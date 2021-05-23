@@ -14,9 +14,6 @@
   <a *ngIf="!auth.isLoggedIn()" class="nav-padding" (click)="openRegister()"
     ><span>Register</span></a
   >
-  <a *ngIf="isAdminUser" class="nav-padding" (click)="openAdminPage()"
-    ><span>Admin</span></a
-  >
   <a *ngIf="auth.isLoggedIn()" class="nav-padding" (click)="auth.logout()"
     ><span>Logout</span></a
   >

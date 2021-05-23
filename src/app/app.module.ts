@@ -7,6 +7,7 @@ import { AppRoutingModule } from "./app-routing.module";
 import { CoreModule } from "./core/core.module";
 import { SharedModule } from "./shared/shared.module";
 import { HomeModule } from "./home/home.module";
+import { TasksModule } from "./tasks/tasks.module";
 
 import { AppComponent } from "./app.component";
 import { SuccessSnackbar, ErrorSnackbar } from "./common/snackbar.component";
@@ -18,6 +19,7 @@ import { DeleteConfirmationDialogComponent } from "./common/delete.dialog.compon
 import { AuthModule } from "./auth/auth.module";
 import { AngularFireAuthGuardModule } from "@angular/fire/auth-guard";
 import { FileUploadDialogComponent } from "./common/file-upload.dialog.component";
+import { TaskDialogComponent } from "./common/task-dialog/task-dialog.component";
 
 @NgModule({
   declarations: [
@@ -26,6 +28,7 @@ import { FileUploadDialogComponent } from "./common/file-upload.dialog.component
     ErrorSnackbar,
     DeleteConfirmationDialogComponent,
     FileUploadDialogComponent,
+    TaskDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,6 +39,7 @@ import { FileUploadDialogComponent } from "./common/file-upload.dialog.component
     SharedModule,
     CoreModule,
     HomeModule,
+    TasksModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
@@ -46,6 +50,7 @@ import { FileUploadDialogComponent } from "./common/file-upload.dialog.component
     ErrorSnackbar,
     DeleteConfirmationDialogComponent,
     FileUploadDialogComponent,
+    TaskDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],
