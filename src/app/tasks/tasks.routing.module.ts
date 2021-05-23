@@ -3,7 +3,8 @@ import { RouterModule, Routes } from "@angular/router";
 import { TaskListComponent } from "./task-list/task.list.component";
 import { TaskComponent } from "./task/task.component";
 
-const routes: Routes = [{ path: "tasks", component: TaskListComponent }];
+const routes: Routes = [];
+// const routes: Routes = [{ path: "tasks", component: TaskListComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

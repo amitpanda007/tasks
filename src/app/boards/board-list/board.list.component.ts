@@ -5,6 +5,8 @@ import {
   BoardDialogComponent,
   BoardDialogResult,
 } from "src/app/common/board-dialog/board-dialog.component";
+import { Subscription } from "rxjs";
+import { BoardService } from "src/app/core/services/board.service";
 
 @Component({
   selector: "board-list",
@@ -12,11 +14,26 @@ import {
   styleUrls: ["board.list.component.scss"],
 })
 export class BaordListComponent implements OnInit {
-  boards: Board[] = [];
+  public boards: Board[];
+  private boardSubscription: Subscription;
+  public isLoading: boolean;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private boardService: BoardService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.isLoading = true;
+    this.boardService.getBoards();
+    this.boardSubscription = this.boardService.boardsChanged.subscribe(
+      (boards) => {
+        this.boards = boards;
+        this.isLoading = false;
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    this.boardSubscription.unsubscribe();
+  }
 
   newBoard(): void {
     const dialogRef = this.dialog.open(BoardDialogComponent, {
@@ -27,7 +44,9 @@ export class BaordListComponent implements OnInit {
     });
     dialogRef
       .afterClosed()
-      .subscribe((result: BoardDialogResult) => this.boards.push(result.board));
+      .subscribe((result: BoardDialogResult) =>
+        this.boardService.addBoard(result.board)
+      );
   }
 
   editBoard(board: Board): void {

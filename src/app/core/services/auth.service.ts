@@ -87,4 +87,8 @@ export class AuthService {
       });
     });
   }
+
+  getUID() {
+    return this._afAuth.auth.currentUser.uid;
+  }
 }
