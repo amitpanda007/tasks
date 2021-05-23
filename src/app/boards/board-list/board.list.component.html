@@ -1,0 +1,16 @@
+<div class="content-wrapper">
+  <button (click)="newBoard()" mat-button>
+    <mat-icon>add</mat-icon> Add Board
+  </button>
+
+  <div class="container-wrapper">
+    <div class="container">
+      <p class="empty-label" *ngIf="boards.length === 0">Empty Board</p>
+      <board
+        (edit)="editBoard($event)"
+        *ngFor="let board of boards"
+        [board]="board"
+      ></board>
+    </div>
+  </div>
+</div>

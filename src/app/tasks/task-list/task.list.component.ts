@@ -31,8 +31,6 @@ export class TaskListComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  editTask(list: string, task: Task): void {}
-
   drop(event: CdkDragDrop<Task[] | null>): void {
     if (event.previousContainer === event.container) {
       return;
@@ -47,6 +45,28 @@ export class TaskListComponent implements OnInit {
       event.previousIndex,
       event.currentIndex
     );
+  }
+
+  editTask(list: "done" | "todo" | "inProgress", task: Task): void {
+    const dialogRef = this.dialog.open(TaskDialogComponent, {
+      width: "270px",
+      data: {
+        task,
+        enableDelete: true,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: TaskDialogResult) => {
+      if (!result) {
+        return;
+      }
+      const dataList = this[list];
+      const taskIndex = dataList.indexOf(task);
+      if (result.delete) {
+        dataList.splice(taskIndex, 1);
+      } else {
+        dataList[taskIndex] = task;
+      }
+    });
   }
 
   newTask(): void {

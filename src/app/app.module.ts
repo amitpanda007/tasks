@@ -20,6 +20,8 @@ import { AuthModule } from "./auth/auth.module";
 import { AngularFireAuthGuardModule } from "@angular/fire/auth-guard";
 import { FileUploadDialogComponent } from "./common/file-upload.dialog.component";
 import { TaskDialogComponent } from "./common/task-dialog/task-dialog.component";
+import { BoardDialogComponent } from "./common/board-dialog/board-dialog.component";
+import { BoardsModule } from "./boards/boards.module";
 
 @NgModule({
   declarations: [
@@ -29,6 +31,7 @@ import { TaskDialogComponent } from "./common/task-dialog/task-dialog.component"
     DeleteConfirmationDialogComponent,
     FileUploadDialogComponent,
     TaskDialogComponent,
+    BoardDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,6 +43,7 @@ import { TaskDialogComponent } from "./common/task-dialog/task-dialog.component"
     CoreModule,
     HomeModule,
     TasksModule,
+    BoardsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
@@ -51,6 +55,7 @@ import { TaskDialogComponent } from "./common/task-dialog/task-dialog.component"
     DeleteConfirmationDialogComponent,
     FileUploadDialogComponent,
     TaskDialogComponent,
+    BoardDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],
