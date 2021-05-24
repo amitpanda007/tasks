@@ -5,7 +5,11 @@
   /></a>
   <div class="spacer" *ngIf="afAuth.user | async as user">
     <span>Welcome, {{ user.displayName }}</span>
+    <a *ngIf="auth.isLoggedIn()" class="nav-padding" (click)="openBoards()"
+    ><span>Boards</span></a
+  >
   </div>
+
   <div class="spacer"></div>
 
   <a *ngIf="!auth.isLoggedIn()" class="nav-padding" (click)="openLogin()"

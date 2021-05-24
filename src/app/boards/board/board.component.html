@@ -1,4 +1,4 @@
-<mat-card class="item" *ngIf="board" (dblclick)="edit.emit(board)">
+<mat-card class="item" *ngIf="board" (dblclick)="edit.emit(board)" (click)="openBoard()">
   <h2>{{ board.title }}</h2>
   <p>
     {{ board.description }}

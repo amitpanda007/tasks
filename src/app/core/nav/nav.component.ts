@@ -44,11 +44,7 @@ export class NavComponent implements OnInit {
     this.router.navigate(["/register"]);
   }
 
-  openInterviews() {
-    this.router.navigate(["/interviews"]);
-  }
-
-  openAdminPage() {
-    this.router.navigate(["/admin"]);
+  openBoards() {
+    this.router.navigate(["/boards"])
   }
 }

@@ -6,6 +6,7 @@ import {
   TaskDialogResult,
 } from "src/app/common/task-dialog/task-dialog.component";
 import { MatDialog } from "@angular/material";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: "task-list",
@@ -13,21 +14,16 @@ import { MatDialog } from "@angular/material";
   styleUrls: ["task.list.component.scss"],
 })
 export class TaskListComponent implements OnInit {
-  todo: Task[] = [
-    {
-      title: "Buy milk",
-      description: "Go to the store and buy milk",
-    },
-    {
-      title: "Create a Kanban app",
-      description: "Using Firebase and Angular create a Kanban app!",
-    },
-  ];
+  private boardId: string;
 
+  todo: Task[] = [];
   inProgress: Task[] = [];
   done: Task[] = [];
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private route: ActivatedRoute) {
+    this.boardId = this.route.snapshot.params.boardId;
+    console.log(this.boardId);
+  }
 
   ngOnInit(): void {}
 
@@ -78,6 +74,12 @@ export class TaskListComponent implements OnInit {
     });
     dialogRef
       .afterClosed()
-      .subscribe((result: TaskDialogResult) => this.todo.push(result.task));
+      .subscribe((result: TaskDialogResult) => {
+        console.log(result);
+        if(!result.task.title) {
+          return;
+        }
+        this.todo.push(result.task);
+      });
   }
 }
