@@ -6,7 +6,7 @@ import {
   TaskDialogResult,
 } from "src/app/common/task-dialog/task-dialog.component";
 import { MatDialog } from "@angular/material";
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "task-list",
@@ -16,6 +16,32 @@ import { ActivatedRoute } from '@angular/router';
 export class TaskListComponent implements OnInit {
   private boardId: string;
 
+  cards = [
+    {
+      name: "ToDo",
+      list: "todoList",
+      tasks: [
+        {
+          title: "New Task",
+          description: "testing desc.",
+        },
+        {
+          title: "Sample Task",
+          description: "sample task description",
+        },
+      ],
+    },
+    {
+      name: "InProgress",
+      list: "inProgressList",
+      tasks: [],
+    },
+    {
+      name: "Done",
+      list: "doneList",
+      tasks: [],
+    },
+  ];
   todo: Task[] = [];
   inProgress: Task[] = [];
   done: Task[] = [];
@@ -26,6 +52,16 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+
+  remainingList(curList: string) {
+    const lists = [];
+    this.cards.forEach((card) => {
+      if (card.name != curList) {
+        lists.push(card.name);
+      }
+    });
+    return lists;
+  }
 
   drop(event: CdkDragDrop<Task[] | null>): void {
     if (event.previousContainer === event.container) {
@@ -72,14 +108,12 @@ export class TaskListComponent implements OnInit {
         task: {},
       },
     });
-    dialogRef
-      .afterClosed()
-      .subscribe((result: TaskDialogResult) => {
-        console.log(result);
-        if(!result.task.title) {
-          return;
-        }
-        this.todo.push(result.task);
-      });
+    dialogRef.afterClosed().subscribe((result: TaskDialogResult) => {
+      console.log(result);
+      if (!result.task.title) {
+        return;
+      }
+      this.todo.push(result.task);
+    });
   }
 }

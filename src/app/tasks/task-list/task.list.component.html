@@ -4,7 +4,28 @@
   </button>
 
   <div class="container-wrapper">
-    <div class="container">
+    <div class="container" *ngFor="let card of cards">
+      <h2>{{ card.name }}</h2>
+
+      <mat-card
+        cdkDropList
+        id="{{ card.name }}"
+        [cdkDropListData]="card.name"
+        [cdkDropListConnectedTo]="remainingList(card.name)"
+        (cdkDropListDropped)="drop($event)"
+        class="list"
+      >
+        <p class="empty-label" *ngIf="card.tasks.length === 0">Empty list</p>
+        <task
+          (edit)="editTask('todo', $event)"
+          *ngFor="let task of card.tasks"
+          cdkDrag
+          [task]="task"
+        ></task>
+      </mat-card>
+    </div>
+
+    <!-- <div class="container">
       <h2>Backlog</h2>
 
       <mat-card
@@ -68,6 +89,6 @@
           [task]="task"
         ></task>
       </mat-card>
-    </div>
+    </div> -->
   </div>
 </div>
