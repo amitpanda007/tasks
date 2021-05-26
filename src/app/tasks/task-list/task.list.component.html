@@ -1,27 +1,26 @@
 <div class="content-wrapper">
-  
   <div class="container-wrapper">
-    <div class="container" *ngFor="let card of cards">
-      <h2>{{ card.name }}</h2>
+    <div class="container" *ngFor="let list of taskList">
+      <h2>{{ list.name }}</h2>
 
       <mat-card
         cdkDropList
-        id="{{ card.name }}"
-        [cdkDropListData]="card.tasks"
-        [cdkDropListConnectedTo]="remainingList(card.name)"
+        id="{{ list.name }}"
+        [cdkDropListData]="list.tasks"
+        [cdkDropListConnectedTo]="remainingList(list.name)"
         (cdkDropListDropped)="drop($event)"
         class="list"
       >
-        <p class="empty-label" *ngIf="card.tasks.length === 0">Empty list</p>
+        <p class="empty-label" *ngIf="list.tasks.length === 0">Empty list</p>
         <task
-          (edit)="editTask(card.tasks, $event)"
-          *ngFor="let task of card.tasks"
+          (edit)="editTask(list, $event)"
+          *ngFor="let task of list.tasks"
           cdkDrag
           [task]="task"
         ></task>
 
         <div class="container-add">
-          <button (click)="createNewTask(card)" mat-button class="task-btn">
+          <button (click)="createNewTask(list)" mat-button class="task-btn">
             <mat-icon>add</mat-icon> Add Task
           </button>
         </div>
@@ -29,24 +28,44 @@
     </div>
 
     <div class="container">
-      <button (click)="showInput()" mat-button color="primary" *ngIf="!showInputField">
+      <button
+        (click)="showInput()"
+        mat-button
+        color="primary"
+        *ngIf="!showInputField"
+      >
         <mat-icon>add</mat-icon> Add New List
       </button>
       <form *ngIf="showInputField">
         <mat-form-field>
           <mat-label>Task List Header</mat-label>
-          <input matInput placeholder="ToDo" autocomplete="off" name="listInput" [(ngModel)]="listName">
+          <input
+            matInput
+            placeholder="ToDo"
+            autocomplete="off"
+            name="listInput"
+            [(ngModel)]="listName"
+          />
         </mat-form-field>
 
-        <button (click)="createNewList()" mat-icon-button color="primary" aria-label="Close Input">
+        <button
+          (click)="createNewList()"
+          mat-icon-button
+          color="primary"
+          aria-label="Close Input"
+        >
           <mat-icon>done</mat-icon>
         </button>
 
-        <button (click)="hideInput()" mat-icon-button color="primary" aria-label="Close Input">
+        <button
+          (click)="hideInput()"
+          mat-icon-button
+          color="primary"
+          aria-label="Close Input"
+        >
           <mat-icon>close</mat-icon>
         </button>
       </form>
     </div>
-
   </div>
 </div>

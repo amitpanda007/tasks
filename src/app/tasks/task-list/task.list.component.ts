@@ -7,9 +7,9 @@ import {
 } from "src/app/common/task-dialog/task-dialog.component";
 import { MatDialog } from "@angular/material";
 import { ActivatedRoute } from "@angular/router";
-import { Subscription } from 'rxjs';
-import { BoardService } from '../../core/services/board.service';
-import { TaskList } from './tasklist';
+import { Subscription } from "rxjs";
+import { BoardService } from "../../core/services/board.service";
+import { TaskList } from "./tasklist";
 
 @Component({
   selector: "task-list",
@@ -22,42 +22,13 @@ export class TaskListComponent implements OnInit {
   public showInputField: boolean = false;
   public isLoading: boolean;
   public listName: string = "";
-  public cards: TaskList[];
-  private tasksList: Task[];
+  public taskList: TaskList[];
 
-  // cards = [];
-  // cards = [
-  //   {
-  //     name: "ToDo",
-  //     list: "todoList",
-  //     tasks: [
-  //       {
-  //         title: "New Task",
-  //         description: "testing desc.",
-  //       },
-  //       {
-  //         title: "Sample Task",
-  //         description: "sample task description",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     name: "InProgress",
-  //     list: "inProgressList",
-  //     tasks: [],
-  //   },
-  //   {
-  //     name: "Done",
-  //     list: "doneList",
-  //     tasks: [],
-  //   },
-  // ];
-
-  // todo: Task[] = [];
-  // inProgress: Task[] = [];
-  // done: Task[] = [];
-
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private boardService: BoardService) {
+  constructor(
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private boardService: BoardService
+  ) {
     this.boardId = this.route.snapshot.params.boardId;
     console.log(this.boardId);
   }
@@ -68,7 +39,7 @@ export class TaskListComponent implements OnInit {
     this.taskListsSubscription = this.boardService.taskListsChanged.subscribe(
       (lists) => {
         console.log(lists);
-        this.cards = lists;
+        this.taskList = lists;
         this.isLoading = false;
       }
     );
@@ -80,22 +51,37 @@ export class TaskListComponent implements OnInit {
 
   remainingList(curList: string) {
     const lists = [];
-    this.cards.forEach((card) => {
-      if (card.name != curList) {
-        lists.push(card.name);
+    this.taskList.forEach((list) => {
+      if (list.name != curList) {
+        lists.push(list.name);
       }
     });
     return lists;
   }
 
   drop(event: CdkDragDrop<Task[] | null>): void {
-    console.log(event);
     if (event.previousContainer === event.container) {
       return;
     }
     if (!event.container.data || !event.previousContainer.data) {
       return;
     }
+    // const item = event.previousContainer.data[event.previousIndex];
+    const prevContainerName = event.previousContainer.id;
+    const newContainerName = event.container.id;
+    const prevContainer = this.taskList.filter(
+      (list) => prevContainerName == list.name
+    );
+    const newContainer = this.taskList.filter(
+      (list) => newContainerName == list.name
+    );
+    this.boardService.moveTasks(
+      this.boardId,
+      prevContainer[0].id,
+      event.previousContainer.data,
+      newContainer[0].id,
+      event.container.data
+    );
 
     transferArrayItem(
       event.previousContainer.data,
@@ -105,7 +91,7 @@ export class TaskListComponent implements OnInit {
     );
   }
 
-  editTask(dataList: Task[], task: Task): void {
+  editTask(dataList: TaskList, task: Task): void {
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: "270px",
       data: {
@@ -117,12 +103,13 @@ export class TaskListComponent implements OnInit {
       if (!result) {
         return;
       }
-      
-      const taskIndex = dataList.indexOf(task);
+
+      const taskIndex = dataList.tasks.indexOf(task);
       if (result.delete) {
-        dataList.splice(taskIndex, 1);
+        dataList.tasks.splice(taskIndex, 1);
+        this.boardService.updateTask(this.boardId, dataList.id, dataList.tasks);
       } else {
-        dataList[taskIndex] = task;
+        this.boardService.updateTask(this.boardId, dataList.id, dataList.tasks);
       }
     });
   }
@@ -143,7 +130,7 @@ export class TaskListComponent implements OnInit {
       // this.tasksList.push(result.task);
       taskList.tasks.push(result.task);
       console.log(taskList);
-      this.boardService.addTask(this.boardId, taskList.id, taskList.tasks)
+      this.boardService.addTask(this.boardId, taskList.id, taskList.tasks);
     });
   }
 
@@ -153,7 +140,7 @@ export class TaskListComponent implements OnInit {
       name: this.listName,
       list: this.listName + "List",
       tasks: [],
-    }
+    };
     // this.cards.push(newList);
     this.boardService.addTaskList(this.boardId, newList);
 
