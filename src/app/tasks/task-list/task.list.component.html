@@ -1,8 +1,5 @@
 <div class="content-wrapper">
-  <button (click)="newTask()" mat-button>
-    <mat-icon>add</mat-icon> Add Task
-  </button>
-
+  
   <div class="container-wrapper">
     <div class="container" *ngFor="let card of cards">
       <h2>{{ card.name }}</h2>
@@ -10,85 +7,46 @@
       <mat-card
         cdkDropList
         id="{{ card.name }}"
-        [cdkDropListData]="card.name"
+        [cdkDropListData]="card.tasks"
         [cdkDropListConnectedTo]="remainingList(card.name)"
         (cdkDropListDropped)="drop($event)"
         class="list"
       >
         <p class="empty-label" *ngIf="card.tasks.length === 0">Empty list</p>
         <task
-          (edit)="editTask('todo', $event)"
+          (edit)="editTask(card.tasks, $event)"
           *ngFor="let task of card.tasks"
           cdkDrag
           [task]="task"
         ></task>
-      </mat-card>
-    </div>
 
-    <!-- <div class="container">
-      <h2>Backlog</h2>
-
-      <mat-card
-        cdkDropList
-        id="todo"
-        #todoList="cdkDropList"
-        [cdkDropListData]="todo"
-        [cdkDropListConnectedTo]="[doneList, inProgressList]"
-        (cdkDropListDropped)="drop($event)"
-        class="list"
-      >
-        <p class="empty-label" *ngIf="todo.length === 0">Empty list</p>
-        <task
-          (edit)="editTask('todo', $event)"
-          *ngFor="let task of todo"
-          cdkDrag
-          [task]="task"
-        ></task>
+        <div class="container-add">
+          <button (click)="createNewTask(card)" mat-button class="task-btn">
+            <mat-icon>add</mat-icon> Add Task
+          </button>
+        </div>
       </mat-card>
     </div>
 
     <div class="container">
-      <h2>In progress</h2>
+      <button (click)="showInput()" mat-button color="primary" *ngIf="!showInputField">
+        <mat-icon>add</mat-icon> Add New List
+      </button>
+      <form *ngIf="showInputField">
+        <mat-form-field>
+          <mat-label>Task List Header</mat-label>
+          <input matInput placeholder="ToDo" autocomplete="off" name="listInput" [(ngModel)]="listName">
+        </mat-form-field>
 
-      <mat-card
-        cdkDropList
-        id="inProgress"
-        #inProgressList="cdkDropList"
-        [cdkDropListData]="inProgress"
-        [cdkDropListConnectedTo]="[todoList, doneList]"
-        (cdkDropListDropped)="drop($event)"
-        class="list"
-      >
-        <p class="empty-label" *ngIf="inProgress.length === 0">Empty list</p>
-        <task
-          (edit)="editTask('inProgress', $event)"
-          *ngFor="let task of inProgress"
-          cdkDrag
-          [task]="task"
-        ></task>
-      </mat-card>
+        <button (click)="createNewList()" mat-icon-button color="primary" aria-label="Close Input">
+          <mat-icon>done</mat-icon>
+        </button>
+
+        <button (click)="hideInput()" mat-icon-button color="primary" aria-label="Close Input">
+          <mat-icon>close</mat-icon>
+        </button>
+      </form>
     </div>
 
-    <div class="container">
-      <h2>Done</h2>
-
-      <mat-card
-        cdkDropList
-        id="done"
-        #doneList="cdkDropList"
-        [cdkDropListData]="done"
-        [cdkDropListConnectedTo]="[todoList, inProgressList]"
-        (cdkDropListDropped)="drop($event)"
-        class="list"
-      >
-        <p class="empty-label" *ngIf="done.length === 0">Empty list</p>
-        <task
-          (edit)="editTask('done', $event)"
-          *ngFor="let task of done"
-          cdkDrag
-          [task]="task"
-        ></task>
-      </mat-card>
-    </div> -->
   </div>
 </div>

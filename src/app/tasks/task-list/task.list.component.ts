@@ -7,6 +7,9 @@ import {
 } from "src/app/common/task-dialog/task-dialog.component";
 import { MatDialog } from "@angular/material";
 import { ActivatedRoute } from "@angular/router";
+import { Subscription } from 'rxjs';
+import { BoardService } from '../../core/services/board.service';
+import { TaskList } from './tasklist';
 
 @Component({
   selector: "task-list",
@@ -14,44 +17,66 @@ import { ActivatedRoute } from "@angular/router";
   styleUrls: ["task.list.component.scss"],
 })
 export class TaskListComponent implements OnInit {
+  private taskListsSubscription: Subscription;
   private boardId: string;
+  public showInputField: boolean = false;
+  public isLoading: boolean;
+  public listName: string = "";
+  public cards: TaskList[];
+  private tasksList: Task[];
 
-  cards = [
-    {
-      name: "ToDo",
-      list: "todoList",
-      tasks: [
-        {
-          title: "New Task",
-          description: "testing desc.",
-        },
-        {
-          title: "Sample Task",
-          description: "sample task description",
-        },
-      ],
-    },
-    {
-      name: "InProgress",
-      list: "inProgressList",
-      tasks: [],
-    },
-    {
-      name: "Done",
-      list: "doneList",
-      tasks: [],
-    },
-  ];
-  todo: Task[] = [];
-  inProgress: Task[] = [];
-  done: Task[] = [];
+  // cards = [];
+  // cards = [
+  //   {
+  //     name: "ToDo",
+  //     list: "todoList",
+  //     tasks: [
+  //       {
+  //         title: "New Task",
+  //         description: "testing desc.",
+  //       },
+  //       {
+  //         title: "Sample Task",
+  //         description: "sample task description",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     name: "InProgress",
+  //     list: "inProgressList",
+  //     tasks: [],
+  //   },
+  //   {
+  //     name: "Done",
+  //     list: "doneList",
+  //     tasks: [],
+  //   },
+  // ];
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute) {
+  // todo: Task[] = [];
+  // inProgress: Task[] = [];
+  // done: Task[] = [];
+
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private boardService: BoardService) {
     this.boardId = this.route.snapshot.params.boardId;
     console.log(this.boardId);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.isLoading = true;
+    this.boardService.getTaskList(this.boardId);
+    this.taskListsSubscription = this.boardService.taskListsChanged.subscribe(
+      (lists) => {
+        console.log(lists);
+        this.cards = lists;
+        this.isLoading = false;
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    this.taskListsSubscription.unsubscribe();
+  }
 
   remainingList(curList: string) {
     const lists = [];
@@ -64,6 +89,7 @@ export class TaskListComponent implements OnInit {
   }
 
   drop(event: CdkDragDrop<Task[] | null>): void {
+    console.log(event);
     if (event.previousContainer === event.container) {
       return;
     }
@@ -79,7 +105,7 @@ export class TaskListComponent implements OnInit {
     );
   }
 
-  editTask(list: "done" | "todo" | "inProgress", task: Task): void {
+  editTask(dataList: Task[], task: Task): void {
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: "270px",
       data: {
@@ -91,7 +117,7 @@ export class TaskListComponent implements OnInit {
       if (!result) {
         return;
       }
-      const dataList = this[list];
+      
       const taskIndex = dataList.indexOf(task);
       if (result.delete) {
         dataList.splice(taskIndex, 1);
@@ -101,7 +127,7 @@ export class TaskListComponent implements OnInit {
     });
   }
 
-  newTask(): void {
+  createNewTask(taskList: TaskList): void {
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: "270px",
       data: {
@@ -113,7 +139,33 @@ export class TaskListComponent implements OnInit {
       if (!result.task.title) {
         return;
       }
-      this.todo.push(result.task);
+      // this.todo.push(result.task);
+      // this.tasksList.push(result.task);
+      taskList.tasks.push(result.task);
+      console.log(taskList);
+      this.boardService.addTask(this.boardId, taskList.id, taskList.tasks)
     });
+  }
+
+  createNewList() {
+    console.log(this.listName);
+    const newList = {
+      name: this.listName,
+      list: this.listName + "List",
+      tasks: [],
+    }
+    // this.cards.push(newList);
+    this.boardService.addTaskList(this.boardId, newList);
+
+    this.listName = "";
+    this.hideInput();
+  }
+
+  showInput() {
+    this.showInputField = true;
+  }
+
+  hideInput() {
+    this.showInputField = false;
   }
 }

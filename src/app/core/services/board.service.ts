@@ -7,14 +7,20 @@ import { Subject } from "rxjs";
 import { Board } from "src/app/boards/board/board";
 import { Task } from "src/app/tasks/task/task";
 import { AuthService } from "./auth.service";
+import { TaskList } from '../../tasks/task-list/tasklist';
 
 @Injectable()
 export class BoardService {
   private boardsCollection: AngularFirestoreCollection<Board>;
+  private taskListsCollection: AngularFirestoreCollection<TaskList>;
   private tasksCollection: AngularFirestoreCollection<Task>;
+  
   private allBoards: Board[];
+  private allTaskLists: TaskList[];
   private allTasks: Task[];
+
   public boardsChanged = new Subject<Board[]>();
+  public taskListsChanged = new Subject<TaskList[]>();
   public tasksChanged = new Subject<Task[]>();
 
   constructor(
@@ -43,24 +49,44 @@ export class BoardService {
     });
   }
 
-  getTasks(boardId: string) {
-    this.tasksCollection = this._store
+  getTaskList(boardId: string) {
+    this.taskListsCollection = this._store
       .collection(this.authService.getUID())
       .doc(boardId)
-      .collection("tasks");
+      .collection("taskLists");
 
-    this.tasksCollection.valueChanges({ idField: "id" }).subscribe((tasks) => {
-      this.allTasks = tasks;
-      this.tasksChanged.next([...this.allBoards]);
+    this.taskListsCollection.valueChanges({ idField: "id" }).subscribe((taskList) => {
+      this.allTaskLists = taskList;
+      this.taskListsChanged.next([...this.allTaskLists]);
     });
   }
 
-  addTask(boardId: string, taskGroup: string, task: Task) {
+  addTaskList(boardId: string, data: TaskList) {
     this._store
       .collection(this.authService.getUID())
       .doc(boardId)
-      .collection("tasks")
-      .doc(taskGroup)
-      .set(task);
+      .collection("taskLists")
+      .add(data);
+  }
+
+  // getTasks(boardId: string) {
+  //   this.tasksCollection = this._store
+  //     .collection(this.authService.getUID())
+  //     .doc(boardId)
+  //     .collection("tasks");
+
+  //   this.tasksCollection.valueChanges({ idField: "id" }).subscribe((tasks) => {
+  //     this.allTasks = tasks;
+  //     this.tasksChanged.next([...this.allBoards]);
+  //   });
+  // }
+
+  addTask(boardId: string, taskGroupId: string, tasks: Task[]) {
+    this._store
+      .collection(this.authService.getUID())
+      .doc(boardId)
+      .collection("taskLists")
+      .doc(taskGroupId)
+      .set({tasks: tasks}, { merge: true });
   }
 }
