@@ -8,6 +8,40 @@
   <textarea matInput [(ngModel)]="data.task.description"></textarea>
 </mat-form-field>
 
+<section class="checklist">
+  <h2 class="example-h2">Check List</h2>
+  <div *ngFor="let checklist of data.task.checklist">
+    <!-- <mat-checkbox [(ngModel)]="checklist.done">{{
+      checklist.text
+    }}</mat-checkbox> -->
+    <mat-checkbox [(ngModel)]="checklist.done"></mat-checkbox
+    ><span (click)="editCheckList()" *ngIf="!isEditing">{{
+      checklist.text
+    }}</span>
+    <input matInput [(ngModel)]="checklist.text" *ngIf="isEditing" />
+    <span *ngIf="isEditing" (click)="doneEditing()">
+      <mat-icon>done</mat-icon>
+    </span>
+  </div>
+
+  <input
+    class="checklist-input"
+    matInput
+    placeholder="complete release work"
+    autocomplete="off"
+    name="checklistInput"
+    [(ngModel)]="checklistText"
+  />
+  <button
+    (click)="updateChecklist()"
+    mat-icon-button
+    color="primary"
+    aria-label="Close Input"
+  >
+    <mat-icon>done</mat-icon>
+  </button>
+</section>
+
 <div mat-dialog-actions>
   <button mat-button [mat-dialog-close]="{ task: data.task }">OK</button>
   <button mat-button (click)="cancel()">Cancel</button>

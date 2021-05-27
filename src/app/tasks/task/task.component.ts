@@ -9,7 +9,6 @@ import { Task } from "./task";
 export class TaskComponent implements OnInit {
   @Input() task: Task | null = null;
   @Output() edit = new EventEmitter<Task>();
-  @Output() fullEdit = new EventEmitter<Task>();
 
   constructor() {}
 

@@ -14,7 +14,6 @@
         <p class="empty-label" *ngIf="list.tasks.length === 0">Empty list</p>
         <task
           (edit)="editTask(list, $event)"
-          (fullEdit)="fullEditTask(list, $event)"
           *ngFor="let task of list.tasks"
           cdkDrag
           [task]="task"

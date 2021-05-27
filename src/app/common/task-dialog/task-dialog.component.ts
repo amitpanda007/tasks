@@ -1,5 +1,6 @@
 import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { CheckList } from "src/app/tasks/task/checklist";
 import { Task } from "src/app/tasks/task/task";
 
 @Component({
@@ -9,6 +10,8 @@ import { Task } from "src/app/tasks/task/task";
 })
 export class TaskDialogComponent {
   private backupTask: Partial<Task> = { ...this.data.task };
+  public isEditing = false;
+  public checklistText: string;
 
   constructor(
     public dialogRef: MatDialogRef<TaskDialogComponent>,
@@ -19,6 +22,23 @@ export class TaskDialogComponent {
     this.data.task.title = this.backupTask.title;
     this.data.task.description = this.backupTask.description;
     this.dialogRef.close(this.data);
+  }
+
+  editCheckList() {
+    this.isEditing = true;
+  }
+
+  doneEditing() {
+    this.isEditing = false;
+  }
+
+  updateChecklist() {
+    const newCheckList: CheckList = {
+      text: this.checklistText,
+      done: false,
+    };
+    this.data.task.checklist.push(newCheckList);
+    this.checklistText = "";
   }
 }
 
