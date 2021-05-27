@@ -10,6 +10,7 @@ import { ActivatedRoute } from "@angular/router";
 import { Subscription } from "rxjs";
 import { BoardService } from "../../core/services/board.service";
 import { TaskList } from "./tasklist";
+import { TaskEditDialogComponent, TaskEditDialogResult } from '../../common/task-edit-dialog/task-edit-dialog.component';
 
 @Component({
   selector: "task-list",
@@ -111,6 +112,29 @@ export class TaskListComponent implements OnInit {
       } else {
         this.boardService.updateTask(this.boardId, dataList.id, dataList.tasks);
       }
+    });
+  }
+
+  fullEditTask(dataList: TaskList, task: Task): void {
+    const dialogRef = this.dialog.open(TaskEditDialogComponent, {
+      width: "270px",
+      data: {
+        task,
+        enableDelete: true,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: TaskEditDialogResult) => {
+      if (!result) {
+        return;
+      }
+
+      // const taskIndex = dataList.tasks.indexOf(task);
+      // if (result.delete) {
+      //   dataList.tasks.splice(taskIndex, 1);
+      //   this.boardService.updateTask(this.boardId, dataList.id, dataList.tasks);
+      // } else {
+      //   this.boardService.updateTask(this.boardId, dataList.id, dataList.tasks);
+      // }
     });
   }
 

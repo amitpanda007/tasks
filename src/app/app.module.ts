@@ -22,6 +22,7 @@ import { FileUploadDialogComponent } from "./common/file-upload.dialog.component
 import { TaskDialogComponent } from "./common/task-dialog/task-dialog.component";
 import { BoardDialogComponent } from "./common/board-dialog/board-dialog.component";
 import { BoardsModule } from "./boards/boards.module";
+import { TaskEditDialogComponent } from './common/task-edit-dialog/task-edit-dialog.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { BoardsModule } from "./boards/boards.module";
     DeleteConfirmationDialogComponent,
     FileUploadDialogComponent,
     TaskDialogComponent,
+    TaskEditDialogComponent,
     BoardDialogComponent,
   ],
   imports: [
@@ -55,6 +57,7 @@ import { BoardsModule } from "./boards/boards.module";
     DeleteConfirmationDialogComponent,
     FileUploadDialogComponent,
     TaskDialogComponent,
+    TaskEditDialogComponent,
     BoardDialogComponent,
   ],
   providers: [HttpClient],
