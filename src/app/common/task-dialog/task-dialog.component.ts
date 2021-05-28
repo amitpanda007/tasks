@@ -18,24 +18,41 @@ export class TaskDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: TaskDialogData
   ) {}
 
-  cancel(): void {
-    this.data.task.title = this.backupTask.title;
-    this.data.task.description = this.backupTask.description;
+  save(): void {
+    this.data.task.checklist.forEach(checklist => {
+        delete checklist.isEditing;
+        delete checklist.unsaved;
+    });
+
     this.dialogRef.close(this.data);
   }
 
-  editCheckList() {
-    this.isEditing = true;
+  cancel(): void {
+    this.data.task.title = this.backupTask.title;
+    this.data.task.description = this.backupTask.description;
+    this.data.task.checklist = this.backupTask.checklist;
+    // this.data.cancel = true;
+    this.dialogRef.close();
   }
 
-  doneEditing() {
-    this.isEditing = false;
+  toggleChecklistEditing(checklist) {
+    checklist.isEditing = !checklist.isEditing;
   }
+
+  // editCheckList() {
+  //   this.isEditing = true;
+  // }
+
+  // doneEditing() {
+  //   this.isEditing = false;
+  // }
 
   updateChecklist() {
     const newCheckList: CheckList = {
       text: this.checklistText,
       done: false,
+      unsaved: true,
+      isEditing: false
     };
     this.data.task.checklist.push(newCheckList);
     this.checklistText = "";

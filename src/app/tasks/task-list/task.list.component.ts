@@ -10,10 +10,6 @@ import { ActivatedRoute } from "@angular/router";
 import { Subscription } from "rxjs";
 import { BoardService } from "../../core/services/board.service";
 import { TaskList } from "./tasklist";
-import {
-  TaskEditDialogComponent,
-  TaskEditDialogResult,
-} from "../../common/task-edit-dialog/task-edit-dialog.component";
 
 @Component({
   selector: "task-list",
@@ -100,7 +96,7 @@ export class TaskListComponent implements OnInit {
       width: "768px",
       data: {
         task,
-        enableDelete: true,
+        enableDelete: false,
       },
     });
     dialogRef.afterClosed().subscribe((result: TaskDialogResult) => {

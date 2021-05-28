@@ -1,5 +1,46 @@
+.checklist {
+  max-width: 60%;
+}
+
+.checklist-text {
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.checklist-edit-input {
+  display: flex;
+}
+
 .checklist-input {
-  margin: 5px;
-  border: 1px solid black;
-  border-radius: 10px;
+  border: 1px solid gray;
+  border-radius: 4px;
+}
+
+.checklist-add {
+  display: flex;
+  margin-top: 10px;
+  margin-left: 15px;
+
+}
+
+.checklist-done {
+  text-decoration: line-through;
+  text-decoration-color: gray;
+}
+
+.single-checklist {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.single-checklist:hover {
+  background-color: rgb(188, 243, 243);
+}
+
+.done {
+  color: lightseagreen;
+}
+
+.close {
+  color: orangered;
 }
