@@ -1,5 +1,36 @@
+.container {
+  display: flex;
+}
+
+.main {
+  width: 70%;
+}
+
+.title {
+  width: 60%;
+}
+
+.description {
+  width: 60%;
+}
+
+.description textarea {
+  resize: none;
+}
+
+.options {
+  width: 30%;
+}
+
 .checklist {
   max-width: 60%;
+}
+
+.sub-header {
+  margin-bottom: 1em;
+  font-size: small;
+  font-weight: 600;
+  color: dimgray;
 }
 
 .checklist-text {
@@ -20,7 +51,6 @@
   display: flex;
   margin-top: 10px;
   margin-left: 15px;
-
 }
 
 .checklist-done {
@@ -43,4 +73,16 @@
 
 .close {
   color: orangered;
+}
+
+.labels {
+  margin: 10px 0px;
+}
+
+.label-section {
+  display: flex;
+}
+
+.label-btn {
+  cursor: auto;
 }

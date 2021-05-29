@@ -96,7 +96,8 @@ export class TaskListComponent implements OnInit {
       width: "768px",
       data: {
         task,
-        enableDelete: false,
+        boardId: this.boardId,
+        enableDelete: true,
       },
     });
     dialogRef.afterClosed().subscribe((result: TaskDialogResult) => {

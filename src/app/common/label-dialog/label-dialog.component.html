@@ -1,19 +1,53 @@
-<mat-form-field>
-  <mat-label>Title</mat-label>
-  <input matInput cdkFocusInitial [(ngModel)]="data.label.name" />
-</mat-form-field>
+<!-- <mat-icon (click)="closeDialog()" *ngIf="!isAddingLabel" class="action-icon"
+  >close</mat-icon
+> -->
+<mat-icon (click)="toggleLabel()" *ngIf="isAddingLabel" class="action-icon"
+  >arrow_back</mat-icon
+>
 
-<div mat-dialog-actions>
-  <button mat-button [mat-dialog-close]="{ label: data.label }">OK</button>
-  <button mat-button (click)="cancel()">Cancel</button>
+<h2>Labels</h2>
 
-  <button
-    *ngIf="data.enableDelete"
-    mat-icon-button
-    color="primary"
-    aria-label="Delete"
-    [mat-dialog-close]="{ label: data.label, delete: true }"
-  >
-    <mat-icon>delete</mat-icon>
+<div *ngIf="!isAddingLabel">
+  <p class="empty-label" *ngIf="data.labels?.length === 0">No Labels</p>
+  <div *ngFor="let label of data.labels" class="labels">
+    <button
+      mat-flat-button
+      [style.background-color]="label.color"
+      class="label-btn"
+      (click)="selectLabel(label)"
+    >
+      {{ label.name }}
+      <mat-icon *ngIf="label.isSelected">done</mat-icon>
+    </button>
+  </div>
+  <button mat-stroked-button (click)="toggleLabel()">Create a new label</button>
+</div>
+
+<div *ngIf="isAddingLabel">
+  <mat-label>Name</mat-label>
+  <div class="label-input">
+    <input
+      [style.background-color]="newLabelColor"
+      type="text"
+      matInput
+      cdkFocusInitial
+      autocomplete="off"
+      [(ngModel)]="newLabelName"
+    />
+  </div>
+
+  <div class="label-color">
+    <mat-label>Select a color</mat-label>
+    <color-circle (onChange)="handleChange($event)"></color-circle>
+  </div>
+  <div class="new-label-options">
+    <button mat-stroked-button (click)="addLabel()">ADD</button>
+  </div>
+</div>
+
+<div mat-dialog-actions *ngIf="!isAddingLabel">
+  <button mat-stroked-button [mat-dialog-close]="{ labels: data.taskLabels }">
+    OK
   </button>
+  <button mat-stroked-button (click)="cancel()">Cancel</button>
 </div>

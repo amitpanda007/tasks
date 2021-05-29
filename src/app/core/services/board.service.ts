@@ -8,20 +8,24 @@ import { Board } from "src/app/boards/board/board";
 import { Task } from "src/app/tasks/task/task";
 import { AuthService } from "./auth.service";
 import { TaskList } from "../../tasks/task-list/tasklist";
+import { Label } from "src/app/tasks/task/label";
 
 @Injectable()
 export class BoardService {
   private boardsCollection: AngularFirestoreCollection<Board>;
   private taskListsCollection: AngularFirestoreCollection<TaskList>;
   private tasksCollection: AngularFirestoreCollection<Task>;
+  private labelsCollection: AngularFirestoreCollection<Label>;
 
   private allBoards: Board[];
   private allTaskLists: TaskList[];
   private allTasks: Task[];
+  private allLabelList: Label[];
 
   public boardsChanged = new Subject<Board[]>();
   public taskListsChanged = new Subject<TaskList[]>();
   public tasksChanged = new Subject<Task[]>();
+  public labelListChanged = new Subject<Label[]>();
 
   constructor(
     private _store: AngularFirestore,
@@ -112,5 +116,36 @@ export class BoardService {
           .set({ tasks: newTasks }, { merge: true }),
       ]);
     });
+  }
+
+  getLabels(boardId: string) {
+    this.labelsCollection = this._store
+      .collection(this.authService.getUID())
+      .doc(boardId)
+      .collection("labels");
+
+    this.labelsCollection
+      .valueChanges({ idField: "id" })
+      .subscribe((labels) => {
+        this.allLabelList = labels;
+        this.labelListChanged.next([...this.allLabelList]);
+      });
+  }
+
+  addLabel(boardId: string, label: Label) {
+    this._store
+      .collection(this.authService.getUID())
+      .doc(boardId)
+      .collection("labels")
+      .add(label);
+  }
+
+  addLabelToTask(boardId: string, taskGroupId: string, tasks: Task[]) {
+    this._store
+      .collection(this.authService.getUID())
+      .doc(boardId)
+      .collection("taskLists")
+      .doc(taskGroupId)
+      .set({ tasks: tasks }, { merge: true });
   }
 }

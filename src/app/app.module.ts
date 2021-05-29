@@ -22,6 +22,8 @@ import { FileUploadDialogComponent } from "./common/file-upload.dialog.component
 import { TaskDialogComponent } from "./common/task-dialog/task-dialog.component";
 import { BoardDialogComponent } from "./common/board-dialog/board-dialog.component";
 import { BoardsModule } from "./boards/boards.module";
+import { LabelDialogComponent } from "./common/label-dialog/label-dialog.component";
+import { ColorCircleModule } from "ngx-color/circle";
 
 @NgModule({
   declarations: [
@@ -32,6 +34,7 @@ import { BoardsModule } from "./boards/boards.module";
     FileUploadDialogComponent,
     TaskDialogComponent,
     BoardDialogComponent,
+    LabelDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,6 +51,7 @@ import { BoardsModule } from "./boards/boards.module";
     AngularFirestoreModule,
     AngularFireAuthModule,
     AngularFireAuthGuardModule,
+    ColorCircleModule,
   ],
   entryComponents: [
     SuccessSnackbar,
@@ -56,6 +60,7 @@ import { BoardsModule } from "./boards/boards.module";
     FileUploadDialogComponent,
     TaskDialogComponent,
     BoardDialogComponent,
+    LabelDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

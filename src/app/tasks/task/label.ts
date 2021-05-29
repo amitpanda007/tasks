@@ -1,5 +1,5 @@
 export interface Label {
-    name: string;
-    color: string;  
-  }
-  
+  name: string;
+  color: string;
+  isSelected?: boolean;
+}

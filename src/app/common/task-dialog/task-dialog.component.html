@@ -1,62 +1,110 @@
-<mat-form-field>
-  <mat-label>Title</mat-label>
-  <input matInput cdkFocusInitial [(ngModel)]="data.task.title" />
-</mat-form-field>
+<div class="container">
+  <div class="main">
+    <mat-form-field class="title">
+      <mat-label>Title</mat-label>
+      <input matInput cdkFocusInitial [(ngModel)]="data.task.title" />
+    </mat-form-field>
 
-<mat-form-field>
-  <mat-label>Description</mat-label>
-  <textarea matInput [(ngModel)]="data.task.description"></textarea>
-</mat-form-field>
+    <mat-form-field class="description">
+      <mat-label>Description</mat-label>
+      <textarea
+        matInput
+        [(ngModel)]="data.task.description"
+        rows="2"
+        cols="50"
+      ></textarea>
+    </mat-form-field>
 
-<section class="checklist">
-  <h2 class="example-h2">Check List</h2>
-  <div *ngFor="let checklist of data.task.checklist" class="single-checklist">
-    <!-- <mat-checkbox [(ngModel)]="checklist.done">{{
+    <section class="labels">
+      <p class="sub-header">Lables</p>
+      <div class="label-section">
+        <mat-chip-list>
+          <mat-chip
+            *ngFor="let label of data.task.labels"
+            [style.background-color]="label.color"
+          >
+            {{ label.name }}
+          </mat-chip>
+        </mat-chip-list>
+        <button
+          mat-icon-button
+          aria-label="add label"
+          (click)="openLabelDialog()"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </section>
+
+    <section class="checklist">
+      <p class="sub-header">Check List</p>
+      <div
+        *ngFor="let checklist of data.task.checklist"
+        class="single-checklist"
+      >
+        <!-- <mat-checkbox [(ngModel)]="checklist.done">{{
       checklist.text
     }}</mat-checkbox> -->
-    <mat-checkbox [(ngModel)]="checklist.done"></mat-checkbox
-    ><span (click)="toggleChecklistEditing(checklist)" 
-      *ngIf="!checklist.isEditing" 
-      class="checklist-text" 
-      [ngClass]="{'checklist-done': checklist.done == true}">{{
-      checklist.text
-    }}</span>
-    <div class="checklist-text checklist-edit-input" *ngIf="checklist.isEditing">
-      <input matInput [(ngModel)]="checklist.text"  />
-      <span (click)="toggleChecklistEditing(checklist)" class="done">
-        <mat-icon>done</mat-icon>
-      </span>
-      <span (click)="toggleChecklistEditing(checklist)" class="close">
-        <mat-icon>close</mat-icon>
-      </span>
+        <mat-checkbox
+          [(ngModel)]="checklist.done"
+          color="primary"
+        ></mat-checkbox
+        ><span
+          (click)="toggleChecklistEditing(checklist)"
+          *ngIf="!checklist.isEditing"
+          class="checklist-text"
+          [ngClass]="{ 'checklist-done': checklist.done == true }"
+          >{{ checklist.text }}</span
+        >
+        <div
+          class="checklist-text checklist-edit-input"
+          *ngIf="checklist.isEditing"
+        >
+          <input matInput [(ngModel)]="checklist.text" />
+          <span (click)="toggleChecklistEditing(checklist)" class="done">
+            <mat-icon>done</mat-icon>
+          </span>
+          <span (click)="toggleChecklistEditing(checklist)" class="close">
+            <mat-icon>close</mat-icon>
+          </span>
+        </div>
+      </div>
+
+      <div class="checklist-add">
+        <input
+          class="checklist-input"
+          matInput
+          placeholder="Add a new task to checklist"
+          autocomplete="off"
+          name="checklistInput"
+          [(ngModel)]="checklistText"
+        />
+        <button mat-stroked-button (click)="updateChecklist()">Add</button>
+      </div>
+    </section>
+
+    <div mat-dialog-actions>
+      <!-- <button mat-button [mat-dialog-close]="{ task: data.task }">OK</button> -->
+      <button mat-button (click)="save()">OK</button>
+      <button mat-button (click)="cancel()">Cancel</button>
+
+      <button
+        *ngIf="data.enableDelete"
+        mat-icon-button
+        color="primary"
+        aria-label="Delete"
+        class="close"
+        [mat-dialog-close]="{ task: data.task, delete: true }"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
     </div>
   </div>
 
-  <div class="checklist-add">
-    <input
-      class="checklist-input"
-      matInput
-      placeholder="Add a new task to checklist"
-      autocomplete="off"
-      name="checklistInput"
-      [(ngModel)]="checklistText"
-    />
-    <button mat-stroked-button (click)="updateChecklist()">Add</button>
+  <div class="options">
+    <p class="sub-header">ADD TO CARD</p>
+    <button mat-stroked-button color="primary" (click)="openLabelDialog()">
+      <mat-icon>label</mat-icon> Labels
+    </button>
   </div>
-</section>
-
-<div mat-dialog-actions>
-  <!-- <button mat-button [mat-dialog-close]="{ task: data.task }">OK</button> -->
-  <button mat-button (click)="save()">OK</button>
-  <button mat-button (click)="cancel()">Cancel</button>
-
-  <button
-    *ngIf="data.enableDelete"
-    mat-icon-button
-    color="primary"
-    aria-label="Delete"
-    [mat-dialog-close]="{ task: data.task, delete: true }"
-  >
-    <mat-icon>delete</mat-icon>
-  </button>
 </div>
