@@ -15,7 +15,7 @@ export class LabelDialogComponent implements OnInit {
   public newLabelName: string;
   public newLabelColor: string = "#FFFFFF";
   public newLabelTextColor: string = "#000000";
-  private localLabels: Label[];
+  public localLabels: Label[];
 
   constructor(
     public dialogRef: MatDialogRef<LabelDialogComponent>,
