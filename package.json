@@ -29,6 +29,7 @@
     "@auth0/angular-jwt": "^5.0.2",
     "firebase": ">= 5.5.7 <8",
     "firebase-admin": "^9.4.2",
+    "lodash": "^4.17.21",
     "ngx-color": "^7.0.0",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",

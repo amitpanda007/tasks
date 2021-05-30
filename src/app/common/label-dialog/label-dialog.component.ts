@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Label } from "../../tasks/task/label";
 import { ColorEvent } from "ngx-color";
@@ -9,17 +9,29 @@ import { BoardService } from "src/app/core/services/board.service";
   templateUrl: "./label-dialog.component.html",
   styleUrls: ["./label-dialog.component.scss"],
 })
-export class LabelDialogComponent {
+export class LabelDialogComponent implements OnInit {
   private backupLabel: Partial<Label[]> = { ...this.data.labels };
   public isAddingLabel: boolean = false;
   public newLabelName: string;
   public newLabelColor: string = "#FFF";
+  private localLabels: Label[];
 
   constructor(
     public dialogRef: MatDialogRef<LabelDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: LabelDialogData,
     private boardService: BoardService
   ) {}
+
+  ngOnInit(): void {
+    this.localLabels = [...this.data.labels];
+    this.localLabels.forEach((label) => {
+      this.data.taskLabels.forEach((taskLabel) => {
+        if (label.name.localeCompare(taskLabel.name) == 0) {
+          label.isSelected = true;
+        }
+      });
+    });
+  }
 
   cancel(): void {
     // this.data.labels = this.backupLabel;
@@ -53,6 +65,7 @@ export class LabelDialogComponent {
 
   selectLabel(label: Label) {
     label.isSelected = true;
+    // this.localLabels.push(label);
     this.data.taskLabels.push(label);
   }
 }

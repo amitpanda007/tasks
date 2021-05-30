@@ -1,11 +1,23 @@
 <mat-card class="item" *ngIf="task" (click)="edit.emit(task)">
   <h3>{{ task.title }}</h3>
-  <mat-chip-list>
+  <mat-chip-list *ngIf="!showLabelText">
     <mat-chip
       *ngFor="let label of task.labels"
       [style.background-color]="label.color"
+      class="my-chip"
+      (click)="hideLabelName()"
     >
       {{ label.name }}
+    </mat-chip>
+  </mat-chip-list>
+
+  <mat-chip-list *ngIf="showLabelText">
+    <mat-chip
+      *ngFor="let label of task.labels"
+      [style.background-color]="label.color"
+      class="chip-no-text"
+      (click)="hideLabelName()"
+    >
     </mat-chip>
   </mat-chip-list>
   <p>

@@ -1,11 +1,21 @@
-<mat-form-field>
+<mat-form-field class="input">
   <mat-label>Title</mat-label>
-  <input matInput cdkFocusInitial [(ngModel)]="data.board.title" />
+  <input
+    matInput
+    cdkFocusInitial
+    autocomplete="off"
+    [(ngModel)]="data.board.title"
+  />
 </mat-form-field>
 
-<mat-form-field>
+<mat-form-field class="input">
   <mat-label>Description</mat-label>
-  <textarea matInput [(ngModel)]="data.board.description"></textarea>
+  <textarea
+    matInput
+    rows="2"
+    cols="50"
+    [(ngModel)]="data.board.description"
+  ></textarea>
 </mat-form-field>
 
 <div mat-dialog-actions>

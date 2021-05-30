@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { CdkDragDrop, transferArrayItem } from "@angular/cdk/drag-drop";
+import * as cloneDeep from "lodash/cloneDeep";
 import { Task } from "../task/task";
 import {
   TaskDialogComponent,
@@ -92,10 +93,11 @@ export class TaskListComponent implements OnInit {
   }
 
   editTask(dataList: TaskList, task: Task): void {
+    const clonedTask = cloneDeep(task);
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: "768px",
       data: {
-        task,
+        task: clonedTask,
         boardId: this.boardId,
         enableDelete: true,
       },
@@ -104,6 +106,7 @@ export class TaskListComponent implements OnInit {
       if (!result) {
         return;
       }
+      console.log(result);
 
       const taskIndex = dataList.tasks.indexOf(task);
       if (result.delete) {

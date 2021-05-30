@@ -6,3 +6,13 @@
   margin-bottom: 10px;
   cursor: pointer;
 }
+
+.my-chip {
+  min-height: 20px;
+  transition: min-height 2s;
+}
+
+.chip-no-text {
+  min-height: 10px;
+  min-width: 40px;
+}

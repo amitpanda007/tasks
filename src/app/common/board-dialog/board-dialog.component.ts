@@ -16,9 +16,9 @@ export class BoardDialogComponent {
   ) {}
 
   cancel(): void {
-    this.data.board.title = this.backupTask.title;
-    this.data.board.description = this.backupTask.description;
-    this.dialogRef.close(this.data);
+    // this.data.board.title = this.backupTask.title;
+    // this.data.board.description = this.backupTask.description;
+    this.dialogRef.close();
   }
 }
 

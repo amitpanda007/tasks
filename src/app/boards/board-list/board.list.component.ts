@@ -37,16 +37,17 @@ export class BaordListComponent implements OnInit {
 
   newBoard(): void {
     const dialogRef = this.dialog.open(BoardDialogComponent, {
-      width: "270px",
+      width: "360px",
       data: {
         board: {},
       },
     });
-    dialogRef
-      .afterClosed()
-      .subscribe((result: BoardDialogResult) =>
-        this.boardService.addBoard(result.board)
-      );
+    dialogRef.afterClosed().subscribe((result: BoardDialogResult) => {
+      if (!result) {
+        return;
+      }
+      this.boardService.addBoard(result.board);
+    });
   }
 
   editBoard(board: Board): void {
