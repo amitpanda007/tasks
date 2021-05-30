@@ -20,6 +20,8 @@
 
 .options {
   width: 30%;
+  border-left: 1px dotted;
+  padding-left: 5px;
 }
 
 .checklist {
@@ -85,4 +87,8 @@
 
 .label-btn {
   cursor: auto;
+}
+
+.single-label {
+  color: white;
 }

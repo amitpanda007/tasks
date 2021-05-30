@@ -13,7 +13,8 @@ export class LabelDialogComponent implements OnInit {
   private backupLabel: Partial<Label[]> = { ...this.data.labels };
   public isAddingLabel: boolean = false;
   public newLabelName: string;
-  public newLabelColor: string = "#FFF";
+  public newLabelColor: string = "#FFFFFF";
+  public newLabelTextColor: string = "#000000";
   private localLabels: Label[];
 
   constructor(
@@ -45,6 +46,7 @@ export class LabelDialogComponent implements OnInit {
   handleChange($event: ColorEvent) {
     console.log($event.color.hex);
     this.newLabelColor = $event.color.hex;
+    this.newLabelTextColor = "#FFFFFF";
   }
 
   // closeDialog() {
@@ -64,9 +66,14 @@ export class LabelDialogComponent implements OnInit {
   }
 
   selectLabel(label: Label) {
-    label.isSelected = true;
-    // this.localLabels.push(label);
-    this.data.taskLabels.push(label);
+    if (label.isSelected) {
+      delete label.isSelected;
+      const labelIndex = this.data.taskLabels.indexOf(label);
+      this.data.taskLabels.splice(labelIndex, 1);
+    } else {
+      label.isSelected = true;
+      this.data.taskLabels.push(label);
+    }
   }
 }
 

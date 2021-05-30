@@ -22,6 +22,7 @@
           <mat-chip
             *ngFor="let label of data.task.labels"
             [style.background-color]="label.color"
+            class="single-label"
           >
             {{ label.name }}
           </mat-chip>
@@ -94,7 +95,7 @@
         color="primary"
         aria-label="Delete"
         class="close"
-        [mat-dialog-close]="{ task: data.task, delete: true }"
+        (click)="delete()"
       >
         <mat-icon>delete</mat-icon>
       </button>
@@ -103,7 +104,7 @@
 
   <div class="options">
     <p class="sub-header">ADD TO CARD</p>
-    <button mat-stroked-button color="primary" (click)="openLabelDialog()">
+    <button mat-stroked-button (click)="openLabelDialog()">
       <mat-icon>label</mat-icon> Labels
     </button>
   </div>

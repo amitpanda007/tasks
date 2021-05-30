@@ -11,6 +11,10 @@ import { ActivatedRoute } from "@angular/router";
 import { Subscription } from "rxjs";
 import { BoardService } from "../../core/services/board.service";
 import { TaskList } from "./tasklist";
+import {
+  DeleteConfirmationDialogComponent,
+  DeleteConfirmationDialogResult,
+} from "src/app/common/delete.dialog.component";
 
 @Component({
   selector: "task-list",
@@ -113,6 +117,7 @@ export class TaskListComponent implements OnInit {
         dataList.tasks.splice(taskIndex, 1);
         this.boardService.updateTask(this.boardId, dataList.id, dataList.tasks);
       } else {
+        dataList.tasks[taskIndex] = result.task;
         this.boardService.updateTask(this.boardId, dataList.id, dataList.tasks);
       }
     });
@@ -120,14 +125,16 @@ export class TaskListComponent implements OnInit {
 
   createNewTask(taskList: TaskList): void {
     const dialogRef = this.dialog.open(TaskDialogComponent, {
-      width: "270px",
+      width: "768px",
       data: {
         task: {},
+        boardId: this.boardId,
+        enableDelete: false,
       },
     });
     dialogRef.afterClosed().subscribe((result: TaskDialogResult) => {
       console.log(result);
-      if (!result.task.title) {
+      if (!result) {
         return;
       }
       // this.todo.push(result.task);

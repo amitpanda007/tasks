@@ -10,6 +10,10 @@ import { CheckList } from "src/app/tasks/task/checklist";
 import { Label } from "src/app/tasks/task/label";
 import { Task } from "src/app/tasks/task/task";
 import {
+  DeleteConfirmationDialogComponent,
+  DeleteConfirmationDialogResult,
+} from "../delete.dialog.component";
+import {
   LabelDialogComponent,
   LabelDialogResult,
 } from "../label-dialog/label-dialog.component";
@@ -49,10 +53,12 @@ export class TaskDialogComponent implements OnInit {
   }
 
   save(): void {
-    this.data.task.checklist.forEach((checklist) => {
-      delete checklist.isEditing;
-      delete checklist.unsaved;
-    });
+    if (this.data.task.checklist && this.data.task.checklist.length > 0) {
+      this.data.task.checklist.forEach((checklist) => {
+        delete checklist.isEditing;
+        delete checklist.unsaved;
+      });
+    }
 
     this.dialogRef.close(this.data);
   }
@@ -63,6 +69,21 @@ export class TaskDialogComponent implements OnInit {
     this.data.task.checklist = this.backupTask.checklist;
     // this.data.cancel = true;
     this.dialogRef.close();
+  }
+
+  delete() {
+    const delDialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+      width: "240px",
+      disableClose: true,
+    });
+
+    delDialogRef
+      .afterClosed()
+      .subscribe((result: DeleteConfirmationDialogResult) => {
+        if (result.delete) {
+          this.dialogRef.close({ delete: true });
+        }
+      });
   }
 
   toggleChecklistEditing(checklist: CheckList) {
@@ -76,6 +97,9 @@ export class TaskDialogComponent implements OnInit {
       unsaved: true,
       isEditing: false,
     };
+    if (!this.data.task.checklist) {
+      this.data.task.checklist = [];
+    }
     this.data.task.checklist.push(newCheckList);
     this.checklistText = "";
   }
@@ -95,11 +119,13 @@ export class TaskDialogComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe((result: LabelDialogResult) => {
-      console.log(result);
-
       if (!result) {
         return;
       }
+
+      result.labels.forEach((label) => {
+        delete label.isSelected;
+      });
 
       this.data.task.labels = result.labels;
     });
