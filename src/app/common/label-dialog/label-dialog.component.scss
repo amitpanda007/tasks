@@ -20,13 +20,34 @@
 
 .labels {
   margin: 10px 0px;
-  min-width: 250px;
+  min-width: 200px;
 }
 
-.label-btn {
-  min-width: 200px;
-  text-align: start;
+.label-single {
+  display: flex;
+}
+
+.label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: 70%;
+  height: 30px;
   color: white;
+  border-radius: 5px;
+}
+
+.label mat-icon {
+  margin: 2px;
+}
+
+.label span {
+  margin: 5px;
+}
+
+.label-options {
+  cursor: pointer;
+  color: black;
 }
 
 .new-label-options {

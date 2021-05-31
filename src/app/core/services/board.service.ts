@@ -140,6 +140,15 @@ export class BoardService {
       .add(label);
   }
 
+  deleteLabel(boardId: string, labelId: string) {
+    this._store
+      .collection(this.authService.getUID())
+      .doc(boardId)
+      .collection("labels")
+      .doc(labelId)
+      .delete();
+  }
+
   addLabelToTask(boardId: string, taskGroupId: string, tasks: Task[]) {
     this._store
       .collection(this.authService.getUID())

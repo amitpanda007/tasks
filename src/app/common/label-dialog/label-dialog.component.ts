@@ -59,10 +59,21 @@ export class LabelDialogComponent implements OnInit {
       color: this.newLabelColor,
     };
     this.data.labels.push(newLabel);
+    this.localLabels.push(newLabel);
     this.boardService.addLabel(this.data.boardId, newLabel);
     this.newLabelName = "";
     this.newLabelColor = "";
     this.toggleLabel();
+  }
+
+  editLabel(label: Label) {
+    console.log("EDIT LABEL");
+    
+  }
+
+  deleteLabel(label: Label) {
+    console.log("DELETE LABEL");
+    this.boardService.deleteLabel(this.data.boardId, label.id);
   }
 
   selectLabel(label: Label) {

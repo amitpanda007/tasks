@@ -10,16 +10,20 @@
 <div *ngIf="!isAddingLabel">
   <p class="empty-label" *ngIf="data.labels?.length === 0">No Labels</p>
   <div *ngFor="let label of localLabels" class="labels">
-    <button
-      mat-flat-button
-      [style.background-color]="label.color"
-      class="label-btn"
-      (click)="selectLabel(label)"
-    >
-      {{ label.name }}
-      <mat-icon *ngIf="label.isSelected">done</mat-icon>
-      <!-- <p>{{ checkLabelSelected(label) }}</p> -->
-    </button>
+    <div class="label-single">
+      <div
+        [style.background-color]="label.color"
+        class="label"
+        (click)="selectLabel(label)"
+      >
+        <mat-icon *ngIf="label.isSelected">done</mat-icon>
+        <span>{{ label.name }}</span>
+      </div>
+      <div class="label-options">
+        <mat-icon (click)="editLabel(label)">edit</mat-icon>
+        <mat-icon (click)="deleteLabel(label)">delete</mat-icon>
+      </div>
+    </div>
   </div>
   <button mat-stroked-button (click)="toggleLabel()">Create a new label</button>
 </div>
