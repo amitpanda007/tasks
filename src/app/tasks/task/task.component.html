@@ -1,25 +1,27 @@
 <mat-card class="item" *ngIf="task" (click)="edit.emit(task)">
   <h3>{{ task.title }}</h3>
-  <mat-chip-list *ngIf="!showLabelText">
-    <mat-chip
-      *ngFor="let label of task.labels"
-      [style.background-color]="label.color"
-      class="my-chip"
-      (click)="hideLabelName()"
-    >
-      {{ label.name }}
-    </mat-chip>
-  </mat-chip-list>
+  <div *ngIf="!showLabelText">
+    <mat-chip-list>
+      <div *ngFor="let label of labels">
+        <span *ngFor="let taskId of label.taskIds">
+          <mat-chip *ngIf="taskId == task.id" [style.background-color]="label.color" class="single-label" class="my-chip" (click)="hideLabelName()">
+            {{ label.name }}
+          </mat-chip>
+        </span>
+      </div>
+    </mat-chip-list>
+  </div>
 
-  <mat-chip-list *ngIf="showLabelText">
-    <mat-chip
-      *ngFor="let label of task.labels"
-      [style.background-color]="label.color"
-      class="chip-no-text"
-      (click)="hideLabelName()"
-    >
-    </mat-chip>
-  </mat-chip-list>
+  <div *ngIf="showLabelText">
+    <mat-chip-list>
+      <div *ngFor="let label of labels">
+        <span *ngFor="let taskId of label.taskIds">
+          <mat-chip *ngIf="taskId == task.id" [style.background-color]="label.color" class="chip-no-text" (click)="hideLabelName()">
+          </mat-chip>
+        </span>
+      </div>
+    </mat-chip-list>
+  </div>
   <p>
     {{ task.description }}
   </p>

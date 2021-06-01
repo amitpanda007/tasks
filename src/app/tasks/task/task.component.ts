@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
 import { Task } from "./task";
+import { Label } from './label';
 
 @Component({
   selector: "task",
@@ -8,6 +9,7 @@ import { Task } from "./task";
 })
 export class TaskComponent implements OnInit {
   @Input() task: Task | null = null;
+  @Input() labels: Label[] | null = null;
   @Output() edit = new EventEmitter<Task>();
   public showLabelText: boolean = false;
 

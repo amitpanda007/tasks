@@ -15,6 +15,7 @@ import {
   DeleteConfirmationDialogComponent,
   DeleteConfirmationDialogResult,
 } from "src/app/common/delete.dialog.component";
+import { Label } from '../task/label';
 
 @Component({
   selector: "task-list",
@@ -23,11 +24,17 @@ import {
 })
 export class TaskListComponent implements OnInit {
   private taskListsSubscription: Subscription;
+  private tasksSubscription: Subscription;
+  private labelsSubscription: Subscription;
+
   private boardId: string;
   public showInputField: boolean = false;
   public isLoading: boolean;
   public listName: string = "";
+
   public taskList: TaskList[];
+  public tasks: Task[];
+  public labels: Label[];
 
   constructor(
     private dialog: MatDialog,
@@ -41,6 +48,9 @@ export class TaskListComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.boardService.getTaskList(this.boardId);
+    this.boardService.getTasks(this.boardId);
+    this.boardService.getLabels(this.boardId);
+
     this.taskListsSubscription = this.boardService.taskListsChanged.subscribe(
       (lists) => {
         console.log(lists);
@@ -48,45 +58,51 @@ export class TaskListComponent implements OnInit {
         this.isLoading = false;
       }
     );
+
+    this.tasksSubscription = this.boardService.tasksChanged.subscribe(
+      (tasks) => {
+        console.log(tasks);
+        this.tasks = tasks;
+      }
+    );
+
+    this.labelsSubscription = this.boardService.labelListChanged.subscribe(
+      (labels) => {
+        console.log(labels);
+        this.labels = labels;
+      }
+    );
   }
 
   ngOnDestroy() {
     this.taskListsSubscription.unsubscribe();
+    this.tasksSubscription.unsubscribe();
+    this.labelsSubscription.unsubscribe();
   }
 
   remainingList(curList: string) {
     const lists = [];
     this.taskList.forEach((list) => {
-      if (list.name != curList) {
-        lists.push(list.name);
+      if (list.id != curList) {
+        lists.push(list.id);
       }
     });
     return lists;
   }
 
   drop(event: CdkDragDrop<Task[] | null>): void {
+    console.log(event);
     if (event.previousContainer === event.container) {
       return;
     }
     if (!event.container.data || !event.previousContainer.data) {
       return;
     }
-    // const item = event.previousContainer.data[event.previousIndex];
-    const prevContainerName = event.previousContainer.id;
-    const newContainerName = event.container.id;
-    const prevContainer = this.taskList.filter(
-      (list) => prevContainerName == list.name
-    );
-    const newContainer = this.taskList.filter(
-      (list) => newContainerName == list.name
-    );
-    this.boardService.moveTasks(
-      this.boardId,
-      prevContainer[0].id,
-      event.previousContainer.data,
-      newContainer[0].id,
-      event.container.data
-    );
+
+    const taskId = event.container.data[0].id;
+    const newTaskListId = event.container.id;
+    console.log(taskId, newTaskListId);
+    this.boardService.moveTasks(this.boardId, taskId, newTaskListId);
 
     transferArrayItem(
       event.previousContainer.data,
@@ -96,12 +112,14 @@ export class TaskListComponent implements OnInit {
     );
   }
 
-  editTask(dataList: TaskList, task: Task): void {
+  editTask(task: Task): void {
     const clonedTask = cloneDeep(task);
+    const clonedLabels = cloneDeep(this.labels);
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: "768px",
       data: {
         task: clonedTask,
+        labels: clonedLabels,
         boardId: this.boardId,
         enableDelete: true,
       },
@@ -112,18 +130,21 @@ export class TaskListComponent implements OnInit {
       }
       console.log(result);
 
-      const taskIndex = dataList.tasks.indexOf(task);
-      if (result.delete) {
-        dataList.tasks.splice(taskIndex, 1);
-        this.boardService.updateTask(this.boardId, dataList.id, dataList.tasks);
+      if(result.delete) {
+        this.boardService.deleteTask(this.boardId, result.task.id);
       } else {
-        dataList.tasks[taskIndex] = result.task;
-        this.boardService.updateTask(this.boardId, dataList.id, dataList.tasks);
+        // this.boardService.updateTask(this.boardId, result.task.id, result.task);
+        if(result.updatedLabels && result.updatedLabels.length > 0) {
+          result.updatedLabels.forEach((label: Label) => {
+            this.boardService.updateLabel(this.boardId, label.id, label);
+          });
+        }
       }
+
     });
   }
 
-  createNewTask(taskList: TaskList): void {
+  createNewTask(taskListId: string): void {
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: "768px",
       data: {
@@ -137,20 +158,16 @@ export class TaskListComponent implements OnInit {
       if (!result) {
         return;
       }
-      // this.todo.push(result.task);
-      // this.tasksList.push(result.task);
-      taskList.tasks.push(result.task);
-      console.log(taskList);
-      this.boardService.addTask(this.boardId, taskList.id, taskList.tasks);
+      result.task.listId = taskListId;
+      this.boardService.addTask(this.boardId, result.task);
     });
   }
 
   createNewList() {
     console.log(this.listName);
-    const newList = {
+    const newList: TaskList = {
       name: this.listName,
-      list: this.listName + "List",
-      tasks: [],
+      list: this.listName + "List"
     };
     // this.cards.push(newList);
     this.boardService.addTaskList(this.boardId, newList);

@@ -23,12 +23,13 @@ import {
   templateUrl: "./task-dialog.component.html",
   styleUrls: ["./task-dialog.component.scss"],
 })
-export class TaskDialogComponent implements OnInit {
+export class TaskDialogComponent{
   private labelListsSubscription: Subscription;
   private backupTask: Partial<Task> = { ...this.data.task };
+  private labels: Label[] = { ...this.data.labels };
   public isEditing = false;
   public checklistText: string;
-  public labels: Label[];
+  
 
   constructor(
     public dialogRef: MatDialogRef<TaskDialogComponent>,
@@ -36,21 +37,6 @@ export class TaskDialogComponent implements OnInit {
     private dialog: MatDialog,
     private boardService: BoardService
   ) {}
-
-  ngOnInit(): void {
-    console.log(this.data);
-    this.boardService.getLabels(this.data.boardId);
-    this.labelListsSubscription = this.boardService.labelListChanged.subscribe(
-      (labels) => {
-        console.log(labels);
-        this.labels = labels;
-      }
-    );
-  }
-
-  ngOnDestroy() {
-    this.labelListsSubscription.unsubscribe();
-  }
 
   save(): void {
     if (this.data.task.checklist && this.data.task.checklist.length > 0) {
@@ -81,7 +67,7 @@ export class TaskDialogComponent implements OnInit {
       .afterClosed()
       .subscribe((result: DeleteConfirmationDialogResult) => {
         if (result.delete) {
-          this.dialogRef.close({ delete: true });
+          this.dialogRef.close({task: this.data.task, delete: true });
         }
       });
   }
@@ -105,16 +91,13 @@ export class TaskDialogComponent implements OnInit {
   }
 
   openLabelDialog() {
-    let currentTaskLabels = [];
-    if (this.data.task.labels) {
-      currentTaskLabels = this.data.task.labels;
-    }
+    const allLabels = [...this.data.labels];
     const dialogRef = this.dialog.open(LabelDialogComponent, {
       width: "360px",
       data: {
-        taskLabels: currentTaskLabels,
-        labels: this.labels,
+        labels: allLabels,
         enableDelete: false,
+        taskId: this.data.task.id,
         boardId: this.data.boardId,
       },
     });
@@ -123,17 +106,22 @@ export class TaskDialogComponent implements OnInit {
         return;
       }
 
+      console.log(result);
+
       result.labels.forEach((label) => {
         delete label.isSelected;
       });
 
-      this.data.task.labels = result.labels;
+      this.data.labels = result.labels;
+      this.data.updatedLabels = result.updatedLabels;
     });
   }
 }
 
 export interface TaskDialogData {
   task: Partial<Task>;
+  labels: Label[];
+  updatedLabels?: string[];
   boardId: string;
   enableDelete: boolean;
 }
@@ -141,4 +129,6 @@ export interface TaskDialogData {
 export interface TaskDialogResult {
   task: Task;
   delete?: boolean;
+  labels?: Label[];
+  updatedLabels?: Label[];
 }

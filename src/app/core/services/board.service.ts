@@ -75,47 +75,57 @@ export class BoardService {
       .add(data);
   }
 
-  addTask(boardId: string, taskGroupId: string, tasks: Task[]) {
-    this._store
+  getTasks(boardId: string) {
+    this.tasksCollection = this._store
       .collection(this.authService.getUID())
       .doc(boardId)
-      .collection("taskLists")
-      .doc(taskGroupId)
-      .set({ tasks: tasks }, { merge: true });
+      .collection("tasks");
+
+    this.tasksCollection
+      .valueChanges({ idField: "id" })
+      .subscribe((tasks) => {
+        this.allTasks = tasks;
+        this.tasksChanged.next([...this.allTasks]);
+      });
   }
 
-  updateTask(boardId: string, taskGroupId: string, tasks: Task[]) {
+  addTask(boardId: string, task: Task) {
     this._store
       .collection(this.authService.getUID())
       .doc(boardId)
-      .collection("taskLists")
-      .doc(taskGroupId)
-      .set({ tasks: tasks }, { merge: true });
+      .collection("tasks")
+      .add(task);
+  }
+
+  updateTask(boardId: string, taskId: string, task: Task) {
+    this._store
+      .collection(this.authService.getUID())
+      .doc(boardId)
+      .collection("tasks")
+      .doc(taskId)
+      .set(task, { merge: true });
+  }
+
+  deleteTask(boardId: string, taskId: string) {
+    this._store
+      .collection(this.authService.getUID())
+      .doc(boardId)
+      .collection("tasks")
+      .doc(taskId)
+      .delete();
   }
 
   moveTasks(
     boardId: string,
-    oldTaskGroupId: string,
-    oldTasks: Task[],
-    newTaskGroupId: string,
-    newTasks: Task[]
+    taskId: string,
+    newTaskListId: string
   ) {
-    this._store.firestore.runTransaction(() => {
-      return Promise.all([
-        this._store
-          .collection(this.authService.getUID())
-          .doc(boardId)
-          .collection("taskLists")
-          .doc(oldTaskGroupId)
-          .set({ tasks: oldTasks }, { merge: true }),
-        this._store
-          .collection(this.authService.getUID())
-          .doc(boardId)
-          .collection("taskLists")
-          .doc(newTaskGroupId)
-          .set({ tasks: newTasks }, { merge: true }),
-      ]);
-    });
+    this._store
+      .collection(this.authService.getUID())
+      .doc(boardId)
+      .collection("tasks")
+      .doc(taskId)
+      .set({ listId: newTaskListId }, { merge: true });
   }
 
   getLabels(boardId: string) {
@@ -133,11 +143,23 @@ export class BoardService {
   }
 
   addLabel(boardId: string, label: Label) {
+    return this._store
+      .collection(this.authService.getUID())
+      .doc(boardId)
+      .collection("labels")
+      .add(label)
+      .then((docRef) => {
+        return docRef.id;
+    });
+  }
+
+  updateLabel(boardId: string, labelId: string, label: Label) {
     this._store
       .collection(this.authService.getUID())
       .doc(boardId)
       .collection("labels")
-      .add(label);
+      .doc(labelId)
+      .set(label, { merge: true })
   }
 
   deleteLabel(boardId: string, labelId: string) {
@@ -147,14 +169,5 @@ export class BoardService {
       .collection("labels")
       .doc(labelId)
       .delete();
-  }
-
-  addLabelToTask(boardId: string, taskGroupId: string, tasks: Task[]) {
-    this._store
-      .collection(this.authService.getUID())
-      .doc(boardId)
-      .collection("taskLists")
-      .doc(taskGroupId)
-      .set({ tasks: tasks }, { merge: true });
   }
 }

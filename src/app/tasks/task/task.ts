@@ -3,9 +3,9 @@ import { CheckList } from './checklist';
 
 export interface Task {
   id?: string;
+  listId: string;
   title: string;
   description: string;
-  labels?: Label[];
   dueDate?: string;
   checklist?: CheckList[];
 }

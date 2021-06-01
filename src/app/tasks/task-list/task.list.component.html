@@ -5,22 +5,24 @@
 
       <mat-card
         cdkDropList
-        id="{{ list.name }}"
-        [cdkDropListData]="list.tasks"
-        [cdkDropListConnectedTo]="remainingList(list.name)"
+        id="{{ list.id }}"
+        [cdkDropListData]="tasks"
+        [cdkDropListConnectedTo]="remainingList(list.id)"
         (cdkDropListDropped)="drop($event)"
         class="list"
       >
-        <p class="empty-label" *ngIf="list.tasks.length === 0">Empty list</p>
-        <task
-          (edit)="editTask(list, $event)"
-          *ngFor="let task of list.tasks"
-          cdkDrag
-          [task]="task"
-        ></task>
-
+        <p class="empty-label" *ngIf="!tasks">Empty list</p>
+        <div *ngFor="let task of tasks">
+          <task
+            *ngIf="task.listId == list.id"
+            (edit)="editTask($event)"
+            cdkDrag
+            [task]="task"
+            [labels]="labels"
+          ></task>
+        </div>
         <div class="container-add">
-          <button (click)="createNewTask(list)" mat-button class="task-btn">
+          <button (click)="createNewTask(list.id)" mat-button class="task-btn">
             <mat-icon>add</mat-icon> Add Task
           </button>
         </div>

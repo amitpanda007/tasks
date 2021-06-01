@@ -15,7 +15,7 @@ export class LabelDialogComponent implements OnInit {
   public newLabelName: string;
   public newLabelColor: string = "#FFFFFF";
   public newLabelTextColor: string = "#000000";
-  public localLabels: Label[];
+  public updatedLabels: Label[];
 
   constructor(
     public dialogRef: MatDialogRef<LabelDialogComponent>,
@@ -24,19 +24,17 @@ export class LabelDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.localLabels = [...this.data.labels];
-    this.localLabels.forEach((label) => {
-      this.data.taskLabels.forEach((taskLabel) => {
-        if (label.name.localeCompare(taskLabel.name) == 0) {
-          label.isSelected = true;
-        }
-      });
-    });
+    // console.log(this.data.labels);
+    this.updatedLabels = [];
   }
 
   cancel(): void {
     // this.data.labels = this.backupLabel;
     this.dialogRef.close();
+  }
+
+  save() {
+    this.dialogRef.close({labels: this.data.labels, updatedLabels: this.updatedLabels});
   }
 
   toggleLabel() {
@@ -49,18 +47,14 @@ export class LabelDialogComponent implements OnInit {
     this.newLabelTextColor = "#FFFFFF";
   }
 
-  // closeDialog() {
-  //   this.dialogRef.close();
-  // }
-
-  addLabel() {
+  async addLabel() {
     const newLabel: Label = {
       name: this.newLabelName,
       color: this.newLabelColor,
     };
+    const labelId = await this.boardService.addLabel(this.data.boardId, newLabel);
+    newLabel.id = labelId;
     this.data.labels.push(newLabel);
-    this.localLabels.push(newLabel);
-    this.boardService.addLabel(this.data.boardId, newLabel);
     this.newLabelName = "";
     this.newLabelColor = "";
     this.toggleLabel();
@@ -68,34 +62,42 @@ export class LabelDialogComponent implements OnInit {
 
   editLabel(label: Label) {
     console.log("EDIT LABEL");
-    
   }
 
   deleteLabel(label: Label) {
     console.log("DELETE LABEL");
     this.boardService.deleteLabel(this.data.boardId, label.id);
+    this.data.labels.splice(this.data.labels.indexOf(label), 1);
   }
 
-  selectLabel(label: Label) {
+  selectLabel(label: Label) {    
+    console.log(this.data.labels);
+    const labelIndex = this.data.labels.indexOf(label);
     if (label.isSelected) {
       delete label.isSelected;
-      const labelIndex = this.data.taskLabels.indexOf(label);
-      this.data.taskLabels.splice(labelIndex, 1);
+      this.data.labels[labelIndex].taskIds.splice(this.data.labels[labelIndex].taskIds.indexOf(this.data.taskId), 1);
+      this.updatedLabels.splice(this.updatedLabels.indexOf(this.data.labels[labelIndex], 1));
     } else {
+      if(!this.data.labels[labelIndex].taskIds) {
+        this.data.labels[labelIndex].taskIds = [];
+      }
       label.isSelected = true;
-      this.data.taskLabels.push(label);
+      this.data.labels[labelIndex].taskIds.push(this.data.taskId);
+      this.updatedLabels.push(this.data.labels[labelIndex]);
     }
+    console.log(this.data.labels);
   }
 }
 
 export interface LabelDialogData {
-  taskLabels: Label[];
   labels: Partial<Label[]>;
   enableDelete: boolean;
+  taskId: string;
   boardId: string;
 }
 
 export interface LabelDialogResult {
   labels: Label[];
   delete?: boolean;
+  updatedLabels?: string[];
 }
