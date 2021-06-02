@@ -2,12 +2,22 @@
   <div class="main">
     <mat-form-field class="title">
       <mat-label>Title</mat-label>
-      <input matInput cdkFocusInitial [(ngModel)]="data.task.title" />
+      <input
+        matInput
+        cdkFocusInitial
+        autocomplete="off"
+        [(ngModel)]="data.task.title"
+      />
     </mat-form-field>
 
     <mat-form-field class="description">
       <mat-label>Description</mat-label>
-      <textarea matInput [(ngModel)]="data.task.description" rows="2" cols="50"></textarea>
+      <textarea
+        matInput
+        [(ngModel)]="data.task.description"
+        rows="2"
+        cols="50"
+      ></textarea>
     </mat-form-field>
 
     <section class="labels">
@@ -15,13 +25,25 @@
       <div class="label-section">
         <span *ngFor="let label of data.labels">
           <span *ngFor="let taskId of label.taskIds">
-            <mat-chip *ngIf="taskId == data.task.id" [style.background-color]="label.color" class="single-label">
+            <mat-chip
+              *ngIf="taskId == data.task.id"
+              [style.background-color]="label.color"
+              class="single-label"
+            >
               {{ label.name }}
             </mat-chip>
           </span>
         </span>
-        <div matTooltip="You can add Labels once task is created" [matTooltipDisabled]="!isAddLabelDisabled()">
-          <button mat-icon-button aria-label="add label" (click)="openLabelDialog()" [disabled]="isAddLabelDisabled()">
+        <div
+          matTooltip="You can add Labels once task is created"
+          [matTooltipDisabled]="!isAddLabelDisabled()"
+        >
+          <button
+            mat-icon-button
+            aria-label="add label"
+            (click)="openLabelDialog()"
+            [disabled]="isAddLabelDisabled()"
+          >
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -30,17 +52,37 @@
 
     <section class="checklist">
       <p class="sub-header">Check List</p>
-      <div class="checklist-progress">
-        <mat-progress-bar mode="determinate" value="{{checklistCompleted}}"></mat-progress-bar>
+      <div class="checklist-progress" *ngIf="data.task.checklist">
+        <span>[{{ doneChecklist }}/{{ data.task.checklist.length }}]</span>
+        <mat-progress-bar
+          class="progress-bar"
+          mode="determinate"
+          value="{{ checklistCompleted }}"
+        ></mat-progress-bar>
       </div>
-      <div *ngFor="let checklist of data.task.checklist" class="single-checklist">
+      <div
+        *ngFor="let checklist of data.task.checklist"
+        class="single-checklist"
+      >
         <!-- <mat-checkbox [(ngModel)]="checklist.done">{{
       checklist.text
     }}</mat-checkbox> -->
-        <mat-checkbox [(ngModel)]="checklist.done" color="primary" (click)="checklistClicked(checklist)"></mat-checkbox>
-        <span (click)="toggleChecklistEditing(checklist)" *ngIf="!checklist.isEditing" class="checklist-text"
-          [ngClass]="{ 'checklist-done': checklist.done == true }">{{ checklist.text }}</span>
-        <div class="checklist-text checklist-edit-input" *ngIf="checklist.isEditing">
+        <mat-checkbox
+          [(ngModel)]="checklist.done"
+          color="primary"
+          (click)="checklistClicked(checklist)"
+        ></mat-checkbox>
+        <span
+          (click)="toggleChecklistEditing(checklist)"
+          *ngIf="!checklist.isEditing"
+          class="checklist-text"
+          [ngClass]="{ 'checklist-done': checklist.done == true }"
+          >{{ checklist.text }}</span
+        >
+        <div
+          class="checklist-text checklist-edit-input"
+          *ngIf="checklist.isEditing"
+        >
           <input matInput [(ngModel)]="checklist.text" />
           <span (click)="toggleChecklistEditing(checklist)" class="done">
             <mat-icon>done</mat-icon>
@@ -52,8 +94,14 @@
       </div>
 
       <div class="checklist-add">
-        <input class="checklist-input" matInput placeholder="Add a new task to checklist" autocomplete="off" name="checklistInput"
-          [(ngModel)]="checklistText" />
+        <input
+          class="checklist-input"
+          matInput
+          placeholder="Add a new task to checklist"
+          autocomplete="off"
+          name="checklistInput"
+          [(ngModel)]="checklistText"
+        />
         <button mat-stroked-button (click)="updateChecklist()">Add</button>
       </div>
     </section>
@@ -63,7 +111,14 @@
       <button mat-button (click)="save()">OK</button>
       <button mat-button (click)="cancel()">Cancel</button>
 
-      <button *ngIf="data.enableDelete" mat-icon-button color="primary" aria-label="Delete" class="close" (click)="delete()">
+      <button
+        *ngIf="data.enableDelete"
+        mat-icon-button
+        color="primary"
+        aria-label="Delete"
+        class="close"
+        (click)="delete()"
+      >
         <mat-icon>delete</mat-icon>
       </button>
     </div>
@@ -71,12 +126,64 @@
 
   <div class="options">
     <p class="sub-header">ADD TO CARD</p>
-    <div matTooltip="You can add Labels once task is created" [matTooltipDisabled]="!isAddLabelDisabled()">
-      <button mat-stroked-button (click)="openLabelDialog()" [disabled]="isAddLabelDisabled()">
+    <div
+      matTooltip="You can add Labels once task is created"
+      [matTooltipDisabled]="!isAddLabelDisabled()"
+    >
+      <button mat-stroked-button>
+        <span class="option-content">
+          <mat-icon class="material-icons-outlined">person_outline</mat-icon>
+          Members
+        </span>
+      </button>
+
+      <button
+        mat-stroked-button
+        (click)="openLabelDialog()"
+        [disabled]="isAddLabelDisabled()"
+      >
         <span class="option-content">
           <mat-icon class="material-icons-outlined">label</mat-icon> Labels
         </span>
       </button>
+
+      <button mat-stroked-button>
+        <span class="option-content">
+          <mat-icon class="material-icons-outlined">schedule</mat-icon> Dates
+        </span>
+      </button>
+
+      <button mat-stroked-button>
+        <span class="option-content">
+          <mat-icon class="material-icons-outlined">attachment</mat-icon>
+          Attachments
+        </span>
+      </button>
     </div>
+
+    <p class="sub-header">ACTIONS</p>
+    <button mat-stroked-button>
+      <span class="option-content">
+        <mat-icon class="material-icons-outlined">arrow_forward</mat-icon> Move
+      </span>
+    </button>
+
+    <button mat-stroked-button>
+      <span class="option-content">
+        <mat-icon class="material-icons-outlined">content_copy</mat-icon> Copy
+      </span>
+    </button>
+
+    <button mat-stroked-button>
+      <span class="option-content">
+        <mat-icon class="material-icons-outlined">visibility</mat-icon> Watch
+      </span>
+    </button>
+
+    <button mat-stroked-button>
+      <span class="option-content">
+        <mat-icon class="material-icons-outlined">share</mat-icon> Share
+      </span>
+    </button>
   </div>
 </div>

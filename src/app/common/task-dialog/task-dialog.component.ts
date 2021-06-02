@@ -23,7 +23,7 @@ import {
   templateUrl: "./task-dialog.component.html",
   styleUrls: ["./task-dialog.component.scss"],
 })
-export class TaskDialogComponent implements OnInit{
+export class TaskDialogComponent implements OnInit {
   private labelListsSubscription: Subscription;
   private backupTask: Partial<Task> = { ...this.data.task };
   private labels: Label[] = { ...this.data.labels };
@@ -32,7 +32,6 @@ export class TaskDialogComponent implements OnInit{
   public checklistCompleted: number;
   private totalChecklist: number;
   private doneChecklist: number;
-  
 
   constructor(
     public dialogRef: MatDialogRef<TaskDialogComponent>,
@@ -47,25 +46,29 @@ export class TaskDialogComponent implements OnInit{
 
   calculateChecklistCompleted() {
     this.checklistCompleted = 0;
-    if(this.data.task.checklist && this.data.task.checklist.length > 0) {
+    this.doneChecklist = 0;
+    if (this.data.task.checklist && this.data.task.checklist.length > 0) {
       this.totalChecklist = this.data.task.checklist.length;
-      this.doneChecklist = 0;
-      this.data.task.checklist.forEach(checklist => {
-        if(checklist.done) {
+      this.data.task.checklist.forEach((checklist) => {
+        if (checklist.done) {
           this.doneChecklist += 1;
         }
       });
-      this.checklistCompleted = Math.floor((this.doneChecklist/this.totalChecklist) * 100);
+      this.checklistCompleted = Math.floor(
+        (this.doneChecklist / this.totalChecklist) * 100
+      );
     }
   }
 
   checklistClicked(checklist: CheckList) {
-    if(checklist.done) {
-      this.doneChecklist -= 1; 
-    }else {
+    if (checklist.done) {
+      this.doneChecklist -= 1;
+    } else {
       this.doneChecklist += 1;
     }
-    this.checklistCompleted = Math.floor((this.doneChecklist/this.totalChecklist) * 100);
+    this.checklistCompleted = Math.floor(
+      (this.doneChecklist / this.totalChecklist) * 100
+    );
   }
 
   save(): void {
@@ -97,7 +100,7 @@ export class TaskDialogComponent implements OnInit{
       .afterClosed()
       .subscribe((result: DeleteConfirmationDialogResult) => {
         if (result.delete) {
-          this.dialogRef.close({task: this.data.task, delete: true });
+          this.dialogRef.close({ task: this.data.task, delete: true });
         }
       });
   }
