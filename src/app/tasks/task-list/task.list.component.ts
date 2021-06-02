@@ -133,7 +133,7 @@ export class TaskListComponent implements OnInit {
       if(result.delete) {
         this.boardService.deleteTask(this.boardId, result.task.id);
       } else {
-        // this.boardService.updateTask(this.boardId, result.task.id, result.task);
+        this.boardService.updateTask(this.boardId, result.task.id, result.task);
         if(result.updatedLabels && result.updatedLabels.length > 0) {
           result.updatedLabels.forEach((label: Label) => {
             this.boardService.updateLabel(this.boardId, label.id, label);

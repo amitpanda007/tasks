@@ -23,12 +23,15 @@ import {
   templateUrl: "./task-dialog.component.html",
   styleUrls: ["./task-dialog.component.scss"],
 })
-export class TaskDialogComponent{
+export class TaskDialogComponent implements OnInit{
   private labelListsSubscription: Subscription;
   private backupTask: Partial<Task> = { ...this.data.task };
   private labels: Label[] = { ...this.data.labels };
   public isEditing = false;
   public checklistText: string;
+  public checklistCompleted: number;
+  private totalChecklist: number;
+  private doneChecklist: number;
   
 
   constructor(
@@ -37,6 +40,33 @@ export class TaskDialogComponent{
     private dialog: MatDialog,
     private boardService: BoardService
   ) {}
+
+  ngOnInit(): void {
+    this.calculateChecklistCompleted();
+  }
+
+  calculateChecklistCompleted() {
+    this.checklistCompleted = 0;
+    if(this.data.task.checklist && this.data.task.checklist.length > 0) {
+      this.totalChecklist = this.data.task.checklist.length;
+      this.doneChecklist = 0;
+      this.data.task.checklist.forEach(checklist => {
+        if(checklist.done) {
+          this.doneChecklist += 1;
+        }
+      });
+      this.checklistCompleted = Math.floor((this.doneChecklist/this.totalChecklist) * 100);
+    }
+  }
+
+  checklistClicked(checklist: CheckList) {
+    if(checklist.done) {
+      this.doneChecklist -= 1; 
+    }else {
+      this.doneChecklist += 1;
+    }
+    this.checklistCompleted = Math.floor((this.doneChecklist/this.totalChecklist) * 100);
+  }
 
   save(): void {
     if (this.data.task.checklist && this.data.task.checklist.length > 0) {

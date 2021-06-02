@@ -30,11 +30,14 @@
 
     <section class="checklist">
       <p class="sub-header">Check List</p>
+      <div class="checklist-progress">
+        <mat-progress-bar mode="determinate" value="{{checklistCompleted}}"></mat-progress-bar>
+      </div>
       <div *ngFor="let checklist of data.task.checklist" class="single-checklist">
         <!-- <mat-checkbox [(ngModel)]="checklist.done">{{
       checklist.text
     }}</mat-checkbox> -->
-        <mat-checkbox [(ngModel)]="checklist.done" color="primary"></mat-checkbox>
+        <mat-checkbox [(ngModel)]="checklist.done" color="primary" (click)="checklistClicked(checklist)"></mat-checkbox>
         <span (click)="toggleChecklistEditing(checklist)" *ngIf="!checklist.isEditing" class="checklist-text"
           [ngClass]="{ 'checklist-done': checklist.done == true }">{{ checklist.text }}</span>
         <div class="checklist-text checklist-edit-input" *ngIf="checklist.isEditing">
@@ -70,7 +73,9 @@
     <p class="sub-header">ADD TO CARD</p>
     <div matTooltip="You can add Labels once task is created" [matTooltipDisabled]="!isAddLabelDisabled()">
       <button mat-stroked-button (click)="openLabelDialog()" [disabled]="isAddLabelDisabled()">
-        <mat-icon>label</mat-icon> Labels
+        <span class="option-content">
+          <mat-icon class="material-icons-outlined">label</mat-icon> Labels
+        </span>
       </button>
     </div>
   </div>
