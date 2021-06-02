@@ -1,7 +1,8 @@
 <!-- <mat-icon (click)="closeDialog()" *ngIf="!isAddingLabel" class="action-icon"
   >close</mat-icon
 > -->
-<mat-icon (click)="toggleLabel()" *ngIf="isAddingLabel" class="action-icon">arrow_back</mat-icon>
+<mat-icon (click)="toggleLabel()" *ngIf="isAddingLabel && !isEditingLabel" class="action-icon">arrow_back</mat-icon>
+<mat-icon (click)="reset()" *ngIf="isEditingLabel" class="action-icon">close</mat-icon>
 
 <h2>Labels</h2>
 
@@ -34,7 +35,8 @@
     <color-circle (onChange)="handleChange($event)"></color-circle>
   </div>
   <div class="new-label-options">
-    <button mat-stroked-button (click)="addLabel()">ADD</button>
+    <button mat-stroked-button (click)="addLabel()" *ngIf="!isEditingLabel">ADD</button>
+    <button mat-stroked-button (click)="updateLabel()" *ngIf="isEditingLabel">UPDATE</button>
   </div>
 </div>
 

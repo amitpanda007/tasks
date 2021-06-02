@@ -83,6 +83,7 @@
 
 .label-section {
   display: flex;
+  align-items: center;
 }
 
 .label-btn {
@@ -91,4 +92,6 @@
 
 .single-label {
   color: white;
+  min-height: 20px;
+  margin-right: 3px;
 }

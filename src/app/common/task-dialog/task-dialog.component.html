@@ -13,16 +13,18 @@
     <section class="labels">
       <p class="sub-header">Lables</p>
       <div class="label-section">
-        <div *ngFor="let label of data.labels">
+        <span *ngFor="let label of data.labels">
           <span *ngFor="let taskId of label.taskIds">
             <mat-chip *ngIf="taskId == data.task.id" [style.background-color]="label.color" class="single-label">
               {{ label.name }}
             </mat-chip>
           </span>
+        </span>
+        <div matTooltip="You can add Labels once task is created" [matTooltipDisabled]="!isAddLabelDisabled()">
+          <button mat-icon-button aria-label="add label" (click)="openLabelDialog()" [disabled]="isAddLabelDisabled()">
+            <mat-icon>add</mat-icon>
+          </button>
         </div>
-        <button mat-icon-button aria-label="add label" (click)="openLabelDialog()">
-          <mat-icon>add</mat-icon>
-        </button>
       </div>
     </section>
 
@@ -66,8 +68,10 @@
 
   <div class="options">
     <p class="sub-header">ADD TO CARD</p>
-    <button mat-stroked-button (click)="openLabelDialog()">
-      <mat-icon>label</mat-icon> Labels
-    </button>
+    <div matTooltip="You can add Labels once task is created" [matTooltipDisabled]="!isAddLabelDisabled()">
+      <button mat-stroked-button (click)="openLabelDialog()" [disabled]="isAddLabelDisabled()">
+        <mat-icon>label</mat-icon> Labels
+      </button>
+    </div>
   </div>
 </div>

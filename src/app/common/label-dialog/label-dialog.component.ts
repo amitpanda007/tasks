@@ -12,6 +12,8 @@ import { BoardService } from "src/app/core/services/board.service";
 export class LabelDialogComponent implements OnInit {
   private backupLabel: Partial<Label[]> = { ...this.data.labels };
   public isAddingLabel: boolean = false;
+  public isEditingLabel: boolean = false;
+  public newLabelId: string = "";
   public newLabelName: string;
   public newLabelColor: string = "#FFFFFF";
   public newLabelTextColor: string = "#000000";
@@ -24,12 +26,10 @@ export class LabelDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // console.log(this.data.labels);
     this.updatedLabels = [];
   }
 
   cancel(): void {
-    // this.data.labels = this.backupLabel;
     this.dialogRef.close();
   }
 
@@ -37,8 +37,21 @@ export class LabelDialogComponent implements OnInit {
     this.dialogRef.close({labels: this.data.labels, updatedLabels: this.updatedLabels});
   }
 
+  reset() {
+    this.newLabelId = "";
+    this.newLabelName = "";
+    this.newLabelColor = "";
+    this.newLabelTextColor = "#000000";
+    this.toggleLabel();
+    this.toggleEditLabel();
+  }
+
   toggleLabel() {
     this.isAddingLabel = !this.isAddingLabel;
+  }
+
+  toggleEditLabel() {
+    this.isEditingLabel = !this.isEditingLabel;
   }
 
   handleChange($event: ColorEvent) {
@@ -62,6 +75,24 @@ export class LabelDialogComponent implements OnInit {
 
   editLabel(label: Label) {
     console.log("EDIT LABEL");
+    this.newLabelId = label.id
+    this.newLabelName = label.name;
+    this.newLabelColor = label.color;
+    this.newLabelTextColor = "#FFFFFF";
+    this.toggleLabel();
+    this.toggleEditLabel();
+  }
+
+  updateLabel() {
+    const updatedLabel = this.data.labels.filter(label => label.id == this.newLabelId)[0];
+    updatedLabel.color = this.newLabelColor;
+    updatedLabel.name = this.newLabelName;
+
+    this.boardService.updateLabel(this.data.boardId, updatedLabel.id, updatedLabel);
+    const index = this.data.labels.indexOf(updatedLabel);
+    this.data.labels[index] = updatedLabel;
+
+    this.reset();
   }
 
   deleteLabel(label: Label) {

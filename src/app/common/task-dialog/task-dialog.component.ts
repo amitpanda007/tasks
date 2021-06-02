@@ -116,6 +116,10 @@ export class TaskDialogComponent{
       this.data.updatedLabels = result.updatedLabels;
     });
   }
+
+  isAddLabelDisabled() {
+    return !this.data.task.id;
+  }
 }
 
 export interface TaskDialogData {
