@@ -50,6 +50,26 @@
       </div>
     </section>
 
+    <section class="duedate-section" *ngIf="data.task.dueDate">
+      <p class="sub-header">Due date</p>
+      <div class="duedates">
+        <mat-checkbox
+          [(ngModel)]="data.task.dueDate.completed"
+          color="primary"
+        ></mat-checkbox>
+        <!-- <input matInput [(ngModel)]="data.task.dueDate.date" /> -->
+        <span class="due-date">{{ data.task.dueDate.date | dateformat }}</span>
+        <span class="due-complete" *ngIf="data.task.dueDate.completed"
+          >COMPLETED</span
+        >
+        <span
+          class="due-overdue"
+          *ngIf="overDue && !data.task.dueDate.completed"
+          >OVERDUE</span
+        >
+      </div>
+    </section>
+
     <section class="checklist">
       <p class="sub-header">Check List</p>
       <div class="checklist-progress" *ngIf="data.task.checklist">
@@ -126,10 +146,7 @@
 
   <div class="options">
     <p class="sub-header">ADD TO CARD</p>
-    <div
-      matTooltip="You can add Labels once task is created"
-      [matTooltipDisabled]="!isAddLabelDisabled()"
-    >
+    <div class="option-btn">
       <button mat-stroked-button>
         <span class="option-content">
           <mat-icon class="material-icons-outlined">person_outline</mat-icon>
@@ -142,48 +159,73 @@
         (click)="openLabelDialog()"
         [disabled]="isAddLabelDisabled()"
       >
-        <span class="option-content">
+        <span
+          class="option-content"
+          matTooltip="You can add Labels once task is created"
+          [matTooltipDisabled]="!isAddLabelDisabled()"
+          [matTooltipPosition]="tooltipPosition"
+        >
           <mat-icon class="material-icons-outlined">label</mat-icon> Labels
         </span>
       </button>
 
-      <button mat-stroked-button>
+      <button mat-stroked-button (click)="openCalenderDialog()">
         <span class="option-content">
           <mat-icon class="material-icons-outlined">schedule</mat-icon> Dates
         </span>
       </button>
 
-      <button mat-stroked-button>
-        <span class="option-content">
+      <button mat-stroked-button [disabled]="true">
+        <span
+          class="option-content"
+          matTooltip="Feature not available"
+          [matTooltipDisabled]="false"
+          [matTooltipPosition]="tooltipPosition"
+        >
           <mat-icon class="material-icons-outlined">attachment</mat-icon>
           Attachments
+        </span>
+      </button>
+
+      <button mat-stroked-button (click)="openColorDialog()">
+        <span class="option-content">
+          <mat-icon class="material-icons-outlined">palette</mat-icon>
+          Design
         </span>
       </button>
     </div>
 
     <p class="sub-header">ACTIONS</p>
-    <button mat-stroked-button>
-      <span class="option-content">
-        <mat-icon class="material-icons-outlined">arrow_forward</mat-icon> Move
-      </span>
-    </button>
+    <div class="option-btn">
+      <button mat-stroked-button>
+        <span class="option-content">
+          <mat-icon class="material-icons-outlined">arrow_forward</mat-icon>
+          Move
+        </span>
+      </button>
 
-    <button mat-stroked-button>
-      <span class="option-content">
-        <mat-icon class="material-icons-outlined">content_copy</mat-icon> Copy
-      </span>
-    </button>
+      <button mat-stroked-button>
+        <span class="option-content">
+          <mat-icon class="material-icons-outlined">content_copy</mat-icon> Copy
+        </span>
+      </button>
 
-    <button mat-stroked-button>
-      <span class="option-content">
-        <mat-icon class="material-icons-outlined">visibility</mat-icon> Watch
-      </span>
-    </button>
+      <button mat-stroked-button [disabled]="true">
+        <span
+          class="option-content"
+          matTooltip="Feature not available"
+          [matTooltipDisabled]="false"
+          [matTooltipPosition]="tooltipPosition"
+        >
+          <mat-icon class="material-icons-outlined">visibility</mat-icon> Watch
+        </span>
+      </button>
 
-    <button mat-stroked-button>
-      <span class="option-content">
-        <mat-icon class="material-icons-outlined">share</mat-icon> Share
-      </span>
-    </button>
+      <button mat-stroked-button>
+        <span class="option-content">
+          <mat-icon class="material-icons-outlined">share</mat-icon> Share
+        </span>
+      </button>
+    </div>
   </div>
 </div>

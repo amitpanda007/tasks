@@ -24,6 +24,9 @@ import { BoardDialogComponent } from "./common/board-dialog/board-dialog.compone
 import { BoardsModule } from "./boards/boards.module";
 import { LabelDialogComponent } from "./common/label-dialog/label-dialog.component";
 import { ColorCircleModule } from "ngx-color/circle";
+import { ColorSwatchesModule } from "ngx-color/swatches";
+import { CalenderDialogComponent } from "./common/calender-dialog/calender-dialog.component";
+import { ColorDialogComponent } from "./common/color-dialog/color-dialog.component";
 
 @NgModule({
   declarations: [
@@ -35,6 +38,8 @@ import { ColorCircleModule } from "ngx-color/circle";
     TaskDialogComponent,
     BoardDialogComponent,
     LabelDialogComponent,
+    CalenderDialogComponent,
+    ColorDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,6 +57,7 @@ import { ColorCircleModule } from "ngx-color/circle";
     AngularFireAuthModule,
     AngularFireAuthGuardModule,
     ColorCircleModule,
+    ColorSwatchesModule,
   ],
   entryComponents: [
     SuccessSnackbar,
@@ -61,6 +67,8 @@ import { ColorCircleModule } from "ngx-color/circle";
     TaskDialogComponent,
     BoardDialogComponent,
     LabelDialogComponent,
+    CalenderDialogComponent,
+    ColorDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

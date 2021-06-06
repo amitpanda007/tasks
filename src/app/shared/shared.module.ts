@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { CommonModule, DatePipe } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import {
   MatSnackBarModule,
@@ -29,6 +29,7 @@ import {
 
 import { CapitalizePipe } from "./capitalize.pipe";
 import { DefaultPipe } from "./default.pipe";
+import { DateFormatPipe } from "./date.format.pipe";
 
 @NgModule({
   imports: [CommonModule, FormsModule],
@@ -38,6 +39,7 @@ import { DefaultPipe } from "./default.pipe";
     ReactiveFormsModule,
     CapitalizePipe,
     DefaultPipe,
+    DateFormatPipe,
     MatSnackBarModule,
     MatButtonModule,
     MatCardModule,
@@ -62,7 +64,7 @@ import { DefaultPipe } from "./default.pipe";
     MatSliderModule,
     MatTableModule,
   ],
-  declarations: [CapitalizePipe, DefaultPipe],
+  declarations: [CapitalizePipe, DefaultPipe, DateFormatPipe],
   providers: [MatNativeDateModule],
 })
 export class SharedModule {}

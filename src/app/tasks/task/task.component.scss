@@ -11,6 +11,7 @@
   color: white;
   min-height: 20px;
   transition: min-height 2s;
+  border: 1px solid white;
 }
 
 .chip-no-text {
@@ -20,4 +21,36 @@
 
 .checklist-count {
   margin-top: 15px;
+}
+
+.actions-info {
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.action-schedule {
+  display: flex;
+  margin-right: 6px;
+  align-items: center;
+  align-content: center;
+}
+
+.action-schedule span {
+  font-weight: 500;
+}
+
+.due-overdue {
+  background-color: #ea80fc;
+  color: #6a1b9a;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.due-complete {
+  background-color: #b2ff59;
+  color: #33691e;
+  padding: 4px;
+  border-radius: 4px;
 }

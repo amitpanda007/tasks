@@ -1,11 +1,12 @@
-import { Label } from './label';
-import { CheckList } from './checklist';
+import { CheckList } from "./checklist";
+import { DueDate } from "./duedate";
 
 export interface Task {
   id?: string;
   listId: string;
   title: string;
   description: string;
-  dueDate?: string;
+  backgroundColor?: string;
+  dueDate?: DueDate;
   checklist?: CheckList[];
 }

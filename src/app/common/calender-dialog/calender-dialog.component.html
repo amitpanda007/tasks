@@ -1,0 +1,12 @@
+<div mat-dialog-content>
+  <p>Select Due Date</p>
+  <mat-calendar
+    [selected]="data.date"
+    (selectedChange)="dueDateChanged($event)"
+  >
+  </mat-calendar>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="save()" cdkFocusInitial>Ok</button>
+  <button mat-button (click)="cancel()">Cancel</button>
+</div>

@@ -3,7 +3,7 @@
 }
 
 .main {
-  width: 70%;
+  width: 80%;
 }
 
 .title {
@@ -19,9 +19,14 @@
 }
 
 .options {
-  width: 30%;
+  width: 20%;
   border-left: 1px dotted;
   padding-left: 5px;
+}
+
+.option-btn {
+  display: grid;
+  grid-gap: 4px;
 }
 
 .option-content {
@@ -34,6 +39,7 @@
 }
 
 .sub-header {
+  margin-top: 5px;
   margin-bottom: 1em;
   font-size: small;
   font-weight: 600;
@@ -41,6 +47,7 @@
 }
 
 .checklist-text {
+  width: 100%;
   cursor: pointer;
   margin-left: 10px;
 }
@@ -66,8 +73,10 @@
 }
 
 .single-checklist {
+  height: 30px;
   display: flex;
-  margin-bottom: 5px;
+  align-items: center;
+  align-content: center;
 }
 
 .single-checklist:hover {
@@ -76,10 +85,16 @@
 
 .done {
   color: lightseagreen;
+  display: flex;
+  align-items: center;
+  align-content: center;
 }
 
 .close {
   color: orangered;
+  display: flex;
+  align-items: center;
+  align-content: center;
 }
 
 .labels {
@@ -107,4 +122,40 @@
 
 .progress-bar {
   margin: 10px 5px;
+}
+
+.duedate-section {
+  margin-bottom: 1em;
+}
+
+.duedates {
+  display: flex;
+}
+
+.duedates input {
+  margin-left: 1em;
+  width: 8em;
+}
+
+.due-date {
+  margin-left: 1em;
+  width: 10em;
+}
+
+.due-complete {
+  background-color: #b2ff59;
+  color: #33691e;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: smaller;
+  font-weight: 600;
+}
+
+.due-overdue {
+  background-color: #ea80fc;
+  color: #6a1b9a;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: smaller;
+  font-weight: 600;
 }

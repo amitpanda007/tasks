@@ -1,10 +1,20 @@
-<mat-card class="item" *ngIf="task" (click)="edit.emit(task)">
+<mat-card
+  class="item"
+  *ngIf="task"
+  (click)="edit.emit(task)"
+  [style.background-color]="task.backgroundColor"
+>
   <h3>{{ task.title }}</h3>
   <div *ngIf="!showLabelText">
     <mat-chip-list>
       <div *ngFor="let label of labels">
         <span *ngFor="let taskId of label.taskIds">
-          <mat-chip *ngIf="taskId == task.id" [style.background-color]="label.color" class="single-label" class="my-chip" (click)="hideLabelName()">
+          <mat-chip
+            *ngIf="taskId == task.id"
+            [style.background-color]="label.color"
+            class="single-label my-chip"
+            (click)="hideLabelName()"
+          >
             {{ label.name }}
           </mat-chip>
         </span>
@@ -16,7 +26,12 @@
     <mat-chip-list>
       <div *ngFor="let label of labels">
         <span *ngFor="let taskId of label.taskIds">
-          <mat-chip *ngIf="taskId == task.id" [style.background-color]="label.color" class="chip-no-text" (click)="hideLabelName()">
+          <mat-chip
+            *ngIf="taskId == task.id"
+            [style.background-color]="label.color"
+            class="chip-no-text"
+            (click)="hideLabelName()"
+          >
           </mat-chip>
         </span>
       </div>
@@ -25,10 +40,29 @@
   <p>
     {{ task.description }}
   </p>
-  <p *ngIf="task.checklist" class="checklist-count">
-    <mat-icon matBadge="{{task.checklist.length}}" matBadgeColor="accent" class="material-icons-outlined">check_box</mat-icon>
-    <span class="cdk-visually-hidden">
-      Example with a home icon with overlaid badge showing the number 15
-    </span>
-  </p>
+
+  <div class="actions-info">
+    <p
+      *ngIf="task.dueDate"
+      class="action-schedule"
+      [ngClass]="{
+        'due-overdue': overDue == true,
+        'due-complete': task.dueDate.completed == true
+      }"
+    >
+      <mat-icon>schedule</mat-icon>
+      <span>{{ task.dueDate.date | dateformat: "short" }}</span>
+    </p>
+    <p *ngIf="task.checklist" class="checklist-count">
+      <mat-icon
+        matBadge="{{ task.checklist.length }}"
+        matBadgeColor="accent"
+        class="material-icons-outlined"
+        >check_box</mat-icon
+      >
+      <span class="cdk-visually-hidden">
+        Example with a home icon with overlaid badge showing the number 15
+      </span>
+    </p>
+  </div>
 </mat-card>

@@ -4,11 +4,20 @@ import {
   MatDialogRef,
   MatDialog,
 } from "@angular/material/dialog";
+import { firestore } from "firebase";
 import { Subscription } from "rxjs";
 import { BoardService } from "src/app/core/services/board.service";
 import { CheckList } from "src/app/tasks/task/checklist";
 import { Label } from "src/app/tasks/task/label";
 import { Task } from "src/app/tasks/task/task";
+import {
+  CalenderDialogComponent,
+  CalenderDialogResult,
+} from "../calender-dialog/calender-dialog.component";
+import {
+  ColorDialogComponent,
+  ColorDialogResult,
+} from "../color-dialog/color-dialog.component";
 import {
   DeleteConfirmationDialogComponent,
   DeleteConfirmationDialogResult,
@@ -24,24 +33,27 @@ import {
   styleUrls: ["./task-dialog.component.scss"],
 })
 export class TaskDialogComponent implements OnInit {
-  private labelListsSubscription: Subscription;
   private backupTask: Partial<Task> = { ...this.data.task };
   private labels: Label[] = { ...this.data.labels };
+  private totalChecklist: number;
+  private doneChecklist: number;
+
   public isEditing = false;
   public checklistText: string;
   public checklistCompleted: number;
-  private totalChecklist: number;
-  private doneChecklist: number;
+  public selectedDate: string;
+  public overDue: boolean;
+  public tooltipPosition: string = "right";
 
   constructor(
     public dialogRef: MatDialogRef<TaskDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: TaskDialogData,
-    private dialog: MatDialog,
-    private boardService: BoardService
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.calculateChecklistCompleted();
+    this.checkDueDateStatus();
   }
 
   calculateChecklistCompleted() {
@@ -57,6 +69,18 @@ export class TaskDialogComponent implements OnInit {
       this.checklistCompleted = Math.floor(
         (this.doneChecklist / this.totalChecklist) * 100
       );
+    }
+  }
+
+  checkDueDateStatus() {
+    if (this.data.task.dueDate && this.data.task.dueDate.date) {
+      const timeNowMilli = new Date().getTime();
+      const firebaseTime = Number(this.data.task.dueDate.date.toDate());
+      if (firebaseTime > timeNowMilli) {
+        this.overDue = false;
+      } else {
+        this.overDue = true;
+      }
     }
   }
 
@@ -152,6 +176,50 @@ export class TaskDialogComponent implements OnInit {
 
   isAddLabelDisabled() {
     return !this.data.task.id;
+  }
+
+  openCalenderDialog() {
+    let localDate: firestore.Timestamp;
+    if (this.data.task.dueDate && this.data.task.dueDate.date) {
+      localDate = this.data.task.dueDate.date;
+    }
+    const dialogRef = this.dialog.open(CalenderDialogComponent, {
+      width: "360px",
+      data: {
+        date: localDate,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: CalenderDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+
+      //Check if dueDate is empty & initialize to empty object
+      if (this.data.task.dueDate == undefined) {
+        this.data.task.dueDate = {};
+      }
+
+      this.data.task.dueDate.date = result.date;
+    });
+  }
+
+  openColorDialog() {
+    const dialogRef = this.dialog.open(ColorDialogComponent, {
+      width: "500px",
+      height: "600px",
+      data: {
+        color: "",
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: ColorDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+
+      this.data.task.backgroundColor = result.color;
+    });
   }
 }
 
