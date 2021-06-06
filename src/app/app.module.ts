@@ -27,6 +27,7 @@ import { ColorCircleModule } from "ngx-color/circle";
 import { ColorSwatchesModule } from "ngx-color/swatches";
 import { CalenderDialogComponent } from "./common/calender-dialog/calender-dialog.component";
 import { ColorDialogComponent } from "./common/color-dialog/color-dialog.component";
+import { MemberDialogComponent } from "./common/member-dialog/member-dialog.component";
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { ColorDialogComponent } from "./common/color-dialog/color-dialog.compone
     LabelDialogComponent,
     CalenderDialogComponent,
     ColorDialogComponent,
+    MemberDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -69,6 +71,7 @@ import { ColorDialogComponent } from "./common/color-dialog/color-dialog.compone
     LabelDialogComponent,
     CalenderDialogComponent,
     ColorDialogComponent,
+    MemberDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

@@ -111,6 +111,18 @@
             <mat-icon>close</mat-icon>
           </span>
         </div>
+
+        <div class="checklist-options">
+          <span (click)="setDueDateChecklist(checklist)">
+            <mat-icon>schedule</mat-icon>
+          </span>
+          <span (click)="assignChecklist(checklist)">
+            <mat-icon>person_add</mat-icon>
+          </span>
+          <span (click)="deleteChecklist(checklist)">
+            <mat-icon>delete</mat-icon>
+          </span>
+        </div>
       </div>
 
       <div class="checklist-add">
@@ -147,7 +159,7 @@
   <div class="options">
     <p class="sub-header">ADD TO CARD</p>
     <div class="option-btn">
-      <button mat-stroked-button>
+      <button mat-stroked-button (click)="openMemberDialog()">
         <span class="option-content">
           <mat-icon class="material-icons-outlined">person_outline</mat-icon>
           Members

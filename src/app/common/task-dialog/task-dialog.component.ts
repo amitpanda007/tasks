@@ -26,6 +26,10 @@ import {
   LabelDialogComponent,
   LabelDialogResult,
 } from "../label-dialog/label-dialog.component";
+import {
+  MemberDialogComponent,
+  MemberDialogResult,
+} from "../member-dialog/member-dialog.component";
 
 @Component({
   selector: "app-task-dialog",
@@ -147,6 +151,21 @@ export class TaskDialogComponent implements OnInit {
     this.checklistText = "";
   }
 
+  setDueDateChecklist(checklist: CheckList) {
+    const index = this.data.task.checklist.indexOf(checklist);
+    console.log(index);
+  }
+
+  assignChecklist(checklist: CheckList) {
+    const index = this.data.task.checklist.indexOf(checklist);
+    console.log(index);
+  }
+
+  deleteChecklist(checklist: CheckList) {
+    const index = this.data.task.checklist.indexOf(checklist);
+    this.data.task.checklist.splice(index, 1);
+  }
+
   openLabelDialog() {
     const allLabels = [...this.data.labels];
     const dialogRef = this.dialog.open(LabelDialogComponent, {
@@ -219,6 +238,19 @@ export class TaskDialogComponent implements OnInit {
       }
 
       this.data.task.backgroundColor = result.color;
+    });
+  }
+
+  openMemberDialog() {
+    const dialogRef = this.dialog.open(MemberDialogComponent, {
+      width: "240px",
+      data: {},
+    });
+    dialogRef.afterClosed().subscribe((result: MemberDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
     });
   }
 }
