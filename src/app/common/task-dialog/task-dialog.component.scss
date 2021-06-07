@@ -46,16 +46,6 @@
   color: dimgray;
 }
 
-// .checklist-text {
-//   width: 100%;
-//   cursor: pointer;
-//   margin-left: 10px;
-// }
-
-// .checklist-edit-input {
-//   display: flex;
-// }
-
 .checklist-input {
   border: 1px solid gray;
   border-radius: 4px;
@@ -66,50 +56,6 @@
   margin-top: 10px;
   margin-left: 15px;
 }
-
-// .checklist-done {
-//   text-decoration: line-through;
-//   text-decoration-color: gray;
-// }
-
-// .checklist-options {
-//   display: none;
-// }
-
-// .checklist-options mat-icon {
-//   margin-right: 5px;
-//   cursor: pointer;
-// }
-
-.single-checklist {
-  height: 30px;
-  display: flex;
-  align-items: center;
-  align-content: center;
-}
-
-.single-checklist:hover {
-  background-color: rgb(188, 243, 243);
-}
-
-.single-checklist:hover .checklist-options {
-  display: flex;
-  color: darkslategray;
-}
-
-// .done {
-//   color: lightseagreen;
-//   display: flex;
-//   align-items: center;
-//   align-content: center;
-// }
-
-// .close {
-//   color: orangered;
-//   display: flex;
-//   align-items: center;
-//   align-content: center;
-// }
 
 .labels {
   margin: 10px 0px;
@@ -172,4 +118,16 @@
   border-radius: 4px;
   font-size: smaller;
   font-weight: 600;
+}
+
+::ng-deep .mat-progress-bar-fill::after {
+  background-color: #1e457c;
+}
+
+::ng-deep .mat-progress-bar-buffer {
+  background: #e4e8eb;
+}
+
+::ng-deep .mat-progress-bar {
+  border-radius: 2px;
 }

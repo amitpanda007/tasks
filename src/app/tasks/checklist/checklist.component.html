@@ -1,33 +1,35 @@
-<mat-checkbox
-  [(ngModel)]="checklist.done"
-  color="primary"
-  (click)="checklistClicked(checklist)"
-></mat-checkbox>
-<span
-  (click)="toggleChecklistEditing(checklist)"
-  *ngIf="!checklist.isEditing"
-  class="checklist-text"
-  [ngClass]="{ 'checklist-done': checklist.done == true }"
-  >{{ checklist.text }}</span
->
-<div class="checklist-text checklist-edit-input" *ngIf="checklist.isEditing">
-  <input matInput [(ngModel)]="checklist.text" />
-  <span (click)="toggleChecklistEditing(checklist)" class="done">
-    <mat-icon>done</mat-icon>
-  </span>
-  <span (click)="toggleChecklistEditing(checklist)" class="close">
-    <mat-icon>close</mat-icon>
-  </span>
-</div>
+<div class="single-checklist">
+  <mat-checkbox
+    [(ngModel)]="checklist.done"
+    color="primary"
+    (click)="done.emit(checklist)"
+  ></mat-checkbox>
+  <span
+    (click)="toggleChecklistEditing(checklist)"
+    *ngIf="!checklist.isEditing"
+    class="checklist-text"
+    [ngClass]="{ 'checklist-done': checklist.done == true }"
+    >{{ checklist.text }}</span
+  >
+  <div class="checklist-text checklist-edit-input" *ngIf="checklist.isEditing">
+    <input matInput [(ngModel)]="checklist.text" />
+    <span (click)="toggleChecklistEditing(checklist)" class="done">
+      <mat-icon>done</mat-icon>
+    </span>
+    <span (click)="toggleChecklistEditing(checklist)" class="close">
+      <mat-icon>close</mat-icon>
+    </span>
+  </div>
 
-<div class="checklist-options">
-  <span (click)="setDueDateChecklist(checklist)">
-    <mat-icon>schedule</mat-icon>
-  </span>
-  <span (click)="assignChecklist(checklist)">
-    <mat-icon>person_add</mat-icon>
-  </span>
-  <span (click)="deleteChecklist(checklist)">
-    <mat-icon>delete</mat-icon>
-  </span>
+  <div class="checklist-options">
+    <span (click)="duedate.emit(checklist)">
+      <mat-icon>schedule</mat-icon>
+    </span>
+    <span (click)="assign.emit(checklist)">
+      <mat-icon>person_add</mat-icon>
+    </span>
+    <span (click)="delete.emit(checklist)">
+      <mat-icon>delete</mat-icon>
+    </span>
+  </div>
 </div>

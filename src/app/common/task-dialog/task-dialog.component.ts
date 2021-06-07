@@ -86,8 +86,9 @@ export class TaskDialogComponent implements OnInit {
     }
   }
 
-  checklistClicked(checklist: CheckList) {
-    if (checklist.done) {
+  checklistClicked($event: CheckList) {
+    console.log($event);
+    if ($event.done) {
       this.doneChecklist -= 1;
     } else {
       this.doneChecklist += 1;
@@ -131,10 +132,6 @@ export class TaskDialogComponent implements OnInit {
       });
   }
 
-  toggleChecklistEditing(checklist: CheckList) {
-    checklist.isEditing = !checklist.isEditing;
-  }
-
   updateChecklist() {
     const newCheckList: CheckList = {
       text: this.checklistText,
@@ -147,21 +144,23 @@ export class TaskDialogComponent implements OnInit {
     }
     this.data.task.checklist.push(newCheckList);
     this.checklistText = "";
+    this.calculateChecklistCompleted();
   }
 
-  setDueDateChecklist(checklist: CheckList) {
-    const index = this.data.task.checklist.indexOf(checklist);
+  setDueDateChecklist($event: CheckList) {
+    const index = this.data.task.checklist.indexOf($event);
     console.log(index);
   }
 
-  assignChecklist(checklist: CheckList) {
-    const index = this.data.task.checklist.indexOf(checklist);
+  assignChecklist($event: CheckList) {
+    const index = this.data.task.checklist.indexOf($event);
     console.log(index);
   }
 
-  deleteChecklist(checklist: CheckList) {
-    const index = this.data.task.checklist.indexOf(checklist);
+  deleteChecklist($event: CheckList) {
+    const index = this.data.task.checklist.indexOf($event);
     this.data.task.checklist.splice(index, 1);
+    this.calculateChecklistCompleted();
   }
 
   openLabelDialog() {

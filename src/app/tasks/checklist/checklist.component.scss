@@ -1,3 +1,14 @@
+.single-checklist {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.single-checklist:hover {
+  background-color: rgb(188, 243, 243);
+}
+
 .checklist-text {
   width: 100%;
   cursor: pointer;
@@ -34,4 +45,9 @@
 .checklist-options mat-icon {
   margin-right: 5px;
   cursor: pointer;
+}
+
+.single-checklist:hover .checklist-options {
+  display: flex;
+  color: darkslategray;
 }
