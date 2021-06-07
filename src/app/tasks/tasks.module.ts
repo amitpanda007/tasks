@@ -3,6 +3,7 @@ import { NgModule } from "@angular/core";
 import { SharedModule } from "../shared/shared.module";
 import { TasksRoutingModule } from "./tasks.routing.module";
 import { ColorCircleModule } from "ngx-color/circle";
+import { ChecklistComponent } from "./checklist/checklist.component";
 
 @NgModule({
   imports: [
@@ -12,5 +13,6 @@ import { ColorCircleModule } from "ngx-color/circle";
     ColorCircleModule,
   ],
   declarations: [TasksRoutingModule.components],
+  exports: [ChecklistComponent],
 })
 export class TasksModule {}

@@ -1,0 +1,37 @@
+.checklist-text {
+  width: 100%;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.checklist-done {
+  text-decoration: line-through;
+  text-decoration-color: gray;
+}
+
+.checklist-edit-input {
+  display: flex;
+}
+
+.done {
+  color: lightseagreen;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.close {
+  color: orangered;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.checklist-options {
+  display: none;
+}
+
+.checklist-options mat-icon {
+  margin-right: 5px;
+  cursor: pointer;
+}

@@ -84,10 +84,7 @@
         *ngFor="let checklist of data.task.checklist"
         class="single-checklist"
       >
-        <!-- <mat-checkbox [(ngModel)]="checklist.done">{{
-      checklist.text
-    }}</mat-checkbox> -->
-        <mat-checkbox
+        <!-- <mat-checkbox
           [(ngModel)]="checklist.done"
           color="primary"
           (click)="checklistClicked(checklist)"
@@ -122,7 +119,8 @@
           <span (click)="deleteChecklist(checklist)">
             <mat-icon>delete</mat-icon>
           </span>
-        </div>
+        </div> -->
+        <checklist [checklist]="checklist"></checklist>
       </div>
 
       <div class="checklist-add">

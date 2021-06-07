@@ -5,8 +5,6 @@ import {
   MatDialog,
 } from "@angular/material/dialog";
 import { firestore } from "firebase";
-import { Subscription } from "rxjs";
-import { BoardService } from "src/app/core/services/board.service";
 import { CheckList } from "src/app/tasks/task/checklist";
 import { Label } from "src/app/tasks/task/label";
 import { Task } from "src/app/tasks/task/task";
