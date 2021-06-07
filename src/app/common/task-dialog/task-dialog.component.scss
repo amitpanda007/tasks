@@ -131,3 +131,7 @@
 ::ng-deep .mat-progress-bar {
   border-radius: 2px;
 }
+
+::ng-deep html.cdk-global-scrollblock {
+  top: 0px !important;
+}

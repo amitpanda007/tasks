@@ -54,3 +54,7 @@
   padding: 4px;
   border-radius: 4px;
 }
+
+::ng-deep html.cdk-global-scrollblock {
+  top: 0px !important;
+}

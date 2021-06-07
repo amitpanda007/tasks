@@ -1,3 +1,4 @@
+import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 import { Component, Inject, OnInit } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
@@ -130,6 +131,15 @@ export class TaskDialogComponent implements OnInit {
           this.dialogRef.close({ task: this.data.task, delete: true });
         }
       });
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    console.log(event);
+    moveItemInArray(
+      this.data.task.checklist,
+      event.previousIndex,
+      event.currentIndex
+    );
   }
 
   updateChecklist() {

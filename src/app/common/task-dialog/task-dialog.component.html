@@ -80,14 +80,17 @@
           value="{{ checklistCompleted }}"
         ></mat-progress-bar>
       </div>
-      <div *ngFor="let checklist of data.task.checklist">
-        <checklist
-          [checklist]="checklist"
-          (duedate)="setDueDateChecklist($event)"
-          (assign)="assignChecklist($event)"
-          (delete)="deleteChecklist($event)"
-          (done)="checklistClicked($event)"
-        ></checklist>
+      <div cdkDropList (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let checklist of data.task.checklist">
+          <checklist
+            cdkDrag
+            [checklist]="checklist"
+            (duedate)="setDueDateChecklist($event)"
+            (assign)="assignChecklist($event)"
+            (delete)="deleteChecklist($event)"
+            (done)="checklistClicked($event)"
+          ></checklist>
+        </div>
       </div>
 
       <div class="checklist-add">
