@@ -39,7 +39,7 @@ export class TaskDialogComponent implements OnInit {
   private backupTask: Partial<Task> = { ...this.data.task };
   private labels: Label[] = { ...this.data.labels };
   private totalChecklist: number;
-  private doneChecklist: number;
+  public doneChecklist: number;
 
   public isEditing = false;
   public checklistText: string;

@@ -58,7 +58,7 @@
           color="primary"
         ></mat-checkbox>
         <!-- <input matInput [(ngModel)]="data.task.dueDate.date" /> -->
-        <span class="due-date">{{ data.task.dueDate.date | dateformat }}</span>
+        <span class="due-date">{{ data.task.dueDate.date | dateformat:"" }}</span>
         <span class="due-complete" *ngIf="data.task.dueDate.completed"
           >COMPLETED</span
         >
