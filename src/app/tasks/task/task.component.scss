@@ -7,11 +7,16 @@
   cursor: pointer;
 }
 
+.desc {
+  margin-top: 4px;
+}
+
 .my-chip {
   color: white;
   min-height: 20px;
   transition: min-height 2s;
   border: 2px solid white;
+  margin: 1px !important;
 }
 
 .chip-no-text {

@@ -12,13 +12,16 @@ mat-toolbar > span {
 }
 
 .container-wrapper {
-  display: flex;
+  // display: flex;
+  display: inline-flex;
   justify-content: space-around;
 }
 
 .container {
   width: 400px;
-  margin: 0 25px 25px 0;
+  width: 320px;
+  // margin: 0 25px 25px 0;
+  margin-right: 5px;
 }
 
 .list {

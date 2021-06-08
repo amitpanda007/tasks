@@ -143,14 +143,14 @@
 .checklist-list {
   width: 100%;
   max-width: 100%;
-  border: solid 1px #ccc;
+  // border: solid 1px #ccc;
   display: block;
   border-radius: 4px;
   overflow: hidden;
 }
 
 .checklist-box {
-  border-bottom: solid 1px #ccc;
+  // border-bottom: solid 1px #ccc;
   color: rgba(0, 0, 0, 0.87);
   display: flex;
   flex-direction: row;
