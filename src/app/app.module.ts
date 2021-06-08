@@ -28,6 +28,7 @@ import { ColorSwatchesModule } from "ngx-color/swatches";
 import { CalenderDialogComponent } from "./common/calender-dialog/calender-dialog.component";
 import { ColorDialogComponent } from "./common/color-dialog/color-dialog.component";
 import { MemberDialogComponent } from "./common/member-dialog/member-dialog.component";
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { MemberDialogComponent } from "./common/member-dialog/member-dialog.comp
     AngularFireAuthGuardModule,
     ColorCircleModule,
     ColorSwatchesModule,
+    DragDropModule
   ],
   entryComponents: [
     SuccessSnackbar,
