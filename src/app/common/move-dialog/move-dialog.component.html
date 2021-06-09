@@ -1,0 +1,24 @@
+<div mat-dialog-content>
+  <p>Move Task</p>
+  <h4>Select Destination</h4>
+  <mat-form-field appearance="fill" class="section">
+    <mat-label>Select Board</mat-label>
+    <mat-select name="board" (selectionChange)="boardSelected($event)">
+      <mat-option *ngFor="let board of boards" [value]="board">
+        {{board.title}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="section">
+    <mat-label>Select List</mat-label>
+    <mat-select name="list" (selectionChange)="listSelected($event)">
+      <mat-option *ngFor="let list of taskLists" [value]="list">
+        {{list.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="move()" cdkFocusInitial>Move</button>
+  <button mat-button (click)="cancel()">Cancel</button>
+</div>

@@ -29,6 +29,8 @@ import {
   MemberDialogComponent,
   MemberDialogResult,
 } from "../member-dialog/member-dialog.component";
+import { MoveDialogComponent, MoveDialogResult } from '../move-dialog/move-dialog.component';
+import { CopyDialogComponent, CopyDialogResult } from '../copy-dialog/copy-dialog.component';
 
 @Component({
   selector: "app-task-dialog",
@@ -41,12 +43,14 @@ export class TaskDialogComponent implements OnInit {
   private totalChecklist: number;
   public doneChecklist: number;
 
+  public filteredChecklist: CheckList[];
   public isEditing = false;
   public checklistText: string;
   public checklistCompleted: number;
   public selectedDate: string;
   public overDue: boolean;
   public tooltipPosition: string = "right";
+  public showHideCompletedTask: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<TaskDialogComponent>,
@@ -55,6 +59,7 @@ export class TaskDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.filteredChecklist = this.data.task.checklist;
     this.calculateChecklistCompleted();
     this.checkDueDateStatus();
   }
@@ -173,6 +178,27 @@ export class TaskDialogComponent implements OnInit {
     this.calculateChecklistCompleted();
   }
 
+  showHideCompletedChecklist() {
+    console.info("Hiding completed checklist items.");
+    this.showHideCompletedTask = !this.showHideCompletedTask;
+    if(this.showHideCompletedTask) {
+      this.filteredChecklist = this.data.task.checklist.filter((checklist: CheckList) => {
+        return (
+          checklist.done != true
+        );
+      });
+    }else {
+      this.filteredChecklist = this.data.task.checklist;
+    }
+  }
+
+  deleteAllChecklist() {
+    console.info("Delete all checklist items.");
+    this.data.task.checklist = [];
+    this.filteredChecklist = [];
+    this.calculateChecklistCompleted();
+  }
+
   openLabelDialog() {
     const allLabels = [...this.data.labels];
     const dialogRef = this.dialog.open(LabelDialogComponent, {
@@ -254,6 +280,36 @@ export class TaskDialogComponent implements OnInit {
       data: {},
     });
     dialogRef.afterClosed().subscribe((result: MemberDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+    });
+  }
+
+  openMoveDialog() {
+    const dialogRef = this.dialog.open(MoveDialogComponent, {
+      width: "360px",
+      data: {
+        taskId: this.data.task.id
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: MoveDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+    });
+  }
+
+  openCopyDialog() {
+    const dialogRef = this.dialog.open(CopyDialogComponent, {
+      width: "360px",
+      data: {
+        taskId: this.data.task.id
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: CopyDialogResult) => {
       console.log(result);
       if (!result) {
         return;

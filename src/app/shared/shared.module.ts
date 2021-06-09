@@ -25,6 +25,8 @@ import {
   MatNativeDateModule,
   MatSliderModule,
   MatTableModule,
+  MatOptionModule,
+  MatSelectModule
 } from "@angular/material";
 
 import { CapitalizePipe } from "./capitalize.pipe";
@@ -63,6 +65,8 @@ import { DateFormatPipe } from "./date.format.pipe";
     MatNativeDateModule,
     MatSliderModule,
     MatTableModule,
+    MatOptionModule,
+    MatSelectModule
   ],
   declarations: [CapitalizePipe, DefaultPipe, DateFormatPipe],
   providers: [MatNativeDateModule],

@@ -29,6 +29,8 @@ import { CalenderDialogComponent } from "./common/calender-dialog/calender-dialo
 import { ColorDialogComponent } from "./common/color-dialog/color-dialog.component";
 import { MemberDialogComponent } from "./common/member-dialog/member-dialog.component";
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MoveDialogComponent } from './common/move-dialog/move-dialog.component';
+import { CopyDialogComponent } from './common/copy-dialog/copy-dialog.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     CalenderDialogComponent,
     ColorDialogComponent,
     MemberDialogComponent,
+    MoveDialogComponent,
+    CopyDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -74,6 +78,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     CalenderDialogComponent,
     ColorDialogComponent,
     MemberDialogComponent,
+    MoveDialogComponent,
+    CopyDialogComponent
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

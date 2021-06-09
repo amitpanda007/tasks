@@ -71,7 +71,19 @@
     </section>
 
     <section class="checklist">
-      <p class="sub-header">Check List <span *ngIf="data.task.checklist">[{{ doneChecklist }}/{{ data.task.checklist.length }}]</span></p>
+      <p class="sub-header">Check List 
+        <!-- <span *ngIf="data.task.checklist">[{{ doneChecklist }}/{{ data.task.checklist.length }}]</span> -->
+        <span>
+          <button
+          mat-stroked-button
+          (click)="showHideCompletedChecklist()"
+        ><span *ngIf="showHideCompletedTask">Show</span><span *ngIf="!showHideCompletedTask">Hide</span> checked items</button>
+        <button
+          mat-stroked-button
+          (click)="deleteAllChecklist()"
+        >Delete</button>
+        </span>
+      </p>
       <div class="checklist-progress" *ngIf="data.task.checklist">
         <!-- <span>[{{ doneChecklist }}/{{ data.task.checklist.length }}]</span> -->
         <span class="task-completed">{{ checklistCompleted }}%</span>
@@ -85,7 +97,7 @@
         <!-- <div *ngFor="let checklist of data.task.checklist" class="checklist-box"> -->
           <checklist
             cdkDrag
-            *ngFor="let checklist of data.task.checklist"
+            *ngFor="let checklist of filteredChecklist"
             class="checklist-box"
             [checklist]="checklist"
             (duedate)="setDueDateChecklist($event)"
@@ -180,14 +192,14 @@
 
     <p class="sub-header">ACTIONS</p>
     <div class="option-btn">
-      <button mat-stroked-button>
+      <button mat-stroked-button (click)="openMoveDialog()">
         <span class="option-content">
           <mat-icon class="material-icons-outlined">arrow_forward</mat-icon>
           Move
         </span>
       </button>
 
-      <button mat-stroked-button>
+      <button mat-stroked-button (click)="openCopyDialog()">
         <span class="option-content">
           <mat-icon class="material-icons-outlined">content_copy</mat-icon> Copy
         </span>

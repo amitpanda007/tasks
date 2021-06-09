@@ -3,7 +3,7 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
 } from "@angular/fire/firestore";
-import { Subject } from "rxjs";
+import { Subject, BehaviorSubject } from "rxjs";
 import { Board } from "src/app/boards/board/board";
 import { Task } from "src/app/tasks/task/task";
 import { AuthService } from "./auth.service";
@@ -22,7 +22,7 @@ export class BoardService {
   private allTasks: Task[];
   private allLabelList: Label[];
 
-  public boardsChanged = new Subject<Board[]>();
+  public boardsChanged = new BehaviorSubject<Board[]>(null);
   public taskListsChanged = new Subject<TaskList[]>();
   public tasksChanged = new Subject<Task[]>();
   public labelListChanged = new Subject<Label[]>();
