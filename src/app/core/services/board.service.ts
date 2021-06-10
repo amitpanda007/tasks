@@ -90,11 +90,14 @@ export class BoardService {
   }
 
   addTask(boardId: string, task: Task) {
-    this._store
+    return this._store
       .collection(this.authService.getUID())
       .doc(boardId)
       .collection("tasks")
-      .add(task);
+      .add(task)
+      .then((docRef) => {
+        return docRef.id;
+    });
   }
 
   updateTask(boardId: string, taskId: string, task: Task) {

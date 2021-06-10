@@ -35,7 +35,9 @@ export class MoveDialogComponent implements OnInit{
 
   ngOnDestroy(): void {
     this.boardListSubscription.unsubscribe();
-    this.taskListSubscription.unsubscribe();
+    if(this.taskListSubscription) {
+      this.taskListSubscription.unsubscribe();
+    }
   }
 
   cancel(): void {

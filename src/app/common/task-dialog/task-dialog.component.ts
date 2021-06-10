@@ -310,7 +310,8 @@ export class TaskDialogComponent implements OnInit {
     const dialogRef = this.dialog.open(CopyDialogComponent, {
       width: "360px",
       data: {
-        taskId: this.data.task.id
+        task: this.data.task,
+        labels: this.data.labels
       },
     });
     dialogRef.afterClosed().subscribe((result: CopyDialogResult) => {
