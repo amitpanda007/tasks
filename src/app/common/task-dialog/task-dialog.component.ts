@@ -156,10 +156,13 @@ export class TaskDialogComponent implements OnInit {
     };
     if (!this.data.task.checklist) {
       this.data.task.checklist = [];
+      this.filteredChecklist = [];
     }
     this.data.task.checklist.push(newCheckList);
+    this.filteredChecklist.push(newCheckList);
     this.checklistText = "";
     this.calculateChecklistCompleted();
+    console.log(this.data.task);
   }
 
   setDueDateChecklist($event: CheckList) {
@@ -299,6 +302,7 @@ export class TaskDialogComponent implements OnInit {
       if (!result) {
         return;
       }
+      this.data.task.listId = result.targetListId;
     });
   }
 

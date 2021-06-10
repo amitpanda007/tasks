@@ -22,7 +22,7 @@ export class BoardService {
   private allTasks: Task[];
   private allLabelList: Label[];
 
-  public boardsChanged = new BehaviorSubject<Board[]>(null);
+  public boardsChanged = new Subject<Board[]>();
   public taskListsChanged = new Subject<TaskList[]>();
   public tasksChanged = new Subject<Task[]>();
   public labelListChanged = new Subject<Label[]>();

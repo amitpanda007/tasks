@@ -47,7 +47,8 @@ export class MoveDialogComponent implements OnInit{
       // console.log(this.selectedBoard.id, this.data.taskId, this.selectedList.id);
       this.boardService.moveTasks(this.selectedBoard.id, this.data.taskId, this.selectedList.id);
     }
-    this.dialogRef.close();
+    
+    this.dialogRef.close({targetListId: this.selectedList.id});
   }
 
   async boardSelected($event) {
@@ -71,5 +72,5 @@ export interface MoveDialogData {
 }
 
 export interface MoveDialogResult {
-  name: string;
+  targetListId: string;
 }
