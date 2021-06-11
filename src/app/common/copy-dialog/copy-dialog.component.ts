@@ -37,7 +37,7 @@ export class CopyDialogComponent implements OnInit{
     this.primaryColor = "primary";
     this.titleText = this.data.task.title;
     this.boardService.getBoards();
-    this.boardListSubscription = this.boardService.boardsChanged.subscribe(_boards => {
+    this.boardListSubscription = this.boardService.getBoardsWithoutObserver().subscribe(_boards => {
       console.log(_boards);
       this.boards = _boards;
     });
@@ -54,12 +54,15 @@ export class CopyDialogComponent implements OnInit{
     this.dialogRef.close();
   }
 
+  //TODO: Fix copy for labels when its same board & its a new board
   async copy() {
-    let newDueDate = undefined;
-    let newCheckList = undefined;
+    let newDueDate = null;
+    let newCheckList = [];
 
     if(this.keepChecklist) {
-      newCheckList = this.data.task.checklist
+      if(this.data.task.checklist && this.data.task.checklist.length > 0) {
+        newCheckList = this.data.task.checklist;
+      }
     }
     if(this.keepDueDate) {
       newDueDate = this.data.task.dueDate
@@ -85,9 +88,22 @@ export class CopyDialogComponent implements OnInit{
         }
       })
       console.log(filteredLabels);
-      filteredLabels.forEach(label => {
+      filteredLabels.forEach(async label => {
         label.taskIds.push(taskId);
-        this.boardService.updateLabel(this.selectedBoard.id, label.id, label);
+        if(this.selectedBoard.id == this.data.boardId) {
+          this.boardService.updateLabel(this.selectedBoard.id, label.id, label);
+        }else {
+          console.log(`Current Label: ${label.name}`);
+          const foundLabelColl = await this.boardService.findLabel(this.selectedBoard.id, label);
+          // console.log(foundLabel);
+          // if(foundLabel.length > 0) {
+          //   console.log("Existing Label Found");
+          //   this.boardService.updateLabel(this.selectedBoard.id, label.id, label);
+          // }else {
+          //   console.log("Label Not Found. Adding New Label");
+          //   this.boardService.addLabel(this.selectedBoard.id, label);
+          // }
+        }
       });
     }
 
@@ -96,8 +112,7 @@ export class CopyDialogComponent implements OnInit{
 
   async boardSelected($event) {
     this.selectedBoard = $event.value;
-    this.boardService.getTaskList(this.selectedBoard.id);
-    this.taskListSubscription = this.boardService.taskListsChanged.subscribe(_tasklist => {
+    this.taskListSubscription = this.boardService.getTaskListWithoutSubscription(this.selectedBoard.id).subscribe(_tasklist => {
       this.taskLists = _tasklist;
     });
   }
@@ -108,6 +123,7 @@ export class CopyDialogComponent implements OnInit{
 }
 
 export interface CopyDialogData {
+  boardId: string;
   task: Task;
   labels: Label[];
 }

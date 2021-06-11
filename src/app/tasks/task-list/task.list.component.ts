@@ -134,8 +134,8 @@ export class TaskListComponent implements OnInit {
         this.boardService.deleteTask(this.boardId, result.task.id);
       } else {
         this.boardService.updateTask(this.boardId, result.task.id, result.task);
-        if(result.updatedLabels && result.updatedLabels.length > 0) {
-          result.updatedLabels.forEach((label: Label) => {
+        if(result.labels && result.labels.length > 0) {
+          result.labels.forEach((label: Label) => {
             this.boardService.updateLabel(this.boardId, label.id, label);
           });
         }
@@ -169,7 +169,6 @@ export class TaskListComponent implements OnInit {
       name: this.listName,
       list: this.listName + "List"
     };
-    // this.cards.push(newList);
     this.boardService.addTaskList(this.boardId, newList);
 
     this.listName = "";

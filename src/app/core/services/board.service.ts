@@ -13,6 +13,7 @@ import { Label } from "src/app/tasks/task/label";
 @Injectable()
 export class BoardService {
   private boardsCollection: AngularFirestoreCollection<Board>;
+  private boardsSearchCollection: AngularFirestoreCollection<Board>;
   private taskListsCollection: AngularFirestoreCollection<TaskList>;
   private tasksCollection: AngularFirestoreCollection<Task>;
   private labelsCollection: AngularFirestoreCollection<Label>;
@@ -45,6 +46,12 @@ export class BoardService {
       });
   }
 
+  getBoardsWithoutObserver() {
+    return this._store.
+    collection<Board>(this.authService.getUID())
+    .valueChanges({ idField: "id" });
+  }
+
   addBoard(board: Board) {
     return this._store.firestore.runTransaction(async () => {
       const docInfo = await this._store
@@ -67,6 +74,14 @@ export class BoardService {
       });
   }
 
+  getTaskListWithoutSubscription(boardId: string) {
+    return this._store
+      .collection<Board>(this.authService.getUID())
+      .doc(boardId)
+      .collection<TaskList>("taskLists")
+      .valueChanges({ idField: "id" });
+  }
+
   addTaskList(boardId: string, data: TaskList) {
     this._store
       .collection(this.authService.getUID())
@@ -87,6 +102,14 @@ export class BoardService {
         this.allTasks = tasks;
         this.tasksChanged.next([...this.allTasks]);
       });
+  }
+
+  getTasksWithoutSubscription(boardId: string) {
+    return this._store
+      .collection(this.authService.getUID())
+      .doc(boardId)
+      .collection("tasks")
+      .valueChanges({ idField: "id" });
   }
 
   addTask(boardId: string, task: Task) {
@@ -143,6 +166,13 @@ export class BoardService {
         this.allLabelList = labels;
         this.labelListChanged.next([...this.allLabelList]);
       });
+  }
+
+  async findLabel(boardId: string, label: Label) {
+    return this._store
+    .collection(this.authService.getUID())
+    .doc(boardId)
+    .collection("labels", ref => ref.where("name", "==", label.name));  
   }
 
   addLabel(boardId: string, label: Label) {

@@ -119,7 +119,6 @@ export class TaskDialogComponent implements OnInit {
     this.data.task.title = this.backupTask.title;
     this.data.task.description = this.backupTask.description;
     this.data.task.checklist = this.backupTask.checklist;
-    // this.data.cancel = true;
     this.dialogRef.close();
   }
 
@@ -217,15 +216,11 @@ export class TaskDialogComponent implements OnInit {
       if (!result) {
         return;
       }
-
-      console.log(result);
-
       result.labels.forEach((label) => {
         delete label.isSelected;
       });
 
       this.data.labels = result.labels;
-      this.data.updatedLabels = result.updatedLabels;
     });
   }
 
@@ -310,6 +305,7 @@ export class TaskDialogComponent implements OnInit {
     const dialogRef = this.dialog.open(CopyDialogComponent, {
       width: "360px",
       data: {
+        boardId: this.data.boardId,
         task: this.data.task,
         labels: this.data.labels
       },
