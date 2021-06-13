@@ -13,8 +13,8 @@ import { Label } from "../../tasks/task/label";
   styleUrls: ["./copy-dialog.component.scss"],
 })
 export class CopyDialogComponent implements OnInit {
-  private boardListSubscription: Subscription;
-  private taskListSubscription: Subscription;
+  private copyBoardListSubscription: Subscription;
+  private copyTaskListSubscription: Subscription;
   public selectedBoard: Board;
   public selectedList: TaskList;
   public copyBoards: Board[];
@@ -36,7 +36,7 @@ export class CopyDialogComponent implements OnInit {
     this.primaryColor = "primary";
     this.titleText = this.data.task.title;
     // this.boardService.getBoards();
-    this.boardListSubscription = this.boardService
+    this.copyBoardListSubscription = this.boardService
       .getBoardsWithoutObserver()
       .subscribe((_boards) => {
         console.log(_boards);
@@ -45,11 +45,9 @@ export class CopyDialogComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.boardListSubscription.unsubscribe();
-    this.copyBoards = null;
-    if (this.taskListSubscription) {
-      this.taskListSubscription.unsubscribe();
-      this.copyTaskLists = null;
+    this.copyBoardListSubscription.unsubscribe();
+    if (this.copyTaskListSubscription) {
+      this.copyTaskListSubscription.unsubscribe();
     }
   }
 
@@ -57,7 +55,6 @@ export class CopyDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  //TODO: Fix copy for labels when its same board & its a new board
   async copy() {
     let newDueDate = null;
     let newCheckList = [];
@@ -107,6 +104,7 @@ export class CopyDialogComponent implements OnInit {
           if (foundLabel == undefined) {
             console.log("Label Not Found. Adding New Label");
             // Remove current board label information
+            // FIXME: making this empty is causing labels to be removed from current task as well
             label.taskIds = [];
             label.taskIds.push(taskId);
             this.boardService.addLabelWithGivenId(
@@ -132,7 +130,7 @@ export class CopyDialogComponent implements OnInit {
 
   async boardSelected($event) {
     this.selectedBoard = $event.value;
-    this.taskListSubscription = this.boardService
+    this.copyTaskListSubscription = this.boardService
       .getTaskListWithoutSubscription(this.selectedBoard.id)
       .subscribe((_tasklist) => {
         this.copyTaskLists = _tasklist;

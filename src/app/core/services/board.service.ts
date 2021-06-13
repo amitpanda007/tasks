@@ -9,6 +9,7 @@ import { Task } from "src/app/tasks/task/task";
 import { AuthService } from "./auth.service";
 import { TaskList } from "../../tasks/task-list/tasklist";
 import { Label } from "src/app/tasks/task/label";
+import { Subscription } from "rxjs";
 
 @Injectable()
 export class BoardService {
@@ -22,6 +23,11 @@ export class BoardService {
   private allTasks: Task[];
   private allLabelList: Label[];
 
+  private boardsSubscription: Subscription;
+  private taskListsSubscription: Subscription;
+  private tasksSubscription: Subscription;
+  private labelsSubscription: Subscription;
+
   public boardsChanged = new Subject<Board[]>();
   public taskListsChanged = new Subject<TaskList[]>();
   public tasksChanged = new Subject<Task[]>();
@@ -32,17 +38,24 @@ export class BoardService {
     private authService: AuthService
   ) {}
 
+  /**
+   * Boards API Call section
+   **/
   getBoards() {
     this.boardsCollection = this._store.collection<Board>(
       this.authService.getUID()
     );
 
-    this.boardsCollection
+    this.boardsSubscription = this.boardsCollection
       .valueChanges({ idField: "id" })
       .subscribe((boards) => {
         this.allBoards = boards;
         this.boardsChanged.next([...this.allBoards]);
       });
+  }
+
+  cancelBoardSuscriotion() {
+    this.boardsSubscription.unsubscribe();
   }
 
   getBoardsWithoutObserver() {
@@ -59,18 +72,26 @@ export class BoardService {
     });
   }
 
+  /**
+  / TaskLists API Call section
+  **/
+
   getTaskList(boardId: string) {
     this.taskListsCollection = this._store
       .collection(this.authService.getUID())
       .doc(boardId)
       .collection("taskLists");
 
-    this.taskListsCollection
+    this.taskListsSubscription = this.taskListsCollection
       .valueChanges({ idField: "id" })
       .subscribe((taskList) => {
         this.allTaskLists = taskList;
         this.taskListsChanged.next([...this.allTaskLists]);
       });
+  }
+
+  cancelTaskListsSubscription() {
+    this.taskListsSubscription.unsubscribe();
   }
 
   getTaskListWithoutSubscription(boardId: string) {
@@ -89,16 +110,26 @@ export class BoardService {
       .add(data);
   }
 
+  /**
+  / Tasks API Call section
+  **/
+
   getTasks(boardId: string) {
     this.tasksCollection = this._store
       .collection(this.authService.getUID())
       .doc(boardId)
       .collection("tasks");
 
-    this.tasksCollection.valueChanges({ idField: "id" }).subscribe((tasks) => {
-      this.allTasks = tasks;
-      this.tasksChanged.next([...this.allTasks]);
-    });
+    this.tasksSubscription = this.tasksCollection
+      .valueChanges({ idField: "id" })
+      .subscribe((tasks) => {
+        this.allTasks = tasks;
+        this.tasksChanged.next([...this.allTasks]);
+      });
+  }
+
+  cancelTasksSubscription() {
+    this.tasksSubscription.unsubscribe();
   }
 
   getTasksWithoutSubscription(boardId: string) {
@@ -147,18 +178,26 @@ export class BoardService {
       .set({ listId: newTaskListId }, { merge: true });
   }
 
+  /*
+  / Labels API Call section
+  */
+
   getLabels(boardId: string) {
     this.labelsCollection = this._store
       .collection(this.authService.getUID())
       .doc(boardId)
       .collection("labels");
 
-    this.labelsCollection
+    this.labelsSubscription = this.labelsCollection
       .valueChanges({ idField: "id" })
       .subscribe((labels) => {
         this.allLabelList = labels;
         this.labelListChanged.next([...this.allLabelList]);
       });
+  }
+
+  cancelLabelSubscription() {
+    this.labelsSubscription.unsubscribe();
   }
 
   findLabel(boardId: string, label: Label) {

@@ -80,6 +80,9 @@ export class TaskListComponent implements OnInit {
     this.taskListsSubscription.unsubscribe();
     this.tasksSubscription.unsubscribe();
     this.labelsSubscription.unsubscribe();
+    this.boardService.cancelTaskListsSubscription();
+    this.boardService.cancelTasksSubscription();
+    this.boardService.cancelLabelSubscription();
   }
 
   remainingList(curList: string) {
@@ -142,11 +145,16 @@ export class TaskListComponent implements OnInit {
         this.boardService.deleteTask(this.boardId, result.task.id);
       } else {
         this.boardService.updateTask(this.boardId, result.task.id, result.task);
-        if (result.labels && result.labels.length > 0) {
-          result.labels.forEach((label: Label) => {
+        if (result.updatedLabels && result.updatedLabels.length > 0) {
+          result.updatedLabels.forEach((label) => {
             this.boardService.updateLabel(this.boardId, label.id, label);
           });
         }
+        // if (result.labels && result.labels.length > 0) {
+        //   result.labels.forEach((label: Label) => {
+        //     this.boardService.updateLabel(this.boardId, label.id, label);
+        //   });
+        // }
       }
     });
   }

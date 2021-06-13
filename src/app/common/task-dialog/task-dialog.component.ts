@@ -228,6 +228,7 @@ export class TaskDialogComponent implements OnInit {
       });
 
       this.data.labels = result.labels;
+      this.data.updatedLabels = result.updatedLabelData;
     });
   }
 
@@ -334,7 +335,7 @@ export class TaskDialogComponent implements OnInit {
 export interface TaskDialogData {
   task: Partial<Task>;
   labels: Label[];
-  updatedLabels?: string[];
+  updatedLabels?: Label[];
   boardId: string;
   enableDelete: boolean;
 }
