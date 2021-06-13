@@ -6,6 +6,7 @@ import { Board } from "../../boards/board/board";
 import { TaskList } from "../../tasks/task-list/tasklist";
 import { Task } from "../../tasks/task/task";
 import { Label } from "../../tasks/task/label";
+import * as cloneDeep from "lodash/cloneDeep";
 
 @Component({
   selector: "app-copy-dialog",
@@ -104,13 +105,13 @@ export class CopyDialogComponent implements OnInit {
           if (foundLabel == undefined) {
             console.log("Label Not Found. Adding New Label");
             // Remove current board label information
-            // FIXME: making this empty is causing labels to be removed from current task as well
-            label.taskIds = [];
-            label.taskIds.push(taskId);
+            const clonedLabel = cloneDeep(label);
+            clonedLabel.taskIds = [];
+            clonedLabel.taskIds.push(taskId);
             this.boardService.addLabelWithGivenId(
               this.selectedBoard.id,
-              label.id,
-              label
+              clonedLabel.id,
+              clonedLabel
             );
           } else {
             foundLabel.taskIds.push(taskId);
