@@ -1,25 +1,24 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { firestore } from "firebase";
-import { BoardService } from '../../core/services/board.service';
-import { Subscription } from 'rxjs';
-import { Board } from '../../boards/board/board';
-import { TaskList } from '../../tasks/task-list/tasklist';
-import { Task } from '../../tasks/task/task';
-import { Label } from '../../tasks/task/label';
+import { BoardService } from "../../core/services/board.service";
+import { Subscription } from "rxjs";
+import { Board } from "../../boards/board/board";
+import { TaskList } from "../../tasks/task-list/tasklist";
+import { Task } from "../../tasks/task/task";
+import { Label } from "../../tasks/task/label";
 
 @Component({
   selector: "app-copy-dialog",
   templateUrl: "./copy-dialog.component.html",
   styleUrls: ["./copy-dialog.component.scss"],
 })
-export class CopyDialogComponent implements OnInit{
+export class CopyDialogComponent implements OnInit {
   private boardListSubscription: Subscription;
   private taskListSubscription: Subscription;
   public selectedBoard: Board;
   public selectedList: TaskList;
-  public boards: Board[];
-  public taskLists: TaskList[];
+  public copyBoards: Board[];
+  public copyTaskLists: TaskList[];
   public primaryColor: string;
   public titleText: string;
 
@@ -36,17 +35,21 @@ export class CopyDialogComponent implements OnInit{
   ngOnInit(): void {
     this.primaryColor = "primary";
     this.titleText = this.data.task.title;
-    this.boardService.getBoards();
-    this.boardListSubscription = this.boardService.getBoardsWithoutObserver().subscribe(_boards => {
-      console.log(_boards);
-      this.boards = _boards;
-    });
+    // this.boardService.getBoards();
+    this.boardListSubscription = this.boardService
+      .getBoardsWithoutObserver()
+      .subscribe((_boards) => {
+        console.log(_boards);
+        this.copyBoards = _boards;
+      });
   }
 
   ngOnDestroy(): void {
     this.boardListSubscription.unsubscribe();
-    if(this.taskListSubscription) {
+    this.copyBoards = null;
+    if (this.taskListSubscription) {
       this.taskListSubscription.unsubscribe();
+      this.copyTaskLists = null;
     }
   }
 
@@ -59,13 +62,13 @@ export class CopyDialogComponent implements OnInit{
     let newDueDate = null;
     let newCheckList = [];
 
-    if(this.keepChecklist) {
-      if(this.data.task.checklist && this.data.task.checklist.length > 0) {
+    if (this.keepChecklist) {
+      if (this.data.task.checklist && this.data.task.checklist.length > 0) {
         newCheckList = this.data.task.checklist;
       }
     }
-    if(this.keepDueDate) {
-      newDueDate = this.data.task.dueDate
+    if (this.keepDueDate) {
+      newDueDate = this.data.task.dueDate;
     }
 
     const newTask = {
@@ -74,35 +77,52 @@ export class CopyDialogComponent implements OnInit{
       backgroundColor: this.data.task.backgroundColor,
       listId: this.selectedList.id,
       dueDate: newDueDate,
-      checklist: newCheckList
-    }
+      checklist: newCheckList,
+    };
     console.log(newTask);
-    const taskId = await this.boardService.addTask(this.selectedBoard.id, newTask);
+    const taskId = await this.boardService.addTask(
+      this.selectedBoard.id,
+      newTask
+    );
 
-    if(this.keepLabels) {
-      const filteredLabels = this.data.labels.filter(label =>  {
-        if(label.taskIds) {
-          return (
-            label.taskIds.includes(this.data.task.id)
-          );
+    if (this.keepLabels) {
+      const filteredLabels = this.data.labels.filter((label) => {
+        if (label.taskIds) {
+          return label.taskIds.includes(this.data.task.id);
         }
-      })
+      });
       console.log(filteredLabels);
-      filteredLabels.forEach(async label => {
-        label.taskIds.push(taskId);
-        if(this.selectedBoard.id == this.data.boardId) {
+      filteredLabels.forEach(async (label) => {
+        if (this.selectedBoard.id == this.data.boardId) {
+          label.taskIds.push(taskId);
+          console.log(this.selectedBoard.id, this.data.boardId);
           this.boardService.updateLabel(this.selectedBoard.id, label.id, label);
-        }else {
+        } else {
+          let foundLabel: any = await this.boardService.findLabelPromise(
+            this.selectedBoard.id,
+            label
+          );
           console.log(`Current Label: ${label.name}`);
-          const foundLabelColl = await this.boardService.findLabel(this.selectedBoard.id, label);
-          // console.log(foundLabel);
-          // if(foundLabel.length > 0) {
-          //   console.log("Existing Label Found");
-          //   this.boardService.updateLabel(this.selectedBoard.id, label.id, label);
-          // }else {
-          //   console.log("Label Not Found. Adding New Label");
-          //   this.boardService.addLabel(this.selectedBoard.id, label);
-          // }
+          console.log(foundLabel);
+          if (foundLabel == undefined) {
+            console.log("Label Not Found. Adding New Label");
+            // Remove current board label information
+            label.taskIds = [];
+            label.taskIds.push(taskId);
+            this.boardService.addLabelWithGivenId(
+              this.selectedBoard.id,
+              label.id,
+              label
+            );
+          } else {
+            foundLabel.taskIds.push(taskId);
+            console.log("Existing Label Found");
+            this.boardService.updateLabel(
+              this.selectedBoard.id,
+              foundLabel.id,
+              foundLabel
+            );
+          }
         }
       });
     }
@@ -112,9 +132,11 @@ export class CopyDialogComponent implements OnInit{
 
   async boardSelected($event) {
     this.selectedBoard = $event.value;
-    this.taskListSubscription = this.boardService.getTaskListWithoutSubscription(this.selectedBoard.id).subscribe(_tasklist => {
-      this.taskLists = _tasklist;
-    });
+    this.taskListSubscription = this.boardService
+      .getTaskListWithoutSubscription(this.selectedBoard.id)
+      .subscribe((_tasklist) => {
+        this.copyTaskLists = _tasklist;
+      });
   }
 
   async listSelected($event) {

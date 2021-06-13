@@ -13,7 +13,6 @@ import { Label } from "src/app/tasks/task/label";
 @Injectable()
 export class BoardService {
   private boardsCollection: AngularFirestoreCollection<Board>;
-  private boardsSearchCollection: AngularFirestoreCollection<Board>;
   private taskListsCollection: AngularFirestoreCollection<TaskList>;
   private tasksCollection: AngularFirestoreCollection<Task>;
   private labelsCollection: AngularFirestoreCollection<Label>;
@@ -47,9 +46,9 @@ export class BoardService {
   }
 
   getBoardsWithoutObserver() {
-    return this._store.
-    collection<Board>(this.authService.getUID())
-    .valueChanges({ idField: "id" });
+    return this._store
+      .collection<Board>(this.authService.getUID())
+      .valueChanges({ idField: "id" });
   }
 
   addBoard(board: Board) {
@@ -96,12 +95,10 @@ export class BoardService {
       .doc(boardId)
       .collection("tasks");
 
-    this.tasksCollection
-      .valueChanges({ idField: "id" })
-      .subscribe((tasks) => {
-        this.allTasks = tasks;
-        this.tasksChanged.next([...this.allTasks]);
-      });
+    this.tasksCollection.valueChanges({ idField: "id" }).subscribe((tasks) => {
+      this.allTasks = tasks;
+      this.tasksChanged.next([...this.allTasks]);
+    });
   }
 
   getTasksWithoutSubscription(boardId: string) {
@@ -120,7 +117,7 @@ export class BoardService {
       .add(task)
       .then((docRef) => {
         return docRef.id;
-    });
+      });
   }
 
   updateTask(boardId: string, taskId: string, task: Task) {
@@ -141,11 +138,7 @@ export class BoardService {
       .delete();
   }
 
-  moveTasks(
-    boardId: string,
-    taskId: string,
-    newTaskListId: string
-  ) {
+  moveTasks(boardId: string, taskId: string, newTaskListId: string) {
     this._store
       .collection(this.authService.getUID())
       .doc(boardId)
@@ -168,11 +161,59 @@ export class BoardService {
       });
   }
 
-  async findLabel(boardId: string, label: Label) {
+  findLabel(boardId: string, label: Label) {
     return this._store
-    .collection(this.authService.getUID())
-    .doc(boardId)
-    .collection("labels", ref => ref.where("name", "==", label.name));  
+      .collection(this.authService.getUID())
+      .doc(boardId)
+      .collection("labels")
+      .doc(label.id);
+  }
+
+  async findLabelPromise(boardId: string, label: Label) {
+    return new Promise((resolve, reject) => {
+      this._store
+        .collection(this.authService.getUID())
+        .doc(boardId)
+        .collection("labels")
+        .doc(label.id)
+        .valueChanges()
+        .subscribe((label) => {
+          resolve(label);
+        });
+    });
+  }
+
+  async findLabelWithId(boardId: string, label: Label) {
+    let _label = undefined;
+    return new Promise((resolve, reject) => {
+      this._store
+        .collection(this.authService.getUID())
+        .doc(boardId)
+        .collection("labels", (ref) => ref.where("id", "==", label.id))
+        .valueChanges()
+        .subscribe((label) => {
+          _label = label;
+          resolve(_label);
+        });
+    });
+  }
+
+  async findLabelWithName(boardId: string, label: Label) {
+    let _label = undefined;
+    let promise = new Promise((resolve, reject) => {
+      this._store
+        .collection(this.authService.getUID())
+        .doc(boardId)
+        .collection("labels", (ref) =>
+          ref.where("name", "==", label.name).limit(1)
+        )
+        .valueChanges()
+        .subscribe((label) => {
+          _label = label;
+          resolve(_label);
+        });
+      // return _label;
+    });
   }
 
   addLabel(boardId: string, label: Label) {
@@ -183,7 +224,16 @@ export class BoardService {
       .add(label)
       .then((docRef) => {
         return docRef.id;
-    });
+      });
+  }
+
+  addLabelWithGivenId(boardId: string, labelId: string, label: Label) {
+    this._store
+      .collection(this.authService.getUID())
+      .doc(boardId)
+      .collection("labels")
+      .doc(labelId)
+      .set(label);
   }
 
   updateLabel(boardId: string, labelId: string, label: Label) {
@@ -192,7 +242,7 @@ export class BoardService {
       .doc(boardId)
       .collection("labels")
       .doc(labelId)
-      .set(label, { merge: true })
+      .set(label, { merge: true });
   }
 
   deleteLabel(boardId: string, labelId: string) {

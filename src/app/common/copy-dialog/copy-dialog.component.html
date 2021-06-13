@@ -4,29 +4,35 @@
   <p class="sub-header">Title</p>
   <mat-form-field class="example-full-width">
     <mat-label>Title</mat-label>
-    <input matInput placeholder="Buy Pizza" [(ngModel)]="titleText">
+    <input matInput placeholder="Buy Pizza" [(ngModel)]="titleText" />
   </mat-form-field>
 
   <p class="sub-header">Keep</p>
   <div class="checkboxes">
-    <mat-checkbox [color]="primaryColor" [(ngModel)]="keepChecklist">Checklists</mat-checkbox>
-    <mat-checkbox [color]="primaryColor" [(ngModel)]="keepLabels">Labels</mat-checkbox>
-    <mat-checkbox [color]="primaryColor" [(ngModel)]="keepDueDate">Duedate</mat-checkbox>
+    <mat-checkbox [color]="primaryColor" [(ngModel)]="keepChecklist"
+      >Checklists</mat-checkbox
+    >
+    <mat-checkbox [color]="primaryColor" [(ngModel)]="keepLabels"
+      >Labels</mat-checkbox
+    >
+    <mat-checkbox [color]="primaryColor" [(ngModel)]="keepDueDate"
+      >Duedate</mat-checkbox
+    >
   </div>
   <p class="sub-header">Copy To</p>
   <mat-form-field appearance="fill" class="section">
     <mat-label>Select Board</mat-label>
     <mat-select name="board" (selectionChange)="boardSelected($event)">
-      <mat-option *ngFor="let board of boards" [value]="board">
-        {{board.title}}
+      <mat-option *ngFor="let board of copyBoards" [value]="board">
+        {{ board.title }}
       </mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="fill" class="section">
     <mat-label>Select List</mat-label>
     <mat-select name="list" (selectionChange)="listSelected($event)">
-      <mat-option *ngFor="let list of taskLists" [value]="list">
-        {{list.name}}
+      <mat-option *ngFor="let list of copyTaskLists" [value]="list">
+        {{ list.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>

@@ -21,6 +21,7 @@ export class BaordListComponent implements OnInit {
   constructor(private dialog: MatDialog, private boardService: BoardService) {}
 
   ngOnInit(): void {
+    console.log("BOARDLIST IS INITIATED");
     this.isLoading = true;
     this.boardService.getBoards();
     this.boardSubscription = this.boardService.boardsChanged.subscribe(
@@ -32,6 +33,7 @@ export class BaordListComponent implements OnInit {
   }
 
   ngOnDestroy() {
+    console.log("BOARDLIST IS DESTROYED");
     this.boardSubscription.unsubscribe();
   }
 

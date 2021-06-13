@@ -15,7 +15,7 @@ import {
   DeleteConfirmationDialogComponent,
   DeleteConfirmationDialogResult,
 } from "src/app/common/delete.dialog.component";
-import { Label } from '../task/label';
+import { Label } from "../task/label";
 
 @Component({
   selector: "task-list",
@@ -46,6 +46,7 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log("TASK LIST INITIATED");
     this.isLoading = true;
     this.boardService.getTaskList(this.boardId);
     this.boardService.getTasks(this.boardId);
@@ -75,6 +76,7 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnDestroy() {
+    console.log("TASK LIST DESTROYED");
     this.taskListsSubscription.unsubscribe();
     this.tasksSubscription.unsubscribe();
     this.labelsSubscription.unsubscribe();
@@ -130,17 +132,22 @@ export class TaskListComponent implements OnInit {
       }
       console.log(result);
 
-      if(result.delete) {
+      if (result.delete) {
+        this.labels.forEach((label: Label) => {
+          if (label.taskIds && label.taskIds.includes(result.task.id)) {
+            label.taskIds.splice(label.taskIds.indexOf(result.task.id), 1);
+            this.boardService.updateLabel(this.boardId, label.id, label);
+          }
+        });
         this.boardService.deleteTask(this.boardId, result.task.id);
       } else {
         this.boardService.updateTask(this.boardId, result.task.id, result.task);
-        if(result.labels && result.labels.length > 0) {
+        if (result.labels && result.labels.length > 0) {
           result.labels.forEach((label: Label) => {
             this.boardService.updateLabel(this.boardId, label.id, label);
           });
         }
       }
-
     });
   }
 
@@ -167,7 +174,7 @@ export class TaskListComponent implements OnInit {
     console.log(this.listName);
     const newList: TaskList = {
       name: this.listName,
-      list: this.listName + "List"
+      list: this.listName + "List",
     };
     this.boardService.addTaskList(this.boardId, newList);
 

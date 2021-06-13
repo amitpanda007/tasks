@@ -4,16 +4,16 @@
   <mat-form-field appearance="fill" class="section">
     <mat-label>Select Board</mat-label>
     <mat-select name="board" (selectionChange)="boardSelected($event)">
-      <mat-option *ngFor="let board of boards" [value]="board">
-        {{board.title}}
+      <mat-option *ngFor="let board of moveBoards" [value]="board">
+        {{ board.title }}
       </mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="fill" class="section">
     <mat-label>Select List</mat-label>
     <mat-select name="list" (selectionChange)="listSelected($event)">
-      <mat-option *ngFor="let list of taskLists" [value]="list">
-        {{list.name}}
+      <mat-option *ngFor="let list of moveTaskLists" [value]="list">
+        {{ list.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>

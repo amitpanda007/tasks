@@ -29,8 +29,14 @@ import {
   MemberDialogComponent,
   MemberDialogResult,
 } from "../member-dialog/member-dialog.component";
-import { MoveDialogComponent, MoveDialogResult } from '../move-dialog/move-dialog.component';
-import { CopyDialogComponent, CopyDialogResult } from '../copy-dialog/copy-dialog.component';
+import {
+  MoveDialogComponent,
+  MoveDialogResult,
+} from "../move-dialog/move-dialog.component";
+import {
+  CopyDialogComponent,
+  CopyDialogResult,
+} from "../copy-dialog/copy-dialog.component";
 
 @Component({
   selector: "app-task-dialog",
@@ -59,6 +65,7 @@ export class TaskDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log(this.data.task.id);
     this.filteredChecklist = this.data.task.checklist;
     this.calculateChecklistCompleted();
     this.checkDueDateStatus();
@@ -183,13 +190,13 @@ export class TaskDialogComponent implements OnInit {
   showHideCompletedChecklist() {
     console.info("Hiding completed checklist items.");
     this.showHideCompletedTask = !this.showHideCompletedTask;
-    if(this.showHideCompletedTask) {
-      this.filteredChecklist = this.data.task.checklist.filter((checklist: CheckList) => {
-        return (
-          checklist.done != true
-        );
-      });
-    }else {
+    if (this.showHideCompletedTask) {
+      this.filteredChecklist = this.data.task.checklist.filter(
+        (checklist: CheckList) => {
+          return checklist.done != true;
+        }
+      );
+    } else {
       this.filteredChecklist = this.data.task.checklist;
     }
   }
@@ -289,13 +296,18 @@ export class TaskDialogComponent implements OnInit {
     const dialogRef = this.dialog.open(MoveDialogComponent, {
       width: "360px",
       data: {
-        taskId: this.data.task.id
+        boardId: this.data.boardId,
+        task: this.data.task,
+        labels: this.data.labels,
       },
     });
     dialogRef.afterClosed().subscribe((result: MoveDialogResult) => {
       console.log(result);
       if (!result) {
         return;
+      }
+      if (result.targetListId == null) {
+        this.cancel();
       }
       this.data.task.listId = result.targetListId;
     });
@@ -307,7 +319,7 @@ export class TaskDialogComponent implements OnInit {
       data: {
         boardId: this.data.boardId,
         task: this.data.task,
-        labels: this.data.labels
+        labels: this.data.labels,
       },
     });
     dialogRef.afterClosed().subscribe((result: CopyDialogResult) => {
