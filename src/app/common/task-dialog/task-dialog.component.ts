@@ -37,6 +37,8 @@ import {
   CopyDialogComponent,
   CopyDialogResult,
 } from "../copy-dialog/copy-dialog.component";
+import { ErrorSnackbar, SuccessSnackbar } from "../snackbar.component";
+import { MatSnackBar } from "@angular/material";
 
 @Component({
   selector: "app-task-dialog",
@@ -172,8 +174,31 @@ export class TaskDialogComponent implements OnInit {
   }
 
   setDueDateChecklist($event: CheckList) {
-    const index = this.data.task.checklist.indexOf($event);
-    console.log(index);
+    // const index = this.data.task.checklist.indexOf($event);
+    // console.log($event);
+    let localDate: firestore.Timestamp;
+    if ($event.dueDate && $event.dueDate.date) {
+      localDate = $event.dueDate.date;
+    }
+    const dialogRef = this.dialog.open(CalenderDialogComponent, {
+      width: "360px",
+      data: {
+        date: localDate,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: CalenderDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+
+      //Check if dueDate is empty & initialize to empty object
+      if ($event.dueDate == undefined) {
+        $event.dueDate = {};
+      }
+
+      $event.dueDate.date = result.date;
+    });
   }
 
   assignChecklist($event: CheckList) {
@@ -329,6 +354,24 @@ export class TaskDialogComponent implements OnInit {
         return;
       }
     });
+  }
+
+  async shareBoard() {
+    let angularNavigator: any;
+    angularNavigator = window.navigator;
+
+    const baseUrl = window.location.origin;
+    const shareData = {
+      title: "Interview URL",
+      text: "click on URL to navigate to an Interview",
+      url: `${baseUrl}/boards/${this.data.boardId}`,
+    };
+
+    if (angularNavigator && angularNavigator.share) {
+      await angularNavigator.share(shareData).then((_) => {
+        console.log("Share Complete");
+      });
+    }
   }
 }
 

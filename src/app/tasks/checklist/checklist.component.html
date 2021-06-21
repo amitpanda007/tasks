@@ -11,25 +11,39 @@
     [ngClass]="{ 'checklist-done': checklist.done == true }"
     >{{ checklist.text }}</span
   >
+  <p
+    *ngIf="checklist.dueDate"
+    class="action-schedule"
+    [ngClass]="{
+      'due-overdue': checklistOverDue == true,
+      'due-complete':
+        checklist.done == true || checklist.dueDate.completed == true
+    }"
+    (click)="duedate.emit(checklist)"
+  >
+    <mat-icon class="icon">schedule</mat-icon>
+    <span>{{ checklist.dueDate.date | dateformat: "short" }}</span>
+  </p>
+
   <div class="checklist-text checklist-edit-input" *ngIf="checklist.isEditing">
     <input matInput [(ngModel)]="checklist.text" />
     <span (click)="toggleChecklistEditing(checklist)" class="done">
-      <mat-icon>done</mat-icon>
+      <mat-icon class="icon">done</mat-icon>
     </span>
     <span (click)="toggleChecklistEditing(checklist)" class="close">
-      <mat-icon>close</mat-icon>
+      <mat-icon class="icon">close</mat-icon>
     </span>
   </div>
 
   <div class="checklist-options">
-    <span (click)="duedate.emit(checklist)">
-      <mat-icon>schedule</mat-icon>
+    <span (click)="duedate.emit(checklist)" *ngIf="!checklist.dueDate">
+      <mat-icon class="icon">schedule</mat-icon>
     </span>
     <span (click)="assign.emit(checklist)">
-      <mat-icon>person_add</mat-icon>
+      <mat-icon class="icon">person_add</mat-icon>
     </span>
     <span (click)="delete.emit(checklist)">
-      <mat-icon>delete</mat-icon>
+      <mat-icon class="icon">delete</mat-icon>
     </span>
   </div>
 </div>

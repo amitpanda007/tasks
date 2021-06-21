@@ -8,6 +8,8 @@ import { firestore } from "firebase";
   styleUrls: ["./member-dialog.component.scss"],
 })
 export class MemberDialogComponent {
+  public memberSearch: string;
+
   constructor(
     public dialogRef: MatDialogRef<MemberDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MemberDialogData
@@ -19,6 +21,10 @@ export class MemberDialogComponent {
 
   save() {
     this.dialogRef.close(this.data);
+  }
+
+  showAllMembers() {
+    console.log("Showing all members");
   }
 }
 

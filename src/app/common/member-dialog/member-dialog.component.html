@@ -1,5 +1,23 @@
 <div mat-dialog-content>
-  <p>Add Member to Board</p>
+  <p class="sub-header">Add Member to Board</p>
+  <mat-form-field class="title">
+    <mat-label>Search Members</mat-label>
+    <input
+      matInput
+      cdkFocusInitial
+      autocomplete="off"
+      [(ngModel)]="memberSearch"
+    />
+  </mat-form-field>
+  <p class="sub-header">BOARD MEMBERS</p>
+
+  <button
+    mat-stroked-button
+    aria-label="show members"
+    (click)="showAllMembers()"
+  >
+    Show Available Members
+  </button>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="save()" cdkFocusInitial>Ok</button>

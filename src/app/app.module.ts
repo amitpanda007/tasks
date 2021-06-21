@@ -28,9 +28,10 @@ import { ColorSwatchesModule } from "ngx-color/swatches";
 import { CalenderDialogComponent } from "./common/calender-dialog/calender-dialog.component";
 import { ColorDialogComponent } from "./common/color-dialog/color-dialog.component";
 import { MemberDialogComponent } from "./common/member-dialog/member-dialog.component";
-import { DragDropModule } from '@angular/cdk/drag-drop';
-import { MoveDialogComponent } from './common/move-dialog/move-dialog.component';
-import { CopyDialogComponent } from './common/copy-dialog/copy-dialog.component';
+import { DragDropModule } from "@angular/cdk/drag-drop";
+import { MoveDialogComponent } from "./common/move-dialog/move-dialog.component";
+import { CopyDialogComponent } from "./common/copy-dialog/copy-dialog.component";
+import { InviteDialogComponent } from "./common/invite-dialog/invite-dialog.component";
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { CopyDialogComponent } from './common/copy-dialog/copy-dialog.component'
     ColorDialogComponent,
     MemberDialogComponent,
     MoveDialogComponent,
-    CopyDialogComponent
+    CopyDialogComponent,
+    InviteDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -65,7 +67,7 @@ import { CopyDialogComponent } from './common/copy-dialog/copy-dialog.component'
     AngularFireAuthGuardModule,
     ColorCircleModule,
     ColorSwatchesModule,
-    DragDropModule
+    DragDropModule,
   ],
   entryComponents: [
     SuccessSnackbar,
@@ -79,7 +81,8 @@ import { CopyDialogComponent } from './common/copy-dialog/copy-dialog.component'
     ColorDialogComponent,
     MemberDialogComponent,
     MoveDialogComponent,
-    CopyDialogComponent
+    CopyDialogComponent,
+    InviteDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

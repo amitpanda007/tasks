@@ -7,7 +7,7 @@
 }
 
 .single-checklist:hover {
-  background-color: rgb(188, 243, 243);
+  background-color: rgba(188, 243, 243, 0.2);
 }
 
 .checklist-text {
@@ -44,11 +44,49 @@
 }
 
 .checklist-options mat-icon {
-  margin-right: 5px;
+  margin-right: 1px;
   cursor: pointer;
 }
 
 .single-checklist:hover .checklist-options {
   display: flex;
   color: darkslategray;
+}
+
+.material-icons {
+  font-size: 18px;
+}
+
+.action-schedule {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  font-size: x-small;
+  width: 80px;
+  cursor: pointer;
+}
+
+.action-schedule span {
+  font-weight: 500;
+}
+
+.due-overdue {
+  background-color: #ea80fc;
+  color: #6a1b9a;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.due-complete {
+  background-color: #b2ff59;
+  color: #33691e;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
 }

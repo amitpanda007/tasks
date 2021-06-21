@@ -58,7 +58,9 @@
           color="primary"
         ></mat-checkbox>
         <!-- <input matInput [(ngModel)]="data.task.dueDate.date" /> -->
-        <span class="due-date">{{ data.task.dueDate.date | dateformat:"" }}</span>
+        <span class="due-date">{{
+          data.task.dueDate.date | dateformat: ""
+        }}</span>
         <span class="due-complete" *ngIf="data.task.dueDate.completed"
           >COMPLETED</span
         >
@@ -71,17 +73,17 @@
     </section>
 
     <section class="checklist">
-      <p class="sub-header">Check List 
+      <p class="sub-header">
+        Check List
         <!-- <span *ngIf="data.task.checklist">[{{ doneChecklist }}/{{ data.task.checklist.length }}]</span> -->
         <span>
-          <button
-          mat-stroked-button
-          (click)="showHideCompletedChecklist()"
-        ><span *ngIf="showHideCompletedTask">Show</span><span *ngIf="!showHideCompletedTask">Hide</span> checked items</button>
-        <button
-          mat-stroked-button
-          (click)="deleteAllChecklist()"
-        >Delete</button>
+          <button mat-stroked-button (click)="showHideCompletedChecklist()">
+            <span *ngIf="showHideCompletedTask">Show</span
+            ><span *ngIf="!showHideCompletedTask">Hide</span> checked items
+          </button>
+          <button mat-stroked-button (click)="deleteAllChecklist()">
+            Delete
+          </button>
         </span>
       </p>
       <div class="checklist-progress" *ngIf="data.task.checklist">
@@ -93,18 +95,22 @@
           value="{{ checklistCompleted }}"
         ></mat-progress-bar>
       </div>
-      <div cdkDropList (cdkDropListDropped)="drop($event)" class="checklist-list">
+      <div
+        cdkDropList
+        (cdkDropListDropped)="drop($event)"
+        class="checklist-list"
+      >
         <!-- <div *ngFor="let checklist of data.task.checklist" class="checklist-box"> -->
-          <checklist
-            cdkDrag
-            *ngFor="let checklist of filteredChecklist"
-            class="checklist-box"
-            [checklist]="checklist"
-            (duedate)="setDueDateChecklist($event)"
-            (assign)="assignChecklist($event)"
-            (delete)="deleteChecklist($event)"
-            (done)="checklistClicked($event)"
-          ></checklist>
+        <checklist
+          cdkDrag
+          *ngFor="let checklist of filteredChecklist"
+          class="checklist-box"
+          [checklist]="checklist"
+          (duedate)="setDueDateChecklist($event)"
+          (assign)="assignChecklist($event)"
+          (delete)="deleteChecklist($event)"
+          (done)="checklistClicked($event)"
+        ></checklist>
         <!-- </div> -->
       </div>
 
@@ -216,7 +222,18 @@
         </span>
       </button>
 
-      <button mat-stroked-button>
+      <button mat-stroked-button [disabled]="true">
+        <span
+          class="option-content"
+          matTooltip="Feature not available"
+          [matTooltipDisabled]="false"
+          [matTooltipPosition]="tooltipPosition"
+        >
+          <mat-icon class="material-icons-outlined">archive</mat-icon> Archive
+        </span>
+      </button>
+
+      <button mat-stroked-button (click)="shareBoard()">
         <span class="option-content">
           <mat-icon class="material-icons-outlined">share</mat-icon> Share
         </span>

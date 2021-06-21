@@ -16,6 +16,10 @@ import {
   DeleteConfirmationDialogResult,
 } from "src/app/common/delete.dialog.component";
 import { Label } from "../task/label";
+import {
+  InviteDialogComponent,
+  InviteDialogResult,
+} from "src/app/common/invite-dialog/invite-dialog.component";
 
 @Component({
   selector: "task-list",
@@ -196,5 +200,18 @@ export class TaskListComponent implements OnInit {
 
   hideInput() {
     this.showInputField = false;
+  }
+
+  inviteMembers() {
+    console.log("Initiating Invite Member");
+    const dialogRef = this.dialog.open(InviteDialogComponent, {
+      width: "360px",
+      data: {
+        email: "",
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: InviteDialogResult) => {
+      console.log(result);
+    });
   }
 }

@@ -45,6 +45,10 @@ export class NavComponent implements OnInit {
   }
 
   openBoards() {
-    this.router.navigate(["/boards"])
+    this.router.navigate(["/boards"]);
+  }
+
+  openDaily() {
+    this.router.navigate(["/daily"]);
   }
 }

@@ -1,0 +1,26 @@
+<div mat-dialog-content>
+  <p class="sub-header">Invite Members</p>
+  <div>
+    <mat-form-field class="title">
+      <input
+        matInput
+        cdkFocusInitial
+        autocomplete="off"
+        [(ngModel)]="inviteEmail"
+        placeholder="Email address"
+      />
+    </mat-form-field>
+    <div>
+      <button
+        mat-stroked-button
+        aria-label="sedn invitation"
+        (click)="sendInvitation()"
+      >
+        Send invitation
+      </button>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="cancel()">Cancel</button>
+    </div>
+  </div>
+</div>

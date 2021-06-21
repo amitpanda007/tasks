@@ -13,11 +13,27 @@ export class ChecklistComponent implements OnInit {
   @Output() delete = new EventEmitter<CheckList>();
   @Output() done = new EventEmitter<CheckList>();
 
+  public checklistOverDue: boolean;
+
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.checkDueDateStatus();
+  }
 
   toggleChecklistEditing(checklist: CheckList) {
     checklist.isEditing = !checklist.isEditing;
+  }
+
+  checkDueDateStatus() {
+    if (this.checklist.dueDate && this.checklist.dueDate.date) {
+      const timeNowMilli = new Date().getTime();
+      const firebaseTime = Number(this.checklist.dueDate.date.toDate());
+      if (firebaseTime > timeNowMilli) {
+        this.checklistOverDue = false;
+      } else {
+        this.checklistOverDue = true;
+      }
+    }
   }
 }

@@ -6,8 +6,11 @@
   <div class="spacer" *ngIf="afAuth.user | async as user">
     <span>Welcome, {{ user.displayName }}</span>
     <a *ngIf="auth.isLoggedIn()" class="nav-padding" (click)="openBoards()"
-    ><span>Boards</span></a
-  >
+      ><span>Boards</span></a
+    >
+    <a *ngIf="auth.isLoggedIn()" class="nav-padding" (click)="openDaily()"
+      ><span>Daily</span></a
+    >
   </div>
 
   <div class="spacer"></div>
