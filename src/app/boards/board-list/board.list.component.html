@@ -13,4 +13,15 @@
       ></board>
     </div>
   </div>
+  <div class="share"></div>
+  <div class="container-wrapper">
+    <div class="container">
+      <p class="empty-label" *ngIf="sharedBoards?.length === 0">Empty Shared Board</p>
+      <board
+        (edit)="editBoard($event)"
+        *ngFor="let shareBoard of sharedBoards"
+        [board]="shareBoard"
+      ></board>
+    </div>
+  </div>
 </div>

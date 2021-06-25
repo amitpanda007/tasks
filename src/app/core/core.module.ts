@@ -13,6 +13,7 @@ import { MatSnackBarModule } from "@angular/material";
 import { NavService } from "./services/nav.service";
 import { HomeService } from "./services/home.service";
 import { BoardService } from "./services/board.service";
+import { BoardServiceV2 } from './services/boardv2.service';
 
 @NgModule({
   imports: [CommonModule, SharedModule],
@@ -26,6 +27,7 @@ import { BoardService } from "./services/board.service";
     NavService,
     HomeService,
     BoardService,
+    BoardServiceV2,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
 })

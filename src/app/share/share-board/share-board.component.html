@@ -1,0 +1,27 @@
+<div class="share-board">
+  <mat-card class="item" *ngIf="showInvitation">
+    <mat-card-header>
+        <mat-card-title>{{board?.title}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>You have been invited to collaborate on a Board. Accept if you with to work on this board.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-stroked-button color="primary" (click)="accept()">ACCEPT</button>
+        <button mat-stroked-button color="warn"(click)="cancel()">CANCEL</button>
+      </mat-card-actions>
+  </mat-card>
+  <mat-card class="item" *ngIf="isInvalidInvitation">
+    <mat-card-content>
+      <p>The Invitation may not be valid or has expired. Please check again with Board Owner to get a new Invitation Link.</p>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="item" *ngIf="hasBoardAccess">
+      <mat-card-header>
+        <mat-card-title>{{board?.title}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>You Already have access to this Board. Please navigate to <a href="{{boardLink}}">Board</a> section to view the content.</p>
+      </mat-card-content>
+  </mat-card>
+</div>

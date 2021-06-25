@@ -7,7 +7,7 @@ import {
   TaskDialogResult,
 } from "src/app/common/task-dialog/task-dialog.component";
 import { MatDialog } from "@angular/material";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { BoardService } from "../../core/services/board.service";
 import { TaskList } from "./tasklist";
@@ -20,6 +20,9 @@ import {
   InviteDialogComponent,
   InviteDialogResult,
 } from "src/app/common/invite-dialog/invite-dialog.component";
+import { BoardServiceV2 } from '../../core/services/boardv2.service';
+import { AuthService } from '../../core/services/auth.service';
+import { Board } from '../../boards/board/board';
 
 @Component({
   selector: "task-list",
@@ -31,10 +34,12 @@ export class TaskListComponent implements OnInit {
   private tasksSubscription: Subscription;
   private labelsSubscription: Subscription;
 
+  public hasBoardAccess: boolean = false;
   private boardId: string;
   public showInputField: boolean = false;
   public isLoading: boolean;
   public listName: string = "";
+  
 
   public taskList: TaskList[];
   public tasks: Task[];
@@ -43,20 +48,36 @@ export class TaskListComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private boardService: BoardService
+    private router: Router,
+    private boardServiceV2: BoardServiceV2,
+    private authService: AuthService
   ) {
     this.boardId = this.route.snapshot.params.boardId;
     console.log(this.boardId);
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    // Check if user has access to this board
+    const board: Board = await this.boardServiceV2.getBoardWithPromise(this.boardId).then(board => {
+      return board.data() as Board;
+    });
+    const userUID = this.authService.getUID();
+    if(board.owner == userUID || (board.shared && board.shared.includes(this.authService.getUID()))) {
+      console.log("User has access.");
+      this.hasBoardAccess = true;
+    }else {
+      console.log("You dont have Access to this Board.");
+      this.router.navigate(["/boards"]);
+      return;
+    }
+
     console.log("TASK LIST INITIATED");
     this.isLoading = true;
-    this.boardService.getTaskList(this.boardId);
-    this.boardService.getTasks(this.boardId);
-    this.boardService.getLabels(this.boardId);
+    this.boardServiceV2.getTaskList(this.boardId);
+    this.boardServiceV2.getTasks(this.boardId);
+    this.boardServiceV2.getLabels(this.boardId);
 
-    this.taskListsSubscription = this.boardService.taskListsChanged.subscribe(
+    this.taskListsSubscription = this.boardServiceV2.taskListsChanged.subscribe(
       (lists) => {
         console.log(lists);
         this.taskList = lists;
@@ -64,14 +85,14 @@ export class TaskListComponent implements OnInit {
       }
     );
 
-    this.tasksSubscription = this.boardService.tasksChanged.subscribe(
+    this.tasksSubscription = this.boardServiceV2.tasksChanged.subscribe(
       (tasks) => {
         console.log(tasks);
         this.tasks = tasks;
       }
     );
 
-    this.labelsSubscription = this.boardService.labelListChanged.subscribe(
+    this.labelsSubscription = this.boardServiceV2.labelListChanged.subscribe(
       (labels) => {
         console.log(labels);
         this.labels = labels;
@@ -81,12 +102,20 @@ export class TaskListComponent implements OnInit {
 
   ngOnDestroy() {
     console.log("TASK LIST DESTROYED");
-    this.taskListsSubscription.unsubscribe();
-    this.tasksSubscription.unsubscribe();
-    this.labelsSubscription.unsubscribe();
-    this.boardService.cancelTaskListsSubscription();
-    this.boardService.cancelTasksSubscription();
-    this.boardService.cancelLabelSubscription();
+    if(this.taskListsSubscription) {
+      this.taskListsSubscription.unsubscribe();
+      this.boardServiceV2.cancelTaskListsSubscription();
+    }
+
+    if(this.tasksSubscription) {
+      this.tasksSubscription.unsubscribe();
+      this.boardServiceV2.cancelTasksSubscription();
+    }
+
+    if(this.labelsSubscription) {
+      this.labelsSubscription.unsubscribe();
+      this.boardServiceV2.cancelLabelSubscription();
+    }
   }
 
   remainingList(curList: string) {
@@ -111,7 +140,7 @@ export class TaskListComponent implements OnInit {
     const taskId = event.container.data[0].id;
     const newTaskListId = event.container.id;
     console.log(taskId, newTaskListId);
-    this.boardService.moveTasks(this.boardId, taskId, newTaskListId);
+    this.boardServiceV2.moveTasks(this.boardId, taskId, newTaskListId);
 
     transferArrayItem(
       event.previousContainer.data,
@@ -143,20 +172,20 @@ export class TaskListComponent implements OnInit {
         this.labels.forEach((label: Label) => {
           if (label.taskIds && label.taskIds.includes(result.task.id)) {
             label.taskIds.splice(label.taskIds.indexOf(result.task.id), 1);
-            this.boardService.updateLabel(this.boardId, label.id, label);
+            this.boardServiceV2.updateLabel(this.boardId, label.id, label);
           }
         });
-        this.boardService.deleteTask(this.boardId, result.task.id);
+        this.boardServiceV2.deleteTask(this.boardId, result.task.id);
       } else {
-        this.boardService.updateTask(this.boardId, result.task.id, result.task);
+        this.boardServiceV2.updateTask(this.boardId, result.task.id, result.task);
         if (result.updatedLabels && result.updatedLabels.length > 0) {
           result.updatedLabels.forEach((label) => {
-            this.boardService.updateLabel(this.boardId, label.id, label);
+            this.boardServiceV2.updateLabel(this.boardId, label.id, label);
           });
         }
         // if (result.labels && result.labels.length > 0) {
         //   result.labels.forEach((label: Label) => {
-        //     this.boardService.updateLabel(this.boardId, label.id, label);
+        //     this.boardServiceV2.updateLabel(this.boardId, label.id, label);
         //   });
         // }
       }
@@ -178,7 +207,7 @@ export class TaskListComponent implements OnInit {
         return;
       }
       result.task.listId = taskListId;
-      this.boardService.addTask(this.boardId, result.task);
+      this.boardServiceV2.addTask(this.boardId, result.task);
     });
   }
 
@@ -188,7 +217,7 @@ export class TaskListComponent implements OnInit {
       name: this.listName,
       list: this.listName + "List",
     };
-    this.boardService.addTaskList(this.boardId, newList);
+    this.boardServiceV2.addTaskList(this.boardId, newList);
 
     this.listName = "";
     this.hideInput();
@@ -207,6 +236,7 @@ export class TaskListComponent implements OnInit {
     const dialogRef = this.dialog.open(InviteDialogComponent, {
       width: "360px",
       data: {
+        boardId: this.boardId,
         email: "",
       },
     });

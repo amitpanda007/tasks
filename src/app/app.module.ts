@@ -32,6 +32,7 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
 import { MoveDialogComponent } from "./common/move-dialog/move-dialog.component";
 import { CopyDialogComponent } from "./common/copy-dialog/copy-dialog.component";
 import { InviteDialogComponent } from "./common/invite-dialog/invite-dialog.component";
+import { ShareModule } from './share/share.module';
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import { InviteDialogComponent } from "./common/invite-dialog/invite-dialog.comp
     ColorCircleModule,
     ColorSwatchesModule,
     DragDropModule,
+    ShareModule
   ],
   entryComponents: [
     SuccessSnackbar,

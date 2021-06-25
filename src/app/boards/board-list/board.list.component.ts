@@ -7,6 +7,8 @@ import {
 } from "src/app/common/board-dialog/board-dialog.component";
 import { Subscription } from "rxjs";
 import { BoardService } from "src/app/core/services/board.service";
+import { BoardServiceV2 } from '../../core/services/boardv2.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: "board-list",
@@ -15,18 +17,27 @@ import { BoardService } from "src/app/core/services/board.service";
 })
 export class BaordListComponent implements OnInit {
   public boards: Board[];
+  public sharedBoards: Board[];
   private boardSubscription: Subscription;
   public isLoading: boolean;
 
-  constructor(private dialog: MatDialog, private boardService: BoardService) {}
+  constructor(private dialog: MatDialog, private boardServiceV2: BoardServiceV2, private authService: AuthService) {}
 
   ngOnInit(): void {
     console.log("BOARDLIST IS INITIATED");
     this.isLoading = true;
-    this.boardService.getBoards();
-    this.boardSubscription = this.boardService.boardsChanged.subscribe(
+    this.boardServiceV2.getBoards();
+    this.boardSubscription = this.boardServiceV2.boardsChanged.subscribe(
       (boards) => {
         this.boards = boards;
+        this.isLoading = false;
+      }
+    );
+
+    this.boardServiceV2.getSharedBoards();
+    this.boardSubscription = this.boardServiceV2.sharedBoardsChanged.subscribe(
+      (shareBoards) => {
+        this.sharedBoards = shareBoards;
         this.isLoading = false;
       }
     );
@@ -48,7 +59,13 @@ export class BaordListComponent implements OnInit {
       if (!result) {
         return;
       }
-      this.boardService.addBoard(result.board);
+      
+      const board: Board = {
+        title: result.board.title,
+        description: result.board.description,
+        owner: this.authService.getUID()
+      }
+      this.boardServiceV2.addBoard(board);
     });
   }
 

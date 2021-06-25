@@ -10,17 +10,26 @@
         placeholder="Email address"
       />
     </mat-form-field>
-    <div>
-      <button
-        mat-stroked-button
-        aria-label="sedn invitation"
-        (click)="sendInvitation()"
-      >
-        Send invitation
-      </button>
-    </div>
-    <div mat-dialog-actions>
-      <button mat-button (click)="cancel()">Cancel</button>
-    </div>
+    <button
+      mat-stroked-button
+      aria-label="sedn invitation"
+      (click)="sendInvitation()"
+    >
+      Send invitation
+    </button>
   </div>
+  <p class="sub-header">Create Invite Link</p>
+  <div class="invite-link">
+    <a *ngIf="invitationLink" target="_blank" href="{{invitationLink}}">Invitation Link</a>
+  </div>
+  <button
+    mat-stroked-button
+    aria-label="create invite link"
+    (click)="createInvitation()"
+  >
+  Create invitation
+  </button>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="cancel()">Cancel</button>
 </div>

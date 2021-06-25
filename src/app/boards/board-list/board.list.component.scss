@@ -19,7 +19,7 @@ mat-toolbar > span {
 
 .container {
   width: 400px;
-  margin: 0 25px 25px 0;
+  margin: 25px;
 }
 
 .list {
@@ -37,4 +37,8 @@ app-new-task {
   padding-top: 10px;
   text-align: center;
   opacity: 0.2;
+}
+
+.share {
+  border-top: 2px dotted gray;
 }

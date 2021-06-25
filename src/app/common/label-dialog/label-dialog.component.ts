@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Label } from "../../tasks/task/label";
 import { ColorEvent } from "ngx-color";
 import { BoardService } from "src/app/core/services/board.service";
+import { BoardServiceV2 } from '../../core/services/boardv2.service';
 
 @Component({
   selector: "app-label-dialog",
@@ -22,7 +23,7 @@ export class LabelDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<LabelDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: LabelDialogData,
-    private boardService: BoardService
+    private boardServiceV2: BoardServiceV2
   ) {}
 
   ngOnInit(): void {
@@ -73,7 +74,7 @@ export class LabelDialogComponent implements OnInit {
       name: this.newLabelName,
       color: this.newLabelColor,
     };
-    const labelId = await this.boardService.addLabel(
+    const labelId = await this.boardServiceV2.addLabel(
       this.data.boardId,
       newLabel
     );
@@ -101,7 +102,7 @@ export class LabelDialogComponent implements OnInit {
     updatedLabel.color = this.newLabelColor;
     updatedLabel.name = this.newLabelName;
 
-    this.boardService.updateLabel(
+    this.boardServiceV2.updateLabel(
       this.data.boardId,
       updatedLabel.id,
       updatedLabel
@@ -114,7 +115,7 @@ export class LabelDialogComponent implements OnInit {
 
   deleteLabel(label: Label) {
     console.log("DELETE LABEL");
-    this.boardService.deleteLabel(this.data.boardId, label.id);
+    this.boardServiceV2.deleteLabel(this.data.boardId, label.id);
     this.data.labels.splice(this.data.labels.indexOf(label), 1);
   }
 

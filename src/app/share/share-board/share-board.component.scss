@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.share-board {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.item {
+  margin-bottom: 10px;
+  width: 20em;
+}

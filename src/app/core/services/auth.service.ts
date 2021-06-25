@@ -10,13 +10,16 @@ import {
 import { AngularFireAuth } from "@angular/fire/auth";
 import { pipe, Observable } from "rxjs";
 import { map } from "rxjs/operators";
+import { AngularFirestore } from '@angular/fire/firestore';
+import { User } from '../../auth/user';
 
 @Injectable()
 export class AuthService {
   constructor(
     private _router: Router,
     private _snackBar: MatSnackBar,
-    private _afAuth: AngularFireAuth
+    private _afAuth: AngularFireAuth,
+    private _store: AngularFirestore
   ) {}
 
   async register(user) {
@@ -28,6 +31,15 @@ export class AuthService {
         password
       );
       await resp.user.updateProfile({ displayName: fullName });
+      
+      // Save data to firebase collection
+      const UID = resp.user.uid;
+      const newUser: User = {
+        name: fullName,
+        email: resp.user.email,
+        creationDate: new Date()
+      }
+      this._store.collection("users").doc(UID).set(newUser);
 
       this._router.navigate([""]);
       this._snackBar.openFromComponent(SuccessSnackbar, {
@@ -90,5 +102,9 @@ export class AuthService {
 
   getUID() {
     return this._afAuth.auth.currentUser.uid;
+  }
+
+  getUserDisplayName() {
+    return this._afAuth.auth.currentUser.displayName;
   }
 }

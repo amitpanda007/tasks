@@ -13,9 +13,9 @@
     >
   </div>
 
-  <div class="spacer"></div>
+  <!-- <div class="spacer"></div> -->
 
-  <a *ngIf="!auth.isLoggedIn()" class="nav-padding" (click)="openLogin()"
+  <!-- <a *ngIf="!auth.isLoggedIn()" class="nav-padding" (click)="openLogin()"
     ><span>Login</span></a
   >
   <a *ngIf="!auth.isLoggedIn()" class="nav-padding" (click)="openRegister()"
@@ -23,5 +23,26 @@
   >
   <a *ngIf="auth.isLoggedIn()" class="nav-padding" (click)="auth.logout()"
     ><span>Logout</span></a
-  >
+  > -->
+
+  <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="manage account">
+      <mat-icon>manage_accounts</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item *ngIf="!auth.isLoggedIn()">
+        <mat-icon>login</mat-icon>
+        <a class="nav-padding" (click)="openLogin()"
+          ><span>Login</span></a>
+      </button>
+      <button mat-menu-item *ngIf="!auth.isLoggedIn()">
+        <mat-icon>add_circle_outline</mat-icon>
+        <a class="nav-padding" (click)="openRegister()"
+          ><span>Register</span></a>
+      </button>
+      <button mat-menu-item *ngIf="auth.isLoggedIn()">
+        <mat-icon>logout</mat-icon>
+        <a class="nav-padding" (click)="auth.logout()"
+          ><span>Logout</span></a>
+      </button>
+    </mat-menu>
 </div>
