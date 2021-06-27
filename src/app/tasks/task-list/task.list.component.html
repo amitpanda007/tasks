@@ -1,5 +1,13 @@
 <div *ngIf="hasBoardAccess">
   <div class="board-options">
+    <div class="members" *ngIf="boardMembers && boardMembers.length > 0">
+      <span
+        class="member"
+        *ngFor="let member of boardMembers"
+        title="{{ member.name }}"
+        >{{ member.name | shortname }}</span
+      >
+    </div>
     <button (click)="inviteMembers()" mat-stroked-button color="primary">
       Invite
     </button>
@@ -29,7 +37,11 @@
             ></task>
           </div>
           <div class="container-add">
-            <button (click)="createNewTask(list.id)" mat-button class="task-btn">
+            <button
+              (click)="createNewTask(list.id)"
+              mat-button
+              class="task-btn"
+            >
               <mat-icon>add</mat-icon> Add Task
             </button>
           </div>
@@ -39,15 +51,11 @@
       <div class="container">
         <div *ngIf="!showInputField">
           <h2>...</h2>
-          <button
-            (click)="showInput()"
-            mat-button
-            color="primary"
-          >
+          <button (click)="showInput()" mat-button color="primary">
             <mat-icon>add</mat-icon> Add New List
           </button>
         </div>
-        
+
         <form *ngIf="showInputField">
           <mat-form-field>
             <mat-label>Task List Header</mat-label>

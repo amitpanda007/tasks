@@ -1,3 +1,4 @@
+import { SharedUser } from "src/app/boards/board/board";
 import { DueDate } from "./duedate";
 
 export interface CheckList {
@@ -7,4 +8,5 @@ export interface CheckList {
   unsaved?: boolean;
   isEditing?: boolean;
   dueDate?: DueDate;
+  members?: SharedUser[];
 }

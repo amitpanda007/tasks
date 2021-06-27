@@ -64,5 +64,11 @@
         Example with a home icon with overlaid badge showing the number 15
       </span>
     </p>
+
+    <div class="members">
+      <span class="member" *ngFor="let member of task.members">{{
+        member.name | shortname
+      }}</span>
+    </div>
   </div>
 </mat-card>

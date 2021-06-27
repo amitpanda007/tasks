@@ -90,3 +90,26 @@
   align-content: center;
   justify-content: center;
 }
+
+.member {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  font-size: xx-small;
+  font-weight: bolder;
+  background-color: #dfe1e6;
+  border-radius: 25em;
+  color: #172b4d;
+  cursor: pointer;
+  float: left;
+  height: 18px;
+  margin: 0 2px 2px 0;
+  overflow: visible;
+  position: relative;
+  width: 18px;
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+  z-index: 0;
+}

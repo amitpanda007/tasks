@@ -20,9 +20,9 @@ import {
   InviteDialogComponent,
   InviteDialogResult,
 } from "src/app/common/invite-dialog/invite-dialog.component";
-import { BoardServiceV2 } from '../../core/services/boardv2.service';
-import { AuthService } from '../../core/services/auth.service';
-import { Board } from '../../boards/board/board';
+import { BoardServiceV2 } from "../../core/services/boardv2.service";
+import { AuthService } from "../../core/services/auth.service";
+import { Board, SharedUser } from "../../boards/board/board";
 
 @Component({
   selector: "task-list",
@@ -33,14 +33,13 @@ export class TaskListComponent implements OnInit {
   private taskListsSubscription: Subscription;
   private tasksSubscription: Subscription;
   private labelsSubscription: Subscription;
+  private boardId: string;
 
   public hasBoardAccess: boolean = false;
-  private boardId: string;
   public showInputField: boolean = false;
   public isLoading: boolean;
-  public listName: string = "";
-  
-
+  public listName: string;
+  public boardMembers: SharedUser[];
   public taskList: TaskList[];
   public tasks: Task[];
   public labels: Label[];
@@ -57,15 +56,23 @@ export class TaskListComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.listName = "";
+    this.boardMembers = [];
     // Check if user has access to this board
-    const board: Board = await this.boardServiceV2.getBoardWithPromise(this.boardId).then(board => {
-      return board.data() as Board;
-    });
+    const board: Board = await this.boardServiceV2
+      .getBoardWithPromise(this.boardId)
+      .then((board) => {
+        return board.data() as Board;
+      });
     const userUID = this.authService.getUID();
-    if(board.owner == userUID || (board.shared && board.shared.includes(this.authService.getUID()))) {
+    if (
+      board.owner == userUID ||
+      (board.shared && board.shared.includes(this.authService.getUID()))
+    ) {
       console.log("User has access.");
       this.hasBoardAccess = true;
-    }else {
+      this.boardMembers = board.sharedUserInfo;
+    } else {
       console.log("You dont have Access to this Board.");
       this.router.navigate(["/boards"]);
       return;
@@ -102,17 +109,17 @@ export class TaskListComponent implements OnInit {
 
   ngOnDestroy() {
     console.log("TASK LIST DESTROYED");
-    if(this.taskListsSubscription) {
+    if (this.taskListsSubscription) {
       this.taskListsSubscription.unsubscribe();
       this.boardServiceV2.cancelTaskListsSubscription();
     }
 
-    if(this.tasksSubscription) {
+    if (this.tasksSubscription) {
       this.tasksSubscription.unsubscribe();
       this.boardServiceV2.cancelTasksSubscription();
     }
 
-    if(this.labelsSubscription) {
+    if (this.labelsSubscription) {
       this.labelsSubscription.unsubscribe();
       this.boardServiceV2.cancelLabelSubscription();
     }
@@ -153,12 +160,14 @@ export class TaskListComponent implements OnInit {
   editTask(task: Task): void {
     const clonedTask = cloneDeep(task);
     const clonedLabels = cloneDeep(this.labels);
+    const clonedBoardMembers = cloneDeep(this.boardMembers);
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: "768px",
       data: {
         task: clonedTask,
         labels: clonedLabels,
         boardId: this.boardId,
+        boardMembers: clonedBoardMembers,
         enableDelete: true,
       },
     });
@@ -177,7 +186,11 @@ export class TaskListComponent implements OnInit {
         });
         this.boardServiceV2.deleteTask(this.boardId, result.task.id);
       } else {
-        this.boardServiceV2.updateTask(this.boardId, result.task.id, result.task);
+        this.boardServiceV2.updateTask(
+          this.boardId,
+          result.task.id,
+          result.task
+        );
         if (result.updatedLabels && result.updatedLabels.length > 0) {
           result.updatedLabels.forEach((label) => {
             this.boardServiceV2.updateLabel(this.boardId, label.id, label);

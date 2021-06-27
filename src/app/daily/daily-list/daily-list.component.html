@@ -1,0 +1,17 @@
+<p class="empty-label" *ngIf="!dailyTasks">Empty list</p>
+<div class="list">
+  <div cdkDropList (cdkDropListDropped)="drop($event)">
+    <div *ngFor="let dailyTask of dailyTasks">
+      <daily-task
+        cdkDrag
+        (edit)="editTask($event)"
+        [dailyTask]="dailyTask"
+      ></daily-task>
+    </div>
+  </div>
+  <div class="container-add">
+    <button (click)="createNewDailyTask()" mat-button>
+      <mat-icon>add</mat-icon> Add Task
+    </button>
+  </div>
+</div>

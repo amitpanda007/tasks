@@ -63,3 +63,31 @@
 ::ng-deep html.cdk-global-scrollblock {
   top: 0px !important;
 }
+
+.members {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  font-weight: 700;
+  background-color: #dfe1e6;
+  border-radius: 25em;
+  color: #172b4d;
+  cursor: pointer;
+  float: left;
+  height: 32px;
+  margin: 0 4px 4px 0;
+  overflow: visible;
+  position: relative;
+  width: 32px;
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+  z-index: 0;
+}

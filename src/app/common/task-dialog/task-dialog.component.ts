@@ -39,6 +39,7 @@ import {
 } from "../copy-dialog/copy-dialog.component";
 import { ErrorSnackbar, SuccessSnackbar } from "../snackbar.component";
 import { MatSnackBar } from "@angular/material";
+import { SharedUser } from "src/app/boards/board/board";
 
 @Component({
   selector: "app-task-dialog",
@@ -204,6 +205,31 @@ export class TaskDialogComponent implements OnInit {
   assignChecklist($event: CheckList) {
     const index = this.data.task.checklist.indexOf($event);
     console.log(index);
+
+    const curChecklist = this.data.task.checklist[index];
+
+    const dialogRef = this.dialog.open(MemberDialogComponent, {
+      width: "360px",
+      data: {
+        members: this.data.boardMembers,
+        addedMembers: curChecklist.members,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: MemberDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+      if (result.addedMembers && result.addedMembers.length > 0) {
+        if (!$event.members) {
+          $event.members = [];
+        }
+        result.addedMembers.forEach((member) => {
+          delete member.isAdded;
+        });
+        $event.members = result.addedMembers;
+      }
+    });
   }
 
   deleteChecklist($event: CheckList) {
@@ -307,13 +333,25 @@ export class TaskDialogComponent implements OnInit {
 
   openMemberDialog() {
     const dialogRef = this.dialog.open(MemberDialogComponent, {
-      width: "240px",
-      data: {},
+      width: "360px",
+      data: {
+        members: this.data.boardMembers,
+        addedMembers: this.data.task.members,
+      },
     });
     dialogRef.afterClosed().subscribe((result: MemberDialogResult) => {
       console.log(result);
       if (!result) {
         return;
+      }
+      if (result.addedMembers && result.addedMembers.length > 0) {
+        if (!this.data.task.members) {
+          this.data.task.members = [];
+        }
+        result.addedMembers.forEach((member) => {
+          delete member.isAdded;
+        });
+        this.data.task.members = result.addedMembers;
       }
     });
   }
@@ -380,6 +418,7 @@ export interface TaskDialogData {
   labels: Label[];
   updatedLabels?: Label[];
   boardId: string;
+  boardMembers: SharedUser[];
   enableDelete: boolean;
 }
 

@@ -10,7 +10,18 @@
     />
   </mat-form-field>
   <p class="sub-header">BOARD MEMBERS</p>
-
+  <div *ngIf="data.members">
+    <button
+      (click)="addRemoveMemberFromTask(member)"
+      mat-stroked-button
+      *ngFor="let member of data.members"
+      class="member-info"
+    >
+      <span class="member">{{ member.name | shortname }}</span>
+      {{ member.name }}
+      <mat-icon *ngIf="member.isAdded">done</mat-icon>
+    </button>
+  </div>
   <button
     mat-stroked-button
     aria-label="show members"

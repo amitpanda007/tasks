@@ -32,7 +32,9 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
 import { MoveDialogComponent } from "./common/move-dialog/move-dialog.component";
 import { CopyDialogComponent } from "./common/copy-dialog/copy-dialog.component";
 import { InviteDialogComponent } from "./common/invite-dialog/invite-dialog.component";
-import { ShareModule } from './share/share.module';
+import { ShareModule } from "./share/share.module";
+import { DailyModule } from "./daily/daily.module";
+import { DailyTaskDialogComponent } from "./common/daily-task-dialog/daily-task-dialog.component";
 
 @NgModule({
   declarations: [
@@ -50,6 +52,7 @@ import { ShareModule } from './share/share.module';
     MoveDialogComponent,
     CopyDialogComponent,
     InviteDialogComponent,
+    DailyTaskDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -62,6 +65,7 @@ import { ShareModule } from './share/share.module';
     HomeModule,
     TasksModule,
     BoardsModule,
+    DailyModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
@@ -69,7 +73,7 @@ import { ShareModule } from './share/share.module';
     ColorCircleModule,
     ColorSwatchesModule,
     DragDropModule,
-    ShareModule
+    ShareModule,
   ],
   entryComponents: [
     SuccessSnackbar,
@@ -85,6 +89,7 @@ import { ShareModule } from './share/share.module';
     MoveDialogComponent,
     CopyDialogComponent,
     InviteDialogComponent,
+    DailyTaskDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

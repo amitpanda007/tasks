@@ -1,0 +1,38 @@
+<div class="main">
+  <mat-form-field class="title">
+    <mat-label>Title</mat-label>
+    <input
+      matInput
+      cdkFocusInitial
+      autocomplete="off"
+      [(ngModel)]="data.dailyTask.title"
+    />
+  </mat-form-field>
+
+  <mat-form-field class="description">
+    <mat-label>Description</mat-label>
+    <textarea
+      matInput
+      [(ngModel)]="data.dailyTask.description"
+      rows="2"
+      cols="50"
+    ></textarea>
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="{ dailyTask: data.dailyTask }">
+    Save
+  </button>
+  <button mat-button (click)="cancel()">Cancel</button>
+
+  <button
+    *ngIf="data.enableDelete"
+    mat-icon-button
+    color="primary"
+    aria-label="Delete"
+    [mat-dialog-close]="{ dailyTask: data.dailyTask, delete: true }"
+  >
+    <mat-icon>delete</mat-icon>
+  </button>
+</div>

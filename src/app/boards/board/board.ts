@@ -4,4 +4,11 @@ export interface Board {
   description: string;
   owner: string;
   shared?: string[];
+  sharedUserInfo?: SharedUser[];
+}
+
+export interface SharedUser {
+  id: string;
+  name: string;
+  isAdded?: boolean;
 }

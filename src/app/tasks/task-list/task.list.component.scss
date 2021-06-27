@@ -56,14 +56,36 @@ app-new-task {
   width: 100%;
   padding: 0;
   margin-left: -16px;
-  background: aqua;
+  background: rgba(0, 255, 255, 0.1);
   transition: opacity 300ms;
 }
 
-.list:hover .task-btn{
+.list:hover .task-btn {
   opacity: 1;
 }
 
 .container-add {
   margin-top: 30px;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  font-weight: 700;
+  background-color: #dfe1e6;
+  border-radius: 25em;
+  color: #172b4d;
+  cursor: pointer;
+  float: left;
+  height: 32px;
+  margin: 0 4px 4px 0;
+  overflow: visible;
+  position: relative;
+  width: 32px;
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+  z-index: 0;
 }

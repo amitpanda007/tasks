@@ -20,6 +20,24 @@
       ></textarea>
     </mat-form-field>
 
+    <section class="members">
+      <p class="sub-header">Members</p>
+      <div class="member-section">
+        <span class="member" *ngFor="let member of data.task.members">{{
+          member.name | shortname
+        }}</span>
+        <div>
+          <button
+            mat-icon-button
+            aria-label="add member"
+            (click)="openMemberDialog()"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
+    </section>
+
     <section class="labels">
       <p class="sub-header">Lables</p>
       <div class="label-section">

@@ -26,12 +26,13 @@ import {
   MatSliderModule,
   MatTableModule,
   MatOptionModule,
-  MatSelectModule
+  MatSelectModule,
 } from "@angular/material";
 
 import { CapitalizePipe } from "./capitalize.pipe";
 import { DefaultPipe } from "./default.pipe";
 import { DateFormatPipe } from "./date.format.pipe";
+import { ShortnamePipe } from "./shortname.pipe";
 
 @NgModule({
   imports: [CommonModule, FormsModule],
@@ -42,6 +43,7 @@ import { DateFormatPipe } from "./date.format.pipe";
     CapitalizePipe,
     DefaultPipe,
     DateFormatPipe,
+    ShortnamePipe,
     MatSnackBarModule,
     MatButtonModule,
     MatCardModule,
@@ -66,9 +68,9 @@ import { DateFormatPipe } from "./date.format.pipe";
     MatSliderModule,
     MatTableModule,
     MatOptionModule,
-    MatSelectModule
+    MatSelectModule,
   ],
-  declarations: [CapitalizePipe, DefaultPipe, DateFormatPipe],
+  declarations: [CapitalizePipe, DefaultPipe, DateFormatPipe, ShortnamePipe],
   providers: [MatNativeDateModule],
 })
 export class SharedModule {}

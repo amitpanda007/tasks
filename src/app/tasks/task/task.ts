@@ -1,3 +1,4 @@
+import { SharedUser } from "src/app/boards/board/board";
 import { CheckList } from "./checklist";
 import { DueDate } from "./duedate";
 
@@ -9,4 +10,5 @@ export interface Task {
   backgroundColor?: string;
   dueDate?: DueDate;
   checklist?: CheckList[];
+  members?: SharedUser[];
 }
