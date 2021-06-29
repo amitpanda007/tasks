@@ -1,4 +1,16 @@
-<mat-card class="item" (click)="edit.emit(dailyTask)">
-  <p>{{ dailyTask.title }}</p>
-  <p>{{ dailyTask.description }}</p>
+<mat-card class="item" [ngClass]="{ 'complete': dailyTask.isComplete == true }">
+  <mat-checkbox
+    [(ngModel)]="dailyTask.isComplete"
+    color="primary"
+    (click)="done.emit(dailyTask)"
+  ></mat-checkbox>
+  <div (click)="edit.emit(dailyTask)" class="details">
+    <p class="title">{{ dailyTask.title }}</p>
+  </div>
+
+  <div class="task-options">
+    <span (click)="delete.emit(dailyTask)">
+      <mat-icon class="icon">delete</mat-icon>
+    </span>
+  </div>
 </mat-card>

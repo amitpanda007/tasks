@@ -26,7 +26,7 @@ export class DailyService {
     this.dailyCollection = this._store
       .collection<DailyTask>("daily")
       .doc(this.authService.getUID())
-      .collection("tasks");
+      .collection("tasks", ref => ref.orderBy("created", "asc"));
 
     this.dailySubscription = this.dailyCollection
       .valueChanges({ idField: "id" })
@@ -42,5 +42,23 @@ export class DailyService {
       .doc(this.authService.getUID())
       .collection("tasks")
       .add(task);
+  }
+
+  updateDailyTask(task: DailyTask) {
+    this._store
+      .collection<DailyTask>("daily")
+      .doc(this.authService.getUID())
+      .collection("tasks")
+      .doc(task.id)
+      .set(task, {merge: true});
+  }
+
+  deleteDailyTask(taskId: string) {
+    this._store
+      .collection<DailyTask>("daily")
+      .doc(this.authService.getUID())
+      .collection("tasks")
+      .doc(taskId)
+      .delete();
   }
 }

@@ -1,13 +1,10 @@
 <p class="empty-label" *ngIf="!dailyTasks">Empty list</p>
 <div class="list">
-  <div cdkDropList (cdkDropListDropped)="drop($event)">
-    <div *ngFor="let dailyTask of dailyTasks">
-      <daily-task
-        cdkDrag
-        (edit)="editTask($event)"
-        [dailyTask]="dailyTask"
-      ></daily-task>
-    </div>
+  <div cdkDropList (cdkDropListDropped)="drop($event)" class="drag-list">
+    <daily-task *ngFor="let dailyTask of dailyTasks" class="drag-item" cdkDrag (edit)="editTask($event)" (delete)="deleteTask($event)" (done)="doneTask($event, status)"
+      [dailyTask]="dailyTask"></daily-task>
+    <input matInput [(ngModel)]="newDailyTaskTitle" autocomplete="off" class="input" placeholder="Enter daily task eg. Buy Milk"
+      (keyup.enter)="createNewDailyTaskQuick()" />
   </div>
   <div class="container-add">
     <button (click)="createNewDailyTask()" mat-button>

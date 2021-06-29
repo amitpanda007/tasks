@@ -1,3 +1,61 @@
 .item {
-  width: 400px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: flex-start;
+}
+
+.title {
+  margin-left: 1em;
+}
+
+.details{
+  cursor: pointer;
+}
+
+.mat-card {
+  padding: 8px !important;
+}
+
+.complete {
+  background-color: #80808070;
+  color: #808080;
+}
+
+.task-options {
+  display: none;
+}
+
+.task-options mat-icon {
+  margin-right: 1px;
+  cursor: pointer;
+}
+
+.single-task {
+  height: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.item:hover .task-options {
+  display: flex;
+  color: darkslategray;
+  position: absolute;
+  right: 10px;
+}
+
+.material-icons {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
 }

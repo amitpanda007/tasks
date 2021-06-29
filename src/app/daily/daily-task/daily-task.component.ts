@@ -10,6 +10,8 @@ import { DailyTask } from "./dailytask";
 export class DailyTaskComponent implements OnInit {
   @Input() dailyTask: DailyTask;
   @Output() edit = new EventEmitter<DailyTask>();
+  @Output() done = new EventEmitter<DailyTask>();
+  @Output() delete = new EventEmitter<DailyTask>();
 
   constructor() {}
 
