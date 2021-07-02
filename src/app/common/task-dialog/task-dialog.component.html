@@ -75,7 +75,6 @@
           [(ngModel)]="data.task.dueDate.completed"
           color="primary"
         ></mat-checkbox>
-        <!-- <input matInput [(ngModel)]="data.task.dueDate.date" /> -->
         <span class="due-date">{{
           data.task.dueDate.date | dateformat: ""
         }}</span>
@@ -93,7 +92,6 @@
     <section class="checklist">
       <p class="sub-header">
         Check List
-        <!-- <span *ngIf="data.task.checklist">[{{ doneChecklist }}/{{ data.task.checklist.length }}]</span> -->
         <span>
           <button mat-stroked-button (click)="showHideCompletedChecklist()">
             <span *ngIf="showHideCompletedTask">Show</span
@@ -105,7 +103,6 @@
         </span>
       </p>
       <div class="checklist-progress" *ngIf="data.task.checklist">
-        <!-- <span>[{{ doneChecklist }}/{{ data.task.checklist.length }}]</span> -->
         <span class="task-completed">{{ checklistCompleted }}%</span>
         <mat-progress-bar
           class="progress-bar"
@@ -118,7 +115,6 @@
         (cdkDropListDropped)="drop($event)"
         class="checklist-list"
       >
-        <!-- <div *ngFor="let checklist of data.task.checklist" class="checklist-box"> -->
         <checklist
           cdkDrag
           *ngFor="let checklist of filteredChecklist"
@@ -129,7 +125,6 @@
           (delete)="deleteChecklist($event)"
           (done)="checklistClicked($event)"
         ></checklist>
-        <!-- </div> -->
       </div>
 
       <div class="checklist-add">

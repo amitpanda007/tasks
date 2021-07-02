@@ -2,6 +2,7 @@ import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
 import { MatDialog } from "@angular/material";
 import { Router, ActivatedRoute } from "@angular/router";
 import { Subscription } from "rxjs";
+import * as cloneDeep from "lodash/cloneDeep";
 import {
   DailyTaskDialogComponent,
   DailyTaskDialogResult,
@@ -20,20 +21,35 @@ export class DailyListComponent implements OnInit {
   private dailyTasksSubscription = new Subscription();
   
   public dailyTasks: DailyTask[];
+  public dailyTasksFilterd: DailyTask[];
+  public dailyTasksDateView;
+
   public newDailyTaskTitle: string;
+  public allTaskViewChecked: boolean;
+  public dateTaskViewChecked: boolean;
+  public viewType: string;
+  public showTodayTask: boolean;
+  public showHideCompletedTask: boolean;
 
   constructor(private dailyService: DailyService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.newDailyTaskTitle = "";
+    this.allTaskViewChecked = true;
+    this.dateTaskViewChecked = false;
+    this.viewType = "ALL";
+    this.dailyTasksDateView = [];
+    this.showTodayTask = false;
+    this.showHideCompletedTask = false;
 
     this.dailyService.getDailyTasks();
     this.dailyTasksSubscription = this.dailyService.dailyTasksChanged.subscribe(
       (tasks: DailyTask[]) => {
         this.dailyTasks = tasks;
+        this.dailyTasksFilterd = tasks;
+        console.log(this.dailyTasks);
       }
     );
-    console.log(this.dailyTasks);
   }
 
   ngOnDestroy(): void {
@@ -43,7 +59,7 @@ export class DailyListComponent implements OnInit {
   createNewDailyTask() {
     console.log("Creating new Task!!!");
     const dialogRef = this.dialog.open(DailyTaskDialogComponent, {
-      width: "360px",
+      width: "560px",
       data: {
         dailyTask: {},
         enableDelete: false,
@@ -82,6 +98,10 @@ export class DailyListComponent implements OnInit {
     moveItemInArray(this.dailyTasks, event.previousIndex, event.currentIndex);
   }
 
+  dropDateView(event: CdkDragDrop<string[]>) {
+    console.log(event);
+  }
+
   doneTask(task: DailyTask) {
     if(task.isComplete) {
       task.isComplete = false;
@@ -94,10 +114,11 @@ export class DailyListComponent implements OnInit {
   }
 
   editTask(task: DailyTask) {
+    const clonedDailyTask = cloneDeep(task);
     const dialogRef = this.dialog.open(DailyTaskDialogComponent, {
-      width: "360px",
+      width: "600px",
       data: {
-        dailyTask: task,
+        dailyTask: clonedDailyTask,
         enableDelete: true,
       },
     });
@@ -118,5 +139,79 @@ export class DailyListComponent implements OnInit {
 
   deleteTask(task: DailyTask) {
     this.dailyService.deleteDailyTask(task.id);
+  }
+
+  toggleShowHideCompletedTask() {
+    console.log(this.showHideCompletedTask);
+    if(this.showHideCompletedTask) {
+      this.dailyTasksFilterd = this.dailyTasks.filter(tasks => tasks.isComplete == false);
+    }else {
+      this.dailyTasksFilterd = this.dailyTasks;
+    }
+    
+  }
+
+  toggleShowTodayTask() {
+    console.log(this.showTodayTask);
+    if(this.showTodayTask) {
+      this.dailyTasksFilterd = this.dailyTasks.filter(task => {
+        const days = this.calculateDays(new Date(), task.created.toDate());
+        console.log(days);
+        if(days == 0) {
+          return task;
+        }
+      });
+    }else {
+      this.dailyTasksFilterd = this.dailyTasks;
+    }
+  }
+
+  calculateDays(dateOne, dateTwo) {
+    let diffTime = Math.abs(dateTwo - dateOne);
+    let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    if(dateOne > dateTwo) {
+      diffDays = diffDays * -1;
+    }
+    return diffDays;
+  }
+
+  //TODO: This needs to be implemented
+  showAllTaskAtOnceView() {
+    this.viewType = "ALL";
+    console.log("Show all task at once with date created & if it was created in past");
+    console.log("This should have option to Show only open tasks. This should have how far in days you would like to see your tasks");
+    console.log("Options to turn on focus mode for today's only task");
+
+
+  }
+
+  showTaskByDateView() {
+    console.log("Show all task sorted by date and the last one should have Today/Last date when task was created");
+    // Setting up UI to handle view change
+    this.dailyTasksDateView = [];
+    this.viewType = "DATE";
+    const taskByDates = {};
+    this.dailyTasks.forEach(task => {
+      const date = new Date(task.created.toDate());
+      const formatDate = date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear();
+
+      if(taskByDates[formatDate]) {
+        taskByDates[formatDate].push(task);
+      }else {
+        taskByDates[formatDate] = [];
+        taskByDates[formatDate].push(task);
+      }
+    });
+    console.log(taskByDates);
+    
+    for (let dateKey in taskByDates) {
+      const tempObj = {
+        date: dateKey,
+        tasks: taskByDates[dateKey]
+      }
+      this.dailyTasksDateView.push(tempObj);
+    }
+
+    console.log(this.dailyTasksDateView);
   }
 }

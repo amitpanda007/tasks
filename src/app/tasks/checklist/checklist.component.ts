@@ -8,12 +8,17 @@ import { CheckList } from "../task/checklist";
 })
 export class ChecklistComponent implements OnInit {
   @Input() checklist: CheckList | null = null;
+  @Input() showDuedate: boolean = true;
+  @Input() showAssign: boolean = true;
+  @Input() showDelete: boolean = true;
+
   @Output() duedate = new EventEmitter<CheckList>();
   @Output() assign = new EventEmitter<CheckList>();
   @Output() delete = new EventEmitter<CheckList>();
   @Output() done = new EventEmitter<CheckList>();
 
   public checklistOverDue: boolean;
+  public dueDate;
 
   constructor() {}
 

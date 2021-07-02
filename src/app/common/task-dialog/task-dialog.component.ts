@@ -6,6 +6,7 @@ import {
   MatDialog,
 } from "@angular/material/dialog";
 import { firestore } from "firebase";
+import * as cloneDeep from "lodash/cloneDeep";
 import { CheckList } from "src/app/tasks/task/checklist";
 import { Label } from "src/app/tasks/task/label";
 import { Task } from "src/app/tasks/task/task";
@@ -58,8 +59,8 @@ export class TaskDialogComponent implements OnInit {
   public checklistCompleted: number;
   public selectedDate: string;
   public overDue: boolean;
-  public tooltipPosition: string = "right";
-  public showHideCompletedTask: boolean = false;
+  public tooltipPosition: string;
+  public showHideCompletedTask: boolean;
 
   constructor(
     public dialogRef: MatDialogRef<TaskDialogComponent>,
@@ -69,7 +70,13 @@ export class TaskDialogComponent implements OnInit {
 
   ngOnInit(): void {
     console.log(this.data.task.id);
-    this.filteredChecklist = this.data.task.checklist;
+    this.tooltipPosition = "right";
+    this.showHideCompletedTask = false;
+    // this.filteredChecklist = this.data.task.checklist;
+    if(this.data.task.checklist) {
+      this.filteredChecklist = cloneDeep(this.data.task.checklist);
+    }
+    console.log(this.filteredChecklist);
     this.calculateChecklistCompleted();
     this.checkDueDateStatus();
   }
@@ -115,6 +122,10 @@ export class TaskDialogComponent implements OnInit {
   }
 
   save(): void {
+    if(this.filteredChecklist) {
+      this.data.task.checklist = cloneDeep(this.filteredChecklist);
+    }
+
     if (this.data.task.checklist && this.data.task.checklist.length > 0) {
       this.data.task.checklist.forEach((checklist) => {
         delete checklist.isEditing;
@@ -150,7 +161,7 @@ export class TaskDialogComponent implements OnInit {
   drop(event: CdkDragDrop<string[]>) {
     console.log(event);
     moveItemInArray(
-      this.data.task.checklist,
+      this.filteredChecklist,
       event.previousIndex,
       event.currentIndex
     );
@@ -232,9 +243,9 @@ export class TaskDialogComponent implements OnInit {
     });
   }
 
-  deleteChecklist($event: CheckList) {
-    const index = this.data.task.checklist.indexOf($event);
-    this.data.task.checklist.splice(index, 1);
+  deleteChecklist(checklist: CheckList) {
+    this.data.task.checklist.splice(this.data.task.checklist.indexOf(checklist), 1);
+    this.filteredChecklist.splice(this.filteredChecklist.indexOf(checklist), 1);
     this.calculateChecklistCompleted();
   }
 
@@ -248,7 +259,7 @@ export class TaskDialogComponent implements OnInit {
         }
       );
     } else {
-      this.filteredChecklist = this.data.task.checklist;
+      this.filteredChecklist = cloneDeep(this.data.task.checklist);
     }
   }
 

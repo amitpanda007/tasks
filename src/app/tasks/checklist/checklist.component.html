@@ -44,13 +44,13 @@
   </div>
 
   <div class="checklist-options">
-    <span (click)="duedate.emit(checklist)" *ngIf="!checklist.dueDate">
+    <span (click)="duedate.emit(checklist)" *ngIf="!checklist.dueDate && showDuedate">
       <mat-icon class="icon">schedule</mat-icon>
     </span>
-    <span (click)="assign.emit(checklist)">
+    <span (click)="assign.emit(checklist)" *ngIf="showAssign">
       <mat-icon class="icon">person_add</mat-icon>
     </span>
-    <span (click)="delete.emit(checklist)">
+    <span (click)="delete.emit(checklist)" *ngIf="showDelete">
       <mat-icon class="icon">delete</mat-icon>
     </span>
   </div>

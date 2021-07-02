@@ -27,6 +27,7 @@ import {
   MatTableModule,
   MatOptionModule,
   MatSelectModule,
+  MatButtonToggleModule,
 } from "@angular/material";
 
 import { CapitalizePipe } from "./capitalize.pipe";
@@ -69,6 +70,7 @@ import { ShortnamePipe } from "./shortname.pipe";
     MatTableModule,
     MatOptionModule,
     MatSelectModule,
+    MatButtonToggleModule
   ],
   declarations: [CapitalizePipe, DefaultPipe, DateFormatPipe, ShortnamePipe],
   providers: [MatNativeDateModule],

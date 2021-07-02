@@ -1,4 +1,4 @@
-<mat-card class="item" [ngClass]="{ 'complete': dailyTask.isComplete == true }">
+<mat-card class="item" [ngClass]="{ 'complete': dailyTask.isComplete == true }" [style.background-color]="dailyTask.backgroundColor">
   <mat-checkbox
     [(ngModel)]="dailyTask.isComplete"
     color="primary"
@@ -6,6 +6,11 @@
   ></mat-checkbox>
   <div (click)="edit.emit(dailyTask)" class="details">
     <p class="title">{{ dailyTask.title }}</p>
+  </div>
+
+  <div class="task-info">
+    <span [ngClass]="{'green': taskElapsedDays === 'Today', 'red': taskElapsedDays !== 'Today'}">{{ taskElapsedDays }}</span>
+    <span *ngIf="dailyTask.checklist"><mat-icon class="material-icons-outlined">check_box</mat-icon>{{ completedChecklist }}/{{ totalChecklist }}</span>
   </div>
 
   <div class="task-options">
