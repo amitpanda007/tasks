@@ -91,4 +91,13 @@ export class DailyService {
       .collection("tasks")
       .add(task);
   }
+
+  setTaskStatus(taskId: string, name: string) {
+    this._store
+      .collection<DailyTask>("daily")
+      .doc(this.authService.getUID())
+      .collection("tasks")
+      .doc(taskId)
+      .set({ status: name }, { merge: true });
+  }
 }

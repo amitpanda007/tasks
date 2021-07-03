@@ -1,6 +1,6 @@
-import { firestore } from 'firebase';
-import { CheckList } from '../../tasks/task/checklist';
-import { DueDate } from '../../tasks/task/duedate';
+import { firestore } from "firebase";
+import { CheckList } from "../../tasks/task/checklist";
+import { DueDate } from "../../tasks/task/duedate";
 
 export interface DailyTask {
   id?: string;
@@ -14,4 +14,5 @@ export interface DailyTask {
   backgroundColor?: string;
   estimatedTime?: string;
   elapsedTime?: string;
+  status?: string;
 }

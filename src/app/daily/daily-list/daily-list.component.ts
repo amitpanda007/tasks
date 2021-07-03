@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
-import { MatDialog } from "@angular/material";
-import { Router, ActivatedRoute } from "@angular/router";
+import { MatDialog, throwToolbarMixedModesError } from "@angular/material";
 import { Subscription } from "rxjs";
 import * as cloneDeep from "lodash/cloneDeep";
 import {
@@ -11,6 +10,7 @@ import { DailyService } from "src/app/core/services/daily.service";
 import { DailyTask } from "../daily-task/dailytask";
 import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 import { ENETUNREACH } from "constants";
+import { Status } from "../daily-task/status";
 
 @Component({
   selector: "daily-list",
@@ -123,6 +123,11 @@ export class DailyListComponent implements OnInit {
       task.modified = new Date();
     }
     this.dailyService.updateDailyTask(task);
+  }
+
+  setstatus(data) {
+    console.log(data);
+    this.dailyService.setTaskStatus(data.task.id, data.status[0].name);
   }
 
   editTask(task: DailyTask) {

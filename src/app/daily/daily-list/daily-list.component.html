@@ -84,7 +84,8 @@
         cdkDrag
         (edit)="editTask($event)"
         (delete)="deleteTask($event)"
-        (done)="doneTask($event, status)"
+        (done)="doneTask($event)"
+        (statusChanged)="setstatus($event)"
         [dailyTask]="dailyTask"
       ></daily-task>
       <input

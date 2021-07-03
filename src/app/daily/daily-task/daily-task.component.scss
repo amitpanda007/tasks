@@ -23,9 +23,9 @@
   color: #808080;
 }
 
-.task-options {
-  display: none;
-}
+// .task-options{
+//   display: none;
+// }
 
 .task-options mat-icon {
   margin-right: 1px;
@@ -40,7 +40,14 @@
   align-content: center;
 }
 
-.item:hover .task-options {
+// .item:hover .task-options {
+//   display: flex;
+//   color: darkslategray;
+//   position: absolute;
+//   right: 10px;
+// }
+
+.task-options {
   display: flex;
   color: darkslategray;
   position: absolute;
@@ -95,4 +102,13 @@
   border-radius: 5px;
   height: 18px;
   font-size: 9px;
+  font-weight: 900;
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.status {
+  display: flex;
 }

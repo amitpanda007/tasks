@@ -27,16 +27,27 @@
   </div>
 
   <div class="task-options">
-    <span>
-      <select class="select" (change)="onChange($event.target.value)">
-        <option selected>ToDo</option>
-        <option>Open</option>
-        <option>Inprogress</option>
-        <option>Done</option>
-        <option>Blocked</option>
+    <span class="status">
+      <select
+        class="select"
+        [style.background-color]="selectStatusBackgroundColor"
+        [style.color]="selectStatusColor"
+        (change)="onChange($event.target.value)"
+      >
+        <option
+          class="options"
+          *ngFor="let status of statusOptions"
+          value="{{ status.id }}"
+          [style.background-color]="status.backgroundColor"
+          [style.color]="status.color"
+          [selected]="isStatusSelected(status)"
+        >
+          {{ status.name }}
+        </option>
       </select>
     </span>
-    <span (click)="delete.emit(dailyTask)">
+
+    <span (click)="delete.emit(dailyTask)" class="delete">
       <mat-icon class="icon">delete</mat-icon>
     </span>
   </div>

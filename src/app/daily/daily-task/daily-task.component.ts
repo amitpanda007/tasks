@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
-import { Router, ActivatedRoute } from "@angular/router";
 import { DailyTask } from "./dailytask";
+import { Status } from "./status";
 
 @Component({
   selector: "daily-task",
@@ -12,14 +12,62 @@ export class DailyTaskComponent implements OnInit {
   @Output() edit = new EventEmitter<DailyTask>();
   @Output() done = new EventEmitter<DailyTask>();
   @Output() delete = new EventEmitter<DailyTask>();
+  @Output() statusChanged = new EventEmitter();
 
   public taskElapsedDays: any;
   public totalChecklist: number;
   public completedChecklist: number;
+  public statusOptions: Status[];
+  public selectStatusBackgroundColor: string;
+  public selectStatusColor: string;
 
   constructor() {}
 
   ngOnInit(): void {
+    this.statusOptions = [
+      {
+        id: 1,
+        name: "ToDo",
+        backgroundColor: "#CFD8DC",
+        color: "#455A64",
+      },
+      {
+        id: 2,
+        name: "Open",
+        backgroundColor: "#0048b0",
+        color: "#ffffff",
+      },
+      {
+        id: 3,
+        name: "Inprogress",
+        backgroundColor: "#BBDEFB",
+        color: "#0D47A1",
+      },
+      {
+        id: 4,
+        name: "Done",
+        backgroundColor: "#B9F6CA",
+        color: "#2E7D32",
+      },
+      {
+        id: 5,
+        name: "Blocked",
+        backgroundColor: "#FF9E80",
+        color: "#D84315",
+      },
+    ];
+
+    if (this.dailyTask.status) {
+      const currentStatus = this.statusOptions.filter(
+        (status) => status.name == this.dailyTask.status
+      );
+      this.selectStatusBackgroundColor = currentStatus[0].backgroundColor;
+      this.selectStatusColor = currentStatus[0].color;
+    } else {
+      this.selectStatusBackgroundColor = "#CFD8DC";
+      this.selectStatusColor = "#455A64";
+    }
+
     // Calculated number of days before which task was creaed
     const days = this.calculateDays(
       new Date(),
@@ -56,8 +104,17 @@ export class DailyTaskComponent implements OnInit {
     return diffDays;
   }
 
-  onChange(deviceValue) {
-    console.log(this.dailyTask);
-    console.log(deviceValue);
+  onChange(selectedStatus) {
+    console.log(selectedStatus);
+    const status: Status[] = this.statusOptions.filter(
+      (status) => status.id == selectedStatus
+    );
+    this.statusChanged.emit({ task: this.dailyTask, status: status });
+  }
+
+  isStatusSelected(status: Status) {
+    if (status.name == this.dailyTask.status) {
+      return true;
+    }
   }
 }
