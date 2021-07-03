@@ -35,6 +35,7 @@ import { InviteDialogComponent } from "./common/invite-dialog/invite-dialog.comp
 import { ShareModule } from "./share/share.module";
 import { DailyModule } from "./daily/daily.module";
 import { DailyTaskDialogComponent } from "./common/daily-task-dialog/daily-task-dialog.component";
+import { ConfirmDialogComponent } from "./common/confirm-dialog/confirm-dialog.component";
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { DailyTaskDialogComponent } from "./common/daily-task-dialog/daily-task-
     CopyDialogComponent,
     InviteDialogComponent,
     DailyTaskDialogComponent,
+    ConfirmDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -90,6 +92,7 @@ import { DailyTaskDialogComponent } from "./common/daily-task-dialog/daily-task-
     CopyDialogComponent,
     InviteDialogComponent,
     DailyTaskDialogComponent,
+    ConfirmDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

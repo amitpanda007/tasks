@@ -26,7 +26,29 @@ export class DailyService {
     this.dailyCollection = this._store
       .collection<DailyTask>("daily")
       .doc(this.authService.getUID())
-      .collection("tasks", ref => ref.orderBy("created", "asc"));
+      .collection("tasks", (ref) => ref.orderBy("created", "asc"));
+
+    this.dailySubscription = this.dailyCollection
+      .valueChanges({ idField: "id" })
+      .subscribe((dailyList) => {
+        this.allDailyTasksData = dailyList;
+        this.dailyTasksChanged.next([...this.allDailyTasksData]);
+      });
+  }
+
+  getDailyTasksForSelectedDays(days: number) {
+    let requiredDate = new Date();
+    requiredDate = new Date(
+      requiredDate.setDate(requiredDate.getDate() - (days + 1))
+    );
+    // console.log(requiredDate);
+
+    this.dailyCollection = this._store
+      .collection<DailyTask>("daily")
+      .doc(this.authService.getUID())
+      .collection("tasks", (ref) =>
+        ref.where("created", ">=", requiredDate).orderBy("created", "asc")
+      );
 
     this.dailySubscription = this.dailyCollection
       .valueChanges({ idField: "id" })
@@ -50,7 +72,7 @@ export class DailyService {
       .doc(this.authService.getUID())
       .collection("tasks")
       .doc(task.id)
-      .set(task, {merge: true});
+      .set(task, { merge: true });
   }
 
   deleteDailyTask(taskId: string) {
@@ -60,5 +82,13 @@ export class DailyService {
       .collection("tasks")
       .doc(taskId)
       .delete();
+  }
+
+  copyTask(task: DailyTask) {
+    this._store
+      .collection<DailyTask>("daily")
+      .doc(this.authService.getUID())
+      .collection("tasks")
+      .add(task);
   }
 }

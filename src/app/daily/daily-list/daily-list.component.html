@@ -2,10 +2,20 @@
 <div class="list">
   <div class="filters">
     <mat-button-toggle-group aria-label="filter group">
-      <mat-button-toggle value="all" (click)="showAllTaskAtOnceView()" [checked]="allTaskViewChecked" matTooltip="All task">
+      <mat-button-toggle
+        value="all"
+        (click)="showAllTaskAtOnceView()"
+        [checked]="allTaskViewChecked"
+        matTooltip="All task"
+      >
         <mat-icon>list_view</mat-icon>
       </mat-button-toggle>
-      <mat-button-toggle value="date" (click)="showTaskByDateView()" [checked]="dateTaskViewChecked" matTooltip="Task based on date">
+      <mat-button-toggle
+        value="date"
+        (click)="showTaskByDateView()"
+        [checked]="dateTaskViewChecked"
+        matTooltip="Task based on date"
+      >
         <mat-icon>date_range</mat-icon>
       </mat-button-toggle>
     </mat-button-toggle-group>
@@ -13,27 +23,107 @@
 
   <div class="list-section">
     <div class="options">
-      <mat-slide-toggle [(ngModel)]="showHideCompletedTask" (change)="toggleShowHideCompletedTask()" [labelPosition]="'before'">Only pending tasks</mat-slide-toggle>
-      <mat-slide-toggle [(ngModel)]="showTodayTask" (change)="toggleShowTodayTask()" [labelPosition]="'before'">Only today's task</mat-slide-toggle>
-    </div>
-
-    <div cdkDropList (cdkDropListDropped)="drop($event)" class="drag-list" *ngIf="viewType === 'ALL'">
-      <daily-task *ngFor="let dailyTask of dailyTasksFilterd" class="drag-item" cdkDrag (edit)="editTask($event)" (delete)="deleteTask($event)"
-        (done)="doneTask($event, status)" [dailyTask]="dailyTask"></daily-task>
-      <input matInput [(ngModel)]="newDailyTaskTitle" autocomplete="off" class="input" placeholder="Enter daily task eg. Buy Milk"
-        (keyup.enter)="createNewDailyTaskQuick()" />
-    </div>
-
-    <div cdkDropList (cdkDropListDropped)="dropDateView($event)" class="drag-list" *ngIf="viewType === 'DATE'">
-      <div *ngFor="let taskView of dailyTasksDateView">
-        <span class="date">{{taskView.date}}</span>
-        <daily-task *ngFor="let dailyTask of taskView.tasks" class="drag-item" cdkDrag (edit)="editTask($event)" (delete)="deleteTask($event)"
-          (done)="doneTask($event, status)" [dailyTask]="dailyTask"></daily-task>
+      <div class="toggle-btn">
+        <mat-icon
+          class="material-icons-outlined"
+          aria-hidden="false"
+          aria-label="pending task icon"
+          >{{ pendingTaskIcon }}</mat-icon
+        >
+        Pending tasks
+        <mat-slide-toggle
+          matTooltip="show pending task"
+          matTooltipPosition="above"
+          [(ngModel)]="showHideCompletedTask"
+          [color]="'primary'"
+          (change)="toggleShowHideCompletedTask()"
+        >
+        </mat-slide-toggle>
       </div>
-      <input matInput [(ngModel)]="newDailyTaskTitle" autocomplete="off" class="input" placeholder="Enter daily task eg. Buy Milk"
-        (keyup.enter)="createNewDailyTaskQuick()" />
+
+      <div class="toggle-btn">
+        <mat-icon
+          class="material-icons-outlined"
+          aria-hidden="false"
+          aria-label="todays task icon"
+          >{{ todayIcon }}</mat-icon
+        >
+        Today's task
+        <mat-slide-toggle
+          matTooltip="show today's task"
+          matTooltipPosition="above"
+          [(ngModel)]="showTodayTask"
+          [color]="'primary'"
+          (change)="toggleShowTodayTask()"
+        >
+        </mat-slide-toggle>
+      </div>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Show Data for</mat-label>
+        <mat-select (selectionChange)="daysSelected($event)">
+          <mat-option
+            *ngFor="let days of taskShownForDays"
+            [value]="days.value"
+          >
+            {{ days.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
 
+    <div
+      cdkDropList
+      (cdkDropListDropped)="drop($event)"
+      class="drag-list"
+      *ngIf="viewType === 'ALL'"
+    >
+      <daily-task
+        *ngFor="let dailyTask of dailyTasksFilterd"
+        class="drag-item"
+        cdkDrag
+        (edit)="editTask($event)"
+        (delete)="deleteTask($event)"
+        (done)="doneTask($event, status)"
+        [dailyTask]="dailyTask"
+      ></daily-task>
+      <input
+        matInput
+        [(ngModel)]="newDailyTaskTitle"
+        autocomplete="off"
+        class="input"
+        placeholder="Enter daily task eg. Buy Milk"
+        (keyup.enter)="createNewDailyTaskQuick()"
+      />
+    </div>
+
+    <div
+      cdkDropList
+      (cdkDropListDropped)="dropDateView($event)"
+      class="drag-list"
+      *ngIf="viewType === 'DATE'"
+    >
+      <div *ngFor="let taskView of dailyTasksDateView">
+        <span class="date">{{ taskView.date }}</span>
+        <daily-task
+          *ngFor="let dailyTask of taskView.tasks"
+          class="drag-item"
+          cdkDrag
+          (edit)="editTask($event)"
+          (delete)="deleteTask($event)"
+          (done)="doneTask($event, status)"
+          [dailyTask]="dailyTask"
+        ></daily-task>
+      </div>
+      <input
+        matInput
+        [(ngModel)]="newDailyTaskTitle"
+        autocomplete="off"
+        class="input"
+        placeholder="Enter daily task eg. Buy Milk"
+        (keyup.enter)="createNewDailyTaskQuick()"
+      />
+    </div>
   </div>
   <div class="container-add">
     <button (click)="createNewDailyTask()" mat-button>

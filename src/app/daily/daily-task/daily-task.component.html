@@ -1,4 +1,8 @@
-<mat-card class="item" [ngClass]="{ 'complete': dailyTask.isComplete == true }" [style.background-color]="dailyTask.backgroundColor">
+<mat-card
+  class="item"
+  [ngClass]="{ complete: dailyTask.isComplete == true }"
+  [style.background-color]="dailyTask.backgroundColor"
+>
   <mat-checkbox
     [(ngModel)]="dailyTask.isComplete"
     color="primary"
@@ -9,11 +13,29 @@
   </div>
 
   <div class="task-info">
-    <span [ngClass]="{'green': taskElapsedDays === 'Today', 'red': taskElapsedDays !== 'Today'}">{{ taskElapsedDays }}</span>
-    <span *ngIf="dailyTask.checklist"><mat-icon class="material-icons-outlined">check_box</mat-icon>{{ completedChecklist }}/{{ totalChecklist }}</span>
+    <span
+      [ngClass]="{
+        green: taskElapsedDays === 'Today',
+        red: taskElapsedDays !== 'Today'
+      }"
+      >{{ taskElapsedDays }}</span
+    >
+    <span *ngIf="dailyTask.checklist"
+      ><mat-icon class="material-icons-outlined">check_box</mat-icon
+      >{{ completedChecklist }}/{{ totalChecklist }}</span
+    >
   </div>
 
   <div class="task-options">
+    <span>
+      <select class="select" (change)="onChange($event.target.value)">
+        <option selected>ToDo</option>
+        <option>Open</option>
+        <option>Inprogress</option>
+        <option>Done</option>
+        <option>Blocked</option>
+      </select>
+    </span>
     <span (click)="delete.emit(dailyTask)">
       <mat-icon class="icon">delete</mat-icon>
     </span>

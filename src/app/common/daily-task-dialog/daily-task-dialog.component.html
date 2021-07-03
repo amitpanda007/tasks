@@ -2,15 +2,28 @@
   <div class="main">
     <mat-form-field class="title">
       <mat-label>Title</mat-label>
-      <input matInput cdkFocusInitial autocomplete="off" [(ngModel)]="data.dailyTask.title" />
+      <input
+        matInput
+        cdkFocusInitial
+        autocomplete="off"
+        [(ngModel)]="data.dailyTask.title"
+      />
     </mat-form-field>
 
     <mat-form-field class="description">
       <mat-label>Description</mat-label>
-      <textarea matInput [(ngModel)]="data.dailyTask.description" rows="2" cols="50"></textarea>
+      <textarea
+        matInput
+        [(ngModel)]="data.dailyTask.description"
+        rows="2"
+        cols="50"
+      ></textarea>
     </mat-form-field>
 
-    <section class="checklist" *ngIf="data.dailyTask.checklist || this.showChecklists">
+    <section
+      class="checklist"
+      *ngIf="data.dailyTask.checklist || this.showChecklists"
+    >
       <p class="sub-header">
         Check List
         <span>
@@ -23,28 +36,58 @@
           </button>
         </span>
       </p>
-      <div class="checklist-progress" *ngIf="data.dailyTask.checklist && data.dailyTask.checklist.length > 0">
+      <div
+        class="checklist-progress"
+        *ngIf="data.dailyTask.checklist && data.dailyTask.checklist.length > 0"
+      >
         <span class="task-completed">{{ checklistCompleted }}%</span>
-        <mat-progress-bar class="progress-bar" mode="determinate" value="{{ checklistCompleted }}"></mat-progress-bar>
+        <mat-progress-bar
+          class="progress-bar"
+          mode="determinate"
+          value="{{ checklistCompleted }}"
+        ></mat-progress-bar>
       </div>
-      <div cdkDropList (cdkDropListDropped)="drop($event)" class="checklist-list">
-        <checklist cdkDrag *ngFor="let checklist of filteredChecklist" class="checklist-box" [checklist]="checklist" [showAssign]="false"
-          (duedate)="setDueDateChecklist($event)" (delete)="deleteChecklist($event)" (done)="checklistClicked($event)"></checklist>
+      <div
+        cdkDropList
+        (cdkDropListDropped)="drop($event)"
+        class="checklist-list"
+      >
+        <checklist
+          cdkDrag
+          *ngFor="let checklist of filteredChecklist"
+          class="checklist-box"
+          [checklist]="checklist"
+          [showAssign]="false"
+          (duedate)="setDueDateChecklist($event)"
+          (delete)="deleteChecklist($event)"
+          (done)="checklistClicked($event)"
+        ></checklist>
       </div>
 
       <div class="checklist-add">
-        <input class="checklist-input" matInput placeholder="Add a new task to checklist" autocomplete="off" name="checklistInput"
-          [(ngModel)]="checklistText" (keyup.enter)="updateChecklist()" />
+        <input
+          class="checklist-input"
+          matInput
+          placeholder="Add a new task to checklist"
+          autocomplete="off"
+          name="checklistInput"
+          [(ngModel)]="checklistText"
+          (keyup.enter)="updateChecklist()"
+        />
       </div>
     </section>
 
     <div mat-dialog-actions>
-      <button mat-button (click)="save()">
-        Save
-      </button>
+      <button mat-button (click)="save()">Save</button>
       <button mat-button (click)="cancel()">Cancel</button>
 
-      <button *ngIf="data.enableDelete" mat-icon-button color="primary" aria-label="Delete" (click)="delete()">
+      <button
+        *ngIf="data.enableDelete"
+        mat-icon-button
+        color="primary"
+        aria-label="Delete"
+        (click)="delete()"
+      >
         <mat-icon>delete</mat-icon>
       </button>
     </div>
@@ -53,14 +96,28 @@
   <div class="options">
     <p class="sub-header">ADD TO CARD</p>
     <div class="option-btn">
-
-      <button mat-stroked-button (click)="showChecklistSection()" *ngIf="!data.dailyTask.checklist && !this.showChecklists">
-          <span class="option-content"><mat-icon class="material-icons-outlined">add</mat-icon> Checklist</span>
+      <button
+        mat-stroked-button
+        (click)="showChecklistSection()"
+        *ngIf="!data.dailyTask.checklist && !this.showChecklists"
+      >
+        <span class="option-content"
+          ><mat-icon class="material-icons-outlined">add</mat-icon>
+          Checklist</span
+        >
       </button>
 
-      <button mat-stroked-button (click)="openLabelDialog()" [disabled]="isAddLabelDisabled()">
-        <span class="option-content" matTooltip="You can add Labels once task is created" [matTooltipDisabled]="!isAddLabelDisabled()"
-          [matTooltipPosition]="tooltipPosition">
+      <button
+        mat-stroked-button
+        (click)="openLabelDialog()"
+        [disabled]="isAddLabelDisabled()"
+      >
+        <span
+          class="option-content"
+          matTooltip="You can add Labels once task is created"
+          [matTooltipDisabled]="!isAddLabelDisabled()"
+          [matTooltipPosition]="tooltipPosition"
+        >
           <mat-icon class="material-icons-outlined">label</mat-icon> Labels
         </span>
       </button>
@@ -75,7 +132,6 @@
 
     <p class="sub-header">ACTIONS</p>
     <div class="option-btn">
-
       <button mat-stroked-button (click)="openCopyDialog()">
         <span class="option-content">
           <mat-icon class="material-icons-outlined">content_copy</mat-icon> Copy
@@ -83,12 +139,15 @@
       </button>
 
       <button mat-stroked-button [disabled]="true">
-        <span class="option-content" matTooltip="Feature not available" [matTooltipDisabled]="false" [matTooltipPosition]="tooltipPosition">
+        <span
+          class="option-content"
+          matTooltip="Feature not available"
+          [matTooltipDisabled]="false"
+          [matTooltipPosition]="tooltipPosition"
+        >
           <mat-icon class="material-icons-outlined">archive</mat-icon> Archive
         </span>
       </button>
-
     </div>
   </div>
-
 </div>

@@ -9,8 +9,8 @@ import {
 } from "src/app/common/daily-task-dialog/daily-task-dialog.component";
 import { DailyService } from "src/app/core/services/daily.service";
 import { DailyTask } from "../daily-task/dailytask";
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ENETUNREACH } from 'constants';
+import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
+import { ENETUNREACH } from "constants";
 
 @Component({
   selector: "daily-list",
@@ -19,7 +19,7 @@ import { ENETUNREACH } from 'constants';
 })
 export class DailyListComponent implements OnInit {
   private dailyTasksSubscription = new Subscription();
-  
+
   public dailyTasks: DailyTask[];
   public dailyTasksFilterd: DailyTask[];
   public dailyTasksDateView;
@@ -30,6 +30,9 @@ export class DailyListComponent implements OnInit {
   public viewType: string;
   public showTodayTask: boolean;
   public showHideCompletedTask: boolean;
+  public todayIcon: string;
+  public pendingTaskIcon: string;
+  public taskShownForDays: any;
 
   constructor(private dailyService: DailyService, private dialog: MatDialog) {}
 
@@ -41,6 +44,15 @@ export class DailyListComponent implements OnInit {
     this.dailyTasksDateView = [];
     this.showTodayTask = false;
     this.showHideCompletedTask = false;
+    this.todayIcon = "calendar_today";
+    this.pendingTaskIcon = "check_box";
+
+    this.taskShownForDays = [
+      { name: "3 Days", value: 3 },
+      { name: "7 Days", value: 7 },
+      { name: "15 Days", value: 15 },
+      { name: "All", value: 100 },
+    ];
 
     this.dailyService.getDailyTasks();
     this.dailyTasksSubscription = this.dailyService.dailyTasksChanged.subscribe(
@@ -80,7 +92,7 @@ export class DailyListComponent implements OnInit {
   }
 
   createNewDailyTaskQuick() {
-    if(this.newDailyTaskTitle.trim() == "") {
+    if (this.newDailyTaskTitle.trim() == "") {
       return;
     }
     const newTask: DailyTask = {
@@ -88,7 +100,7 @@ export class DailyListComponent implements OnInit {
       isComplete: false,
       created: new Date(),
       modified: new Date(),
-    }
+    };
     console.log(newTask);
     this.dailyService.addDailyTask(newTask);
     this.newDailyTaskTitle = "";
@@ -103,10 +115,10 @@ export class DailyListComponent implements OnInit {
   }
 
   doneTask(task: DailyTask) {
-    if(task.isComplete) {
+    if (task.isComplete) {
       task.isComplete = false;
       task.modified = new Date();
-    }else {
+    } else {
       task.isComplete = true;
       task.modified = new Date();
     }
@@ -128,9 +140,9 @@ export class DailyListComponent implements OnInit {
         return;
       }
 
-      if(result.delete) {
+      if (result.delete) {
         this.dailyService.deleteDailyTask(result.dailyTask.id);
-      }else {
+      } else {
         result.dailyTask.modified = new Date();
         this.dailyService.updateDailyTask(result.dailyTask);
       }
@@ -143,33 +155,43 @@ export class DailyListComponent implements OnInit {
 
   toggleShowHideCompletedTask() {
     console.log(this.showHideCompletedTask);
-    if(this.showHideCompletedTask) {
-      this.dailyTasksFilterd = this.dailyTasks.filter(tasks => tasks.isComplete == false);
-    }else {
+    if (this.showHideCompletedTask) {
+      this.pendingTaskIcon = "check_box_outline_blank";
+      this.dailyTasksFilterd = this.dailyTasks.filter(
+        (tasks) => tasks.isComplete == false
+      );
+    } else {
+      this.pendingTaskIcon = "check_box";
       this.dailyTasksFilterd = this.dailyTasks;
     }
-    
   }
 
   toggleShowTodayTask() {
     console.log(this.showTodayTask);
-    if(this.showTodayTask) {
-      this.dailyTasksFilterd = this.dailyTasks.filter(task => {
+    if (this.showTodayTask) {
+      this.todayIcon = "today";
+      this.dailyTasksFilterd = this.dailyTasks.filter((task) => {
         const days = this.calculateDays(new Date(), task.created.toDate());
         console.log(days);
-        if(days == 0) {
+        if (days == 0) {
           return task;
         }
       });
-    }else {
+    } else {
+      this.todayIcon = "calendar_today";
       this.dailyTasksFilterd = this.dailyTasks;
     }
+  }
+
+  daysSelected(data) {
+    console.log(data);
+    this.dailyService.getDailyTasksForSelectedDays(data.value);
   }
 
   calculateDays(dateOne, dateTwo) {
     let diffTime = Math.abs(dateTwo - dateOne);
     let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    if(dateOne > dateTwo) {
+    if (dateOne > dateTwo) {
       diffDays = diffDays * -1;
     }
     return diffDays;
@@ -178,37 +200,42 @@ export class DailyListComponent implements OnInit {
   //TODO: This needs to be implemented
   showAllTaskAtOnceView() {
     this.viewType = "ALL";
-    console.log("Show all task at once with date created & if it was created in past");
-    console.log("This should have option to Show only open tasks. This should have how far in days you would like to see your tasks");
+    console.log(
+      "Show all task at once with date created & if it was created in past"
+    );
+    console.log(
+      "This should have option to Show only open tasks. This should have how far in days you would like to see your tasks"
+    );
     console.log("Options to turn on focus mode for today's only task");
-
-
   }
 
   showTaskByDateView() {
-    console.log("Show all task sorted by date and the last one should have Today/Last date when task was created");
+    console.log(
+      "Show all task sorted by date and the last one should have Today/Last date when task was created"
+    );
     // Setting up UI to handle view change
     this.dailyTasksDateView = [];
     this.viewType = "DATE";
     const taskByDates = {};
-    this.dailyTasks.forEach(task => {
+    this.dailyTasks.forEach((task) => {
       const date = new Date(task.created.toDate());
-      const formatDate = date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear();
+      const formatDate =
+        date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear();
 
-      if(taskByDates[formatDate]) {
+      if (taskByDates[formatDate]) {
         taskByDates[formatDate].push(task);
-      }else {
+      } else {
         taskByDates[formatDate] = [];
         taskByDates[formatDate].push(task);
       }
     });
     console.log(taskByDates);
-    
+
     for (let dateKey in taskByDates) {
       const tempObj = {
         date: dateKey,
-        tasks: taskByDates[dateKey]
-      }
+        tasks: taskByDates[dateKey],
+      };
       this.dailyTasksDateView.push(tempObj);
     }
 

@@ -1,13 +1,30 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialog,
+} from "@angular/material/dialog";
 import { DailyTask } from "src/app/daily/daily-task/dailytask";
-import { CheckList } from '../../tasks/task/checklist';
-import { firestore } from 'firebase';
-import { CalenderDialogComponent, CalenderDialogResult } from '../calender-dialog/calender-dialog.component';
-import { DeleteConfirmationDialogComponent, DeleteConfirmationDialogResult } from '../delete.dialog.component';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ColorDialogComponent, ColorDialogResult } from '../color-dialog/color-dialog.component';
-import { CopyDialogComponent, CopyDialogResult } from '../copy-dialog/copy-dialog.component';
+import { CheckList } from "../../tasks/task/checklist";
+import { firestore } from "firebase";
+import {
+  CalenderDialogComponent,
+  CalenderDialogResult,
+} from "../calender-dialog/calender-dialog.component";
+import {
+  DeleteConfirmationDialogComponent,
+  DeleteConfirmationDialogResult,
+} from "../delete.dialog.component";
+import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
+import {
+  ColorDialogComponent,
+  ColorDialogResult,
+} from "../color-dialog/color-dialog.component";
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogResult,
+} from "../confirm-dialog/confirm-dialog.component";
+import { DailyService } from "src/app/core/services/daily.service";
 
 @Component({
   selector: "app-daily-task-dialog",
@@ -30,7 +47,8 @@ export class DailyTaskDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<DailyTaskDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DailyTaskDialogData,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialyService: DailyService
   ) {}
 
   ngOnInit(): void {
@@ -39,8 +57,10 @@ export class DailyTaskDialogComponent implements OnInit {
     this.checklistText = "";
     this.tooltipPosition = "right";
     // this.filteredChecklist = this.data.dailyTask.checklist;
-    if(this.data.dailyTask.checklist) {
-      this.filteredChecklist = JSON.parse(JSON.stringify(this.data.dailyTask.checklist));
+    if (this.data.dailyTask.checklist) {
+      this.filteredChecklist = JSON.parse(
+        JSON.stringify(this.data.dailyTask.checklist)
+      );
     }
     this.calculateChecklistCompleted();
   }
@@ -50,11 +70,16 @@ export class DailyTaskDialogComponent implements OnInit {
   }
 
   save(): void {
-    if(this.filteredChecklist) {
-      this.data.dailyTask.checklist = JSON.parse(JSON.stringify(this.filteredChecklist));
+    if (this.filteredChecklist) {
+      this.data.dailyTask.checklist = JSON.parse(
+        JSON.stringify(this.filteredChecklist)
+      );
     }
 
-    if (this.data.dailyTask.checklist && this.data.dailyTask.checklist.length > 0) {
+    if (
+      this.data.dailyTask.checklist &&
+      this.data.dailyTask.checklist.length > 0
+    ) {
       this.data.dailyTask.checklist.forEach((checklist) => {
         delete checklist.isEditing;
         delete checklist.unsaved;
@@ -74,7 +99,10 @@ export class DailyTaskDialogComponent implements OnInit {
       .afterClosed()
       .subscribe((result: DeleteConfirmationDialogResult) => {
         if (result.delete) {
-          this.dialogRef.close({ dailyTask: this.data.dailyTask, delete: true });
+          this.dialogRef.close({
+            dailyTask: this.data.dailyTask,
+            delete: true,
+          });
         }
       });
   }
@@ -102,14 +130,19 @@ export class DailyTaskDialogComponent implements OnInit {
         }
       );
     } else {
-      this.filteredChecklist = JSON.parse(JSON.stringify(this.data.dailyTask.checklist));
+      this.filteredChecklist = JSON.parse(
+        JSON.stringify(this.data.dailyTask.checklist)
+      );
     }
   }
 
   calculateChecklistCompleted() {
     this.checklistCompleted = 0;
     this.doneChecklist = 0;
-    if (this.data.dailyTask.checklist && this.data.dailyTask.checklist.length > 0) {
+    if (
+      this.data.dailyTask.checklist &&
+      this.data.dailyTask.checklist.length > 0
+    ) {
       this.totalChecklist = this.data.dailyTask.checklist.length;
       this.data.dailyTask.checklist.forEach((checklist) => {
         if (checklist.done) {
@@ -129,12 +162,12 @@ export class DailyTaskDialogComponent implements OnInit {
       unsaved: true,
       isEditing: false,
     };
-    
+
     if (!this.data.dailyTask.checklist) {
       this.data.dailyTask.checklist = [];
       this.filteredChecklist = [];
     }
-    
+
     this.data.dailyTask.checklist.push(newCheckList);
     console.log(this.data.dailyTask);
     console.log(this.filteredChecklist);
@@ -153,7 +186,10 @@ export class DailyTaskDialogComponent implements OnInit {
   }
 
   deleteChecklist(checklist: CheckList) {
-    this.data.dailyTask.checklist.splice(this.data.dailyTask.checklist.indexOf(checklist), 1);
+    this.data.dailyTask.checklist.splice(
+      this.data.dailyTask.checklist.indexOf(checklist),
+      1
+    );
     this.filteredChecklist.splice(this.filteredChecklist.indexOf(checklist), 1);
     this.calculateChecklistCompleted();
   }
@@ -234,7 +270,6 @@ export class DailyTaskDialogComponent implements OnInit {
     //   result.labels.forEach((label) => {
     //     delete label.isSelected;
     //   });
-
     //   this.data.labels = result.labels;
     //   this.data.updatedLabels = result.updatedLabelData;
     // });
@@ -245,20 +280,26 @@ export class DailyTaskDialogComponent implements OnInit {
   }
 
   openCopyDialog() {
-  //   const dialogRef = this.dialog.open(CopyDialogComponent, {
-  //     width: "360px",
-  //     data: {
-  //       boardId: this.data.boardId,
-  //       task: this.data.task,
-  //       labels: this.data.labels,
-  //     },
-  //   });
-  //   dialogRef.afterClosed().subscribe((result: CopyDialogResult) => {
-  //     console.log(result);
-  //     if (!result) {
-  //       return;
-  //     }
-  //   });
+    const msg = "Are you sure you want to copy this task?";
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: "240px",
+      data: {
+        message: msg,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: ConfirmDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+
+      if (result.confirm) {
+        let copyTask: DailyTask = this.data.dailyTask as DailyTask;
+        copyTask.created = new Date();
+        copyTask.modified = new Date();
+        this.dialyService.copyTask(copyTask);
+      }
+    });
   }
 }
 
