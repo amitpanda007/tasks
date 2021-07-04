@@ -15,6 +15,7 @@ import { HomeService } from "./services/home.service";
 import { BoardService } from "./services/board.service";
 import { BoardServiceV2 } from "./services/boardv2.service";
 import { DailyService } from "./services/daily.service";
+import { AccountService } from "./services/account.service";
 
 @NgModule({
   imports: [CommonModule, SharedModule],
@@ -30,6 +31,7 @@ import { DailyService } from "./services/daily.service";
     BoardService,
     BoardServiceV2,
     DailyService,
+    AccountService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
 })

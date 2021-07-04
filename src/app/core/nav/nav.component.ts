@@ -51,4 +51,8 @@ export class NavComponent implements OnInit {
   openDaily() {
     this.router.navigate(["/daily"]);
   }
+
+  openAccount() {
+    this.router.navigate(["/account"]);
+  }
 }

@@ -27,7 +27,8 @@
   </div>
 
   <div class="task-options">
-    <span class="status">
+    <!-- <span class="status"> -->
+    <span class="status" [ngClass]="{ 'status-selected': dailyTask.status }">
       <select
         class="select"
         [style.background-color]="selectStatusBackgroundColor"

@@ -41,6 +41,10 @@
       <mat-icon>add_circle_outline</mat-icon>
       <a class="nav-padding"><span>Register</span></a>
     </button>
+    <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="openAccount()">
+      <mat-icon>manage_accounts</mat-icon>
+      <a class="nav-padding"><span>Account</span></a>
+    </button>
     <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="auth.logout()">
       <mat-icon>logout</mat-icon>
       <a class="nav-padding"><span>Logout</span></a>

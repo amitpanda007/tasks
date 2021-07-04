@@ -36,6 +36,7 @@ import { ShareModule } from "./share/share.module";
 import { DailyModule } from "./daily/daily.module";
 import { DailyTaskDialogComponent } from "./common/daily-task-dialog/daily-task-dialog.component";
 import { ConfirmDialogComponent } from "./common/confirm-dialog/confirm-dialog.component";
+import { AccountModule } from "./account/account.module";
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import { ConfirmDialogComponent } from "./common/confirm-dialog/confirm-dialog.c
     TasksModule,
     BoardsModule,
     DailyModule,
+    AccountModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,

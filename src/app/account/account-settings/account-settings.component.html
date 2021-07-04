@@ -1,0 +1,33 @@
+<div class="container">
+  <h3>Account Settings</h3>
+
+  <section class="section">
+    <p class="label">User Information</p>
+    <div *ngIf="user">
+      <mat-form-field class="username">
+        <mat-label>Full Name</mat-label>
+        <input
+          matInput
+          cdkFocusInitial
+          autocomplete="off"
+          [(ngModel)]="user.name"
+        />
+      </mat-form-field>
+    </div>
+    <button mat-flat-button color="primary" (click)="saveUserInformation(user)">
+      Save
+    </button>
+  </section>
+
+  <section class="section">
+    <p class="label">Board Settings</p>
+
+    <button mat-flat-button color="primary">Save</button>
+  </section>
+
+  <section class="section">
+    <p class="label">Daily Task Settings</p>
+
+    <button mat-flat-button color="primary">Save</button>
+  </section>
+</div>
