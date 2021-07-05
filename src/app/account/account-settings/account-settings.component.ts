@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { User } from "firebase";
 import { Subscription } from "rxjs";
+import { User } from "src/app/auth/user";
 import { AccountService } from "src/app/core/services/account.service";
 
 @Component({
@@ -19,7 +19,7 @@ export class AccountSettingsComponent implements OnInit {
   ngOnInit(): void {
     this.accountService.getUserInfo();
     this.userSubscription = this.accountService.userDataChanged.subscribe(
-      (userData) => {
+      (userData: any) => {
         this.user = userData;
         console.log(this.user);
       }

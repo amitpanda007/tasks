@@ -61,7 +61,10 @@
 
       <mat-form-field appearance="fill">
         <mat-label>Show Data for</mat-label>
-        <mat-select (selectionChange)="daysSelected($event)" [(value)]="selectedShownDays">
+        <mat-select
+          (selectionChange)="daysSelected($event)"
+          [(value)]="selectedShownDays"
+        >
           <mat-option
             *ngFor="let days of taskShownForDays"
             [value]="days.value"
@@ -106,15 +109,14 @@
       *ngIf="viewType === 'DATE'"
     >
       <div *ngFor="let taskView of dailyTasksDateView">
-        <span class="date">{{ taskView.date | dateformat:'short' }}</span>
+        <span class="date">{{ taskView.date | dateformat: "short" }}</span>
         <daily-task
           *ngFor="let dailyTask of taskView.tasks"
           class="drag-item"
           cdkDrag
           (edit)="editTask($event)"
           (delete)="deleteTask($event)"
-          (done)="doneTask($event, status)"
-
+          (done)="doneTask($event)"
           (statusChanged)="setstatus($event)"
           [dailyTask]="dailyTask"
         ></daily-task>
