@@ -33,6 +33,7 @@ export class DailyListComponent implements OnInit {
   public todayIcon: string;
   public pendingTaskIcon: string;
   public taskShownForDays: any;
+  public selectedShownDays: number;
 
   constructor(private dailyService: DailyService, private dialog: MatDialog) {}
 
@@ -46,6 +47,7 @@ export class DailyListComponent implements OnInit {
     this.showHideCompletedTask = false;
     this.todayIcon = "calendar_today";
     this.pendingTaskIcon = "check_box";
+    this.selectedShownDays = 100;
 
     this.taskShownForDays = [
       { name: "3 Days", value: 3 },
@@ -158,6 +160,12 @@ export class DailyListComponent implements OnInit {
     this.dailyService.deleteDailyTask(task.id);
   }
 
+  moveTaskToToday(task: DailyTask) {
+    task.created = new Date();
+    task.modified = new Date();
+    this.dailyService.updateDailyTask(task);
+  }
+
   toggleShowHideCompletedTask() {
     console.log(this.showHideCompletedTask);
     if (this.showHideCompletedTask) {
@@ -190,6 +198,7 @@ export class DailyListComponent implements OnInit {
 
   daysSelected(data) {
     console.log(data);
+    this.selectedShownDays = data.value;
     this.dailyService.getDailyTasksForSelectedDays(data.value);
   }
 
@@ -225,7 +234,7 @@ export class DailyListComponent implements OnInit {
     this.dailyTasks.forEach((task) => {
       const date = new Date(task.created.toDate());
       const formatDate =
-        date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear();
+        date.getMonth() + "-" + date.getDate() + "-" + date.getFullYear();
 
       if (taskByDates[formatDate]) {
         taskByDates[formatDate].push(task);

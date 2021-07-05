@@ -48,6 +48,9 @@
       </select>
     </span>
 
+    <span (click)="moveToday.emit(dailyTask)" class="delete">
+      <mat-icon class="icon">update</mat-icon>
+    </span>
     <span (click)="delete.emit(dailyTask)" class="delete">
       <mat-icon class="icon">delete</mat-icon>
     </span>

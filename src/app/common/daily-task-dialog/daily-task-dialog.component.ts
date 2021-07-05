@@ -7,6 +7,7 @@ import {
 import { DailyTask } from "src/app/daily/daily-task/dailytask";
 import { CheckList } from "../../tasks/task/checklist";
 import { firestore } from "firebase";
+import * as cloneDeep from "lodash/cloneDeep";
 import {
   CalenderDialogComponent,
   CalenderDialogResult,
@@ -58,9 +59,7 @@ export class DailyTaskDialogComponent implements OnInit {
     this.tooltipPosition = "right";
     // this.filteredChecklist = this.data.dailyTask.checklist;
     if (this.data.dailyTask.checklist) {
-      this.filteredChecklist = JSON.parse(
-        JSON.stringify(this.data.dailyTask.checklist)
-      );
+      this.filteredChecklist = cloneDeep(this.data.dailyTask.checklist);
     }
     this.calculateChecklistCompleted();
   }
@@ -71,9 +70,7 @@ export class DailyTaskDialogComponent implements OnInit {
 
   save(): void {
     if (this.filteredChecklist) {
-      this.data.dailyTask.checklist = JSON.parse(
-        JSON.stringify(this.filteredChecklist)
-      );
+      this.data.dailyTask.checklist = cloneDeep(this.filteredChecklist);
     }
 
     if (
@@ -130,9 +127,7 @@ export class DailyTaskDialogComponent implements OnInit {
         }
       );
     } else {
-      this.filteredChecklist = JSON.parse(
-        JSON.stringify(this.data.dailyTask.checklist)
-      );
+      this.filteredChecklist = cloneDeep(this.data.dailyTask.checklist);
     }
   }
 

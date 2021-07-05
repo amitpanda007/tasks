@@ -13,6 +13,7 @@ export class DateFormatPipe implements PipeTransform {
       return this.defaultDateFormat(date);
     } else {
       console.log("Converting Regular Timestamp");
+      console.log(value);
       let date = new Date(value);
       if (options == "short") {
         return this.dateFormatShort(date);

@@ -12,6 +12,7 @@ export class DailyTaskComponent implements OnInit {
   @Output() edit = new EventEmitter<DailyTask>();
   @Output() done = new EventEmitter<DailyTask>();
   @Output() delete = new EventEmitter<DailyTask>();
+  @Output() moveToday = new EventEmitter<DailyTask>();
   @Output() statusChanged = new EventEmitter();
 
   public taskElapsedDays: any;
@@ -74,11 +75,11 @@ export class DailyTaskComponent implements OnInit {
       this.dailyTask.created.toDate()
     );
     if (days < 0) {
-      this.taskElapsedDays = days * -1 + " days old";
+      this.taskElapsedDays = days * -1 + " days";
     } else if (days == 0) {
       this.taskElapsedDays = "Today";
     } else {
-      this.taskElapsedDays = "After " + days + " days";
+      this.taskElapsedDays = "+" + days + " days";
     }
 
     // Calculated number checklist
