@@ -15,6 +15,7 @@
     *ngIf="checklist.dueDate"
     class="action-schedule"
     [ngClass]="{
+      'due-date': checklistOverDue == false && checklist.done == false,
       'due-overdue': checklistOverDue == true,
       'due-complete':
         checklist.done == true || checklist.dueDate.completed == true

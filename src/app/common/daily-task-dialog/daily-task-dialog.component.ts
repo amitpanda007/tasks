@@ -180,6 +180,20 @@ export class DailyTaskDialogComponent implements OnInit {
     this.calculateChecklistCompleted();
   }
 
+  markCompleteAllChecklist() {
+    this.filteredChecklist.forEach((checklist: CheckList) => {
+      if(!checklist.done) {
+        checklist.done = true;
+      }
+    });
+    this.data.dailyTask.checklist.forEach((checklist: CheckList) => {
+      if(!checklist.done) {
+        checklist.done = true;
+      }
+    });
+    this.calculateChecklistCompleted();
+  }
+
   deleteChecklist(checklist: CheckList) {
     this.data.dailyTask.checklist.splice(
       this.data.dailyTask.checklist.indexOf(checklist),

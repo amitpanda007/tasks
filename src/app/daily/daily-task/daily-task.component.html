@@ -1,39 +1,25 @@
-<mat-card
-  class="item"
-  [ngClass]="{ complete: dailyTask.isComplete == true }"
-  [style.background-color]="dailyTask.backgroundColor"
->
-  <mat-checkbox
-    [(ngModel)]="dailyTask.isComplete"
-    color="primary"
-    (click)="done.emit(dailyTask)"
-  ></mat-checkbox>
+<mat-card class="item" [ngClass]="{ complete: dailyTask.isComplete == true }" [style.background-color]="dailyTask.backgroundColor">
+  <mat-checkbox [(ngModel)]="dailyTask.isComplete" color="primary" (click)="done.emit(dailyTask)"></mat-checkbox>
   <div (click)="edit.emit(dailyTask)" class="details">
     <p class="title">{{ dailyTask.title }}</p>
   </div>
 
   <div class="task-info">
-    <span
-      [ngClass]="{
+    <span [ngClass]="{
         green: taskElapsedDays === 'Today',
         red: taskElapsedDays !== 'Today'
-      }"
-      >{{ taskElapsedDays }}</span
-    >
-    <span *ngIf="dailyTask.checklist"
-      ><mat-icon class="material-icons-outlined">check_box</mat-icon
-      >{{ completedChecklist }}/{{ totalChecklist }}</span
-    >
+      }">{{ taskElapsedDays }}</span>
+    <span *ngIf="dailyTask.checklist" matTooltip="Sub task/s under this task">
+      <mat-icon class="material-icons-outlined">check_box</mat-icon>{{ completedChecklist }}/{{ totalChecklist }}</span>
   </div>
 
   <div class="task-options">
-    <!-- <span class="status"> -->
-    <span class="status" [ngClass]="{ 'status-selected': dailyTask.status }">
+    <span class="status" [ngClass]="{ 'status-selected': dailyTask.status }" matTooltip="Set status">
       <select
         class="select"
         [style.background-color]="selectStatusBackgroundColor"
         [style.color]="selectStatusColor"
-        (change)="onChange($event.target.value)"
+        (change)="onStatusChange($event.target.value)"
       >
         <option
           class="options"
@@ -48,10 +34,10 @@
       </select>
     </span>
 
-    <span (click)="moveToday.emit(dailyTask)" class="delete">
+    <span (click)="moveToday.emit(dailyTask)" class="delete" matTooltip="Update to today's task">
       <mat-icon class="icon">update</mat-icon>
     </span>
-    <span (click)="delete.emit(dailyTask)" class="delete">
+    <span (click)="delete.emit(dailyTask)" class="delete" matTooltip="Delete task">
       <mat-icon class="icon">delete</mat-icon>
     </span>
   </div>

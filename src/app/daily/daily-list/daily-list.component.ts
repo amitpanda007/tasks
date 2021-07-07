@@ -129,7 +129,7 @@ export class DailyListComponent implements OnInit {
 
   setstatus(data) {
     console.log(data);
-    this.dailyService.setTaskStatus(data.task.id, data.status[0].name);
+    this.dailyService.setTaskStatus(data.task.id, data.status.name);
   }
 
   editTask(task: DailyTask) {

@@ -57,7 +57,7 @@ export class DailyTaskComponent implements OnInit {
         color: "#D84315",
       },
     ];
-
+    
     if (this.dailyTask.status) {
       const currentStatus = this.statusOptions.filter(
         (status) => status.name == this.dailyTask.status
@@ -105,9 +105,9 @@ export class DailyTaskComponent implements OnInit {
     return diffDays;
   }
 
-  onChange(selectedStatus) {
+  onStatusChange(selectedStatus) {
     console.log(selectedStatus);
-    const status: Status[] = this.statusOptions.filter(
+    const status: Status = this.statusOptions.find(
       (status) => status.id == selectedStatus
     );
     this.statusChanged.emit({ task: this.dailyTask, status: status });

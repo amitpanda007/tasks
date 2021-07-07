@@ -70,17 +70,23 @@
   font-weight: 500;
 }
 
+.due-date {
+  background-color: #eceff1;
+  color: #546e7a;
+  border-radius: 4px;
+}
+
 .due-overdue {
   background-color: #ea80fc;
   color: #6a1b9a;
-  padding: 4px;
+  // padding: 4px;
   border-radius: 4px;
 }
 
 .due-complete {
   background-color: #b2ff59;
   color: #33691e;
-  padding: 4px;
+  // padding: 4px;
   border-radius: 4px;
 }
 

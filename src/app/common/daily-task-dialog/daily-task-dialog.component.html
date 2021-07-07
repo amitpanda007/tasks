@@ -27,12 +27,15 @@
       <p class="sub-header">
         Check List
         <span>
-          <button mat-stroked-button (click)="showHideCompletedChecklist()">
+          <button mat-stroked-button (click)="showHideCompletedChecklist()" class="btn-small">
             <span *ngIf="showHideCompletedTask">Show</span>
-            <span *ngIf="!showHideCompletedTask">Hide</span> checked items
+            <span *ngIf="!showHideCompletedTask">Hide</span> completed
           </button>
-          <button mat-stroked-button (click)="deleteAllChecklist()">
-            Delete
+          <button mat-stroked-button (click)="markCompleteAllChecklist()" class="btn-small">
+            Complete all
+          </button>
+          <button mat-stroked-button (click)="deleteAllChecklist()" class="btn-small">
+            Delete all
           </button>
         </span>
       </p>
@@ -95,7 +98,7 @@
 
   <div class="options">
     <p class="sub-header">ADD TO CARD</p>
-    <div class="option-btn">
+    <div class="btn-option">
       <button
         mat-stroked-button
         (click)="showChecklistSection()"
@@ -131,7 +134,7 @@
     </div>
 
     <p class="sub-header">ACTIONS</p>
-    <div class="option-btn">
+    <div class="btn-option">
       <button mat-stroked-button (click)="openCopyDialog()">
         <span class="option-content">
           <mat-icon class="material-icons-outlined">content_copy</mat-icon> Copy
