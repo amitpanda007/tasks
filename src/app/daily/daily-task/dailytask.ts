@@ -4,6 +4,7 @@ import { DueDate } from "../../tasks/task/duedate";
 
 export interface DailyTask {
   id?: string;
+  index: number;
   title: string;
   description?: string;
   isComplete: boolean;

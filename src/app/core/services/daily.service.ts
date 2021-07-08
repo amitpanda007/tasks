@@ -22,11 +22,11 @@ export class DailyService {
     private authService: AuthService
   ) {}
 
-  getDailyTasks() {
+  getDailyTasks(sortField = "index") {
     this.dailyCollection = this._store
       .collection<DailyTask>("daily")
       .doc(this.authService.getUID())
-      .collection("tasks", (ref) => ref.orderBy("created", "asc"));
+      .collection("tasks", (ref) => ref.orderBy(sortField, "asc"));
 
     this.dailySubscription = this.dailyCollection
       .valueChanges({ idField: "id" })
@@ -73,6 +73,21 @@ export class DailyService {
       .collection("tasks")
       .doc(task.id)
       .set(task, { merge: true });
+  }
+
+  updateDailyTaskIndex(tasks: DailyTask[]) {
+    this._store.firestore.runTransaction(() => {
+      return Promise.all([
+        tasks.forEach(task => {
+          this._store
+            .collection<DailyTask>("daily")
+            .doc(this.authService.getUID())
+            .collection("tasks")
+            .doc(task.id)
+            .set({"index": task.index}, { merge: true })
+        })
+      ]);
+    });
   }
 
   deleteDailyTask(taskId: string) {

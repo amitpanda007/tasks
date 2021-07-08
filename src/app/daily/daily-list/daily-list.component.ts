@@ -97,7 +97,9 @@ export class DailyListComponent implements OnInit {
     if (this.newDailyTaskTitle.trim() == "") {
       return;
     }
+
     const newTask: DailyTask = {
+      index: this.dailyTasks ? this.dailyTasks.length : 0, 
       title: this.newDailyTaskTitle,
       isComplete: false,
       created: new Date(),
@@ -109,7 +111,22 @@ export class DailyListComponent implements OnInit {
   }
 
   drop(event: CdkDragDrop<string[]>) {
+    console.log(event);
+    if(event.previousIndex == event.currentIndex) {
+      return;
+    }
     moveItemInArray(this.dailyTasks, event.previousIndex, event.currentIndex);
+
+    const taskTobeUpdated: DailyTask[] = [];
+    this.dailyTasks.forEach((task, arrIndex) => {
+      if(task.index != arrIndex) {
+        task.index = arrIndex;
+        taskTobeUpdated.push(task);
+      }
+    });
+
+    console.log(taskTobeUpdated);
+    this.dailyService.updateDailyTaskIndex(taskTobeUpdated);
   }
 
   dropDateView(event: CdkDragDrop<string[]>) {
