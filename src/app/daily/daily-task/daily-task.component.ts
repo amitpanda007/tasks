@@ -75,11 +75,11 @@ export class DailyTaskComponent implements OnInit {
       this.dailyTask.created.toDate()
     );
     if (days < 0) {
-      this.taskElapsedDays = days * -1 + " days";
+      this.taskElapsedDays = days * -1 + "D";
     } else if (days == 0) {
       this.taskElapsedDays = "Today";
     } else {
-      this.taskElapsedDays = "+" + days + " days";
+      this.taskElapsedDays = "+" + days + "D";
     }
 
     // Calculated number checklist
