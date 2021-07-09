@@ -5,15 +5,18 @@
   </div>
 
   <div class="task-info">
-    <span [ngClass]="{
-        green: taskElapsedDays === 'Today',
-        red: taskElapsedDays !== 'Today'
-      }">{{ taskElapsedDays }}</span>
     <span *ngIf="dailyTask.checklist" matTooltip="Sub task/s under this task">
       <mat-icon class="material-icons-outlined">check_box</mat-icon>{{ completedChecklist }}/{{ totalChecklist }}</span>
   </div>
 
   <div class="task-options">
+    <div class="task-info days">
+      <span [ngClass]="{
+          green: taskElapsedDays === 'Today',
+          red: taskElapsedDays !== 'Today'
+        }">{{ taskElapsedDays }}</span>
+    </div>
+
     <span class="status" [ngClass]="{ 'status-selected': dailyTask.status }" matTooltip="Set status">
       <select
         class="select"
