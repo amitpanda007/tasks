@@ -213,10 +213,13 @@ export class DailyListComponent implements OnInit {
     }
   }
 
+  //FIXME: Add feature for local data without calling server/db. 
+  //If decide to call server/db data on change then need to handle Drop() as the array size changes.
+  //causing issue with index being updated incorrectly.
   daysSelected(data) {
     console.log(data);
     this.selectedShownDays = data.value;
-    this.dailyService.getDailyTasksForSelectedDays(data.value);
+    // this.dailyService.getDailyTasksForSelectedDays(data.value);
   }
 
   calculateDays(dateOne, dateTwo) {
@@ -251,8 +254,9 @@ export class DailyListComponent implements OnInit {
     this.dailyTasks.forEach((task) => {
       const date = new Date(task.created.toDate());
       const formatDate =
-        date.getMonth() + "-" + date.getDate() + "-" + date.getFullYear();
+        (date.getMonth() + 1) + "-" + date.getDate() + "-" + date.getFullYear();
 
+        console.log(formatDate);
       if (taskByDates[formatDate]) {
         taskByDates[formatDate].push(task);
       } else {
