@@ -182,12 +182,12 @@ export class DailyTaskDialogComponent implements OnInit {
 
   markCompleteAllChecklist() {
     this.filteredChecklist.forEach((checklist: CheckList) => {
-      if(!checklist.done) {
+      if (!checklist.done) {
         checklist.done = true;
       }
     });
     this.data.dailyTask.checklist.forEach((checklist: CheckList) => {
-      if(!checklist.done) {
+      if (!checklist.done) {
         checklist.done = true;
       }
     });
@@ -214,6 +214,8 @@ export class DailyTaskDialogComponent implements OnInit {
       width: "360px",
       data: {
         date: localDate,
+        enableCalender: true,
+        enableTime: false,
       },
     });
     dialogRef.afterClosed().subscribe((result: CalenderDialogResult) => {

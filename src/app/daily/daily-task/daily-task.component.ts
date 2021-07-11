@@ -1,4 +1,15 @@
 import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
+import { MatDialog } from "@angular/material";
+import * as firebase from "firebase";
+import { firestore } from "firebase";
+import {
+  CalenderDialogComponent,
+  CalenderDialogResult,
+} from "src/app/common/calender-dialog/calender-dialog.component";
+import {
+  MessageDialogComponent,
+  MessageDialogResult,
+} from "src/app/common/message-dialog/message-dialog.component";
 import { DailyTask } from "./dailytask";
 import { Status } from "./status";
 
@@ -11,9 +22,12 @@ export class DailyTaskComponent implements OnInit {
   @Input() dailyTask: DailyTask;
   @Output() edit = new EventEmitter<DailyTask>();
   @Output() done = new EventEmitter<DailyTask>();
+  @Output() addMessage = new EventEmitter();
   @Output() delete = new EventEmitter<DailyTask>();
   @Output() moveToday = new EventEmitter<DailyTask>();
+  @Output() reminder = new EventEmitter();
   @Output() statusChanged = new EventEmitter();
+  @Output() priorityChnaged = new EventEmitter();
 
   public taskElapsedDays: any;
   public totalChecklist: number;
@@ -21,10 +35,19 @@ export class DailyTaskComponent implements OnInit {
   public statusOptions: Status[];
   public selectStatusBackgroundColor: string;
   public selectStatusColor: string;
+  public priority: string;
+  public msgTooltip: string;
+  public showReminder: boolean;
 
-  constructor() {}
+  constructor(private dialog: MatDialog) {}
 
   ngOnInit(): void {
+    if (this.dailyTask.priority) {
+      this.priority = this.dailyTask.priority;
+    } else {
+      this.priority = "blocker";
+    }
+
     this.statusOptions = [
       {
         id: 1,
@@ -57,7 +80,7 @@ export class DailyTaskComponent implements OnInit {
         color: "#D84315",
       },
     ];
-    
+
     if (this.dailyTask.status) {
       const currentStatus = this.statusOptions.filter(
         (status) => status.name == this.dailyTask.status
@@ -75,11 +98,11 @@ export class DailyTaskComponent implements OnInit {
       this.dailyTask.created.toDate()
     );
     if (days < 0) {
-      this.taskElapsedDays = days * -1 + "D";
+      this.taskElapsedDays = "-" + days * -1 + " DAY";
     } else if (days == 0) {
       this.taskElapsedDays = "Today";
     } else {
-      this.taskElapsedDays = "+" + days + "D";
+      this.taskElapsedDays = "+" + days + " DAY";
     }
 
     // Calculated number checklist
@@ -94,6 +117,43 @@ export class DailyTaskComponent implements OnInit {
         this.completedChecklist = 0;
       }
     }
+
+    if (!this.dailyTask.message) {
+      this.msgTooltip = "Add special msg";
+    } else {
+      this.msgTooltip = this.dailyTask.message;
+    }
+
+    this.checkReminderStatus();
+  }
+
+  //TODO: Complete reminder countdown. make sure to keep the starting when reminder is 1 hr left
+  checkReminderStatus() {
+    if (this.dailyTask.reminder) {
+      const reminder = this.dailyTask.reminder as any;
+      if (new Date() > reminder.toDate()) {
+        this.showReminder = true;
+      } else {
+        console.log("DATE IN FUTURE");
+        const timeDiff = this.calculateTimeDiff(new Date(), reminder.toDate());
+        console.log(timeDiff);
+
+        if (timeDiff < 60 * 60 * 1000) {
+          setTimeout(() => {
+            this.showReminder = true;
+          }, timeDiff);
+        } else {
+          this.showReminder = false;
+        }
+      }
+    } else {
+      this.showReminder = false;
+    }
+  }
+
+  calculateTimeDiff(dateTimeOne, dateTimeTwo) {
+    let diffTime = Math.abs(dateTimeOne - dateTimeTwo);
+    return diffTime;
   }
 
   calculateDays(dateOne, dateTwo) {
@@ -117,5 +177,91 @@ export class DailyTaskComponent implements OnInit {
     if (status.name == this.dailyTask.status) {
       return true;
     }
+  }
+
+  selectedMenu(priority: string) {
+    console.log(priority);
+    const taskPriority = {
+      taskId: this.dailyTask.id,
+      priority: priority,
+    };
+    this.priorityChnaged.emit(taskPriority);
+  }
+
+  setMessage() {
+    let isMessageAdded: boolean = false;
+    if (this.dailyTask.message) {
+      isMessageAdded = true;
+    }
+    const dialogRef = this.dialog.open(MessageDialogComponent, {
+      width: "340px",
+      data: {
+        message: this.dailyTask.message,
+        enableDelete: isMessageAdded,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: MessageDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+
+      if (result.message) {
+        this.dailyTask.message = result.message;
+      }
+
+      const updatedTask = {
+        task: this.dailyTask,
+        delete: result.delete,
+      };
+      this.addMessage.emit(updatedTask);
+    });
+  }
+
+  setReminder(deleteReminder: boolean = false) {
+    if (deleteReminder) {
+      console.log("Deleting reminder");
+      const updatedDate = {
+        task: this.dailyTask,
+        delete: deleteReminder,
+      };
+      this.reminder.emit(updatedDate);
+      return;
+    }
+    let localDate: Date;
+    if (this.dailyTask.reminder) {
+      localDate = this.dailyTask.reminder;
+    }
+    const dialogRef = this.dialog.open(CalenderDialogComponent, {
+      width: "360px",
+      data: {
+        date: localDate,
+        enableCalender: true,
+        enableTime: true,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: CalenderDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+
+      let timestamp: Date;
+      const newDate = new Date(result.date as any);
+      if (result.time) {
+        timestamp = new Date(
+          newDate.toDateString().substr(0, 15) + " " + result.time
+        );
+        this.dailyTask.reminder = timestamp;
+      } else {
+        timestamp = result.date as any;
+        this.dailyTask.reminder = timestamp;
+      }
+      const updatedDate = {
+        task: this.dailyTask,
+        delete: deleteReminder,
+      };
+      this.reminder.emit(updatedDate);
+    });
   }
 }

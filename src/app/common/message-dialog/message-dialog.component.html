@@ -1,0 +1,22 @@
+<div mat-dialog-content>
+  <p class="sub-header">Add Message to Task</p>
+  <mat-form-field class="title">
+    <mat-label>Special Message</mat-label>
+    <textarea matInput cdkFocusInitial [(ngModel)]="data.message"></textarea>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="save()" cdkFocusInitial>Ok</button>
+  <button mat-button (click)="cancel()">Cancel</button>
+
+  <button
+    *ngIf="data.enableDelete"
+    mat-icon-button
+    color="primary"
+    aria-label="Delete"
+    class="close"
+    (click)="delete()"
+  >
+    <mat-icon>delete</mat-icon>
+  </button>
+</div>

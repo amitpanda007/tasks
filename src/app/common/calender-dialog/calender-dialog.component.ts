@@ -29,8 +29,12 @@ export class CalenderDialogComponent {
 
 export interface CalenderDialogData {
   date: firestore.Timestamp;
+  time: string;
+  enableCalender: boolean;
+  enableTime: boolean;
 }
 
 export interface CalenderDialogResult {
   date: firestore.Timestamp;
+  time: string;
 }

@@ -1,10 +1,16 @@
 <div mat-dialog-content>
-  <p>Select Due Date</p>
-  <mat-calendar
-    [selected]="data.date"
-    (selectedChange)="dueDateChanged($event)"
-  >
-  </mat-calendar>
+  <div *ngIf="data.enableCalender">
+    <p>Select Due Date</p>
+    <mat-calendar
+      [selected]="data.date"
+      (selectedChange)="dueDateChanged($event)"
+    >
+    </mat-calendar>
+  </div>
+  <div *ngIf="data.enableTime">
+    <p>Select Time</p>
+    <input required type="time" matInput [(ngModel)]="data.time" />
+  </div>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="save()" cdkFocusInitial>Ok</button>

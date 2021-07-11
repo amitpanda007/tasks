@@ -23,60 +23,59 @@
 
   <div class="list-section">
     <mat-card class="options-card">
-    <div class="options">
-      <div class="toggle-btn">
-        <mat-icon
-          class="material-icons-outlined"
-          aria-hidden="false"
-          aria-label="pending task icon"
-          >{{ pendingTaskIcon }}</mat-icon
-        >
-        Pending tasks
-        <mat-slide-toggle
-          matTooltip="show pending task"
-          matTooltipPosition="above"
-          [(ngModel)]="showHideCompletedTask"
-          [color]="'primary'"
-          (change)="toggleShowHideCompletedTask()"
-        >
-        </mat-slide-toggle>
-      </div>
-
-      <div class="toggle-btn">
-        <mat-icon
-          class="material-icons-outlined"
-          aria-hidden="false"
-          aria-label="todays task icon"
-          >{{ todayIcon }}</mat-icon
-        >
-        Today's task
-        <mat-slide-toggle
-          matTooltip="show today's task"
-          matTooltipPosition="above"
-          [(ngModel)]="showTodayTask"
-          [color]="'primary'"
-          (change)="toggleShowTodayTask()"
-        >
-        </mat-slide-toggle>
-      </div>
-
-      <mat-form-field appearance="fill">
-        <mat-label>Show Data for</mat-label>
-        <mat-select
-          (selectionChange)="daysSelected($event)"
-          [(value)]="selectedShownDays"
-        >
-          <mat-option
-            *ngFor="let days of taskShownForDays"
-            [value]="days.value"
+      <div class="options">
+        <div class="toggle-btn">
+          <mat-icon
+            class="material-icons-outlined"
+            aria-hidden="false"
+            aria-label="pending task icon"
+            >{{ pendingTaskIcon }}</mat-icon
           >
-            {{ days.name }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </mat-card>
+          Pending tasks
+          <mat-slide-toggle
+            matTooltip="show pending task"
+            matTooltipPosition="above"
+            [(ngModel)]="showHideCompletedTask"
+            [color]="'primary'"
+            (change)="toggleShowHideCompletedTask()"
+          >
+          </mat-slide-toggle>
+        </div>
 
+        <div class="toggle-btn">
+          <mat-icon
+            class="material-icons-outlined"
+            aria-hidden="false"
+            aria-label="todays task icon"
+            >{{ todayIcon }}</mat-icon
+          >
+          Today's task
+          <mat-slide-toggle
+            matTooltip="show today's task"
+            matTooltipPosition="above"
+            [(ngModel)]="showTodayTask"
+            [color]="'primary'"
+            (change)="toggleShowTodayTask()"
+          >
+          </mat-slide-toggle>
+        </div>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Show Data for</mat-label>
+          <mat-select
+            (selectionChange)="daysSelected($event)"
+            [(value)]="selectedShownDays"
+          >
+            <mat-option
+              *ngFor="let days of taskShownForDays"
+              [value]="days.value"
+            >
+              {{ days.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card>
 
     <div
       cdkDropList
@@ -91,8 +90,11 @@
         (edit)="editTask($event)"
         (delete)="deleteTask($event)"
         (done)="doneTask($event)"
+        (addMessage)="addMessage($event)"
         (moveToday)="moveTaskToToday($event)"
+        (reminder)="addReminder($event)"
         (statusChanged)="setstatus($event)"
+        (priorityChnaged)="setPriority($event)"
         [dailyTask]="dailyTask"
       ></daily-task>
       <input
@@ -120,7 +122,11 @@
           (edit)="editTask($event)"
           (delete)="deleteTask($event)"
           (done)="doneTask($event)"
+          (addMessage)="addMessage($event)"
+          (moveToday)="moveTaskToToday($event)"
+          (reminder)="addReminder($event)"
           (statusChanged)="setstatus($event)"
+          (priorityChnaged)="setPriority($event)"
           [dailyTask]="dailyTask"
         ></daily-task>
       </div>

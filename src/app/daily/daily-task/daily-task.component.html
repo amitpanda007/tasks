@@ -1,23 +1,40 @@
-<mat-card class="item" [ngClass]="{ complete: dailyTask.isComplete == true }" [style.background-color]="dailyTask.backgroundColor">
-  <mat-checkbox [(ngModel)]="dailyTask.isComplete" color="primary" (click)="done.emit(dailyTask)"></mat-checkbox>
+<mat-card
+  class="item"
+  [ngClass]="{ complete: dailyTask.isComplete == true }"
+  [style.background-color]="dailyTask.backgroundColor"
+>
+  <mat-checkbox
+    [(ngModel)]="dailyTask.isComplete"
+    color="primary"
+    (click)="done.emit(dailyTask)"
+  ></mat-checkbox>
   <div (click)="edit.emit(dailyTask)" class="details">
     <p class="title">{{ dailyTask.title }}</p>
   </div>
 
   <div class="task-info">
     <span *ngIf="dailyTask.checklist" matTooltip="Sub task/s under this task">
-      <mat-icon class="material-icons-outlined">check_box</mat-icon>{{ completedChecklist }}/{{ totalChecklist }}</span>
+      <mat-icon class="material-icons-outlined">check_box</mat-icon
+      >{{ completedChecklist }}/{{ totalChecklist }}</span
+    >
   </div>
 
   <div class="task-options">
     <div class="task-info days">
-      <span [ngClass]="{
+      <span
+        [ngClass]="{
           green: taskElapsedDays === 'Today',
           red: taskElapsedDays !== 'Today'
-        }">{{ taskElapsedDays }}</span>
+        }"
+        >{{ taskElapsedDays }}</span
+      >
     </div>
 
-    <span class="status" [ngClass]="{ 'status-selected': dailyTask.status }" matTooltip="Set status">
+    <div
+      class="status"
+      [ngClass]="{ 'status-selected': dailyTask.status }"
+      matTooltip="Set status"
+    >
       <select
         class="select"
         [style.background-color]="selectStatusBackgroundColor"
@@ -35,13 +52,89 @@
           {{ status.name }}
         </option>
       </select>
-    </span>
+    </div>
 
-    <span (click)="moveToday.emit(dailyTask)" class="delete" matTooltip="Update to today's task">
-      <mat-icon class="icon">update</mat-icon>
-    </span>
-    <span (click)="delete.emit(dailyTask)" class="delete" matTooltip="Delete task">
-      <mat-icon class="icon">delete</mat-icon>
-    </span>
+    <div class="options">
+      <!-- <img class="images" src="./assets/images/priority/{{ priority }}.svg" /> -->
+
+      <!-- <span
+        mat-icon-button
+        class="opts"
+        [matMenuTriggerFor]="menu"
+        aria-label="Select task priority"
+      >
+        <mat-icon>bolt</mat-icon>
+      </span> -->
+      <img
+        class="opts images icon"
+        [ngClass]="{ 'priority-selected': dailyTask.priority }"
+        src="./assets/images/priority/{{ priority }}.svg"
+        [matMenuTriggerFor]="menu"
+        matTooltip="{{ priority }}"
+      />
+      <mat-menu #menu="matMenu">
+        <div mat-menu-item class="menu-opts" (click)="selectedMenu('blocker')">
+          <img class="images" src="./assets/images/priority/blocker.svg" />
+          <span>Blocker</span>
+        </div>
+        <div mat-menu-item class="menu-opts" (click)="selectedMenu('critical')">
+          <img class="images" src="./assets/images/priority/critical.svg" />
+          <span>Critical</span>
+        </div>
+        <div mat-menu-item class="menu-opts" (click)="selectedMenu('major')">
+          <img class="images" src="./assets/images/priority/major.svg" />
+          <span>Major</span>
+        </div>
+        <div mat-menu-item class="menu-opts" (click)="selectedMenu('minor')">
+          <img class="images" src="./assets/images/priority/minor.svg" />
+          <span>Minor</span>
+        </div>
+        <div mat-menu-item class="menu-opts" (click)="selectedMenu('trivial')">
+          <img class="images" src="./assets/images/priority/trivial.svg" />
+          <span>Trivial</span>
+        </div>
+      </mat-menu>
+
+      <span
+        (click)="setMessage()"
+        class="opts"
+        matTooltip="{{ msgTooltip }}"
+        [ngClass]="{ 'opts-selected': dailyTask.message }"
+      >
+        <mat-icon class="icon">comment</mat-icon>
+      </span>
+      <span
+        (click)="moveToday.emit(dailyTask)"
+        class="opts"
+        matTooltip="Update to today's task"
+      >
+        <mat-icon class="icon">update</mat-icon>
+      </span>
+
+      <span
+        *ngIf="!showReminder"
+        (click)="setReminder(false)"
+        class="opts"
+        matTooltip="Add reminder for task"
+      >
+        <mat-icon class="icon">notifications_active</mat-icon>
+      </span>
+      <div *ngIf="showReminder">
+        <img
+          (click)="setReminder(true)"
+          class="images"
+          matTooltip="Click to remove reminder"
+          src="./assets/images/icons/bell.gif"
+        />
+      </div>
+
+      <span
+        (click)="delete.emit(dailyTask)"
+        class="opts"
+        matTooltip="Delete task"
+      >
+        <mat-icon class="icon">delete</mat-icon>
+      </span>
+    </div>
   </div>
 </mat-card>

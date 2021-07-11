@@ -23,6 +23,10 @@
   color: #808080;
 }
 
+.options {
+  display: flex;
+}
+
 .task-options mat-icon {
   margin-right: 1px;
   cursor: pointer;
@@ -40,14 +44,14 @@
   display: flex;
   color: darkslategray;
   position: absolute;
-  right: 10px;
+  right: 20px;
 }
 
-.delete {
+.opts {
   opacity: 0;
 }
 
-.item:hover .delete {
+.item:hover .opts {
   opacity: 1;
 }
 
@@ -124,4 +128,31 @@
 
 .status {
   display: flex;
+}
+
+.menu-opts {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-between;
+}
+
+.images {
+  display: block;
+  max-width: 18px;
+  max-height: 18px;
+  width: auto;
+  height: auto;
+  margin-bottom: 1px;
+  cursor: pointer;
+  margin-top: -2px;
+}
+
+.priority-selected {
+  opacity: 1;
+}
+
+.opts-selected {
+  opacity: 1;
 }

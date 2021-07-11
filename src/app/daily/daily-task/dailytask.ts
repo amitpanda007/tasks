@@ -15,5 +15,8 @@ export interface DailyTask {
   backgroundColor?: string;
   estimatedTime?: string;
   elapsedTime?: string;
+  reminder?: Date;
   status?: string;
+  priority?: string;
+  message?: string;
 }

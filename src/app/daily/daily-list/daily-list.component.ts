@@ -99,7 +99,7 @@ export class DailyListComponent implements OnInit {
     }
 
     const newTask: DailyTask = {
-      index: this.dailyTasks ? this.dailyTasks.length : 0, 
+      index: this.dailyTasks ? this.dailyTasks.length : 0,
       title: this.newDailyTaskTitle,
       isComplete: false,
       created: new Date(),
@@ -112,14 +112,14 @@ export class DailyListComponent implements OnInit {
 
   drop(event: CdkDragDrop<string[]>) {
     console.log(event);
-    if(event.previousIndex == event.currentIndex) {
+    if (event.previousIndex == event.currentIndex) {
       return;
     }
     moveItemInArray(this.dailyTasks, event.previousIndex, event.currentIndex);
 
     const taskTobeUpdated: DailyTask[] = [];
     this.dailyTasks.forEach((task, arrIndex) => {
-      if(task.index != arrIndex) {
+      if (task.index != arrIndex) {
         task.index = arrIndex;
         taskTobeUpdated.push(task);
       }
@@ -173,6 +173,19 @@ export class DailyListComponent implements OnInit {
     });
   }
 
+  addMessage(messageData: any) {
+    console.log("Implement dialog for adding message");
+
+    if (messageData.delete) {
+      this.dailyService.deleteDailyTaskField(messageData.task.id, "message");
+    } else {
+      const messageField = {
+        message: messageData.task.message,
+      };
+      this.dailyService.updateDailyTaskField(messageData.task.id, messageField);
+    }
+  }
+
   deleteTask(task: DailyTask) {
     this.dailyService.deleteDailyTask(task.id);
   }
@@ -181,6 +194,24 @@ export class DailyListComponent implements OnInit {
     task.created = new Date();
     task.modified = new Date();
     this.dailyService.updateDailyTask(task);
+  }
+
+  //TODO: Add modified date for the task field updates
+  setPriority(priorityData: any) {
+    const priorityField = {
+      priority: priorityData.priority,
+    };
+    this.dailyService.updateDailyTaskField(priorityData.taskId, priorityField);
+  }
+
+  addReminder(updatedData: any) {
+    updatedData.task.modified = new Date();
+
+    if (updatedData.delete) {
+      this.dailyService.deleteDailyTaskField(updatedData.task.id, "reminder");
+    } else {
+      this.dailyService.updateDailyTask(updatedData.task);
+    }
   }
 
   toggleShowHideCompletedTask() {
@@ -213,7 +244,7 @@ export class DailyListComponent implements OnInit {
     }
   }
 
-  //FIXME: Add feature for local data without calling server/db. 
+  //FIXME: Add feature for local data without calling server/db.
   //If decide to call server/db data on change then need to handle Drop() as the array size changes.
   //causing issue with index being updated incorrectly.
   daysSelected(data) {
@@ -254,9 +285,9 @@ export class DailyListComponent implements OnInit {
     this.dailyTasks.forEach((task) => {
       const date = new Date(task.created.toDate());
       const formatDate =
-        (date.getMonth() + 1) + "-" + date.getDate() + "-" + date.getFullYear();
+        date.getMonth() + 1 + "-" + date.getDate() + "-" + date.getFullYear();
 
-        console.log(formatDate);
+      console.log(formatDate);
       if (taskByDates[formatDate]) {
         taskByDates[formatDate].push(task);
       } else {

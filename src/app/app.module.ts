@@ -37,6 +37,7 @@ import { DailyModule } from "./daily/daily.module";
 import { DailyTaskDialogComponent } from "./common/daily-task-dialog/daily-task-dialog.component";
 import { ConfirmDialogComponent } from "./common/confirm-dialog/confirm-dialog.component";
 import { AccountModule } from "./account/account.module";
+import { MessageDialogComponent } from "./common/message-dialog/message-dialog.component";
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { AccountModule } from "./account/account.module";
     InviteDialogComponent,
     DailyTaskDialogComponent,
     ConfirmDialogComponent,
+    MessageDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -95,6 +97,7 @@ import { AccountModule } from "./account/account.module";
     InviteDialogComponent,
     DailyTaskDialogComponent,
     ConfirmDialogComponent,
+    MessageDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

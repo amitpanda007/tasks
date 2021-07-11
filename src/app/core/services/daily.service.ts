@@ -3,6 +3,8 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
 } from "@angular/fire/firestore";
+// import * as firebase from "firebase";
+import * as firebase from "firebase/app";
 import { Subject, Subscription } from "rxjs";
 import { DailyTask } from "src/app/daily/daily-task/dailytask";
 import { AuthService } from "./auth.service";
@@ -78,16 +80,25 @@ export class DailyService {
   updateDailyTaskIndex(tasks: DailyTask[]) {
     this._store.firestore.runTransaction(() => {
       return Promise.all([
-        tasks.forEach(task => {
+        tasks.forEach((task) => {
           this._store
             .collection<DailyTask>("daily")
             .doc(this.authService.getUID())
             .collection("tasks")
             .doc(task.id)
-            .set({"index": task.index}, { merge: true })
-        })
+            .set({ index: task.index }, { merge: true });
+        }),
       ]);
     });
+  }
+
+  updateDailyTaskField(taskId: string, fieldObject: object) {
+    this._store
+      .collection<DailyTask>("daily")
+      .doc(this.authService.getUID())
+      .collection("tasks")
+      .doc(taskId)
+      .set(fieldObject, { merge: true });
   }
 
   deleteDailyTask(taskId: string) {
@@ -97,6 +108,15 @@ export class DailyService {
       .collection("tasks")
       .doc(taskId)
       .delete();
+  }
+
+  deleteDailyTaskField(taskId: string, fieldName: string) {
+    this._store
+      .collection<DailyTask>("daily")
+      .doc(this.authService.getUID())
+      .collection("tasks")
+      .doc(taskId)
+      .update({ [fieldName]: firebase.firestore.FieldValue.delete() });
   }
 
   copyTask(task: DailyTask) {

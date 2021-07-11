@@ -73,7 +73,7 @@ export class TaskDialogComponent implements OnInit {
     this.tooltipPosition = "right";
     this.showHideCompletedTask = false;
     // this.filteredChecklist = this.data.task.checklist;
-    if(this.data.task.checklist) {
+    if (this.data.task.checklist) {
       this.filteredChecklist = cloneDeep(this.data.task.checklist);
     }
     console.log(this.filteredChecklist);
@@ -122,7 +122,7 @@ export class TaskDialogComponent implements OnInit {
   }
 
   save(): void {
-    if(this.filteredChecklist) {
+    if (this.filteredChecklist) {
       this.data.task.checklist = cloneDeep(this.filteredChecklist);
     }
 
@@ -196,6 +196,8 @@ export class TaskDialogComponent implements OnInit {
       width: "360px",
       data: {
         date: localDate,
+        enableCalender: true,
+        enableTime: false,
       },
     });
     dialogRef.afterClosed().subscribe((result: CalenderDialogResult) => {
@@ -244,7 +246,10 @@ export class TaskDialogComponent implements OnInit {
   }
 
   deleteChecklist(checklist: CheckList) {
-    this.data.task.checklist.splice(this.data.task.checklist.indexOf(checklist), 1);
+    this.data.task.checklist.splice(
+      this.data.task.checklist.indexOf(checklist),
+      1
+    );
     this.filteredChecklist.splice(this.filteredChecklist.indexOf(checklist), 1);
     this.calculateChecklistCompleted();
   }
