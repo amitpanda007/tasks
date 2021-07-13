@@ -29,6 +29,7 @@ export class DailyTaskComponent implements OnInit {
   @Output() statusChanged = new EventEmitter();
   @Output() priorityChnaged = new EventEmitter();
 
+  private reminderTime: any;
   public taskElapsedDays: any;
   public totalChecklist: number;
   public completedChecklist: number;
@@ -38,6 +39,7 @@ export class DailyTaskComponent implements OnInit {
   public priority: string;
   public isPriorityIconSelected: boolean;
   public msgTooltip: string;
+  public reminderTooltip: string;
   public showReminder: boolean;
 
 
@@ -126,26 +128,43 @@ export class DailyTaskComponent implements OnInit {
       this.msgTooltip = this.dailyTask.message;
     }
 
+    if(!this.dailyTask.reminder) {
+      this.reminderTooltip = "Add reminder for task";
+    }else {
+      const remDate = this.dailyTask.reminder as any;
+      const convrtDate = new Date(remDate.toDate());
+      const finalDate = convrtDate.toDateString() + " " +convrtDate.toLocaleTimeString();
+      this.reminderTooltip = `Reminder set for: ${finalDate}`;
+    }
+
     this.checkReminderStatus();
     this.isPriorityIconSelected = false;
   }
 
-  //TODO: Complete reminder countdown. make sure to keep the starting when reminder is 1 hr left
+  ngOnDestroy(): void {
+    window.clearTimeout(this.reminderTime);
+  }
+
+  //TODO: Complete reminder countdown. 
+  //Make sure to keep starting reminder when 1hr left.
   checkReminderStatus() {
     if (this.dailyTask.reminder) {
       const reminder = this.dailyTask.reminder as any;
       if (new Date() > reminder.toDate()) {
         this.showReminder = true;
       } else {
-        console.log("DATE IN FUTURE");
+        console.log(`REMINDER DATE IN FUTURE FOR TASK: ${this.dailyTask.title}`);
         const timeDiff = this.calculateTimeDiff(new Date(), reminder.toDate());
         console.log(timeDiff);
 
-        if (timeDiff < 60 * 60 * 1000) {
-          setTimeout(() => {
+        const ONE_HOUR = 60 * 60 * 1000;
+        if (timeDiff < ONE_HOUR) {
+          console.log(`Starting timer as reminder is less than ${ONE_HOUR / (60* 60 * 1000)} hour away.`);
+          this.reminderTime = setTimeout(() => {
             this.showReminder = true;
           }, timeDiff);
         } else {
+          console.log(`Counter not started as time till reminder is greater than ${ONE_HOUR / (60* 60 * 1000)} hour.`);
           this.showReminder = false;
         }
       }

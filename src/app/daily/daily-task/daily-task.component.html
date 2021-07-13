@@ -116,29 +116,29 @@
         *ngIf="!showReminder"
         (click)="setReminder(false)"
         class="opts"
-        matTooltip="Add reminder for task"
+        matTooltip="{{ reminderTooltip }}"
       >
         <mat-icon class="icon">notifications_active</mat-icon>
       </span>
       <div *ngIf="showReminder">
         <img
           class="images"
-          matTooltip="Click to remove reminder"
+          matTooltip="Click to snooze/remove reminder"
           [matMenuTriggerFor]="reminderOptions"
           src="./assets/images/icons/bell.gif"
         />
 
-        <mat-menu #reminderOptions="matMenu">
-          <button mat-menu-item (click)="setReminder(true)">Remove</button>
-          <button mat-menu-item [matMenuTriggerFor]="snooze">Snooze</button>
+        <mat-menu #reminderOptions="matMenu" yPosition="above">
+          <button mat-menu-item (click)="setReminder(true)" class="menu-opts"><mat-icon>remove_circle_outline</mat-icon>Remove</button>
+          <button mat-menu-item [matMenuTriggerFor]="snooze" class="menu-opts"><mat-icon>snooze</mat-icon>Snooze</button>
         </mat-menu>
-        <mat-menu #snooze="matMenu">
-          <button mat-menu-item (click)="snoozeReminder(15)">15 Mins</button>
-          <button mat-menu-item (click)="snoozeReminder(30)">30 Mins</button>
-          <button mat-menu-item (click)="snoozeReminder(60)">1 Hour</button>
-          <button mat-menu-item (click)="snoozeReminder(720)">12 Hours</button>
-          <button mat-menu-item (click)="snoozeReminder(1440)">1 Day</button>
-          <button mat-menu-item (click)="snoozeReminder(10080)">7 Days</button>
+        <mat-menu #snooze="matMenu" yPosition="above">
+          <button mat-menu-item (click)="snoozeReminder(15)" class="menu-opts">15 Mins</button>
+          <button mat-menu-item (click)="snoozeReminder(30)" class="menu-opts">30 Mins</button>
+          <button mat-menu-item (click)="snoozeReminder(60)" class="menu-opts">1 Hour</button>
+          <button mat-menu-item (click)="snoozeReminder(720)" class="menu-opts">12 Hours</button>
+          <button mat-menu-item (click)="snoozeReminder(1440)" class="menu-opts">1 Day</button>
+          <button mat-menu-item (click)="snoozeReminder(10080)" class="menu-opts">7 Days</button>
         </mat-menu>
       </div>
 
