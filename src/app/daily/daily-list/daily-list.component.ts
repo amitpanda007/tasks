@@ -204,6 +204,7 @@ export class DailyListComponent implements OnInit {
     this.dailyService.updateDailyTaskField(priorityData.taskId, priorityField);
   }
 
+  //TODO: Add modified date for the task field updates
   addReminder(updatedData: any) {
     updatedData.task.modified = new Date();
 

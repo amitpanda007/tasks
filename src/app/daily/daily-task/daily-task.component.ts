@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
+import { Component, Input, OnInit, Output, EventEmitter, HostListener, ElementRef } from "@angular/core";
 import { MatDialog } from "@angular/material";
 import * as firebase from "firebase";
 import { firestore } from "firebase";
@@ -36,10 +36,12 @@ export class DailyTaskComponent implements OnInit {
   public selectStatusBackgroundColor: string;
   public selectStatusColor: string;
   public priority: string;
+  public isPriorityIconSelected: boolean;
   public msgTooltip: string;
   public showReminder: boolean;
 
-  constructor(private dialog: MatDialog) {}
+
+  constructor(private eRef: ElementRef, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     if (this.dailyTask.priority) {
@@ -125,6 +127,7 @@ export class DailyTaskComponent implements OnInit {
     }
 
     this.checkReminderStatus();
+    this.isPriorityIconSelected = false;
   }
 
   //TODO: Complete reminder countdown. make sure to keep the starting when reminder is 1 hr left
@@ -186,6 +189,29 @@ export class DailyTaskComponent implements OnInit {
       priority: priority,
     };
     this.priorityChnaged.emit(taskPriority);
+  }
+
+  priorityIconClicked() {
+    console.log("CLICKED ON PRIORITY ICON");
+    this.isPriorityIconSelected = true;
+  }
+
+  //FIXME: This event is getting triggered for all the components and might cause performance issues.
+  // We can use Menu closed event to target the hide of icon.
+
+  /* @HostListener('document:click', ['$event'])
+  clickout(event) {
+    if(this.eRef.nativeElement.contains(event.target)) {
+      console.log("CLICKED INSIDE");
+    } else {
+      this.isPriorityIconSelected = false;
+      console.log("CLICKED OUTSIDE");
+    }
+  } */
+
+  priorityMenuClosed() {
+    console.log("PRIORITY MENU IS CLOSED.");
+    this.isPriorityIconSelected = false;
   }
 
   setMessage() {
@@ -263,5 +289,19 @@ export class DailyTaskComponent implements OnInit {
       };
       this.reminder.emit(updatedDate);
     });
+  }
+
+  // number coming from component is in minutes.
+  snoozeReminder(time: number) {
+    console.log(`Snoozing reminder for ${time} mins`);
+    const curDate = new Date();
+    const newDate = new Date(curDate.setMinutes((curDate.getMinutes() + time)));
+
+    this.dailyTask.reminder = newDate;
+    const updatedDate = {
+      task: this.dailyTask,
+      delete: false,
+    };
+    this.reminder.emit(updatedDate);
   }
 }

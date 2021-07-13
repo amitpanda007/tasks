@@ -67,12 +67,13 @@
       </span> -->
       <img
         class="opts images icon"
-        [ngClass]="{ 'priority-selected': dailyTask.priority }"
+        [ngClass]="{ 'priority-selected': dailyTask.priority ||  isPriorityIconSelected}"
         src="./assets/images/priority/{{ priority }}.svg"
+        (click)="priorityIconClicked()"
         [matMenuTriggerFor]="menu"
         matTooltip="{{ priority }}"
       />
-      <mat-menu #menu="matMenu">
+      <mat-menu #menu="matMenu" (closed)="priorityMenuClosed()">
         <div mat-menu-item class="menu-opts" (click)="selectedMenu('blocker')">
           <img class="images" src="./assets/images/priority/blocker.svg" />
           <span>Blocker</span>
@@ -121,11 +122,24 @@
       </span>
       <div *ngIf="showReminder">
         <img
-          (click)="setReminder(true)"
           class="images"
           matTooltip="Click to remove reminder"
+          [matMenuTriggerFor]="reminderOptions"
           src="./assets/images/icons/bell.gif"
         />
+
+        <mat-menu #reminderOptions="matMenu">
+          <button mat-menu-item (click)="setReminder(true)">Remove</button>
+          <button mat-menu-item [matMenuTriggerFor]="snooze">Snooze</button>
+        </mat-menu>
+        <mat-menu #snooze="matMenu">
+          <button mat-menu-item (click)="snoozeReminder(15)">15 Mins</button>
+          <button mat-menu-item (click)="snoozeReminder(30)">30 Mins</button>
+          <button mat-menu-item (click)="snoozeReminder(60)">1 Hour</button>
+          <button mat-menu-item (click)="snoozeReminder(720)">12 Hours</button>
+          <button mat-menu-item (click)="snoozeReminder(1440)">1 Day</button>
+          <button mat-menu-item (click)="snoozeReminder(10080)">7 Days</button>
+        </mat-menu>
       </div>
 
       <span
