@@ -16,9 +16,11 @@
 
 .input {
   margin: 5px;
-  width: 96.5%;
+  width: 97.5%;
   height: 20px;
-  border: 2px dotted blue;
+  border: 2px dotted #8a8acb;
+  border-radius: 3px;
+  font-family: 'Roboto';
 }
 
 .drag-list {
