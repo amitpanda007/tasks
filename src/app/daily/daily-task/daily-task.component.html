@@ -30,7 +30,7 @@
       >
     </div>
 
-    <div
+    <!-- <div
       class="status"
       [ngClass]="{ 'status-selected': dailyTask.status }"
       matTooltip="Set status"
@@ -52,6 +52,30 @@
           {{ status.name }}
         </option>
       </select>
+    </div> -->
+    <div
+      class="status"
+      [ngClass]="{ 'status-selected': dailyTask.status || isPriorityIconSelected }"
+      matTooltip="Set status"
+    >
+      <span
+        [matMenuTriggerFor]="statusMenu"
+        [style.background-color]="selectStatusBackgroundColor"
+        [style.color]="selectStatusColor"
+        (click)="statusIconClicked()"
+      >
+        {{ dailyTask.status ? dailyTask.status : 'ToDo'}}
+      </span>
+      <mat-menu #statusMenu="matMenu" (closed)="statusMenuClosed()">
+        <div mat-menu-item 
+          class="menu-opts" 
+          (click)="onStatusChange(status.id)" 
+          [style.background-color]="status.backgroundColor"
+          [style.color]="status.color" 
+          *ngFor="let status of statusOptions">
+            <span>{{ status.name }}</span>
+        </div>
+      </mat-menu>
     </div>
 
     <div class="options">

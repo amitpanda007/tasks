@@ -36,6 +36,7 @@ export class DailyTaskComponent implements OnInit {
   public statusOptions: Status[];
   public selectStatusBackgroundColor: string;
   public selectStatusColor: string;
+  public isStatusIconSelected: boolean;
   public priority: string;
   public isPriorityIconSelected: boolean;
   public msgTooltip: string;
@@ -139,6 +140,7 @@ export class DailyTaskComponent implements OnInit {
 
     this.checkReminderStatus();
     this.isPriorityIconSelected = false;
+    this.isStatusIconSelected = false;
   }
 
   ngOnDestroy(): void {
@@ -193,6 +195,16 @@ export class DailyTaskComponent implements OnInit {
       (status) => status.id == selectedStatus
     );
     this.statusChanged.emit({ task: this.dailyTask, status: status });
+  }
+
+  statusIconClicked() {
+    console.log("STATUS MENU OPENED.");
+    this.isPriorityIconSelected = true;
+  }
+
+  statusMenuClosed() {
+    console.log("STATUS MENU CLOSED.");
+    this.isPriorityIconSelected = false;
   }
 
   isStatusSelected(status: Status) {
