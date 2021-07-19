@@ -26,7 +26,7 @@
           (cdkDropListDropped)="drop($event)"
           class="list"
         >
-          <p class="empty-label" *ngIf="!tasks">Empty list</p>
+          <!-- <p class="empty-label" *ngIf="!tasks">Empty list</p> -->
           <div *ngFor="let task of tasks">
             <task
               *ngIf="task.listId == list.id"

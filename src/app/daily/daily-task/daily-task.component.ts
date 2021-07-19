@@ -1,4 +1,12 @@
-import { Component, Input, OnInit, Output, EventEmitter, HostListener, ElementRef } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  Output,
+  EventEmitter,
+  HostListener,
+  ElementRef,
+} from "@angular/core";
 import { MatDialog } from "@angular/material";
 import * as firebase from "firebase";
 import { firestore } from "firebase";
@@ -42,7 +50,6 @@ export class DailyTaskComponent implements OnInit {
   public msgTooltip: string;
   public reminderTooltip: string;
   public showReminder: boolean;
-
 
   constructor(private eRef: ElementRef, private dialog: MatDialog) {}
 
@@ -129,12 +136,13 @@ export class DailyTaskComponent implements OnInit {
       this.msgTooltip = this.dailyTask.message;
     }
 
-    if(!this.dailyTask.reminder) {
+    if (!this.dailyTask.reminder) {
       this.reminderTooltip = "Add reminder for task";
-    }else {
+    } else {
       const remDate = this.dailyTask.reminder as any;
       const convrtDate = new Date(remDate.toDate());
-      const finalDate = convrtDate.toDateString() + " " +convrtDate.toLocaleTimeString();
+      const finalDate =
+        convrtDate.toDateString() + " " + convrtDate.toLocaleTimeString();
       this.reminderTooltip = `Reminder set for: ${finalDate}`;
     }
 
@@ -147,7 +155,7 @@ export class DailyTaskComponent implements OnInit {
     window.clearTimeout(this.reminderTime);
   }
 
-  //TODO: Complete reminder countdown. 
+  //TODO: Complete reminder countdown.
   //Make sure to keep starting reminder when 1hr left.
   checkReminderStatus() {
     if (this.dailyTask.reminder) {
@@ -155,18 +163,28 @@ export class DailyTaskComponent implements OnInit {
       if (new Date() > reminder.toDate()) {
         this.showReminder = true;
       } else {
-        console.log(`REMINDER DATE IN FUTURE FOR TASK: ${this.dailyTask.title}`);
+        console.log(
+          `REMINDER DATE IN FUTURE FOR TASK: ${this.dailyTask.title}`
+        );
         const timeDiff = this.calculateTimeDiff(new Date(), reminder.toDate());
         console.log(timeDiff);
 
         const ONE_HOUR = 60 * 60 * 1000;
         if (timeDiff < ONE_HOUR) {
-          console.log(`Starting timer as reminder is less than ${ONE_HOUR / (60* 60 * 1000)} hour away.`);
+          console.log(
+            `Starting timer as reminder is less than ${
+              ONE_HOUR / (60 * 60 * 1000)
+            } hour away.`
+          );
           this.reminderTime = setTimeout(() => {
             this.showReminder = true;
           }, timeDiff);
         } else {
-          console.log(`Counter not started as time till reminder is greater than ${ONE_HOUR / (60* 60 * 1000)} hour.`);
+          console.log(
+            `Counter not started as time till reminder is greater than ${
+              ONE_HOUR / (60 * 60 * 1000)
+            } hour.`
+          );
           this.showReminder = false;
         }
       }
@@ -199,12 +217,12 @@ export class DailyTaskComponent implements OnInit {
 
   statusIconClicked() {
     console.log("STATUS MENU OPENED.");
-    this.isPriorityIconSelected = true;
+    this.isStatusIconSelected = true;
   }
 
   statusMenuClosed() {
     console.log("STATUS MENU CLOSED.");
-    this.isPriorityIconSelected = false;
+    this.isStatusIconSelected = false;
   }
 
   isStatusSelected(status: Status) {
@@ -326,7 +344,7 @@ export class DailyTaskComponent implements OnInit {
   snoozeReminder(time: number) {
     console.log(`Snoozing reminder for ${time} mins`);
     const curDate = new Date();
-    const newDate = new Date(curDate.setMinutes((curDate.getMinutes() + time)));
+    const newDate = new Date(curDate.setMinutes(curDate.getMinutes() + time));
 
     this.dailyTask.reminder = newDate;
     const updatedDate = {

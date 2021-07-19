@@ -55,7 +55,9 @@
     </div> -->
     <div
       class="status"
-      [ngClass]="{ 'status-selected': dailyTask.status || isPriorityIconSelected }"
+      [ngClass]="{
+        'status-selected': dailyTask.status || isStatusIconSelected
+      }"
       matTooltip="Set status"
     >
       <span
@@ -64,16 +66,18 @@
         [style.color]="selectStatusColor"
         (click)="statusIconClicked()"
       >
-        {{ dailyTask.status ? dailyTask.status : 'ToDo'}}
+        {{ dailyTask.status ? dailyTask.status : "ToDo" }}
       </span>
       <mat-menu #statusMenu="matMenu" (closed)="statusMenuClosed()">
-        <div mat-menu-item 
-          class="menu-opts" 
-          (click)="onStatusChange(status.id)" 
+        <div
+          mat-menu-item
+          class="menu-opts"
+          (click)="onStatusChange(status.id)"
           [style.background-color]="status.backgroundColor"
-          [style.color]="status.color" 
-          *ngFor="let status of statusOptions">
-            <span>{{ status.name }}</span>
+          [style.color]="status.color"
+          *ngFor="let status of statusOptions"
+        >
+          <span>{{ status.name }}</span>
         </div>
       </mat-menu>
     </div>
@@ -91,7 +95,9 @@
       </span> -->
       <img
         class="opts images icon"
-        [ngClass]="{ 'priority-selected': dailyTask.priority ||  isPriorityIconSelected}"
+        [ngClass]="{
+          'priority-selected': dailyTask.priority || isPriorityIconSelected
+        }"
         src="./assets/images/priority/{{ priority }}.svg"
         (click)="priorityIconClicked()"
         [matMenuTriggerFor]="menu"
@@ -153,16 +159,40 @@
         />
 
         <mat-menu #reminderOptions="matMenu" yPosition="above">
-          <button mat-menu-item (click)="setReminder(true)" class="menu-opts"><mat-icon>remove_circle_outline</mat-icon>Remove</button>
-          <button mat-menu-item [matMenuTriggerFor]="snooze" class="menu-opts"><mat-icon>snooze</mat-icon>Snooze</button>
+          <button mat-menu-item (click)="setReminder(true)" class="menu-opts">
+            <mat-icon>remove_circle_outline</mat-icon>Remove
+          </button>
+          <button mat-menu-item [matMenuTriggerFor]="snooze" class="menu-opts">
+            <mat-icon>snooze</mat-icon>Snooze
+          </button>
         </mat-menu>
         <mat-menu #snooze="matMenu" yPosition="above">
-          <button mat-menu-item (click)="snoozeReminder(15)" class="menu-opts">15 Mins</button>
-          <button mat-menu-item (click)="snoozeReminder(30)" class="menu-opts">30 Mins</button>
-          <button mat-menu-item (click)="snoozeReminder(60)" class="menu-opts">1 Hour</button>
-          <button mat-menu-item (click)="snoozeReminder(720)" class="menu-opts">12 Hours</button>
-          <button mat-menu-item (click)="snoozeReminder(1440)" class="menu-opts">1 Day</button>
-          <button mat-menu-item (click)="snoozeReminder(10080)" class="menu-opts">7 Days</button>
+          <button mat-menu-item (click)="snoozeReminder(15)" class="menu-opts">
+            15 Mins
+          </button>
+          <button mat-menu-item (click)="snoozeReminder(30)" class="menu-opts">
+            30 Mins
+          </button>
+          <button mat-menu-item (click)="snoozeReminder(60)" class="menu-opts">
+            1 Hour
+          </button>
+          <button mat-menu-item (click)="snoozeReminder(720)" class="menu-opts">
+            12 Hours
+          </button>
+          <button
+            mat-menu-item
+            (click)="snoozeReminder(1440)"
+            class="menu-opts"
+          >
+            1 Day
+          </button>
+          <button
+            mat-menu-item
+            (click)="snoozeReminder(10080)"
+            class="menu-opts"
+          >
+            7 Days
+          </button>
         </mat-menu>
       </div>
 

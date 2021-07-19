@@ -87,6 +87,7 @@
         *ngFor="let dailyTask of dailyTasksFilterd"
         class="drag-item"
         cdkDrag
+        [cdkDragDisabled]="showTodayTask || showHideCompletedTask"
         (edit)="editTask($event)"
         (delete)="deleteTask($event)"
         (done)="doneTask($event)"
@@ -119,6 +120,7 @@
           *ngFor="let dailyTask of taskView.tasks"
           class="drag-item"
           cdkDrag
+          [cdkDragDisabled]="showTodayTask || showHideCompletedTask"
           (edit)="editTask($event)"
           (delete)="deleteTask($event)"
           (done)="doneTask($event)"

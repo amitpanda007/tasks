@@ -64,11 +64,26 @@
         Example with a home icon with overlaid badge showing the number 15
       </span>
     </p>
+    <p *ngIf="task.message" class="message-info">
+      <mat-icon class="material-icons-outlined" matTooltip="{{ task.message }}"
+        >message</mat-icon
+      >
+    </p>
+    <p *ngIf="task.lockStatus && task.lockStatus.isLocked" class="">
+      <mat-icon
+        class="material-icons-outlined"
+        matTooltip="Task is locked. Can only be unlocked by user who locked it."
+        >lock</mat-icon
+      >
+    </p>
 
     <div class="members">
-      <span class="member" *ngFor="let member of task.members">{{
-        member.name | shortname
-      }}</span>
+      <span
+        class="member"
+        *ngFor="let member of task.members"
+        title="{{ member.name }}"
+        >{{ member.name | shortname }}</span
+      >
     </div>
   </div>
 </mat-card>

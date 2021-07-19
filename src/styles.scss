@@ -152,3 +152,15 @@ SVG Icons - svgicons.sparkk.fr
   stroke: #4691f6;
   stroke-width: 1;
 }
+
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar-thumb {
+  height: 56px;
+  border-radius: 8px;
+  border: 4px solid transparent;
+  background-clip: content-box;
+  background-color: #606060;
+}

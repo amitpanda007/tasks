@@ -23,6 +23,10 @@ import {
 import { BoardServiceV2 } from "../../core/services/boardv2.service";
 import { AuthService } from "../../core/services/auth.service";
 import { Board, SharedUser } from "../../boards/board/board";
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogResult,
+} from "src/app/common/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: "task-list",
@@ -158,6 +162,26 @@ export class TaskListComponent implements OnInit {
   }
 
   editTask(task: Task): void {
+    if (task.lockStatus && task.lockStatus.isLocked) {
+      if (this.authService.getUID() != task.lockStatus.lockedByUserId) {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+          width: "240px",
+          data: {
+            message:
+              "This task has been locked. You wont be able to open this task until its unlocked.",
+          },
+        });
+        dialogRef.afterClosed().subscribe((result: ConfirmDialogResult) => {
+          if (!result) {
+            return;
+          }
+          console.log(result);
+          return;
+        });
+        return;
+      }
+    }
+
     const clonedTask = cloneDeep(task);
     const clonedLabels = cloneDeep(this.labels);
     const clonedBoardMembers = cloneDeep(this.boardMembers);

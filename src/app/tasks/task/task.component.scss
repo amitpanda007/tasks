@@ -24,15 +24,19 @@
   min-width: 40px;
 }
 
-.checklist-count {
-  margin-top: 15px;
-}
-
 .actions-info {
-  margin-top: 2px;
+  margin-top: 12px;
   display: flex;
   align-items: center;
   align-content: center;
+}
+
+.checklist-count {
+  // margin-top: 15px;
+}
+
+.message-info {
+  margin-left: 12px;
 }
 
 .action-schedule {

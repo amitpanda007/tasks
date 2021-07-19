@@ -28,6 +28,7 @@ mat-toolbar > span {
   border: solid 1px #ccc;
   min-height: 80px;
   border-radius: 4px;
+  padding: 8px;
 }
 
 .app-new-task {
@@ -41,13 +42,18 @@ mat-toolbar > span {
   opacity: 0.2;
 }
 
-.cdk-drag-animating {
-  transition: transform 250ms;
+.cdk-drag-placeholder {
+  opacity: 0.2;
+  border: 2px dashed gray;
 }
 
-.cdk-drag-placeholder {
-  opacity: 0;
+.cdk-drag-animating {
+  transition: transform 300ms ease;
 }
+
+// .cdk-drag-placeholder {
+//   opacity: 0.5;
+// }
 
 .task-btn {
   opacity: 0;
@@ -55,7 +61,7 @@ mat-toolbar > span {
   bottom: 0;
   width: 100%;
   padding: 0;
-  margin-left: -16px;
+  margin-left: -8px;
   background: rgba(0, 255, 255, 0.1);
   transition: opacity 300ms;
 }

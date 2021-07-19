@@ -41,6 +41,12 @@ import {
 import { ErrorSnackbar, SuccessSnackbar } from "../snackbar.component";
 import { MatSnackBar } from "@angular/material";
 import { SharedUser } from "src/app/boards/board/board";
+import {
+  MessageDialogComponent,
+  MessageDialogResult,
+} from "../message-dialog/message-dialog.component";
+import { TaskLock } from "src/app/tasks/task/tasklock";
+import { AuthService } from "src/app/core/services/auth.service";
 
 @Component({
   selector: "app-task-dialog",
@@ -65,7 +71,8 @@ export class TaskDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<TaskDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: TaskDialogData,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -426,6 +433,39 @@ export class TaskDialogComponent implements OnInit {
         console.log("Share Complete");
       });
     }
+  }
+
+  addMessage() {
+    console.log("Adding message to Task");
+    let isMessageAdded: boolean = false;
+    if (this.data.task.message) {
+      isMessageAdded = true;
+    }
+    const dialogRef = this.dialog.open(MessageDialogComponent, {
+      width: "340px",
+      data: {
+        message: this.data.task.message,
+        enableDelete: isMessageAdded,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: MessageDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+
+      if (result.message) {
+        this.data.task.message = result.message;
+      }
+    });
+  }
+
+  lockTask() {
+    const lockTask: TaskLock = {
+      isLocked: true,
+      lockedByUserId: this.authService.getUID(),
+    };
+    this.data.task.lockStatus = lockTask;
   }
 }
 

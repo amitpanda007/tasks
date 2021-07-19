@@ -23,9 +23,12 @@
     <section class="members">
       <p class="sub-header">Members</p>
       <div class="member-section">
-        <span class="member" *ngFor="let member of data.task.members">{{
-          member.name | shortname
-        }}</span>
+        <span
+          class="member"
+          *ngFor="let member of data.task.members"
+          title="{{ member.name }}"
+          >{{ member.name | shortname }}</span
+        >
         <div>
           <button
             mat-icon-button
@@ -249,6 +252,35 @@
       <button mat-stroked-button (click)="shareBoard()">
         <span class="option-content">
           <mat-icon class="material-icons-outlined">share</mat-icon> Share
+        </span>
+      </button>
+
+      <button
+        mat-stroked-button
+        (click)="addMessage()"
+        matTooltip="Add special message"
+      >
+        <span class="option-content">
+          <mat-icon class="material-icons-outlined">message</mat-icon> Message
+        </span>
+      </button>
+
+      <button
+        mat-stroked-button
+        (click)="lockTask()"
+        matTooltip="Lock/Unlock this task. Only you can unlock once locked."
+      >
+        <span
+          class="option-content"
+          *ngIf="!data.task.lockStatus || !data.task.lockStatus.isLocked"
+        >
+          <mat-icon class="material-icons-outlined">lock</mat-icon> Lock
+        </span>
+        <span
+          class="option-content"
+          *ngIf="data.task.lockStatus && data.task.lockStatus.isLocked"
+        >
+          <mat-icon class="material-icons-outlined">lock_open</mat-icon> Unlock
         </span>
       </button>
     </div>
