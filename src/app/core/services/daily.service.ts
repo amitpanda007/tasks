@@ -92,6 +92,21 @@ export class DailyService {
     });
   }
 
+  updateDailyTaskIndexBatch(tasks: DailyTask[]) {
+    const db = firebase.firestore();
+    const batch = db.batch();
+    const refs = tasks.map(t => db.collection("daily").doc(this.authService.getUID()).collection("tasks").doc(t.id));
+    // refs.forEach((ref, idx) => batch.update(ref, { index: idx }))
+    // batch.commit();
+    refs.forEach((ref, idx) => {
+      const currentTask = tasks[idx];
+      // console.log(ref.id);
+      // console.log(currentTask.index);
+      batch.update(ref, { index: currentTask.index });
+    });
+    batch.commit();
+  }
+
   updateDailyTaskField(taskId: string, fieldObject: object) {
     this._store
       .collection<DailyTask>("daily")

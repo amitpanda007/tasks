@@ -461,8 +461,15 @@ export class TaskDialogComponent implements OnInit {
   }
 
   lockTask() {
+    let status: boolean;
+    if(this.data.task.lockStatus && this.data.task.lockStatus.isLocked) {
+      status = !this.data.task.lockStatus.isLocked;
+    }else {
+      status = true;
+    }
+    
     const lockTask: TaskLock = {
-      isLocked: true,
+      isLocked: status,
       lockedByUserId: this.authService.getUID(),
     };
     this.data.task.lockStatus = lockTask;

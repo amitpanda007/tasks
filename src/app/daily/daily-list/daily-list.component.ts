@@ -124,9 +124,10 @@ export class DailyListComponent implements OnInit {
         taskTobeUpdated.push(task);
       }
     });
-
     console.log(taskTobeUpdated);
-    this.dailyService.updateDailyTaskIndex(taskTobeUpdated);
+    // this.dailyService.updateDailyTaskIndex(taskTobeUpdated);
+
+    this.dailyService.updateDailyTaskIndexBatch(taskTobeUpdated);
   }
 
   dropDateView(event: CdkDragDrop<string[]>) {
