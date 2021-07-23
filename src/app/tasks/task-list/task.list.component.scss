@@ -24,11 +24,28 @@ mat-toolbar > span {
   margin-right: 5px;
 }
 
+.list-title {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-between;
+  width: 280px;
+}
+
 .list {
   border: solid 1px #ccc;
   min-height: 80px;
   border-radius: 4px;
   padding: 8px;
+}
+
+.new-list-section {
+  margin: 10px;
+}
+
+.new-list-input {
+  width: 80%;
+  display: inline-grid;
 }
 
 .app-new-task {

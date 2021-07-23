@@ -5,6 +5,7 @@ import { TaskLock } from "./tasklock";
 
 export interface Task {
   id?: string;
+  index: number;
   listId: string;
   title: string;
   description: string;

@@ -12,6 +12,7 @@ import { Label } from "src/app/tasks/task/label";
 import { Subscription } from "rxjs";
 import { Invitation } from '../../common/invite-dialog/invitation';
 import { firestore } from 'firebase/app';
+import * as firebase from "firebase/app";
 
 
 @Injectable()
@@ -185,6 +186,32 @@ export class BoardServiceV2 {
       .add(data);
   }
 
+  deleteTaskList(boardId: string, taskListId: string) {
+    this._store
+      .collection("boards")
+      .doc(boardId)
+      .collection("taskLists")
+      .doc(taskListId)
+      .delete();
+  }
+
+  deleteTaskListBatch(boardId: string, taskListId: string, tasks: Task[]) {
+    const db = firebase.firestore();
+    const batch = db.batch();
+    
+    // Update Task List ref for delete
+    const taskListRef = db.collection("boards").doc(boardId).collection("taskLists").doc(taskListId)
+    batch.delete(taskListRef);
+    
+    // Update tasks ref for delete
+    const taskRefs = tasks.map(t => db.collection("boards").doc(boardId).collection("tasks").doc(t.id));
+    taskRefs.forEach((ref) => {
+      batch.delete(ref);
+    });
+
+    batch.commit();
+  }
+
   /**
   / Tasks API Call section
   **/
@@ -244,13 +271,42 @@ export class BoardServiceV2 {
       .delete();
   }
 
-  moveTasks(boardId: string, taskId: string, newTaskListId: string) {
-    this._store
-      .collection("boards")
-      .doc(boardId)
-      .collection("tasks")
-      .doc(taskId)
-      .set({ listId: newTaskListId }, { merge: true });
+  // moveTaskToList(boardId: string, taskId: string, newTaskListId: string) {
+  //   this._store
+  //     .collection("boards")
+  //     .doc(boardId)
+  //     .collection("tasks")
+  //     .doc(taskId)
+  //     .set({ listId: newTaskListId }, { merge: true });
+  // }
+
+  // updateTaskIndex(boardId: string, taskId: string, newIndex: number) {
+  //   this._store
+  //     .collection("boards")
+  //     .doc(boardId)
+  //     .collection("tasks")
+  //     .doc(taskId)
+  //     .set({ index: newIndex }, { merge: true });
+  // }
+
+  moveTaskBatch(boardId: string, taskListId: string, taskId: string, tasks: Task[]) {
+    const db = firebase.firestore();
+    const batch = db.batch();
+
+    // Update task index in the batch
+    const taskRefs = tasks.map(t => db.collection("boards").doc(boardId).collection("tasks").doc(t.id));
+    taskRefs.forEach((ref, idx) => {
+      const currentTask = tasks[idx];
+      batch.update(ref, { index: currentTask.index });
+    });
+
+    // Update list id for the task in the batch
+    if(taskListId) {
+      const taskListUpdateRefs = db.collection("boards").doc(boardId).collection("tasks").doc(taskId);
+      batch.update(taskListUpdateRefs, {listId: taskListId})
+    }
+
+    batch.commit();
   }
 
   /*

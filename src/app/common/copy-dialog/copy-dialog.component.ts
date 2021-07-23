@@ -69,7 +69,9 @@ export class CopyDialogComponent implements OnInit {
       newDueDate = this.data.task.dueDate;
     }
 
+    //FIXME: inxed needs to be determine where the task is getting copied to.
     const newTask = {
+      index: 0,
       title: this.titleText,
       description: this.data.task.description,
       backgroundColor: this.data.task.backgroundColor,

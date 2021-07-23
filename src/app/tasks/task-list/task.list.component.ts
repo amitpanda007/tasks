@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { CdkDragDrop, transferArrayItem } from "@angular/cdk/drag-drop";
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
 import * as cloneDeep from "lodash/cloneDeep";
 import { Task } from "../task/task";
 import {
@@ -141,24 +141,51 @@ export class TaskListComponent implements OnInit {
 
   drop(event: CdkDragDrop<Task[] | null>): void {
     console.log(event);
-    if (event.previousContainer === event.container) {
-      return;
-    }
-    if (!event.container.data || !event.previousContainer.data) {
-      return;
-    }
-
-    const taskId = event.container.data[0].id;
+    // const taskId = event.container.data[0].id;
     const newTaskListId = event.container.id;
-    console.log(taskId, newTaskListId);
-    this.boardServiceV2.moveTasks(this.boardId, taskId, newTaskListId);
+    // console.log(taskId, newTaskListId);
 
-    transferArrayItem(
-      event.previousContainer.data,
-      event.container.data,
-      event.previousIndex,
-      event.currentIndex
-    );
+    if (event.previousContainer === event.container) {
+      if(event.currentIndex === event.previousIndex) {
+        return;
+      }
+      // const taskListId = event.container.id;
+      let previousIndex: number = event.container.data[0].index;
+      let currentIndex: number = previousIndex + (event.currentIndex - event.previousIndex);
+      console.log(`${previousIndex}:${currentIndex}`);
+      moveItemInArray(this.tasks, previousIndex, currentIndex);
+
+      const taskTobeUpdated: Task[] = [];
+      this.tasks.forEach((task, arrIndex) => {
+        if (task.index != arrIndex) {
+          task.index = arrIndex;
+          taskTobeUpdated.push(task);
+        }
+      });
+      console.log(taskTobeUpdated);
+      
+      // this.boardServiceV2.moveTaskBatch(this.boardId, "", taskId, taskTobeUpdated);
+    }else {
+      if (!event.container.data || !event.previousContainer.data) {
+        return;
+      }
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+
+      const taskTobeUpdated: Task[] = [];
+      this.tasks.forEach((task, arrIndex) => {
+        if (task.index != arrIndex) {
+          task.index = arrIndex;
+          taskTobeUpdated.push(task);
+        }
+      });
+      console.log(taskTobeUpdated);
+      // this.boardServiceV2.moveTaskBatch(this.boardId, newTaskListId, taskId, taskTobeUpdated);
+    }
   }
 
   editTask(task: Task): void {
@@ -244,6 +271,8 @@ export class TaskListComponent implements OnInit {
         return;
       }
       result.task.listId = taskListId;
+      const tasksUnderList = this.tasks.filter(task => task.listId == taskListId);
+      result.task.index = tasksUnderList.length;
       this.boardServiceV2.addTask(this.boardId, result.task);
     });
   }
@@ -254,10 +283,29 @@ export class TaskListComponent implements OnInit {
       name: this.listName,
       list: this.listName + "List",
     };
+    if(this.listName.trim() === "") {
+      return;
+    }
     this.boardServiceV2.addTaskList(this.boardId, newList);
-
     this.listName = "";
     this.hideInput();
+  }
+
+  deleteTaskList(taskListId: string) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: "360px",
+      data: {
+        message: "This would delete the List with all tasks inside. Are you sure ?"
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: ConfirmDialogResult) => {
+      console.log(result);
+      if(result.confirm) {
+        // this.boardServiceV2.deleteTaskList(this.boardId, taskListId);
+        const tasks = this.tasks.filter(task => task.listId === taskListId);
+        this.boardServiceV2.deleteTaskListBatch(this.boardId, taskListId, tasks);
+      }
+    });
   }
 
   showInput() {

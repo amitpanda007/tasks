@@ -16,8 +16,6 @@
   <div class="content-wrapper">
     <div class="container-wrapper">
       <div class="container" *ngFor="let list of taskList">
-        <h2>{{ list.name }}</h2>
-
         <mat-card
           cdkDropList
           id="{{ list.id }}"
@@ -26,6 +24,17 @@
           (cdkDropListDropped)="drop($event)"
           class="list"
         >
+          <mat-card-header>
+            <mat-card-title>
+              <div class="list-title">
+                <p>{{ list.name }}</p>
+                <button mat-icon-button aria-label="drag task list">
+                  <mat-icon>drag_indicator</mat-icon>
+                </button>
+              </div>
+            </mat-card-title>
+            <!-- <mat-card-subtitle></mat-card-subtitle> -->
+          </mat-card-header>
           <!-- <p class="empty-label" *ngIf="!tasks">Empty list</p> -->
           <div *ngFor="let task of tasks">
             <task
@@ -36,7 +45,7 @@
               [labels]="labels"
             ></task>
           </div>
-          <div class="container-add">
+          <!-- <div class="container-add">
             <button
               (click)="createNewTask(list.id)"
               mat-button
@@ -44,48 +53,82 @@
             >
               <mat-icon>add</mat-icon> Add Task
             </button>
+          </div> -->
+
+          <div>
+            <button
+              mat-icon-button
+              (click)="createNewTask(list.id)"
+              aria-label="drag task list"
+              matTooltip="create new task"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="deleteTaskList(list.id)"
+              color="warn"
+              aria-label="drag task list"
+              matTooltip="delete task list"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
           </div>
         </mat-card>
       </div>
 
       <div class="container">
-        <div *ngIf="!showInputField">
-          <h2>...</h2>
-          <button (click)="showInput()" mat-button color="primary">
-            <mat-icon>add</mat-icon> Add New List
-          </button>
-        </div>
+        <mat-card>
+          <div *ngIf="!showInputField">
+            <button (click)="showInput()" mat-button color="primary">
+              <mat-icon>add</mat-icon> Add New List
+            </button>
+          </div>
 
-        <form *ngIf="showInputField">
-          <mat-form-field>
-            <mat-label>Task List Header</mat-label>
-            <input
-              matInput
-              placeholder="ToDo"
-              autocomplete="off"
-              name="listInput"
-              [(ngModel)]="listName"
-            />
-          </mat-form-field>
+          <div *ngIf="showInputField" class="new-list-section">
+            <div class="new-list-input">
+              <mat-form-field>
+                <mat-label>Tasklist title</mat-label>
+                <input
+                  matInput
+                  placeholder="ToDo"
+                  autocomplete="off"
+                  name="listInput"
+                  required
+                  [(ngModel)]="listName"
+                />
+              </mat-form-field>
+            </div>
 
-          <button
-            (click)="createNewList()"
-            mat-icon-button
-            color="primary"
-            aria-label="Close Input"
-          >
-            <mat-icon>done</mat-icon>
-          </button>
+            <div>
+              <!-- <button
+                (click)="createNewList()"
+                mat-icon-button
+                color="primary"
+                aria-label="create list button"
+              >
+                <mat-icon>done</mat-icon>
+              </button> -->
 
-          <button
-            (click)="hideInput()"
-            mat-icon-button
-            color="primary"
-            aria-label="Close Input"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-        </form>
+              <button
+                mat-stroked-button
+                (click)="createNewList()"
+                aria-label="create list button"
+              >
+                Add
+              </button>
+
+              <button
+                (click)="hideInput()"
+                mat-icon-button
+                color="primary"
+                aria-label="cancel"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-card>
       </div>
     </div>
   </div>

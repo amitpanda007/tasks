@@ -70,7 +70,9 @@ export class MoveDialogComponent implements OnInit {
           newDueDate = this.data.task.dueDate;
         }
 
+        //FIXME: inxed needs to be determine where the task is getting moved to.
         const newTask = {
+          index: 0,
           title: this.data.task.title,
           description: this.data.task.description,
           backgroundColor: this.data.task.backgroundColor,

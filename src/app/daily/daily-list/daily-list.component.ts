@@ -126,7 +126,6 @@ export class DailyListComponent implements OnInit {
     });
     console.log(taskTobeUpdated);
     // this.dailyService.updateDailyTaskIndex(taskTobeUpdated);
-
     this.dailyService.updateDailyTaskIndexBatch(taskTobeUpdated);
   }
 
