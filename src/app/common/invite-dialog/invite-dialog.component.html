@@ -11,6 +11,8 @@
       />
     </mat-form-field>
     <button
+      [disabled]="true"
+      matTooltip="Feature not available"
       mat-stroked-button
       aria-label="sedn invitation"
       (click)="sendInvitation()"
@@ -19,15 +21,20 @@
     </button>
   </div>
   <p class="sub-header">Create Invite Link</p>
+  <p class="info">
+    you can create invite link & share with friends to join your board.
+  </p>
   <div class="invite-link">
-    <a *ngIf="invitationLink" target="_blank" href="{{invitationLink}}">Invitation Link</a>
+    <a *ngIf="invitationLink" target="_blank" href="{{ invitationLink }}"
+      >Invitation Link</a
+    >
   </div>
   <button
     mat-stroked-button
     aria-label="create invite link"
     (click)="createInvitation()"
   >
-  Create invitation
+    Create invitation
   </button>
 </div>
 <div mat-dialog-actions>

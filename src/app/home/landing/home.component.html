@@ -1,0 +1,120 @@
+<!-- <div class="search">
+  <input
+    class="search-input"
+    name="search"
+    type="text"
+    [readonly]="readonlyMode"
+    placeholder="Search here"
+    [(ngModel)]="searchTerm"
+    autocomplete="off"
+    (keydown.enter)="find()"
+  />
+</div> -->
+
+<section id="hero">
+  <div class="container">
+    <div class="detail">
+      <h1>Tasks helps teams move work forward.</h1>
+      <p>
+        Collaborate, manage projects, and reach new productivity peaks. From
+        high rises to the home office, the way your team works is
+        unique—accomplish it all with Trello.
+      </p>
+      <div class="sign-up">
+        <div class="">
+          <input
+            name="email"
+            class=""
+            type="email"
+            placeholder="Email"
+            [(ngModel)]="emailId"
+          />
+        </div>
+        <button class="btn btn-wrap btn-primary btn-block" (click)="signUp()">
+          Sign up—it’s free!
+        </button>
+      </div>
+    </div>
+    <div class="">
+      <img
+        src="../../assets/images/hero.jpg"
+        width="931"
+        height="1205"
+        class="img-fluid"
+        alt=""
+      />
+    </div>
+  </div>
+</section>
+<section id="product"></section>
+<section id="features"></section>
+<section id="sign-up"></section>
+<footer>
+  <ul class="global-footer-list">
+    <li class="global-footer-list-item">
+      <a
+        class="global-footer-list-item-link quiet"
+        href="/templates"
+        data-analytics-link="templatesFooterLink"
+        >Templates</a
+      >
+    </li>
+    <li class="global-footer-list-item">
+      <a
+        class="global-footer-list-item-link quiet"
+        href="/pricing"
+        data-analytics-link="pricingFooterLink"
+        >Pricing</a
+      >
+    </li>
+    <li class="global-footer-list-item">
+      <a
+        class="global-footer-list-item-link quiet"
+        target="_blank"
+        data-analytics-link="blogFooterLink"
+        href="https://blog.taskfrtdy.com/"
+        >Blog</a
+      >
+    </li>
+    <li class="global-footer-list-item">
+      <a
+        class="global-footer-list-item-link quiet"
+        href="http://developers.taskfrtdy.com"
+        data-analytics-link="developersFooterLink"
+        >Developers</a
+      >
+    </li>
+    <li class="global-footer-list-item">
+      <a
+        class="global-footer-list-item-link quiet"
+        href="/about"
+        data-analytics-link="aboutFooterLink"
+        >About</a
+      >
+    </li>
+    <li class="global-footer-list-item">
+      <a
+        class="global-footer-list-item-link quiet"
+        href="/help"
+        data-analytics-link="helpFooterLink"
+        >Help</a
+      >
+    </li>
+    <li class="global-footer-list-item">
+      <a
+        class="global-footer-list-item-link quiet"
+        href="/legal"
+        data-analytics-link="legalFooterLink"
+        >Legal</a
+      >
+    </li>
+    <li class="global-footer-list-item">
+      <a
+        class="global-footer-list-item-link quiet"
+        href="/privacy"
+        data-analytics-link="privacyFooterLink"
+        >Privacy</a
+      >
+    </li>
+  </ul>
+</footer>
