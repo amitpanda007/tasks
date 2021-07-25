@@ -18,10 +18,12 @@ mat-toolbar > span {
 }
 
 .container {
-  width: 400px;
-  width: 320px;
-  // margin: 0 25px 25px 0;
+  width: 240px;
   margin-right: 5px;
+}
+
+.card {
+  padding: 0;
 }
 
 .list-title {
@@ -37,6 +39,7 @@ mat-toolbar > span {
   min-height: 80px;
   border-radius: 4px;
   padding: 8px;
+  margin-bottom: 0;
 }
 
 .new-list-section {

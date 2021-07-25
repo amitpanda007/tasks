@@ -4,7 +4,7 @@
   (click)="edit.emit(task)"
   [style.background-color]="task.backgroundColor"
 >
-  <h3>{{ task.title }}</h3>
+  <h4>{{ task.title }}</h4>
   <div *ngIf="!showLabelText">
     <mat-chip-list>
       <div *ngFor="let label of labels">
