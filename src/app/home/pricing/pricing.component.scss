@@ -16,3 +16,192 @@
   font-size: 3rem;
   line-height: 1.25;
 }
+
+.price-box {
+  scroll-margin-top: 72px;
+}
+
+.outer-one {
+  max-width: 960px;
+}
+
+outer-two {
+  -webkit-box-align: stretch;
+  align-items: stretch;
+  -webkit-box-pack: start;
+  justify-content: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
+
+.outer-three {
+  padding: 1rem 1rem 5rem;
+  position: relative;
+  scroll-margin-top: 72px;
+  text-align: center;
+  width: 100%;
+}
+
+.outer-four {
+  display: grid;
+  border-top: 1px solid rgb(193, 199, 208);
+  grid-template-columns: repeat(3, minmax(0px, 1fr));
+}
+
+.outer-four > :last-child {
+  margin-bottom: 0px;
+}
+
+.inner-one {
+  order: 1;
+  border-right: 1px solid rgb(193, 199, 208);
+  padding: 2rem 2rem 0px;
+}
+
+.inner-two {
+  order: 4;
+  border-right: 1px solid rgb(193, 199, 208);
+  padding: 2rem 2rem 0px;
+}
+
+.inner-three {
+  order: 7;
+  border-right: 1px solid rgb(193, 199, 208);
+  border-bottom: 1px solid rgb(193, 199, 208);
+  padding: 2rem 2rem 0px;
+}
+
+.inner-four {
+  order: 10;
+  border-right: 1px solid rgb(193, 199, 208);
+  border-bottom: 1px solid rgb(193, 199, 208);
+  padding: 2rem 2rem 0px;
+}
+
+.inner-five {
+  order: 2;
+  border-right: 1px solid rgb(193, 199, 208);
+  background-color: rgb(222, 235, 255);
+  padding: 2rem 2rem 0px;
+}
+
+.inner-six {
+  order: 5;
+  border-right: 1px solid rgb(193, 199, 208);
+  background-color: rgb(222, 235, 255);
+  padding: 2rem 2rem 0px;
+}
+
+.inner-seven {
+  order: 8;
+  background-color: rgb(222, 235, 255);
+  border-right: 1px solid rgb(193, 199, 208);
+  border-bottom: 1px solid rgb(193, 199, 208);
+  padding: 2rem;
+}
+
+.inner-eight {
+  order: 11;
+  border-right: 1px solid rgb(193, 199, 208);
+  border-bottom: 1px solid rgb(193, 199, 208);
+  padding: 2rem 2rem 0px;
+}
+
+.inner-nine {
+  order: 3;
+  padding: 2rem 2rem 0px;
+}
+
+.inner-ten {
+  order: 6;
+  padding: 2rem 2rem 0px;
+}
+
+.inner-eleven {
+  order: 9;
+  border-bottom: 1px solid rgb(193, 199, 208);
+  padding: 2rem 2rem 0px;
+}
+
+.inner-twelve {
+  order: 12;
+  border-bottom: 1px solid rgb(193, 199, 208);
+  padding: 2rem 2rem 0px;
+}
+
+.business-signup > a > span {
+  -webkit-box-align: center;
+  align-items: center;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  display: inline-flex;
+  transition: all 250ms ease-out 0s;
+  background-color: rgb(54, 179, 126);
+  border: 1px solid rgb(54, 179, 126);
+  text-decoration: none;
+  font-size: 1.25rem;
+  padding: 0.4rem 1.5rem 0.5rem;
+  color: rgb(255, 255, 255) !important;
+}
+
+.signup > a > span {
+  -webkit-box-align: center;
+  align-items: center;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  display: inline-flex;
+  transition: all 250ms ease-out 0s;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgb(54, 179, 126);
+  text-decoration: none;
+  font-size: 1.25rem;
+  padding: 0.4rem 1.5rem 0.5rem;
+  color: rgb(54, 179, 126) !important;
+}
+
+.options {
+  text-align: left;
+}
+
+.options ul {
+  font-size: 1rem;
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px 0px 0px 1.5rem;
+}
+
+.options ul li {
+  margin: 0px 0px 0.5rem;
+  position: relative;
+}
+
+.options ul li::before {
+  background-image: url(../../../assets/images/icons/tick.svg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+  content: "";
+  height: 1rem;
+  left: -1.5rem;
+  margin: 0px auto;
+  overflow: hidden;
+  position: absolute;
+  text-indent: -9999px;
+  top: 0.25rem;
+  vertical-align: middle;
+  width: 1rem;
+}
+
+.options ul li code {
+  background: rgb(0, 121, 191);
+  border-radius: 0.25rem;
+  color: rgb(255, 255, 255);
+  display: inline-block;
+  font-family: inherit;
+  font-size: 0.75rem;
+  padding: 0.12rem 0.5rem 0.25rem;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
