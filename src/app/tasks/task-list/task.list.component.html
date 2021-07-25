@@ -13,17 +13,10 @@
     </button>
   </div>
 
-  <div class="content-wrapper">
+  <div class="content-wrapper" *ngIf="taskList && tasks && labels">
     <div class="container-wrapper">
       <div class="container" *ngFor="let list of taskList">
-        <mat-card
-          cdkDropList
-          id="{{ list.id }}"
-          [cdkDropListData]="tasks"
-          [cdkDropListConnectedTo]="remainingList(list.id)"
-          (cdkDropListDropped)="drop($event)"
-          class="list"
-        >
+        <mat-card>
           <mat-card-header>
             <mat-card-title>
               <div class="list-title">
@@ -33,28 +26,26 @@
                 </button>
               </div>
             </mat-card-title>
-            <!-- <mat-card-subtitle></mat-card-subtitle> -->
           </mat-card-header>
           <!-- <p class="empty-label" *ngIf="!tasks">Empty list</p> -->
-          <div *ngFor="let task of tasks">
-            <task
-              *ngIf="task.listId == list.id"
-              (edit)="editTask($event)"
-              cdkDrag
-              [task]="task"
-              [labels]="labels"
-            ></task>
-          </div>
-          <!-- <div class="container-add">
-            <button
-              (click)="createNewTask(list.id)"
-              mat-button
-              class="task-btn"
-            >
-              <mat-icon>add</mat-icon> Add Task
-            </button>
-          </div> -->
-
+          <mat-card-content
+            cdkDropList
+            id="{{ list.id }}"
+            [cdkDropListData]="containerData(list.id)"
+            [cdkDropListConnectedTo]="remainingList(list.id)"
+            (cdkDropListDropped)="drop($event)"
+            class="list"
+          >
+            <div *ngFor="let task of tasks">
+              <task
+                *ngIf="task.listId == list.id"
+                (edit)="editTask($event)"
+                cdkDrag
+                [task]="task"
+                [labels]="labels"
+              ></task>
+            </div>
+          </mat-card-content>
           <div>
             <button
               mat-icon-button

@@ -10,10 +10,9 @@ import { AuthService } from "./auth.service";
 import { TaskList } from "../../tasks/task-list/tasklist";
 import { Label } from "src/app/tasks/task/label";
 import { Subscription } from "rxjs";
-import { Invitation } from '../../common/invite-dialog/invitation';
-import { firestore } from 'firebase/app';
+import { Invitation } from "../../common/invite-dialog/invitation";
+import { firestore } from "firebase/app";
 import * as firebase from "firebase/app";
-
 
 @Injectable()
 export class BoardServiceV2 {
@@ -51,9 +50,9 @@ export class BoardServiceV2 {
    **/
 
   getBoards() {
-    this.boardsCollection = this._store
-      .collection<Board>("boards", ref => 
-        ref.where("owner", "==", this.authService.getUID()));
+    this.boardsCollection = this._store.collection<Board>("boards", (ref) =>
+      ref.where("owner", "==", this.authService.getUID())
+    );
 
     this.boardsSubscription = this.boardsCollection
       .valueChanges({ idField: "id" })
@@ -68,9 +67,11 @@ export class BoardServiceV2 {
   }
 
   getSharedBoards() {
-    this.sharedBoardsCollection = this._store
-      .collection<Board>("boards", ref => 
-        ref.where("shared", "array-contains-any", [this.authService.getUID()]));
+    this.sharedBoardsCollection = this._store.collection<Board>(
+      "boards",
+      (ref) =>
+        ref.where("shared", "array-contains-any", [this.authService.getUID()])
+    );
 
     this.sharedBoardsSubscription = this.sharedBoardsCollection
       .valueChanges({ idField: "id" })
@@ -85,16 +86,14 @@ export class BoardServiceV2 {
   }
 
   getBoardsWithoutObserver() {
-    return this._store
-      .collection<Board>("boards", ref => 
-      ref.where("owner", "==", this.authService.getUID()));
+    return this._store.collection<Board>("boards", (ref) =>
+      ref.where("owner", "==", this.authService.getUID())
+    );
   }
 
   addBoard(board: Board) {
     return this._store.firestore.runTransaction(async () => {
-      const docInfo = await this._store
-        .collection("boards")
-        .add(board);
+      const docInfo = await this._store.collection("boards").add(board);
     });
   }
 
@@ -103,7 +102,11 @@ export class BoardServiceV2 {
   }
 
   getBoardWithPromise(boardId: string) {
-    return this._store.collection<Board>("boards").doc(boardId).get().toPromise();
+    return this._store
+      .collection<Board>("boards")
+      .doc(boardId)
+      .get()
+      .toPromise();
   }
 
   getBoardInvitation(boardId: string, invitationId: string) {
@@ -128,8 +131,8 @@ export class BoardServiceV2 {
   acceptInvitation(boardId: string, invitationId: string) {
     const userInfo = {
       id: this.authService.getUID(),
-      name: this.authService.getUserDisplayName()
-    }
+      name: this.authService.getUserDisplayName(),
+    };
     this._store.firestore.runTransaction(() => {
       return Promise.all([
         this._store
@@ -137,16 +140,17 @@ export class BoardServiceV2 {
           .doc(boardId)
           .collection("invitations")
           .doc(invitationId)
-          .set({accepted: true}, { merge: true }),
+          .set({ accepted: true }, { merge: true }),
         this._store
           .collection("boards")
           .doc(boardId)
-          .update({"shared": firestore.FieldValue.arrayUnion(this.authService.getUID()), 
-            "sharedUserInfo": firestore.FieldValue.arrayUnion(userInfo)})
+          .update({
+            shared: firestore.FieldValue.arrayUnion(this.authService.getUID()),
+            sharedUserInfo: firestore.FieldValue.arrayUnion(userInfo),
+          }),
       ]);
     });
   }
-
 
   /**
   / TaskLists API Call section
@@ -198,13 +202,19 @@ export class BoardServiceV2 {
   deleteTaskListBatch(boardId: string, taskListId: string, tasks: Task[]) {
     const db = firebase.firestore();
     const batch = db.batch();
-    
+
     // Update Task List ref for delete
-    const taskListRef = db.collection("boards").doc(boardId).collection("taskLists").doc(taskListId)
+    const taskListRef = db
+      .collection("boards")
+      .doc(boardId)
+      .collection("taskLists")
+      .doc(taskListId);
     batch.delete(taskListRef);
-    
+
     // Update tasks ref for delete
-    const taskRefs = tasks.map(t => db.collection("boards").doc(boardId).collection("tasks").doc(t.id));
+    const taskRefs = tasks.map((t) =>
+      db.collection("boards").doc(boardId).collection("tasks").doc(t.id)
+    );
     taskRefs.forEach((ref) => {
       batch.delete(ref);
     });
@@ -216,11 +226,11 @@ export class BoardServiceV2 {
   / Tasks API Call section
   **/
 
-  getTasks(boardId: string) {
+  getTasks(boardId: string, sortField = "index") {
     this.tasksCollection = this._store
       .collection("boards")
       .doc(boardId)
-      .collection("tasks");
+      .collection("tasks", (ref) => ref.orderBy(sortField, "asc"));
 
     this.tasksSubscription = this.tasksCollection
       .valueChanges({ idField: "id" })
@@ -289,21 +299,32 @@ export class BoardServiceV2 {
   //     .set({ index: newIndex }, { merge: true });
   // }
 
-  moveTaskBatch(boardId: string, taskListId: string, taskId: string, tasks: Task[]) {
+  moveTaskBatch(
+    boardId: string,
+    taskListId: string,
+    taskId: string,
+    tasks: Task[]
+  ) {
     const db = firebase.firestore();
     const batch = db.batch();
 
     // Update task index in the batch
-    const taskRefs = tasks.map(t => db.collection("boards").doc(boardId).collection("tasks").doc(t.id));
+    const taskRefs = tasks.map((t) =>
+      db.collection("boards").doc(boardId).collection("tasks").doc(t.id)
+    );
     taskRefs.forEach((ref, idx) => {
       const currentTask = tasks[idx];
       batch.update(ref, { index: currentTask.index });
     });
 
     // Update list id for the task in the batch
-    if(taskListId) {
-      const taskListUpdateRefs = db.collection("boards").doc(boardId).collection("tasks").doc(taskId);
-      batch.update(taskListUpdateRefs, {listId: taskListId})
+    if (taskListId) {
+      const taskListUpdateRefs = db
+        .collection("boards")
+        .doc(boardId)
+        .collection("tasks")
+        .doc(taskId);
+      batch.update(taskListUpdateRefs, { listId: taskListId });
     }
 
     batch.commit();
