@@ -1,5 +1,76 @@
-<p class="empty-label" *ngIf="!dailyTasks">Empty list</p>
-<div class="list">
+<section class="option-bar">
+  <div class="options">
+    <div class="toggle-btn">
+      <!-- <mat-icon
+        class="material-icons-outlined"
+        aria-hidden="false"
+        aria-label="pending task icon"
+        >{{ pendingTaskIcon }}</mat-icon
+      > -->
+      Pending
+      <mat-slide-toggle
+        matTooltip="show pending task"
+        matTooltipPosition="above"
+        [(ngModel)]="showHideCompletedTask"
+        [color]="'primary'"
+        (change)="toggleShowHideCompletedTask()"
+      >
+      </mat-slide-toggle>
+    </div>
+
+    <div class="toggle-btn">
+      <!-- <mat-icon
+        class="material-icons-outlined"
+        aria-hidden="false"
+        aria-label="todays task icon"
+        >{{ todayIcon }}</mat-icon
+      > -->
+      Today
+      <mat-slide-toggle
+        matTooltip="show today's task"
+        matTooltipPosition="above"
+        [(ngModel)]="showTodayTask"
+        [color]="'primary'"
+        (change)="toggleShowTodayTask()"
+      >
+      </mat-slide-toggle>
+    </div>
+
+    <!-- <mat-form-field appearance="fill">
+      <mat-label>Show Data for</mat-label>
+      <mat-select
+        (selectionChange)="daysSelected($event)"
+        [(value)]="selectedShownDays"
+      >
+        <mat-option
+          *ngFor="let days of taskShownForDays"
+          [value]="days.value"
+        >
+          {{ days.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field> -->
+
+    <div class="days">
+      <p
+        [matMenuTriggerFor]="menuInterval"
+      >{{ selectedShownDays }} days</p>
+    </div>
+    <mat-menu #menuInterval="matMenu">
+      <div mat-menu-item class="menu-opts" (click)="daysSelected(3)">
+        <span>3 Days</span>
+      </div>
+      <div mat-menu-item class="menu-opts" (click)="daysSelected(7)">
+        <span>7 Days</span>
+      </div>
+      <div mat-menu-item class="menu-opts" (click)="daysSelected(15)">
+        <span>15 Days</span>
+      </div>
+      <div mat-menu-item class="menu-opts" (click)="daysSelected(100)">
+        <span>All</span>
+      </div>
+    </mat-menu>
+  </div>
   <div class="filters">
     <mat-button-toggle-group aria-label="filter group">
       <mat-button-toggle
@@ -20,63 +91,15 @@
       </mat-button-toggle>
     </mat-button-toggle-group>
   </div>
+</section>
 
+<div class="today">
+  <p>TODAY: {{ todayDate | dateformat: "long" }}</p>
+</div>
+
+<p class="empty-label" *ngIf="!dailyTasks">Empty list</p>
+<div class="list">
   <div class="list-section">
-    <mat-card class="options-card">
-      <div class="options">
-        <div class="toggle-btn">
-          <mat-icon
-            class="material-icons-outlined"
-            aria-hidden="false"
-            aria-label="pending task icon"
-            >{{ pendingTaskIcon }}</mat-icon
-          >
-          Pending tasks
-          <mat-slide-toggle
-            matTooltip="show pending task"
-            matTooltipPosition="above"
-            [(ngModel)]="showHideCompletedTask"
-            [color]="'primary'"
-            (change)="toggleShowHideCompletedTask()"
-          >
-          </mat-slide-toggle>
-        </div>
-
-        <div class="toggle-btn">
-          <mat-icon
-            class="material-icons-outlined"
-            aria-hidden="false"
-            aria-label="todays task icon"
-            >{{ todayIcon }}</mat-icon
-          >
-          Today's task
-          <mat-slide-toggle
-            matTooltip="show today's task"
-            matTooltipPosition="above"
-            [(ngModel)]="showTodayTask"
-            [color]="'primary'"
-            (change)="toggleShowTodayTask()"
-          >
-          </mat-slide-toggle>
-        </div>
-
-        <mat-form-field appearance="fill">
-          <mat-label>Show Data for</mat-label>
-          <mat-select
-            (selectionChange)="daysSelected($event)"
-            [(value)]="selectedShownDays"
-          >
-            <mat-option
-              *ngFor="let days of taskShownForDays"
-              [value]="days.value"
-            >
-              {{ days.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </mat-card>
-
     <div
       cdkDropList
       (cdkDropListDropped)="drop($event)"

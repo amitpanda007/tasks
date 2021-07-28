@@ -319,6 +319,7 @@ export class TaskDialogComponent implements OnInit {
       width: "360px",
       data: {
         date: localDate,
+        enableCalender: true
       },
     });
     dialogRef.afterClosed().subscribe((result: CalenderDialogResult) => {

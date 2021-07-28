@@ -21,13 +21,13 @@
             <mat-card-title>
               <div class="list-title">
                 <p>{{ list.name }}</p>
-                <button mat-icon-button aria-label="drag task list">
+                <button mat-icon-button aria-label="drag task list" class="drag">
                   <mat-icon>drag_indicator</mat-icon>
                 </button>
               </div>
             </mat-card-title>
           </mat-card-header>
-          <!-- <p class="empty-label" *ngIf="!tasks">Empty list</p> -->
+          <!-- <p class="empty-label" *ngIf="emptyContainer">Empty list</p> -->
           <mat-card-content
             cdkDropList
             id="{{ list.id }}"
@@ -36,6 +36,7 @@
             (cdkDropListDropped)="drop($event)"
             class="list"
           >
+          <p class="empty-label" *ngIf="containerData(list.id).length == 0">Empty list</p>
             <div *ngFor="let task of tasks">
               <task
                 *ngIf="task.listId == list.id"

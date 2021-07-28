@@ -9,7 +9,6 @@ import {
 import { DailyService } from "src/app/core/services/daily.service";
 import { DailyTask } from "../daily-task/dailytask";
 import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
-import { ENETUNREACH } from "constants";
 import { Status } from "../daily-task/status";
 
 @Component({
@@ -34,6 +33,7 @@ export class DailyListComponent implements OnInit {
   public pendingTaskIcon: string;
   public taskShownForDays: any;
   public selectedShownDays: number;
+  public todayDate: Date;
 
   constructor(private dailyService: DailyService, private dialog: MatDialog) {}
 
@@ -49,13 +49,14 @@ export class DailyListComponent implements OnInit {
     this.pendingTaskIcon = "check_box";
     this.selectedShownDays = 100;
 
-    this.taskShownForDays = [
-      { name: "3 Days", value: 3 },
-      { name: "7 Days", value: 7 },
-      { name: "15 Days", value: 15 },
-      { name: "All", value: 100 },
-    ];
+    // this.taskShownForDays = [
+    //   { name: "3 Days", value: 3 },
+    //   { name: "7 Days", value: 7 },
+    //   { name: "15 Days", value: 15 },
+    //   { name: "All", value: 100 },
+    // ];
 
+    this.todayDate = new Date();
     this.dailyService.getDailyTasks();
     this.dailyTasksSubscription = this.dailyService.dailyTasksChanged.subscribe(
       (tasks: DailyTask[]) => {
@@ -248,9 +249,9 @@ export class DailyListComponent implements OnInit {
   //FIXME: Add feature for local data without calling server/db.
   //If decide to call server/db data on change then need to handle Drop() as the array size changes.
   //causing issue with index being updated incorrectly.
-  daysSelected(data) {
-    console.log(data);
-    this.selectedShownDays = data.value;
+  daysSelected(days: number) {
+    console.log(days);
+    this.selectedShownDays = days;
     // this.dailyService.getDailyTasksForSelectedDays(data.value);
   }
 

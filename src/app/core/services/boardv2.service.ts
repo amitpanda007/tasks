@@ -252,6 +252,12 @@ export class BoardServiceV2 {
       .valueChanges({ idField: "id" });
   }
 
+  async getTask(boardId: string, taskId: string) {
+    const db = firebase.firestore();
+    const taskSnapshot = await db.collection("boards").doc(boardId).collection("tasks").doc(taskId).get();
+    return taskSnapshot.data();
+  }
+
   addTask(boardId: string, task: Task) {
     return this._store
       .collection("boards")

@@ -64,6 +64,14 @@ export class TaskListComponent implements OnInit {
   }
 
   async ngOnInit() {
+    const taskId = this.route.snapshot.params.taskId;
+    if(taskId) {
+      const task = await this.boardServiceV2.getTask(this.boardId, taskId) as Task;
+      if(task) {
+        this.editTask(task);
+      }
+    }
+
     this.listName = "";
     this.boardMembers = [];
     // Check if user has access to this board
@@ -144,10 +152,11 @@ export class TaskListComponent implements OnInit {
     return lists;
   }
 
+  //FIXME: This is called from template. which is not a good idea for peformance.
   containerData(curListId: string) {
     // console.log("FUNCTION containerData getting called");
     if (this.tasks) {
-      return this.tasks.filter((task) => task.listId === curListId);
+      return this.tasks.filter(task => task.listId === curListId);
     }
   }
 

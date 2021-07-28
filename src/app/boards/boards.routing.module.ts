@@ -16,6 +16,11 @@ const routes: Routes = [
     component: TaskListComponent,
     canActivate: [AngularFireAuthGuard],
   },
+  {
+    path: "boards/:boardId/task/:taskId",
+    component: TaskListComponent,
+    canActivate: [AngularFireAuthGuard],
+  },
 ];
 
 @NgModule({

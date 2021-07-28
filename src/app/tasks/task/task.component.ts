@@ -17,6 +17,11 @@ export class TaskComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
+    if(this.task.dueDate) {
+      if(!this.task.dueDate.completed) {
+        this.task.dueDate.completed = false;
+      }
+    }
     this.checkDueDateStatus();
   }
 

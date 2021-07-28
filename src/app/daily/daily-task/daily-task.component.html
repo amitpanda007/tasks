@@ -29,30 +29,6 @@
         >{{ taskElapsedDays }}</span
       >
     </div>
-
-    <!-- <div
-      class="status"
-      [ngClass]="{ 'status-selected': dailyTask.status }"
-      matTooltip="Set status"
-    >
-      <select
-        class="select"
-        [style.background-color]="selectStatusBackgroundColor"
-        [style.color]="selectStatusColor"
-        (change)="onStatusChange($event.target.value)"
-      >
-        <option
-          class="options"
-          *ngFor="let status of statusOptions"
-          value="{{ status.id }}"
-          [style.background-color]="status.backgroundColor"
-          [style.color]="status.color"
-          [selected]="isStatusSelected(status)"
-        >
-          {{ status.name }}
-        </option>
-      </select>
-    </div> -->
     <div
       class="status"
       [ngClass]="{
@@ -83,16 +59,6 @@
     </div>
 
     <div class="options">
-      <!-- <img class="images" src="./assets/images/priority/{{ priority }}.svg" /> -->
-
-      <!-- <span
-        mat-icon-button
-        class="opts"
-        [matMenuTriggerFor]="menu"
-        aria-label="Select task priority"
-      >
-        <mat-icon>bolt</mat-icon>
-      </span> -->
       <img
         class="opts images icon"
         [ngClass]="{

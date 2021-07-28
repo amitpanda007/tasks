@@ -9,6 +9,7 @@ mat-toolbar > span {
 .content-wrapper {
   max-width: 1400px;
   margin: auto;
+  margin-top: 1em;
 }
 
 .container-wrapper {
@@ -18,7 +19,7 @@ mat-toolbar > span {
 }
 
 .container {
-  width: 240px;
+  width: 220px;
   margin-right: 5px;
 }
 
@@ -26,12 +27,16 @@ mat-toolbar > span {
   padding: 0;
 }
 
+.board-options {
+  display: flex;
+}
+
 .list-title {
   display: flex;
   align-items: center;
   align-content: center;
   justify-content: space-between;
-  width: 280px;
+  width: 200px;
 }
 
 .list {
@@ -74,6 +79,10 @@ mat-toolbar > span {
 // .cdk-drag-placeholder {
 //   opacity: 0.5;
 // }
+
+.drag {
+  cursor: move;
+}
 
 .task-btn {
   opacity: 0;

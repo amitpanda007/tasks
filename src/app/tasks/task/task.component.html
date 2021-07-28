@@ -4,7 +4,7 @@
   (click)="edit.emit(task)"
   [style.background-color]="task.backgroundColor"
 >
-  <h4>{{ task.title }}</h4>
+  <h5>{{ task.title }}</h5>
   <div *ngIf="!showLabelText">
     <mat-chip-list>
       <div *ngFor="let label of labels">
@@ -44,20 +44,22 @@
   <div class="actions-info">
     <p
       *ngIf="task.dueDate"
+      matTooltip="task complete date"
       class="action-schedule"
       [ngClass]="{
+        'due-date': overDue == false && task.dueDate.completed == false,
         'due-overdue': overDue == true,
         'due-complete': task.dueDate.completed == true
       }"
     >
-      <mat-icon>schedule</mat-icon>
-      <span>{{ task.dueDate.date | dateformat: "short" }}</span>
+      <mat-icon class="task-icon">schedule</mat-icon>
+      <span class="info-text">{{ task.dueDate.date | dateformat: "short" }}</span>
     </p>
     <p *ngIf="task.checklist" class="checklist-count">
       <mat-icon
         matBadge="{{ task.checklist.length }}"
         matBadgeColor="accent"
-        class="material-icons-outlined"
+        class="material-icons-outlined task-icon"
         >check_box</mat-icon
       >
       <span class="cdk-visually-hidden">
@@ -65,13 +67,13 @@
       </span>
     </p>
     <p *ngIf="task.message" class="message-info">
-      <mat-icon class="material-icons-outlined" matTooltip="{{ task.message }}"
+      <mat-icon class="material-icons-outlined task-icon" matTooltip="{{ task.message }}"
         >message</mat-icon
       >
     </p>
     <p *ngIf="task.lockStatus && task.lockStatus.isLocked" class="">
       <mat-icon
-        class="material-icons-outlined"
+        class="material-icons-outlined task-icon"
         matTooltip="Task is locked. Can only be unlocked by user who locked it."
         >lock</mat-icon
       >
@@ -81,7 +83,7 @@
       <span
         class="member"
         *ngFor="let member of task.members"
-        title="{{ member.name }}"
+        matTooltip="{{ member.name }}"
         >{{ member.name | shortname }}</span
       >
     </div>
