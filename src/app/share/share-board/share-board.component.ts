@@ -26,7 +26,7 @@ export class ShareBoardComponent implements OnInit {
     private bordServiceV2: BoardServiceV2, 
     private authService: AuthService) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.boardId = this.route.snapshot.params.boardId;
     this.invitationId = this.route.snapshot.params.invitationId;
 
@@ -54,9 +54,7 @@ export class ShareBoardComponent implements OnInit {
       }
     });
 
-    this.bordServiceV2.getBoard(this.boardId).get().subscribe(boardDocRef => {
-      this.board = boardDocRef.data() as Board;
-    });
+    this.board = await this.bordServiceV2.getBoard(this.boardId) as Board;
   }
 
   accept() {

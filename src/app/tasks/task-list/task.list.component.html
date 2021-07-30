@@ -1,16 +1,28 @@
 <div *ngIf="hasBoardAccess">
   <div class="board-options">
+    <div class="board-input" *ngIf="board">
+      <span *ngIf="!editingBoardName" class="title" (click)="toggleBoardNameEditing(false)">{{ board.title }}</span>
+      <div class="boardname-edit-input" *ngIf="editingBoardName">
+        <input [(ngModel)]="board.title" class="input"/>
+        <span (click)="toggleBoardNameEditing(true)" class="done">
+          <mat-icon class="icon">done</mat-icon>
+        </span>
+        <span (click)="toggleBoardNameEditing(false)" class="close">
+          <mat-icon class="icon">close</mat-icon>
+        </span>
+      </div>
+    </div>
+    <span class="option-dividor"></span>
     <div class="members" *ngIf="boardMembers && boardMembers.length > 0">
       <span
         class="member"
         *ngFor="let member of boardMembers"
-        title="{{ member.name }}"
+        matTooltip="{{ member.name }}"
         >{{ member.name | shortname }}</span
       >
     </div>
-    <button (click)="inviteMembers()" mat-stroked-button color="primary">
-      Invite
-    </button>
+    
+    <mat-icon (click)="inviteMembers()" aria-label="invite memebers" matTooltip="Invite member" class="iconBtn">add</mat-icon>
   </div>
 
   <div class="content-wrapper" *ngIf="taskList && tasks && labels">

@@ -15,11 +15,13 @@ const routes: Routes = [
     path: "boards/:boardId",
     component: TaskListComponent,
     canActivate: [AngularFireAuthGuard],
-  },
-  {
-    path: "boards/:boardId/task/:taskId",
-    component: TaskListComponent,
-    canActivate: [AngularFireAuthGuard],
+    children: [
+      {
+        path: ":taskId",
+        component: TaskListComponent,
+        canActivate: [AngularFireAuthGuard],
+      }
+    ]
   },
 ];
 

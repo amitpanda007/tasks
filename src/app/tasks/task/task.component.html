@@ -4,7 +4,7 @@
   (click)="edit.emit(task)"
   [style.background-color]="task.backgroundColor"
 >
-  <h5>{{ task.title }}</h5>
+  <p class="title">{{ task.title }}</p>
   <div *ngIf="!showLabelText">
     <mat-chip-list>
       <div *ngFor="let label of labels">
@@ -73,7 +73,7 @@
     </p>
     <p *ngIf="task.lockStatus && task.lockStatus.isLocked" class="">
       <mat-icon
-        class="material-icons-outlined task-icon"
+        class="material-icons-outlined task-icon red"
         matTooltip="Task is locked. Can only be unlocked by user who locked it."
         >lock</mat-icon
       >

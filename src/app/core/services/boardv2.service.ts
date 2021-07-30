@@ -39,6 +39,7 @@ export class BoardServiceV2 {
   public taskListsChanged = new Subject<TaskList[]>();
   public tasksChanged = new Subject<Task[]>();
   public labelListChanged = new Subject<Label[]>();
+  public showHidelabel = new BehaviorSubject<boolean>(false);
 
   constructor(
     private _store: AngularFirestore,
@@ -97,8 +98,10 @@ export class BoardServiceV2 {
     });
   }
 
-  getBoard(boardId: string) {
-    return this._store.collection<Board>("boards").doc(boardId);
+  async getBoard(boardId: string) {
+    const db = firebase.firestore();
+    const boardSnapshot = await db.collection("boards").doc(boardId).get();
+    return boardSnapshot.data();
   }
 
   getBoardWithPromise(boardId: string) {
@@ -107,6 +110,13 @@ export class BoardServiceV2 {
       .doc(boardId)
       .get()
       .toPromise();
+  }
+
+  updateBoard(boardId: string, board: Board) {
+    this._store
+      .collection("boards")
+      .doc(boardId)
+      .set(board, { merge: true });
   }
 
   getBoardInvitation(boardId: string, invitationId: string) {
@@ -285,6 +295,10 @@ export class BoardServiceV2 {
       .collection("tasks")
       .doc(taskId)
       .delete();
+  }
+
+  showHideTaskLabelName(labelStatus: boolean) {
+    this.showHidelabel.next(!labelStatus);
   }
 
   // moveTaskToList(boardId: string, taskId: string, newTaskListId: string) {

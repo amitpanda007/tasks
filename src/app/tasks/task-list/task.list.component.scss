@@ -27,8 +27,18 @@ mat-toolbar > span {
   padding: 0;
 }
 
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .board-options {
   display: flex;
+  align-items: center;
+  align-content: center;
+  width: 70%;
+  margin: 2em auto;
 }
 
 .list-title {
@@ -114,13 +124,55 @@ mat-toolbar > span {
   color: #172b4d;
   cursor: pointer;
   float: left;
-  height: 32px;
-  margin: 0 4px 4px 0;
+  height: 28px;
+  margin: 0 4px 0 0;
   overflow: visible;
   position: relative;
-  width: 32px;
+  width: 28px;
   text-decoration: none;
   -webkit-user-select: none;
   user-select: none;
   z-index: 0;
+}
+
+.iconBtn {
+  cursor: pointer;
+}
+
+.option-dividor {
+  float: left;
+  border-left: 1px solid hsla(0,0%,100%,.24);
+  height: 16px;
+  margin: 8px 8px 12px 4px;
+  border-color: rgba(0,0,0,.2);
+}
+
+.done {
+  color: lightseagreen;
+}
+
+.close {
+  color: orangered;
+}
+
+.boardname-edit-input {
+  display: flex;
+  width: 100%;
+  cursor: pointer;
+  align-content: center;
+  align-items: center;
+}
+
+.board-input {
+  width: 200px;
+}
+
+.input {
+  width: 150px;
+  background-color: #fff;
+  border: 0;
+  font-weight: 700;
+  font-size: 18px;
+  height: 28px;
+  margin: 0;
 }

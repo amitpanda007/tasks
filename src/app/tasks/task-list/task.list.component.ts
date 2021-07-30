@@ -12,7 +12,7 @@ import {
 } from "src/app/common/task-dialog/task-dialog.component";
 import { MatDialog } from "@angular/material";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Subscription } from "rxjs";
+import { BehaviorSubject, Subscription } from "rxjs";
 import { BoardService } from "../../core/services/board.service";
 import { TaskList } from "./tasklist";
 import {
@@ -38,19 +38,24 @@ import {
   styleUrls: ["task.list.component.scss"],
 })
 export class TaskListComponent implements OnInit {
+  private boardSubscription: Subscription;
   private taskListsSubscription: Subscription;
   private tasksSubscription: Subscription;
   private labelsSubscription: Subscription;
+  private routeQueryParams: Subscription;
+  private tasksDataUpdated: BehaviorSubject<boolean>;
   private boardId: string;
 
   public hasBoardAccess: boolean = false;
   public showInputField: boolean = false;
   public isLoading: boolean;
   public listName: string;
+  public board: Board;
   public boardMembers: SharedUser[];
   public taskList: TaskList[];
   public tasks: Task[];
   public labels: Label[];
+  public editingBoardName: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -61,19 +66,31 @@ export class TaskListComponent implements OnInit {
   ) {
     this.boardId = this.route.snapshot.params.boardId;
     console.log(this.boardId);
+    this.tasksDataUpdated = new BehaviorSubject(false);
+
+    this.routeQueryParams = this.route.queryParams.subscribe(params => {
+      if(params['task']) {
+        if(this.tasks) {
+          const task = this.tasks.find(_task => _task.id == params['task']);
+          this.openTaskDialog(task);
+        }else {
+          this.tasksDataUpdated.subscribe(isTasks => {
+            if(isTasks) {
+              if (this.route.snapshot.queryParams['task']) {
+                const task = this.tasks.find(_task => _task.id == params['task']);
+                this.openTaskDialog(task);
+              }
+            }
+          });
+        }
+      }
+    });
   }
 
   async ngOnInit() {
-    const taskId = this.route.snapshot.params.taskId;
-    if(taskId) {
-      const task = await this.boardServiceV2.getTask(this.boardId, taskId) as Task;
-      if(task) {
-        this.editTask(task);
-      }
-    }
-
     this.listName = "";
     this.boardMembers = [];
+    this.editingBoardName = false;
     // Check if user has access to this board
     const board: Board = await this.boardServiceV2
       .getBoardWithPromise(this.boardId)
@@ -100,6 +117,8 @@ export class TaskListComponent implements OnInit {
     this.boardServiceV2.getTasks(this.boardId);
     this.boardServiceV2.getLabels(this.boardId);
 
+    this.board = await this.boardServiceV2.getBoard(this.boardId) as Board;
+
     this.taskListsSubscription = this.boardServiceV2.taskListsChanged.subscribe(
       (lists) => {
         console.log(lists);
@@ -112,6 +131,7 @@ export class TaskListComponent implements OnInit {
       (tasks) => {
         console.log(tasks);
         this.tasks = tasks;
+        this.tasksDataUpdated.next(true);
       }
     );
 
@@ -125,6 +145,13 @@ export class TaskListComponent implements OnInit {
 
   ngOnDestroy() {
     console.log("TASK LIST DESTROYED");
+    this.routeQueryParams.unsubscribe();
+
+    if(this.boardSubscription) {
+      this.boardSubscription.unsubscribe();
+      this.boardServiceV2.cancelBoardSuscriotion();
+    }
+
     if (this.taskListsSubscription) {
       this.taskListsSubscription.unsubscribe();
       this.boardServiceV2.cancelTaskListsSubscription();
@@ -241,7 +268,13 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  editTask(task: Task): void {
+  editTask(task: Task) {
+    // this.router.navigate([`${task.id}`], { relativeTo: this.route });
+    // this.openTaskDialog(task);
+    this.router.navigate([], { queryParams: { task: `${task.id}` } });
+  }
+
+  openTaskDialog(task: Task): void {
     if (task.lockStatus && task.lockStatus.isLocked) {
       if (this.authService.getUID() != task.lockStatus.lockedByUserId) {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -251,7 +284,9 @@ export class TaskListComponent implements OnInit {
               "This task has been locked. You wont be able to open this task until its unlocked.",
           },
         });
+        dialogRef.disableClose = true;
         dialogRef.afterClosed().subscribe((result: ConfirmDialogResult) => {
+          console.log("EDIT TASK DIALOG CLOSED");
           if (!result) {
             return;
           }
@@ -267,6 +302,7 @@ export class TaskListComponent implements OnInit {
     const clonedBoardMembers = cloneDeep(this.boardMembers);
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: "768px",
+      height: "700px",
       data: {
         task: clonedTask,
         labels: clonedLabels,
@@ -275,8 +311,10 @@ export class TaskListComponent implements OnInit {
         enableDelete: true,
       },
     });
+    dialogRef.disableClose = true;
     dialogRef.afterClosed().subscribe((result: TaskDialogResult) => {
       if (!result) {
+        this.router.navigate(['.'], { relativeTo: this.route });
         return;
       }
       console.log(result);
@@ -306,6 +344,7 @@ export class TaskListComponent implements OnInit {
         //   });
         // }
       }
+      this.router.navigate(['.'], { relativeTo: this.route });
     });
   }
 
@@ -366,6 +405,13 @@ export class TaskListComponent implements OnInit {
         );
       }
     });
+  }
+
+  toggleBoardNameEditing(saveChange: boolean) {
+    this.editingBoardName = !this.editingBoardName;
+    if(saveChange) {
+      this.boardServiceV2.updateBoard(this.boardId, this.board);
+    }
   }
 
   showInput() {
