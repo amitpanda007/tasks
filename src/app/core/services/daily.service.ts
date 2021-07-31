@@ -43,21 +43,29 @@ export class DailyService {
     requiredDate = new Date(
       requiredDate.setDate(requiredDate.getDate() - (days + 1))
     );
-    // console.log(requiredDate);
 
-    this.dailyCollection = this._store
-      .collection<DailyTask>("daily")
-      .doc(this.authService.getUID())
-      .collection("tasks", (ref) =>
-        ref.where("created", ">=", requiredDate).orderBy("created", "asc")
+    // this.dailyCollection = this._store
+    //   .collection<DailyTask>("daily")
+    //   .doc(this.authService.getUID())
+    //   .collection("tasks", (ref) =>
+    //     ref.where("created", ">=", requiredDate).orderBy("created", "asc")
+    //   );
+
+    // this.dailySubscription = this.dailyCollection
+    //   .valueChanges({ idField: "id" })
+    //   .subscribe((dailyList) => {
+    //     this.allDailyTasksData = dailyList;
+    //     this.dailyTasksChanged.next([...this.allDailyTasksData]);
+    //   });
+
+    if (days == 100) {
+      this.dailyTasksChanged.next([...this.allDailyTasksData]);
+    } else {
+      const filteredTask = this.allDailyTasksData.filter(
+        (task) => task.created
       );
-
-    this.dailySubscription = this.dailyCollection
-      .valueChanges({ idField: "id" })
-      .subscribe((dailyList) => {
-        this.allDailyTasksData = dailyList;
-        this.dailyTasksChanged.next([...this.allDailyTasksData]);
-      });
+      this.dailyTasksChanged.next([...filteredTask]);
+    }
   }
 
   addDailyTask(task: DailyTask) {
@@ -95,7 +103,13 @@ export class DailyService {
   updateDailyTaskIndexBatch(tasks: DailyTask[]) {
     const db = firebase.firestore();
     const batch = db.batch();
-    const refs = tasks.map(t => db.collection("daily").doc(this.authService.getUID()).collection("tasks").doc(t.id));
+    const refs = tasks.map((t) =>
+      db
+        .collection("daily")
+        .doc(this.authService.getUID())
+        .collection("tasks")
+        .doc(t.id)
+    );
     // refs.forEach((ref, idx) => batch.update(ref, { index: idx }))
     // batch.commit();
     refs.forEach((ref, idx) => {

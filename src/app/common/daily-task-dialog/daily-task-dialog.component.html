@@ -27,14 +27,26 @@
       <p class="sub-header">
         Check List
         <span>
-          <button mat-stroked-button (click)="showHideCompletedChecklist()" class="btn-small">
+          <button
+            mat-stroked-button
+            (click)="showHideCompletedChecklist()"
+            class="btn-small"
+          >
             <span *ngIf="showHideCompletedTask">Show</span>
             <span *ngIf="!showHideCompletedTask">Hide</span> completed
           </button>
-          <button mat-stroked-button (click)="markCompleteAllChecklist()" class="btn-small">
+          <button
+            mat-stroked-button
+            (click)="markCompleteAllChecklist()"
+            class="btn-small"
+          >
             Complete all
           </button>
-          <button mat-stroked-button (click)="deleteAllChecklist()" class="btn-small">
+          <button
+            mat-stroked-button
+            (click)="deleteAllChecklist()"
+            class="btn-small"
+          >
             Delete all
           </button>
         </span>
@@ -68,7 +80,7 @@
       </div>
 
       <div class="checklist-add">
-        <input
+        <!-- <input
           class="checklist-input"
           matInput
           placeholder="Add a new task to checklist"
@@ -76,7 +88,15 @@
           name="checklistInput"
           [(ngModel)]="checklistText"
           (keyup.enter)="updateChecklist()"
-        />
+        /> -->
+        <textarea
+          class="checklist-input"
+          name="checklistInput"
+          placeholder="Add a new task to checklist"
+          wrap="off"
+          [(ngModel)]="checklistText"
+          (keyup.enter)="updateChecklist()"
+        ></textarea>
       </div>
     </section>
 

@@ -13,7 +13,10 @@
   </div>
 
   <div class="task-info">
-    <span *ngIf="dailyTask.checklist" matTooltip="Sub task/s under this task">
+    <span
+      *ngIf="dailyTask.checklist && dailyTask.checklist.length > 0"
+      matTooltip="Sub task/s under this task"
+    >
       <mat-icon class="material-icons-outlined">check_box</mat-icon
       >{{ completedChecklist }}/{{ totalChecklist }}</span
     >

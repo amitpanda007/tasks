@@ -54,6 +54,11 @@
 .checklist-input {
   border: 1px solid gray;
   border-radius: 4px;
+  width: 100%;
+  outline: none;
+  resize: none;
+  overflow: auto;
+  height: 20px;
 }
 
 .checklist-add {

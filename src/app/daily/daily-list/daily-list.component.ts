@@ -29,6 +29,7 @@ export class DailyListComponent implements OnInit {
   public viewType: string;
   public showTodayTask: boolean;
   public showHideCompletedTask: boolean;
+  public isTaskFilteredDays: boolean;
   public todayIcon: string;
   public pendingTaskIcon: string;
   public taskShownForDays: any;
@@ -44,6 +45,7 @@ export class DailyListComponent implements OnInit {
     this.viewType = "ALL";
     this.dailyTasksDateView = [];
     this.showTodayTask = false;
+    this.isTaskFilteredDays = false;
     this.showHideCompletedTask = false;
     this.todayIcon = "calendar_today";
     this.pendingTaskIcon = "check_box";
@@ -251,8 +253,21 @@ export class DailyListComponent implements OnInit {
   //causing issue with index being updated incorrectly.
   daysSelected(days: number) {
     console.log(days);
+    if (days == 100) {
+      this.isTaskFilteredDays = false;
+    } else {
+      this.isTaskFilteredDays = true;
+    }
+    // this.dailyService.getDailyTasksForSelectedDays(days);
     this.selectedShownDays = days;
-    // this.dailyService.getDailyTasksForSelectedDays(data.value);
+
+    this.dailyTasksFilterd = this.dailyTasks.filter((task) => {
+      const tskDays = this.calculateDays(task.created.toDate(), new Date());
+      // console.log(tskDays);
+      if (tskDays <= days) {
+        return task;
+      }
+    });
   }
 
   calculateDays(dateOne, dateTwo) {

@@ -131,14 +131,22 @@
       </div>
 
       <div class="checklist-add">
-        <input
+        <!-- <input
           class="checklist-input"
           matInput
           placeholder="Add a new task to checklist"
           autocomplete="off"
           name="checklistInput"
           [(ngModel)]="checklistText"
-        />
+        /> -->
+        <textarea
+          class="checklist-input"
+          name="checklistInput"
+          placeholder="Add a new task to checklist"
+          wrap="off"
+          [(ngModel)]="checklistText"
+          (keyup.enter)="updateChecklist()"
+        ></textarea>
         <button mat-stroked-button (click)="updateChecklist()">Add</button>
       </div>
     </section>

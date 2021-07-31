@@ -151,26 +151,46 @@ export class DailyTaskDialogComponent implements OnInit {
   }
 
   updateChecklist() {
-    const newCheckList: CheckList = {
-      text: this.checklistText,
-      done: false,
-      unsaved: true,
-      isEditing: false,
-    };
+    if (this.checklistText.trim()) {
+      const checklistArr = this.checklistText.trim().split("\n");
+      console.log(checklistArr);
 
-    if (!this.data.dailyTask.checklist) {
-      this.data.dailyTask.checklist = [];
-      this.filteredChecklist = [];
+      if (checklistArr.length > 1) {
+        let newCheckListArr: CheckList[] = [];
+        checklistArr.forEach((chklst) => {
+          const newCheckList: CheckList = {
+            text: chklst,
+            done: false,
+            unsaved: true,
+            isEditing: false,
+          };
+          newCheckListArr.push(newCheckList);
+        });
+        console.log(newCheckListArr);
+        if (!this.data.dailyTask.checklist) {
+          this.data.dailyTask.checklist = [];
+          this.filteredChecklist = [];
+        }
+        this.data.dailyTask.checklist.push(...newCheckListArr);
+        this.filteredChecklist.push(...newCheckListArr);
+      } else {
+        const newCheckList: CheckList = {
+          text: this.checklistText,
+          done: false,
+          unsaved: true,
+          isEditing: false,
+        };
+
+        if (!this.data.dailyTask.checklist) {
+          this.data.dailyTask.checklist = [];
+          this.filteredChecklist = [];
+        }
+        this.data.dailyTask.checklist.push(newCheckList);
+        this.filteredChecklist.push(newCheckList);
+      }
     }
-
-    this.data.dailyTask.checklist.push(newCheckList);
-    console.log(this.data.dailyTask);
-    console.log(this.filteredChecklist);
-    this.filteredChecklist.push(newCheckList);
     this.checklistText = "";
     this.calculateChecklistCompleted();
-    console.log(this.data.dailyTask);
-    console.log(this.filteredChecklist);
   }
 
   deleteAllChecklist() {

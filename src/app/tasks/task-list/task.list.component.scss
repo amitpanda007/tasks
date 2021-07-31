@@ -28,6 +28,8 @@ mat-toolbar > span {
 }
 
 .title {
+  // display: flex;
+  width: 200px;
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
@@ -37,6 +39,7 @@ mat-toolbar > span {
   display: flex;
   align-items: center;
   align-content: center;
+  justify-content: space-between;
   width: 70%;
   margin: 2em auto;
 }
@@ -141,17 +144,19 @@ mat-toolbar > span {
 
 .option-dividor {
   float: left;
-  border-left: 1px solid hsla(0,0%,100%,.24);
+  border-left: 1px solid hsla(0, 0%, 100%, 0.24);
   height: 16px;
   margin: 8px 8px 12px 4px;
-  border-color: rgba(0,0,0,.2);
+  border-color: rgba(0, 0, 0, 0.2);
 }
 
 .done {
+  height: 24px;
   color: lightseagreen;
 }
 
 .close {
+  height: 24px;
   color: orangered;
 }
 
@@ -165,14 +170,36 @@ mat-toolbar > span {
 
 .board-input {
   width: 200px;
+  height: 24px;
 }
 
 .input {
-  width: 150px;
+  width: 152px;
   background-color: #fff;
-  border: 0;
   font-weight: 700;
   font-size: 18px;
-  height: 28px;
+  height: 24px !important;
+  border: 0;
   margin: 0;
+  padding: 0;
+}
+
+.fav-icon {
+  cursor: pointer;
+}
+
+.flex-display {
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.option-bg {
+  border-radius: 4px;
+  background-color: #eeeeee;
+  padding: 0 4px;
 }

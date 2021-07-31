@@ -92,7 +92,12 @@
   // display: flex;
   // justify-content: space-between;
   // padding-bottom: 10px;
-  margin: 0px 2px;
+  // margin: 0px 2px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-evenly;
+  width: 100px;
 }
 
 .drag-item {
@@ -133,4 +138,12 @@
 ::ng-deep .mat-button-toggle-label-content {
   line-height: 0px !important;
   padding: 0px !important;
+}
+
+.option-dividor {
+  float: left;
+  border-left: 1px solid hsla(0, 0%, 100%, 0.24);
+  height: 16px;
+  margin: 8px 8px 12px 4px;
+  border-color: rgba(0, 0, 0, 0.2);
 }

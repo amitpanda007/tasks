@@ -56,6 +56,7 @@ export class TaskListComponent implements OnInit {
   public tasks: Task[];
   public labels: Label[];
   public editingBoardName: boolean;
+  public starred: string;
 
   constructor(
     private dialog: MatDialog,
@@ -68,16 +69,18 @@ export class TaskListComponent implements OnInit {
     console.log(this.boardId);
     this.tasksDataUpdated = new BehaviorSubject(false);
 
-    this.routeQueryParams = this.route.queryParams.subscribe(params => {
-      if(params['task']) {
-        if(this.tasks) {
-          const task = this.tasks.find(_task => _task.id == params['task']);
+    this.routeQueryParams = this.route.queryParams.subscribe((params) => {
+      if (params["task"]) {
+        if (this.tasks) {
+          const task = this.tasks.find((_task) => _task.id == params["task"]);
           this.openTaskDialog(task);
-        }else {
-          this.tasksDataUpdated.subscribe(isTasks => {
-            if(isTasks) {
-              if (this.route.snapshot.queryParams['task']) {
-                const task = this.tasks.find(_task => _task.id == params['task']);
+        } else {
+          this.tasksDataUpdated.subscribe((isTasks) => {
+            if (isTasks) {
+              if (this.route.snapshot.queryParams["task"]) {
+                const task = this.tasks.find(
+                  (_task) => _task.id == params["task"]
+                );
                 this.openTaskDialog(task);
               }
             }
@@ -88,6 +91,8 @@ export class TaskListComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.starred = "#FFC107";
+    // this.unstarred = "#FFF";
     this.listName = "";
     this.boardMembers = [];
     this.editingBoardName = false;
@@ -117,7 +122,7 @@ export class TaskListComponent implements OnInit {
     this.boardServiceV2.getTasks(this.boardId);
     this.boardServiceV2.getLabels(this.boardId);
 
-    this.board = await this.boardServiceV2.getBoard(this.boardId) as Board;
+    this.board = (await this.boardServiceV2.getBoard(this.boardId)) as Board;
 
     this.taskListsSubscription = this.boardServiceV2.taskListsChanged.subscribe(
       (lists) => {
@@ -147,7 +152,7 @@ export class TaskListComponent implements OnInit {
     console.log("TASK LIST DESTROYED");
     this.routeQueryParams.unsubscribe();
 
-    if(this.boardSubscription) {
+    if (this.boardSubscription) {
       this.boardSubscription.unsubscribe();
       this.boardServiceV2.cancelBoardSuscriotion();
     }
@@ -183,7 +188,7 @@ export class TaskListComponent implements OnInit {
   containerData(curListId: string) {
     // console.log("FUNCTION containerData getting called");
     if (this.tasks) {
-      return this.tasks.filter(task => task.listId === curListId);
+      return this.tasks.filter((task) => task.listId === curListId);
     }
   }
 
@@ -314,7 +319,7 @@ export class TaskListComponent implements OnInit {
     dialogRef.disableClose = true;
     dialogRef.afterClosed().subscribe((result: TaskDialogResult) => {
       if (!result) {
-        this.router.navigate(['.'], { relativeTo: this.route });
+        this.router.navigate(["."], { relativeTo: this.route });
         return;
       }
       console.log(result);
@@ -344,7 +349,7 @@ export class TaskListComponent implements OnInit {
         //   });
         // }
       }
-      this.router.navigate(['.'], { relativeTo: this.route });
+      this.router.navigate(["."], { relativeTo: this.route });
     });
   }
 
@@ -409,7 +414,7 @@ export class TaskListComponent implements OnInit {
 
   toggleBoardNameEditing(saveChange: boolean) {
     this.editingBoardName = !this.editingBoardName;
-    if(saveChange) {
+    if (saveChange) {
       this.boardServiceV2.updateBoard(this.boardId, this.board);
     }
   }
@@ -434,5 +439,22 @@ export class TaskListComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: InviteDialogResult) => {
       console.log(result);
     });
+  }
+
+  markBoardFavourite() {
+    if (this.board && this.board.favourite) {
+      this.board.favourite = false;
+    } else {
+      this.board.favourite = true;
+    }
+    this.boardServiceV2.updateBoard(this.boardId, this.board);
+  }
+
+  openAutomation() {
+    console.log("Opening Automation dialog");
+  }
+
+  openListMenu() {
+    console.log("Opening Menu dialog");
   }
 }

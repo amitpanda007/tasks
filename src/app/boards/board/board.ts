@@ -5,6 +5,7 @@ export interface Board {
   owner: string;
   shared?: string[];
   sharedUserInfo?: SharedUser[];
+  favourite?: boolean;
 }
 
 export interface SharedUser {

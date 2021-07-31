@@ -17,7 +17,7 @@
       >
       </mat-slide-toggle>
     </div>
-
+    <span class="option-dividor"></span>
     <div class="toggle-btn">
       <!-- <mat-icon
         class="material-icons-outlined"
@@ -35,7 +35,7 @@
       >
       </mat-slide-toggle>
     </div>
-
+    <span class="option-dividor"></span>
     <!-- <mat-form-field appearance="fill">
       <mat-label>Show Data for</mat-label>
       <mat-select
@@ -52,9 +52,7 @@
     </mat-form-field> -->
 
     <div class="days">
-      <p
-        [matMenuTriggerFor]="menuInterval"
-      >{{ selectedShownDays }} days</p>
+      <p [matMenuTriggerFor]="menuInterval">{{ selectedShownDays }} days</p>
     </div>
     <mat-menu #menuInterval="matMenu">
       <div mat-menu-item class="menu-opts" (click)="daysSelected(3)">
@@ -110,7 +108,9 @@
         *ngFor="let dailyTask of dailyTasksFilterd"
         class="drag-item"
         cdkDrag
-        [cdkDragDisabled]="showTodayTask || showHideCompletedTask"
+        [cdkDragDisabled]="
+          showTodayTask || showHideCompletedTask || isTaskFilteredDays
+        "
         (edit)="editTask($event)"
         (delete)="deleteTask($event)"
         (done)="doneTask($event)"
@@ -143,7 +143,9 @@
           *ngFor="let dailyTask of taskView.tasks"
           class="drag-item"
           cdkDrag
-          [cdkDragDisabled]="showTodayTask || showHideCompletedTask"
+          [cdkDragDisabled]="
+            showTodayTask || showHideCompletedTask || isTaskFilteredDays
+          "
           (edit)="editTask($event)"
           (delete)="deleteTask($event)"
           (done)="doneTask($event)"

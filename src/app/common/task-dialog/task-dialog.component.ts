@@ -174,22 +174,65 @@ export class TaskDialogComponent implements OnInit {
     );
   }
 
+  // updateChecklist() {
+  //   const newCheckList: CheckList = {
+  //     text: this.checklistText,
+  //     done: false,
+  //     unsaved: true,
+  //     isEditing: false,
+  //   };
+  //   if (!this.data.task.checklist) {
+  //     this.data.task.checklist = [];
+  //     this.filteredChecklist = [];
+  //   }
+  //   this.data.task.checklist.push(newCheckList);
+  //   this.filteredChecklist.push(newCheckList);
+  //   this.checklistText = "";
+  //   this.calculateChecklistCompleted();
+  //   console.log(this.data.task);
+  // }
+
   updateChecklist() {
-    const newCheckList: CheckList = {
-      text: this.checklistText,
-      done: false,
-      unsaved: true,
-      isEditing: false,
-    };
-    if (!this.data.task.checklist) {
-      this.data.task.checklist = [];
-      this.filteredChecklist = [];
+    if (this.checklistText.trim()) {
+      const checklistArr = this.checklistText.trim().split("\n");
+      console.log(checklistArr);
+
+      if (checklistArr.length > 1) {
+        let newCheckListArr: CheckList[] = [];
+        checklistArr.forEach((chklst) => {
+          const newCheckList: CheckList = {
+            text: chklst,
+            done: false,
+            unsaved: true,
+            isEditing: false,
+          };
+          newCheckListArr.push(newCheckList);
+        });
+        console.log(newCheckListArr);
+        if (!this.data.task.checklist) {
+          this.data.task.checklist = [];
+          this.filteredChecklist = [];
+        }
+        this.data.task.checklist.push(...newCheckListArr);
+        this.filteredChecklist.push(...newCheckListArr);
+      } else {
+        const newCheckList: CheckList = {
+          text: this.checklistText,
+          done: false,
+          unsaved: true,
+          isEditing: false,
+        };
+
+        if (!this.data.task.checklist) {
+          this.data.task.checklist = [];
+          this.filteredChecklist = [];
+        }
+        this.data.task.checklist.push(newCheckList);
+        this.filteredChecklist.push(newCheckList);
+      }
     }
-    this.data.task.checklist.push(newCheckList);
-    this.filteredChecklist.push(newCheckList);
     this.checklistText = "";
     this.calculateChecklistCompleted();
-    console.log(this.data.task);
   }
 
   setDueDateChecklist($event: CheckList) {
@@ -319,7 +362,7 @@ export class TaskDialogComponent implements OnInit {
       width: "360px",
       data: {
         date: localDate,
-        enableCalender: true
+        enableCalender: true,
       },
     });
     dialogRef.afterClosed().subscribe((result: CalenderDialogResult) => {
@@ -463,12 +506,12 @@ export class TaskDialogComponent implements OnInit {
 
   lockTask() {
     let status: boolean;
-    if(this.data.task.lockStatus && this.data.task.lockStatus.isLocked) {
+    if (this.data.task.lockStatus && this.data.task.lockStatus.isLocked) {
       status = !this.data.task.lockStatus.isLocked;
-    }else {
+    } else {
       status = true;
     }
-    
+
     const lockTask: TaskLock = {
       isLocked: status,
       lockedByUserId: this.authService.getUID(),
