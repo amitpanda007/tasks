@@ -1,0 +1,23 @@
+.container {
+  width: 50%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+}
+
+.btn {
+  margin: 10px;
+}
+
+.green {
+  background-color: #2ccf6d;
+}

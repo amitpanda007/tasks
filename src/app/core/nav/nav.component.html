@@ -1,10 +1,10 @@
 <!-- Toolbar -->
 <div class="{{ baseClass }}" role="banner">
   <a href="/"
-    ><img width="25" alt="Tasks Logo" src="assets/images/clipboard.svg"
+    ><img width="25" alt="Tasks Logo" src="assets/images/clipboard.png"
   /></a>
   <!--Created with https://danmarshall.github.io/google-font-to-svg-path/ -->
-  <svg
+  <!-- <svg
     width="80"
     height="25"
     viewBox="0 0 362.401 71.7"
@@ -25,7 +25,8 @@
         vector-effect="non-scaling-stroke"
       />
     </g>
-  </svg>
+  </svg> -->
+  <span class="title">TASKS</span>
   <div class="spacer" *ngIf="afAuth.user | async as user">
     <span>Welcome, {{ user.displayName }}</span>
   </div>

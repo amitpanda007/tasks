@@ -81,16 +81,55 @@
       <div class="container" *ngFor="let list of taskList">
         <mat-card class="card">
           <mat-card-header>
-            <mat-card-title>
+            <mat-card-title class="list-header">
               <div class="list-title">
                 <p>{{ list.name }}</p>
-                <button
-                  mat-icon-button
-                  aria-label="drag task list"
-                  class="drag"
+              </div>
+              <div class="list-options">
+                <span
+                  [matMenuTriggerFor]="menu"
+                  aria-label="sort task under list"
+                  class="sort"
                 >
+                  <mat-icon>sort</mat-icon>
+                </span>
+
+                <mat-menu #menu="matMenu">
+                  <button
+                    mat-menu-item
+                    (click)="sortTasks(list.id, sortOrders.INDEX)"
+                  >
+                    index
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="sortTasks(list.id, sortOrders.CREATED)"
+                  >
+                    created
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="sortTasks(list.id, sortOrders.MODIFIED)"
+                  >
+                    modified
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="sortTasks(list.id, sortOrders.DUEDATE)"
+                  >
+                    duedate
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="sortTasks(list.id, sortOrders.CHECKLIST)"
+                  >
+                    checklist
+                  </button>
+                </mat-menu>
+
+                <span aria-label="drag task list" class="drag">
                   <mat-icon>drag_indicator</mat-icon>
-                </button>
+                </span>
               </div>
             </mat-card-title>
           </mat-card-header>

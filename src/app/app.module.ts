@@ -38,6 +38,7 @@ import { DailyTaskDialogComponent } from "./common/daily-task-dialog/daily-task-
 import { ConfirmDialogComponent } from "./common/confirm-dialog/confirm-dialog.component";
 import { AccountModule } from "./account/account.module";
 import { MessageDialogComponent } from "./common/message-dialog/message-dialog.component";
+import { RouterModule } from "@angular/router";
 
 @NgModule({
   declarations: [
@@ -63,7 +64,6 @@ import { MessageDialogComponent } from "./common/message-dialog/message-dialog.c
     BrowserModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    AppRoutingModule,
     AuthModule,
     SharedModule,
     CoreModule,
@@ -80,6 +80,7 @@ import { MessageDialogComponent } from "./common/message-dialog/message-dialog.c
     ColorSwatchesModule,
     DragDropModule,
     ShareModule,
+    AppRoutingModule,
   ],
   entryComponents: [
     SuccessSnackbar,

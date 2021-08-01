@@ -1,6 +1,6 @@
 export interface TaskList {
-    id?: string;
-    name: string;
-    list: string;
-  }
-  
+  id?: string;
+  name: string;
+  list: string;
+  sortOrder?: string;
+}

@@ -113,10 +113,7 @@ export class BoardServiceV2 {
   }
 
   updateBoard(boardId: string, board: Board) {
-    this._store
-      .collection("boards")
-      .doc(boardId)
-      .set(board, { merge: true });
+    this._store.collection("boards").doc(boardId).set(board, { merge: true });
   }
 
   getBoardInvitation(boardId: string, invitationId: string) {
@@ -200,6 +197,15 @@ export class BoardServiceV2 {
       .add(data);
   }
 
+  updateTaskList(boardId: string, taskListId: string, data: TaskList) {
+    this._store
+      .collection("boards")
+      .doc(boardId)
+      .collection("taskLists")
+      .doc(taskListId)
+      .set(data, { merge: true });
+  }
+
   deleteTaskList(boardId: string, taskListId: string) {
     this._store
       .collection("boards")
@@ -264,7 +270,12 @@ export class BoardServiceV2 {
 
   async getTask(boardId: string, taskId: string) {
     const db = firebase.firestore();
-    const taskSnapshot = await db.collection("boards").doc(boardId).collection("tasks").doc(taskId).get();
+    const taskSnapshot = await db
+      .collection("boards")
+      .doc(boardId)
+      .collection("tasks")
+      .doc(taskId)
+      .get();
     return taskSnapshot.data();
   }
 

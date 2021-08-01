@@ -49,7 +49,7 @@ mat-toolbar > span {
   align-items: center;
   align-content: center;
   justify-content: space-between;
-  width: 200px;
+  // width: 200px;
 }
 
 .list {
@@ -95,6 +95,10 @@ mat-toolbar > span {
 
 .drag {
   cursor: move;
+}
+
+.sort {
+  cursor: pointer;
 }
 
 .task-btn {
@@ -202,4 +206,15 @@ mat-toolbar > span {
   border-radius: 4px;
   background-color: #eeeeee;
   padding: 0 4px;
+}
+
+.list-header {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: space-between;
+  width: 200px;
+}
+
+.list-options {
 }

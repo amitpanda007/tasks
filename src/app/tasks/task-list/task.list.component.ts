@@ -57,6 +57,7 @@ export class TaskListComponent implements OnInit {
   public labels: Label[];
   public editingBoardName: boolean;
   public starred: string;
+  public sortOrders: any;
 
   constructor(
     private dialog: MatDialog,
@@ -91,6 +92,13 @@ export class TaskListComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.sortOrders = {
+      INDEX: "index",
+      CREATED: "created",
+      MODIFIED: "modified",
+      DUEDATE: "duedate",
+      CHECKLIST: "checklist",
+    };
     this.starred = "#FFC107";
     // this.unstarred = "#FFF";
     this.listName = "";
@@ -324,6 +332,8 @@ export class TaskListComponent implements OnInit {
       }
       console.log(result);
 
+      result.task.modified = new Date();
+
       if (result.delete) {
         this.labels.forEach((label: Label) => {
           if (label.taskIds && label.taskIds.includes(result.task.id)) {
@@ -372,6 +382,8 @@ export class TaskListComponent implements OnInit {
         (task) => task.listId == taskListId
       );
       result.task.index = tasksUnderList.length;
+      result.task.created = new Date();
+      result.task.modified = new Date();
       this.boardServiceV2.addTask(this.boardId, result.task);
     });
   }
@@ -449,6 +461,22 @@ export class TaskListComponent implements OnInit {
     }
     this.boardServiceV2.updateBoard(this.boardId, this.board);
   }
+
+  sortTasks(taskListId: string, sortBy: string) {
+    console.log(sortBy);
+    return;
+    // Update sort order ste for task list
+    const curTaskList = this.taskList.find(
+      (taskList) => taskList.id === taskListId
+    );
+    curTaskList.sortOrder = sortBy;
+    this.boardServiceV2.updateTaskList(this.boardId, taskListId, curTaskList);
+
+    // sort tasks by given order
+    this.sortTaskByOrder(sortBy);
+  }
+
+  sortTaskByOrder(sortOrder: string = "index") {}
 
   openAutomation() {
     console.log("Opening Automation dialog");

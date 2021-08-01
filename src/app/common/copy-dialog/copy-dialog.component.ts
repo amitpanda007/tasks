@@ -78,6 +78,8 @@ export class CopyDialogComponent implements OnInit {
       listId: this.selectedList.id,
       dueDate: newDueDate,
       checklist: newCheckList,
+      created: new Date(),
+      modified: new Date(),
     };
     console.log(newTask);
     const taskId = await this.boardService.addTask(

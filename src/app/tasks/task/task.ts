@@ -15,4 +15,6 @@ export interface Task {
   members?: SharedUser[];
   message?: string;
   lockStatus?: TaskLock;
+  created: Date;
+  modified: Date;
 }
