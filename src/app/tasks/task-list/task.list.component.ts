@@ -12,13 +12,8 @@ import {
 } from "src/app/common/task-dialog/task-dialog.component";
 import { MatDialog } from "@angular/material";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BehaviorSubject, Subscription } from "rxjs";
-import { BoardService } from "../../core/services/board.service";
+import { BehaviorSubject, pipe, Subscription } from "rxjs";
 import { TaskList } from "./tasklist";
-import {
-  DeleteConfirmationDialogComponent,
-  DeleteConfirmationDialogResult,
-} from "src/app/common/delete.dialog.component";
 import { Label } from "../task/label";
 import {
   InviteDialogComponent,
@@ -72,7 +67,7 @@ export class TaskListComponent implements OnInit {
 
     this.routeQueryParams = this.route.queryParams.subscribe((params) => {
       if (params["task"]) {
-        if (this.tasks) {
+        if (this.tasks && this.tasks.length > 0) {
           const task = this.tasks.find((_task) => _task.id == params["task"]);
           this.openTaskDialog(task);
         } else {
@@ -96,7 +91,7 @@ export class TaskListComponent implements OnInit {
       INDEX: "index",
       CREATED: "created",
       MODIFIED: "modified",
-      DUEDATE: "duedate",
+      DUEDATE: "dueDate",
       CHECKLIST: "checklist",
     };
     this.starred = "#FFC107";
@@ -132,19 +127,60 @@ export class TaskListComponent implements OnInit {
 
     this.board = (await this.boardServiceV2.getBoard(this.boardId)) as Board;
 
+    // this.taskListsSubscription = this.boardServiceV2.taskListsChanged.subscribe(
+    //   (lists) => {
+    //     console.log(lists);
+    //     this.taskList = lists;
+    //     this.isLoading = false;
+    //   }
+    // );
+
+    // this.tasksSubscription = this.boardServiceV2.tasksChanged.subscribe(
+    //   (tasks) => {
+    //     console.log(tasks);
+    //     this.tasks = tasks;
+    //     this.tasksDataUpdated.next(true);
+    //   }
+    // );
+
     this.taskListsSubscription = this.boardServiceV2.taskListsChanged.subscribe(
       (lists) => {
         console.log(lists);
         this.taskList = lists;
-        this.isLoading = false;
-      }
-    );
+        // If tasklist chnaged , but tasks didnt change
+        if(this.tasks && this.tasks.length > 0) {
+          this.taskList.forEach(_list => {
+            _list.tasks = [];
+            this.tasks.forEach(task => {
+              if(_list.id == task.listId) {
+                _list.tasks.push(task);
+              }
+            });
+            if(_list.sortOrder) {
+              this.sortTaskByOrder(_list, _list.sortOrder);
+            }
+          });
+        }
 
-    this.tasksSubscription = this.boardServiceV2.tasksChanged.subscribe(
-      (tasks) => {
-        console.log(tasks);
-        this.tasks = tasks;
-        this.tasksDataUpdated.next(true);
+        this.tasksSubscription = this.boardServiceV2.tasksChanged.subscribe(
+          (tasks) => {
+            console.log(tasks);
+            this.tasks = tasks;
+            this.taskList.forEach(_list => {
+              _list.tasks = [];
+              this.tasks.forEach(task => {
+                if(_list.id == task.listId) {
+                  _list.tasks.push(task);
+                }
+              });
+              if(_list.sortOrder) {
+                this.sortTaskByOrder(_list, _list.sortOrder);
+              }
+            });
+            console.log(this.taskList);
+            this.tasksDataUpdated.next(true);
+          }
+        );
       }
     );
 
@@ -464,19 +500,63 @@ export class TaskListComponent implements OnInit {
 
   sortTasks(taskListId: string, sortBy: string) {
     console.log(sortBy);
-    return;
-    // Update sort order ste for task list
+    
     const curTaskList = this.taskList.find(
       (taskList) => taskList.id === taskListId
     );
+
+    if(curTaskList.sortOrder && curTaskList.sortOrder === sortBy) {
+      // return;
+    }
+    this.sortTaskByOrder(curTaskList, sortBy);
+
     curTaskList.sortOrder = sortBy;
     this.boardServiceV2.updateTaskList(this.boardId, taskListId, curTaskList);
-
-    // sort tasks by given order
-    this.sortTaskByOrder(sortBy);
   }
 
-  sortTaskByOrder(sortOrder: string = "index") {}
+  sortTaskByOrder(taskList: TaskList, sortOrder: string = "index") {
+    taskList.tasks.sort((task1: Task, task2: Task) => {
+      if(sortOrder == this.sortOrders.INDEX || sortOrder == this.sortOrders.CREATED || sortOrder == this.sortOrders.MODIFIED) {
+        if (task1[sortOrder] < task2[sortOrder]) {
+          return -1;
+        }
+        if (task1[sortOrder] > task2[sortOrder]) {
+          return 1;
+        }
+        return 0;
+      }else if(sortOrder == this.sortOrders.DUEDATE) {
+        if((task1[sortOrder] && task1[sortOrder].date) && (task2[sortOrder] && task2[sortOrder].date)) {
+          if (task1[sortOrder].date < task2[sortOrder].date) {
+            return -1;
+          }
+          if (task1[sortOrder].date > task2[sortOrder].date) {
+            return 1;
+          }
+          return 0;
+        }
+        if(task1[sortOrder] && task1[sortOrder].date) {
+          return -1;
+        }else if(task2[sortOrder] && task2[sortOrder].date) {
+          return 1;
+        }
+      }else if(sortOrder == this.sortOrders.CHECKLIST) {
+        if(task1[sortOrder] && task2[sortOrder]) {
+          if (task1[sortOrder].length < task2[sortOrder].length) {
+            return -1;
+          }
+          if (task1[sortOrder].length > task2[sortOrder].length) {
+            return 1;
+          }
+          return 0;
+        }
+        if(task1[sortOrder] && task1[sortOrder].length > 0) {
+          return -1;
+        }else if(task2[sortOrder] && task2[sortOrder].length > 0) {
+          return 1;
+        }
+      }
+    });
+  }
 
   openAutomation() {
     console.log("Opening Automation dialog");

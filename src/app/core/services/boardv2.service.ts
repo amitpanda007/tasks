@@ -189,21 +189,23 @@ export class BoardServiceV2 {
       .valueChanges({ idField: "id" });
   }
 
-  addTaskList(boardId: string, data: TaskList) {
+  addTaskList(boardId: string, taskList: TaskList) {
+    delete taskList.tasks;
     this._store
       .collection("boards")
       .doc(boardId)
       .collection("taskLists")
-      .add(data);
+      .add(taskList);
   }
 
-  updateTaskList(boardId: string, taskListId: string, data: TaskList) {
+  updateTaskList(boardId: string, taskListId: string, taskList: TaskList) {
+    delete taskList.tasks;
     this._store
       .collection("boards")
       .doc(boardId)
       .collection("taskLists")
       .doc(taskListId)
-      .set(data, { merge: true });
+      .set(taskList, { merge: true });
   }
 
   deleteTaskList(boardId: string, taskListId: string) {

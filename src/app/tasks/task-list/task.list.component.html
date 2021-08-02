@@ -145,9 +145,8 @@
             <p class="empty-label" *ngIf="containerData(list.id).length == 0">
               Empty list
             </p>
-            <div *ngFor="let task of tasks">
+            <div *ngFor="let task of list.tasks">
               <task
-                *ngIf="task.listId == list.id"
                 (edit)="editTask($event)"
                 cdkDrag
                 [task]="task"
