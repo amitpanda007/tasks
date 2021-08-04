@@ -11,6 +11,7 @@ import { AuthService } from "src/app/core/services/auth.service";
 })
 export class MemberDialogComponent implements OnInit {
   public memberSearch: string;
+  public filteredMembers: SharedUser[];
   // private taskMembers: SharedUser[];
 
   constructor(
@@ -20,6 +21,7 @@ export class MemberDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.filteredMembers = this.data.members;
     if (!this.data.addedMembers) {
       console.log("Initialted Added Members List");
       this.data.addedMembers = [];
@@ -84,6 +86,18 @@ export class MemberDialogComponent implements OnInit {
     }
 
     this.calculateAddedMember();
+  }
+
+  filterMembers(data) {
+    if (data) {
+      this.filteredMembers = this.data.members.filter((candidateList: any) => {
+        return (
+          candidateList.name.toLowerCase().indexOf(data.toLowerCase()) > -1
+        );
+      });
+    } else {
+      this.filteredMembers = this.data.members;
+    }
   }
 }
 

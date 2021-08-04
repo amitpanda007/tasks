@@ -53,6 +53,7 @@ export class AuthInterceptor implements HttpInterceptor {
       //     return throwError(err);
       //   })
       // );
+      return next.handle(req);
     } else {
       return next.handle(req);
     }

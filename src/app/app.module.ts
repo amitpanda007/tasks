@@ -39,6 +39,8 @@ import { ConfirmDialogComponent } from "./common/confirm-dialog/confirm-dialog.c
 import { AccountModule } from "./account/account.module";
 import { MessageDialogComponent } from "./common/message-dialog/message-dialog.component";
 import { RouterModule } from "@angular/router";
+import { FilterSearchComponent } from "./common/filter-search.component";
+import { QRCodeModule } from 'angularx-qrcode';
 
 @NgModule({
   declarations: [
@@ -59,6 +61,7 @@ import { RouterModule } from "@angular/router";
     DailyTaskDialogComponent,
     ConfirmDialogComponent,
     MessageDialogComponent,
+    FilterSearchComponent
   ],
   imports: [
     BrowserModule,
@@ -81,6 +84,7 @@ import { RouterModule } from "@angular/router";
     DragDropModule,
     ShareModule,
     AppRoutingModule,
+    QRCodeModule
   ],
   entryComponents: [
     SuccessSnackbar,

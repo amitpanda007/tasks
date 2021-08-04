@@ -4,6 +4,8 @@ import { BoardServiceV2 } from '../../core/services/boardv2.service';
 import { Board } from '../../boards/board/board';
 import { Invitation } from '../../common/invite-dialog/invitation';
 import { AuthService } from '../../core/services/auth.service';
+import { User } from "firebase";
+import { AccountService } from "src/app/core/services/account.service";
 
 @Component({
   selector: "share-board",
@@ -13,7 +15,8 @@ import { AuthService } from '../../core/services/auth.service';
 export class ShareBoardComponent implements OnInit {
   private boardId: string;
   private invitationId: string;
-
+  
+  public boardOwner: User;
   public board: Board;
   public invitation: Invitation;
   public boardLink: string;
@@ -24,7 +27,8 @@ export class ShareBoardComponent implements OnInit {
   constructor(private router: Router, 
     private route: ActivatedRoute, 
     private bordServiceV2: BoardServiceV2, 
-    private authService: AuthService) {}
+    private authService: AuthService,
+    private accountService: AccountService) {}
 
   async ngOnInit() {
     this.boardId = this.route.snapshot.params.boardId;
@@ -55,6 +59,7 @@ export class ShareBoardComponent implements OnInit {
     });
 
     this.board = await this.bordServiceV2.getBoard(this.boardId) as Board;
+    this.boardOwner = await this.accountService.getUserById(this.invitation.creator) as User;
   }
 
   accept() {

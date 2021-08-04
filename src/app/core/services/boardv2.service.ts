@@ -147,7 +147,7 @@ export class BoardServiceV2 {
           .doc(boardId)
           .collection("invitations")
           .doc(invitationId)
-          .set({ accepted: true }, { merge: true }),
+          .set({ accepted: true, acceptedUser: this.authService.getUID(), modified: new Date()}, { merge: true }),
         this._store
           .collection("boards")
           .doc(boardId)

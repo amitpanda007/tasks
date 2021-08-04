@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: "http://localhost:5000/api/v1/",
+  apiUrl: "http://localhost:3000/api/v1/",
   firebase: {
     apiKey: "AIzaSyAolDirCPV3mW11Scb_ethC7O4obTNNEi4",
     authDomain: "taskfrtdy.firebaseapp.com",

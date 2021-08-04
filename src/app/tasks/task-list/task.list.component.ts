@@ -143,6 +143,7 @@ export class TaskListComponent implements OnInit {
     //   }
     // );
 
+    //TODO: This is created with observable inside another observable. Better convert this with switchMap or mergeMap
     this.taskListsSubscription = this.boardServiceV2.taskListsChanged.subscribe(
       (lists) => {
         console.log(lists);
@@ -150,12 +151,7 @@ export class TaskListComponent implements OnInit {
         // If tasklist chnaged , but tasks didnt change
         if(this.tasks && this.tasks.length > 0) {
           this.taskList.forEach(_list => {
-            _list.tasks = [];
-            this.tasks.forEach(task => {
-              if(_list.id == task.listId) {
-                _list.tasks.push(task);
-              }
-            });
+            this.addTasksToList(_list);
             if(_list.sortOrder) {
               this.sortTaskByOrder(_list, _list.sortOrder);
             }
@@ -168,11 +164,7 @@ export class TaskListComponent implements OnInit {
             this.tasks = tasks;
             this.taskList.forEach(_list => {
               _list.tasks = [];
-              this.tasks.forEach(task => {
-                if(_list.id == task.listId) {
-                  _list.tasks.push(task);
-                }
-              });
+              this.addTasksToList(_list);
               if(_list.sortOrder) {
                 this.sortTaskByOrder(_list, _list.sortOrder);
               }
@@ -215,6 +207,15 @@ export class TaskListComponent implements OnInit {
       this.labelsSubscription.unsubscribe();
       this.boardServiceV2.cancelLabelSubscription();
     }
+  }
+
+  addTasksToList(list: TaskList) {
+    list.tasks = [];
+    this.tasks.forEach(task => {
+      if(list.id == task.listId) {
+        list.tasks.push(task);
+      }
+    }); 
   }
 
   remainingList(curListId: string) {
@@ -478,7 +479,7 @@ export class TaskListComponent implements OnInit {
   inviteMembers() {
     console.log("Initiating Invite Member");
     const dialogRef = this.dialog.open(InviteDialogComponent, {
-      width: "360px",
+      width: "280px",
       data: {
         boardId: this.boardId,
         email: "",

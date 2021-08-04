@@ -26,7 +26,7 @@
         <span
           class="member"
           *ngFor="let member of data.task.members"
-          title="{{ member.name }}"
+          matTooltip="{{ member.name }}"
           >{{ member.name | shortname }}</span
         >
         <div>

@@ -4,7 +4,7 @@
         <mat-card-title>{{board?.title}}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p>You have been invited to collaborate on a Board. Accept if you with to work on this board.</p>
+        <p>You have been invited to collaborate on a Board by {{ boardOwner.name }}. Accept if you with to work on this board.</p>
       </mat-card-content>
       <mat-card-actions>
         <button mat-stroked-button color="primary" (click)="accept()">ACCEPT</button>

@@ -400,7 +400,7 @@ export class TaskDialogComponent implements OnInit {
 
   openMemberDialog() {
     const dialogRef = this.dialog.open(MemberDialogComponent, {
-      width: "360px",
+      width: "280px",
       data: {
         members: this.data.boardMembers,
         addedMembers: this.data.task.members,

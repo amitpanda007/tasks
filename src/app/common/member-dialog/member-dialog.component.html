@@ -1,20 +1,14 @@
 <div mat-dialog-content>
-  <p class="sub-header">Add Member to Board</p>
-  <mat-form-field class="title">
-    <mat-label>Search Members</mat-label>
-    <input
-      matInput
-      cdkFocusInitial
-      autocomplete="off"
-      [(ngModel)]="memberSearch"
-    />
-  </mat-form-field>
+  <!-- <p class="title">Members</p> -->
+  <div class="search">
+    <filter-search (changed)="filterMembers($event)" [placeholder]="'Search members'"></filter-search>
+  </div>
   <p class="sub-header">BOARD MEMBERS</p>
   <div *ngIf="data.members">
     <button
       (click)="addRemoveMemberFromTask(member)"
       mat-stroked-button
-      *ngFor="let member of data.members"
+      *ngFor="let member of filteredMembers"
       class="member-info"
     >
       <span class="member">{{ member.name | shortname }}</span>
@@ -27,7 +21,7 @@
     aria-label="show members"
     (click)="showAllMembers()"
   >
-    Show Available Members
+    All Board Members
   </button>
 </div>
 <div mat-dialog-actions>

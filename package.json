@@ -27,6 +27,7 @@
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
     "@auth0/angular-jwt": "^5.0.2",
+    "angularx-qrcode": "^2.1.4",
     "firebase": ">= 5.5.7 <8",
     "firebase-admin": "^9.4.2",
     "lodash": "^4.17.21",
