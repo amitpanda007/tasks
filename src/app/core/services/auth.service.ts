@@ -1,15 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { customClaims } from "@angular/fire/auth-guard";
 
 import {
   SuccessSnackbar,
   ErrorSnackbar,
 } from "../../common/snackbar.component";
 import { AngularFireAuth } from "@angular/fire/auth";
-import { pipe, Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { Observable } from "rxjs";
 import { AngularFirestore } from '@angular/fire/firestore';
 import { User } from '../../auth/user';
 
@@ -73,6 +71,23 @@ export class AuthService {
         duration: 2000,
       });
     }
+  }
+
+  async resetUserPassword(email: string) {
+    try {
+      await this._afAuth.auth.sendPasswordResetEmail(email);
+      console.log("Email sent successfully");
+      this._snackBar.openFromComponent(SuccessSnackbar, {
+        data: "Email sent successfully",
+        duration: 2000,
+      });
+    } catch (error) {
+      this._snackBar.openFromComponent(ErrorSnackbar, {
+        data: error.message,
+        duration: 2000,
+      });
+    }
+
   }
 
   logout() {

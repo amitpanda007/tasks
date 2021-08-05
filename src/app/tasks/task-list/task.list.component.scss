@@ -208,6 +208,10 @@ mat-toolbar > span {
   padding: 0 4px;
 }
 
+.txt-small {
+  font-size: small;
+}
+
 .list-header {
   display: flex;
   align-content: center;
@@ -216,5 +220,75 @@ mat-toolbar > span {
   width: 200px;
 }
 
-.list-options {
+.icon-small {
+  font-size: 18px;
+}
+
+.sidenav {
+  bottom: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transition-property: transform,width;
+  transition-duration: .3s;
+  transition-timing-function: ease-in;
+  transform: translateX(339px);
+  width: 339px;
+  z-index: 5;
+  background-color: #f4f5f7;
+}
+
+.sidenav-open {
+  bottom: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition-property: transform,width;
+  transition-duration: .3s;
+  transition-timing-function: ease-in;
+  transform: translateX(0px) !important;
+  width: 339px;
+  z-index: 5;
+  background-color: #f4f5f7;
+}
+
+.menu-header {
+  font-size: 24px;
+  font-weight: 500;
+  margin-left: 1em;
+}
+
+.spacing {
+  justify-content: space-between;
+}
+
+.icon {
+  margin-right: 2em;
+}
+
+.nav-option-dividor {
+  border-top: 1px solid hsla(0, 0%, 100%, 0.24);
+  margin: 1em 3em;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.menu-options {
+  margin: 0 2em;
+}
+
+.menu-option {
+
+}
+
+.menu-option span{
+  margin-left: 1em;
+}
+
+.menu-option:hover {
+  border-radius: 4px;
+  background-color: #bdbdbd;
+}
+
+.container {
+  height: 8em;
 }

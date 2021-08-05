@@ -21,6 +21,22 @@
           placeholder="Full Name"
         />
       </div>
+      <div
+        *ngIf="!f.fullName.errors && (f.fullName.dirty || f.fullName.touched)"
+        class="alert alert-valid"
+      >
+        <mat-icon>check</mat-icon>
+        Valid
+      </div>
+      <div
+        *ngIf="f.fullName.errors && (f.fullName.dirty || f.fullName.touched)"
+        class="alert alert-danger"
+      >
+        <div *ngIf="f.fullName.errors?.required">Full Name is required</div>
+        <div *ngIf="f.fullName.errors?.minlength">
+          Full Name must be at least 4 characters long
+        </div>
+      </div>
       <div class="text">
         <svg viewBox="0 0 20 20">
           <path
@@ -33,7 +49,34 @@
           name="email"
           type="email"
           placeholder="email"
+          email
         />
+      </div>
+      <div
+        *ngIf="
+          !f.email.errors &&
+          !registerForm.hasError('emailError') &&
+          (f.email.dirty || f.email.touched)
+        "
+        class="alert alert-valid"
+      >
+        <mat-icon>check</mat-icon>
+        Valid
+      </div>
+      <div
+        *ngIf="f.email.errors && (f.email.dirty || f.email.touched)"
+        class="alert alert-danger"
+      >
+        <div *ngIf="f.email.errors?.required">Email is required</div>
+      </div>
+      <div
+        *ngIf="
+          registerForm.hasError('emailError') &&
+          (f.email.dirty || f.email.touched)
+        "
+        class="alert alert-danger"
+      >
+        Not a valid email
       </div>
       <div class="text">
         <svg fill="#999" viewBox="0 0 20 20">
@@ -48,6 +91,22 @@
           placeholder="password"
         />
       </div>
+      <div
+        *ngIf="!f.password.errors && (f.password.dirty || f.password.touched)"
+        class="alert alert-valid"
+      >
+        <mat-icon>check</mat-icon>
+        Valid
+      </div>
+      <div
+        *ngIf="f.password.errors && (f.password.dirty || f.password.touched)"
+        class="alert alert-danger"
+      >
+        <div *ngIf="f.password.errors?.required">password is required</div>
+        <div *ngIf="f.password.errors?.minlength">
+          Password must be at least 8 characters long
+        </div>
+      </div>
       <div class="text">
         <svg fill="#999" viewBox="0 0 20 20">
           <path
@@ -61,8 +120,50 @@
           placeholder="confirm password"
         />
       </div>
-
-      <button class="signin-button" type="submit">Register</button>
+      <div
+        *ngIf="
+          !f.confirmPassword.errors &&
+          !registerForm.hasError('nomatch') &&
+          (f.confirmPassword.dirty || f.confirmPassword.touched)
+        "
+        class="alert alert-valid"
+      >
+        <mat-icon>check</mat-icon>
+        Valid
+      </div>
+      <div
+        *ngIf="
+          f.confirmPassword.errors &&
+          (f.confirmPassword.dirty || f.confirmPassword.touched)
+        "
+        class="alert alert-danger"
+      >
+        <div *ngIf="f.confirmPassword.errors?.required">
+          Confirm password is required
+        </div>
+        <div *ngIf="f.confirmPassword.errors?.minlength">
+          Confirm Password must be at least 8 characters long
+        </div>
+      </div>
+      <div
+        *ngIf="
+          registerForm.hasError('nomatch') &&
+          (f.confirmPassword.dirty || f.confirmPassword.touched)
+        "
+        class="alert alert-danger"
+      >
+        Passwords do not match
+      </div>
+      <button
+        [ngClass]="{
+          'signin-button': registerForm.status == 'INVALID',
+          'signin-button-active': registerForm.status == 'VALID'
+        }"
+        type="submit"
+        [disabled]="registerForm.status == 'INVALID'"
+      >
+        Register
+      </button>
       <div class="link">
         Already have an account?<a href="/login"> Login</a>
       </div>

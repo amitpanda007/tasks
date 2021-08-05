@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -10,7 +10,7 @@ import {
   TaskDialogComponent,
   TaskDialogResult,
 } from "src/app/common/task-dialog/task-dialog.component";
-import { MatDialog } from "@angular/material";
+import { MatDialog, MatSidenav } from "@angular/material";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, pipe, Subscription } from "rxjs";
 import { TaskList } from "./tasklist";
@@ -53,6 +53,7 @@ export class TaskListComponent implements OnInit {
   public editingBoardName: boolean;
   public starred: string;
   public sortOrders: any;
+  public isShowingSidenav: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -563,7 +564,7 @@ export class TaskListComponent implements OnInit {
     console.log("Opening Automation dialog");
   }
 
-  openListMenu() {
-    console.log("Opening Menu dialog");
+  toggleMenuSidenav() {
+    this.isShowingSidenav = !this.isShowingSidenav;
   }
 }

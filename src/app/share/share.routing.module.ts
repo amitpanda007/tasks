@@ -8,10 +8,11 @@ const routes: Routes = [
   {
     path: "share/board/:boardId/:invitationId",
     component: ShareBoardComponent,
-    canActivate: [AngularFireAuthGuard],
+    
   },
 ];
 
+// canActivate: [AngularFireAuthGuard],
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],

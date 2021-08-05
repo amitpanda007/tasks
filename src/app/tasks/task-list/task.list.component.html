@@ -65,13 +65,15 @@
       </div>
     </div>
     <div id="right" class="flex-display">
-      <span class="flex-display option-bg pointer" (click)="openAutomation()"
-        ><mat-icon>bolt</mat-icon> Automation</span
-      >
+      <div class="flex-display option-bg pointer" (click)="openAutomation()">
+        <mat-icon class="flex-display icon-small">bolt</mat-icon>
+        <span class="txt-small">Automation</span>
+      </div>
       <span class="option-dividor"></span>
-      <span class="flex-display option-bg pointer" (click)="openListMenu()"
-        ><mat-icon>more_horiz</mat-icon> Menu</span
-      >
+      <div class="flex-display option-bg pointer" (click)="toggleMenuSidenav()">
+        <mat-icon class="flex-display icon-small">more_horiz</mat-icon>
+        <span class="txt-small"> Menu</span>
+      </div>
     </div>
   </div>
 
@@ -228,6 +230,46 @@
           </div>
         </mat-card>
       </div>
+    </div>
+  </div>
+</div>
+
+<div [ngClass]="{'sidenav': !isShowingSidenav, 'sidenav-open': isShowingSidenav}">
+  <div class="flex-display spacing">
+    <p class="menu-header">Menu</p>
+    <mat-icon class="icon pointer" (click)="toggleMenuSidenav()"
+      >close</mat-icon
+    >
+  </div>
+  <div class="nav-option-dividor"></div>
+  <div class="menu-options">
+    <div class="menu-option flex-display pointer">
+      <mat-icon>read_more</mat-icon>
+      <span>About this board</span>
+    </div>
+    <div class="menu-option flex-display pointer">
+      <mat-icon>wallpaper</mat-icon>
+      <span>Change background</span>
+    </div>
+    <div class="menu-option flex-display pointer">
+      <mat-icon>search</mat-icon>
+      <span>Search cards</span>
+    </div>
+    <div class="menu-option flex-display pointer">
+      <mat-icon>more_horiz</mat-icon>
+      <span>more</span>
+    </div>
+    <div class="nav-option-dividor"></div>
+    <div class="container flex-display">
+      <p>Automation</p>
+    </div>
+    <div class="nav-option-dividor"></div>
+    <div class="container flex-display">
+      <p>Power-Ups</p>
+    </div>
+    <div class="nav-option-dividor"></div>
+    <div class="container flex-display">
+      <p>Activity</p>
     </div>
   </div>
 </div>

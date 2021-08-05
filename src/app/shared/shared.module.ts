@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import {
   MatSnackBarModule,
@@ -28,6 +28,7 @@ import {
   MatOptionModule,
   MatSelectModule,
   MatButtonToggleModule,
+  MatSidenavModule
 } from "@angular/material";
 
 import { CapitalizePipe } from "./capitalize.pipe";
@@ -70,7 +71,8 @@ import { ShortnamePipe } from "./shortname.pipe";
     MatTableModule,
     MatOptionModule,
     MatSelectModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatSidenavModule
   ],
   declarations: [CapitalizePipe, DefaultPipe, DateFormatPipe, ShortnamePipe],
   providers: [MatNativeDateModule],
