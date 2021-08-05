@@ -20,4 +20,17 @@ export class APIService {
       })
       .toPromise();
   }
+
+  sendAccountCreateEmail(email: string, name: string) {
+    const apiUrl = `${environment.apiUrl}email/account/create`;
+    return this.http
+      .get(apiUrl, {
+        params: {
+          email: email,
+          name: name
+        },
+        observe: "response",
+      })
+      .toPromise();
+  }
 }

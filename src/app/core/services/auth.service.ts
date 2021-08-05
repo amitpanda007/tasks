@@ -10,6 +10,7 @@ import { AngularFireAuth } from "@angular/fire/auth";
 import { Observable } from "rxjs";
 import { AngularFirestore } from '@angular/fire/firestore';
 import { User } from '../../auth/user';
+import { APIService } from "./api.service";
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,8 @@ export class AuthService {
     private _router: Router,
     private _snackBar: MatSnackBar,
     private _afAuth: AngularFireAuth,
-    private _store: AngularFirestore
+    private _store: AngularFirestore,
+    private apiService: APIService
   ) {}
 
   async register(user) {
@@ -29,6 +31,7 @@ export class AuthService {
         password
       );
       await resp.user.updateProfile({ displayName: fullName });
+      this.apiService.sendAccountCreateEmail(email, fullName);
       
       // Save data to firebase collection
       const UID = resp.user.uid;
