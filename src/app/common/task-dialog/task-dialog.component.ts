@@ -380,6 +380,24 @@ export class TaskDialogComponent implements OnInit {
     });
   }
 
+  openCreateChecklistDialog() {
+    const dialogRef = this.dialog.open(ColorDialogComponent, {
+      width: "500px",
+      height: "600px",
+      data: {
+        color: "",
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: ColorDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+
+      this.data.task.backgroundColor = result.color;
+    }); 
+  }
+
   openColorDialog() {
     const dialogRef = this.dialog.open(ColorDialogComponent, {
       width: "500px",

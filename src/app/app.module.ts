@@ -41,6 +41,7 @@ import { MessageDialogComponent } from "./common/message-dialog/message-dialog.c
 import { RouterModule } from "@angular/router";
 import { FilterSearchComponent } from "./common/filter-search.component";
 import { QRCodeModule } from 'angularx-qrcode';
+import { ChecklistDialogComponent } from "./common/checklist-dialog/color-dialog.component";
 
 @NgModule({
   declarations: [
@@ -103,6 +104,7 @@ import { QRCodeModule } from 'angularx-qrcode';
     DailyTaskDialogComponent,
     ConfirmDialogComponent,
     MessageDialogComponent,
+    ChecklistDialogComponent
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],
