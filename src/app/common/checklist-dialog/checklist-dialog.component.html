@@ -1,0 +1,36 @@
+<h2>Add Checklist</h2>
+
+<input
+  cdkFocusInitial
+  class="search-input"
+  name="checklistName"
+  type="text"
+  placeholder="Checklist"
+  [(ngModel)]="checklistName"
+  autocomplete="off"
+/>
+
+<h4>Copy checklist from</h4>
+<mat-form-field appearance="fill">
+  <mat-label>All Checklists</mat-label>
+  <mat-select (selectionChange)="checklistSelectionCHanged($event)">
+    <mat-option>-- None --</mat-option>
+    <mat-optgroup
+      *ngFor="let group of checklistGroups"
+      [label]="group.name"
+      [disabled]="group.disabled"
+    >
+      <mat-option
+        *ngFor="let checklist of group.checklists"
+        [value]="checklist.value"
+      >
+        {{ checklist.viewValue }}
+      </mat-option>
+    </mat-optgroup>
+  </mat-select>
+</mat-form-field>
+
+<div mat-dialog-actions class="options">
+  <button mat-stroked-button (click)="save()">OK</button>
+  <button mat-stroked-button (click)="cancel()">Cancel</button>
+</div>

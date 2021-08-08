@@ -1,6 +1,6 @@
 import { SharedUser } from "src/app/boards/board/board";
-import { CheckList } from "./checklist";
 import { DueDate } from "./duedate";
+import { TaskChecklist } from "./taskchecklist";
 import { TaskLock } from "./tasklock";
 
 export interface Task {
@@ -11,7 +11,7 @@ export interface Task {
   description: string;
   backgroundColor?: string;
   dueDate?: DueDate;
-  checklist?: CheckList[];
+  checklists?: TaskChecklist[];
   members?: SharedUser[];
   message?: string;
   lockStatus?: TaskLock;

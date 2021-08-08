@@ -1,15 +1,16 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { ColorEvent } from "ngx-color";
 import { CheckList } from "src/app/tasks/task/checklist";
 import { TaskChecklist } from "src/app/tasks/task/taskchecklist";
 
 @Component({
-  selector: "app-color-dialog",
-  templateUrl: "./color-dialog.component.html",
-  styleUrls: ["./color-dialog.component.scss"],
+  selector: "app-checklist-dialog",
+  templateUrl: "./checklist-dialog.component.html",
+  styleUrls: ["./checklist-dialog.component.scss"],
 })
 export class ChecklistDialogComponent {
+  public checklistName: string;
+
   constructor(
     public dialogRef: MatDialogRef<ChecklistDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ChecklistDialogData
@@ -20,7 +21,15 @@ export class ChecklistDialogComponent {
   }
 
   save() {
-    this.dialogRef.close({  });
+    const data = [];
+    this.dialogRef.close({
+      checklistName: this.checklistName.trim(),
+      checklistData: data,
+    });
+  }
+
+  checklistSelectionCHanged(selected: any) {
+    console.log(selected);
   }
 }
 
@@ -30,5 +39,5 @@ export interface ChecklistDialogData {
 
 export interface ChecklistDialogResult {
   checklistName: string;
-  checklistData?: string;
+  checklistData?: CheckList[];
 }

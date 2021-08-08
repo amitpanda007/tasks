@@ -40,8 +40,8 @@ import { AccountModule } from "./account/account.module";
 import { MessageDialogComponent } from "./common/message-dialog/message-dialog.component";
 import { RouterModule } from "@angular/router";
 import { FilterSearchComponent } from "./common/filter-search.component";
-import { QRCodeModule } from 'angularx-qrcode';
-import { ChecklistDialogComponent } from "./common/checklist-dialog/color-dialog.component";
+import { QRCodeModule } from "angularx-qrcode";
+import { ChecklistDialogComponent } from "./common/checklist-dialog/checklist-dialog.component";
 
 @NgModule({
   declarations: [
@@ -62,7 +62,8 @@ import { ChecklistDialogComponent } from "./common/checklist-dialog/color-dialog
     DailyTaskDialogComponent,
     ConfirmDialogComponent,
     MessageDialogComponent,
-    FilterSearchComponent
+    FilterSearchComponent,
+    ChecklistDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -85,7 +86,7 @@ import { ChecklistDialogComponent } from "./common/checklist-dialog/color-dialog
     DragDropModule,
     ShareModule,
     AppRoutingModule,
-    QRCodeModule
+    QRCodeModule,
   ],
   entryComponents: [
     SuccessSnackbar,
@@ -104,7 +105,7 @@ import { ChecklistDialogComponent } from "./common/checklist-dialog/color-dialog
     DailyTaskDialogComponent,
     ConfirmDialogComponent,
     MessageDialogComponent,
-    ChecklistDialogComponent
+    ChecklistDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

@@ -92,64 +92,64 @@
       </div>
     </section>
 
-    <section class="checklist">
-      <p class="sub-header">
-        Check List
-        <span>
-          <button mat-stroked-button (click)="showHideCompletedChecklist()">
-            <span *ngIf="showHideCompletedTask">Show</span
-            ><span *ngIf="!showHideCompletedTask">Hide</span> checked items
-          </button>
-          <button mat-stroked-button (click)="deleteAllChecklist()">
-            Delete
-          </button>
-        </span>
-      </p>
-      <div class="checklist-progress" *ngIf="data.task.checklist">
-        <span class="task-completed">{{ checklistCompleted }}%</span>
-        <mat-progress-bar
-          class="progress-bar"
-          mode="determinate"
-          value="{{ checklistCompleted }}"
-        ></mat-progress-bar>
-      </div>
-      <div
-        cdkDropList
-        (cdkDropListDropped)="drop($event)"
-        class="checklist-list"
+    <div *ngIf="data.task.checklists">
+      <section
+        class="checklist"
+        *ngFor="let checklists of localChecklists; let i = index"
       >
-        <checklist
-          cdkDrag
-          *ngFor="let checklist of filteredChecklist"
-          class="checklist-box"
-          [checklist]="checklist"
-          (duedate)="setDueDateChecklist($event)"
-          (assign)="assignChecklist($event)"
-          (delete)="deleteChecklist($event)"
-          (done)="checklistClicked($event)"
-        ></checklist>
-      </div>
+        <p class="sub-header">
+          {{ checklists.checklistName }}
+          <span>
+            <button mat-stroked-button (click)="showHideCompletedChecklist(i)">
+              <span *ngIf="checklists.showHideCompletedTask">Show</span
+              ><span *ngIf="!checklists.showHideCompletedTask">Hide</span>
+              checked items
+            </button>
+            <button mat-stroked-button (click)="deleteAllChecklist(i)">
+              Delete
+            </button>
+          </span>
+        </p>
+        <div class="checklist-progress" *ngIf="checklists">
+          <span class="task-completed"
+            >{{ checklists.checklistCompleted }}%</span
+          >
+          <mat-progress-bar
+            class="progress-bar"
+            mode="determinate"
+            value="{{ checklists.checklistCompleted }}"
+          ></mat-progress-bar>
+        </div>
+        <div
+          cdkDropList
+          (cdkDropListDropped)="drop($event)"
+          class="checklist-list"
+        >
+          <checklist
+            cdkDrag
+            *ngFor="let checklist of checklists.checklist; let j = index"
+            class="checklist-box"
+            [checklist]="checklist"
+            (duedate)="setDueDateChecklist($event, j, i)"
+            (assign)="assignChecklist($event, j, i)"
+            (delete)="deleteChecklist($event, checklists.checklist, i)"
+            (done)="checklistClicked($event, i)"
+          ></checklist>
+        </div>
 
-      <div class="checklist-add">
-        <!-- <input
-          class="checklist-input"
-          matInput
-          placeholder="Add a new task to checklist"
-          autocomplete="off"
-          name="checklistInput"
-          [(ngModel)]="checklistText"
-        /> -->
-        <textarea
-          class="checklist-input"
-          name="checklistInput"
-          placeholder="Add a new task to checklist"
-          wrap="off"
-          [(ngModel)]="checklistText"
-          (keyup.enter)="updateChecklist()"
-        ></textarea>
-        <button mat-stroked-button (click)="updateChecklist()">Add</button>
-      </div>
-    </section>
+        <div class="checklist-add">
+          <textarea
+            class="checklist-input"
+            name="checklistInput"
+            placeholder="Add a new task to checklist"
+            wrap="off"
+            [(ngModel)]="checklists.checklistText"
+            (keyup.enter)="updateChecklist(checklists.checklist, i)"
+          ></textarea>
+          <!-- <button mat-stroked-button (click)="updateChecklist()">Add</button> -->
+        </div>
+      </section>
+    </div>
 
     <div mat-dialog-actions>
       <!-- <button mat-button [mat-dialog-close]="{ task: data.task }">OK</button> -->
@@ -202,7 +202,8 @@
 
       <button mat-stroked-button (click)="openCreateChecklistDialog()">
         <span class="option-content">
-          <mat-icon class="material-icons-outlined">check_box</mat-icon> Checklist
+          <mat-icon class="material-icons-outlined">check_box</mat-icon>
+          Checklist
         </span>
       </button>
 

@@ -61,8 +61,8 @@ export class CopyDialogComponent implements OnInit {
     let newCheckList = [];
 
     if (this.keepChecklist) {
-      if (this.data.task.checklist && this.data.task.checklist.length > 0) {
-        newCheckList = this.data.task.checklist;
+      if (this.data.task.checklists && this.data.task.checklists.length > 0) {
+        newCheckList = this.data.task.checklists;
       }
     }
     if (this.keepDueDate) {

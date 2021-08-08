@@ -38,8 +38,6 @@ import {
   CopyDialogComponent,
   CopyDialogResult,
 } from "../copy-dialog/copy-dialog.component";
-import { ErrorSnackbar, SuccessSnackbar } from "../snackbar.component";
-import { MatSnackBar } from "@angular/material";
 import { SharedUser } from "src/app/boards/board/board";
 import {
   MessageDialogComponent,
@@ -47,6 +45,11 @@ import {
 } from "../message-dialog/message-dialog.component";
 import { TaskLock } from "src/app/tasks/task/tasklock";
 import { AuthService } from "src/app/core/services/auth.service";
+import {
+  ChecklistDialogComponent,
+  ChecklistDialogResult,
+} from "../checklist-dialog/checklist-dialog.component";
+import { TaskChecklist } from "src/app/tasks/task/taskchecklist";
 
 @Component({
   selector: "app-task-dialog",
@@ -59,6 +62,7 @@ export class TaskDialogComponent implements OnInit {
   private totalChecklist: number;
   public doneChecklist: number;
 
+  public localChecklists: TaskChecklist[];
   public filteredChecklist: CheckList[];
   public isEditing = false;
   public checklistText: string;
@@ -78,65 +82,45 @@ export class TaskDialogComponent implements OnInit {
   ngOnInit(): void {
     console.log(this.data.task.id);
     this.tooltipPosition = "right";
-    this.showHideCompletedTask = false;
-    // this.filteredChecklist = this.data.task.checklist;
-    if (this.data.task.checklist) {
-      this.filteredChecklist = cloneDeep(this.data.task.checklist);
+    // this.showHideCompletedTask = false;
+    if (this.data.task.checklists) {
+      this.localChecklists = cloneDeep(this.data.task.checklists);
     }
-    console.log(this.filteredChecklist);
+
+    //Setup extra flags on local checklist
+    if (this.localChecklists) {
+      this.localChecklists.forEach((localList) => {
+        localList.showHideCompletedTask = false;
+        localList.checklistText = "";
+        localList.checklistCompleted = 0;
+        localList.doneChecklist = 0;
+      });
+    }
+
     this.calculateChecklistCompleted();
     this.checkDueDateStatus();
   }
 
-  calculateChecklistCompleted() {
-    this.checklistCompleted = 0;
-    this.doneChecklist = 0;
-    if (this.data.task.checklist && this.data.task.checklist.length > 0) {
-      this.totalChecklist = this.data.task.checklist.length;
-      this.data.task.checklist.forEach((checklist) => {
-        if (checklist.done) {
-          this.doneChecklist += 1;
-        }
-      });
-      this.checklistCompleted = Math.floor(
-        (this.doneChecklist / this.totalChecklist) * 100
-      );
-    }
-  }
-
-  checkDueDateStatus() {
-    if (this.data.task.dueDate && this.data.task.dueDate.date) {
-      const timeNowMilli = new Date().getTime();
-      const firebaseTime = Number(this.data.task.dueDate.date.toDate());
-      if (firebaseTime > timeNowMilli) {
-        this.overDue = false;
-      } else {
-        this.overDue = true;
-      }
-    }
-  }
-
-  checklistClicked($event: CheckList) {
-    console.log($event);
-    if ($event.done) {
-      this.doneChecklist -= 1;
-    } else {
-      this.doneChecklist += 1;
-    }
-    this.checklistCompleted = Math.floor(
-      (this.doneChecklist / this.totalChecklist) * 100
-    );
-  }
-
   save(): void {
-    if (this.filteredChecklist) {
-      this.data.task.checklist = cloneDeep(this.filteredChecklist);
+    if (this.localChecklists) {
+      this.data.task.checklists = cloneDeep(this.localChecklists);
     }
 
-    if (this.data.task.checklist && this.data.task.checklist.length > 0) {
-      this.data.task.checklist.forEach((checklist) => {
-        delete checklist.isEditing;
-        delete checklist.unsaved;
+    // Clean up checklist properties before saving.
+    if (this.data.task.checklists && this.data.task.checklists.length > 0) {
+      this.data.task.checklists.forEach((curChecklist) => {
+        delete curChecklist.showHideCompletedTask;
+        delete curChecklist.checklistText;
+        delete curChecklist.checklistCompleted;
+        delete curChecklist.doneChecklist;
+        delete curChecklist.totalChecklist;
+
+        if (curChecklist.checklist && curChecklist.checklist.length > 0) {
+          curChecklist.checklist.forEach((chklst) => {
+            delete chklst.isEditing;
+            delete chklst.unsaved;
+          });
+        }
       });
     }
 
@@ -146,7 +130,7 @@ export class TaskDialogComponent implements OnInit {
   cancel(): void {
     this.data.task.title = this.backupTask.title;
     this.data.task.description = this.backupTask.description;
-    this.data.task.checklist = this.backupTask.checklist;
+    this.data.task.checklists = this.backupTask.checklists;
     this.dialogRef.close();
   }
 
@@ -165,6 +149,48 @@ export class TaskDialogComponent implements OnInit {
       });
   }
 
+  calculateChecklistCompleted() {
+    if (this.data.task.checklists && this.data.task.checklists.length > 0) {
+      this.localChecklists.forEach((localList) => {
+        localList.totalChecklist = localList.checklist.length;
+        localList.checklist.forEach((chklst) => {
+          if (chklst.done) {
+            localList.doneChecklist += 1;
+          }
+        });
+        localList.checklistCompleted = Math.floor(
+          (localList.doneChecklist / localList.totalChecklist) * 100
+        );
+      });
+    }
+  }
+
+  checklistClicked($event: CheckList, index: number) {
+    console.log($event);
+    if ($event.done) {
+      this.localChecklists[index].doneChecklist -= 1;
+    } else {
+      this.localChecklists[index].doneChecklist += 1;
+    }
+    this.localChecklists[index].checklistCompleted = Math.floor(
+      (this.localChecklists[index].doneChecklist /
+        this.localChecklists[index].totalChecklist) *
+        100
+    );
+  }
+
+  checkDueDateStatus() {
+    if (this.data.task.dueDate && this.data.task.dueDate.date) {
+      const timeNowMilli = new Date().getTime();
+      const firebaseTime = Number(this.data.task.dueDate.date.toDate());
+      if (firebaseTime > timeNowMilli) {
+        this.overDue = false;
+      } else {
+        this.overDue = true;
+      }
+    }
+  }
+
   drop(event: CdkDragDrop<string[]>) {
     console.log(event);
     moveItemInArray(
@@ -174,28 +200,11 @@ export class TaskDialogComponent implements OnInit {
     );
   }
 
-  // updateChecklist() {
-  //   const newCheckList: CheckList = {
-  //     text: this.checklistText,
-  //     done: false,
-  //     unsaved: true,
-  //     isEditing: false,
-  //   };
-  //   if (!this.data.task.checklist) {
-  //     this.data.task.checklist = [];
-  //     this.filteredChecklist = [];
-  //   }
-  //   this.data.task.checklist.push(newCheckList);
-  //   this.filteredChecklist.push(newCheckList);
-  //   this.checklistText = "";
-  //   this.calculateChecklistCompleted();
-  //   console.log(this.data.task);
-  // }
-
-  updateChecklist() {
-    if (this.checklistText.trim()) {
-      const checklistArr = this.checklistText.trim().split("\n");
-      console.log(checklistArr);
+  updateChecklist(checklist: CheckList[], index: number) {
+    if (this.localChecklists[index].checklistText.trim()) {
+      const checklistArr = this.localChecklists[index].checklistText
+        .trim()
+        .split("\n");
 
       if (checklistArr.length > 1) {
         let newCheckListArr: CheckList[] = [];
@@ -208,36 +217,29 @@ export class TaskDialogComponent implements OnInit {
           };
           newCheckListArr.push(newCheckList);
         });
-        console.log(newCheckListArr);
-        if (!this.data.task.checklist) {
-          this.data.task.checklist = [];
-          this.filteredChecklist = [];
-        }
-        this.data.task.checklist.push(...newCheckListArr);
-        this.filteredChecklist.push(...newCheckListArr);
+        checklist.push(...newCheckListArr);
       } else {
         const newCheckList: CheckList = {
-          text: this.checklistText,
+          text: this.localChecklists[index].checklistText.trim(),
           done: false,
           unsaved: true,
           isEditing: false,
         };
-
-        if (!this.data.task.checklist) {
-          this.data.task.checklist = [];
-          this.filteredChecklist = [];
-        }
-        this.data.task.checklist.push(newCheckList);
-        this.filteredChecklist.push(newCheckList);
+        checklist.push(newCheckList);
       }
+      this.data.task.checklists[index].checklist = checklist;
     }
-    this.checklistText = "";
+    this.localChecklists[index].checklistText = "";
     this.calculateChecklistCompleted();
   }
 
-  setDueDateChecklist($event: CheckList) {
-    // const index = this.data.task.checklist.indexOf($event);
-    // console.log($event);
+  setDueDateChecklist(
+    $event: CheckList,
+    checklistIndex: number,
+    taskChecklistsIndex: number
+  ) {
+    const curChecklist =
+      this.data.task.checklists[taskChecklistsIndex].checklist[checklistIndex];
     let localDate: firestore.Timestamp;
     if ($event.dueDate && $event.dueDate.date) {
       localDate = $event.dueDate.date;
@@ -262,14 +264,22 @@ export class TaskDialogComponent implements OnInit {
       }
 
       $event.dueDate.date = result.date;
+      curChecklist.dueDate.date = result.date;
     });
   }
 
-  assignChecklist($event: CheckList) {
-    const index = this.data.task.checklist.indexOf($event);
-    console.log(index);
+  assignChecklist(
+    $event: CheckList,
+    checklistIndex: number,
+    taskChecklistsIndex: number
+  ) {
+    console.log($event);
+    console.log(checklistIndex);
+    console.log(taskChecklistsIndex);
 
-    const curChecklist = this.data.task.checklist[index];
+    const curChecklist =
+      this.data.task.checklists[taskChecklistsIndex].checklist[checklistIndex];
+    console.log(curChecklist);
 
     const dialogRef = this.dialog.open(MemberDialogComponent, {
       width: "360px",
@@ -291,37 +301,43 @@ export class TaskDialogComponent implements OnInit {
           delete member.isAdded;
         });
         $event.members = result.addedMembers;
+        curChecklist.members = result.addedMembers;
       }
     });
   }
 
-  deleteChecklist(checklist: CheckList) {
-    this.data.task.checklist.splice(
-      this.data.task.checklist.indexOf(checklist),
+  deleteChecklist(
+    checklist: CheckList,
+    checklists: CheckList[],
+    taskChecklistsIndex: number
+  ) {
+    console.log(taskChecklistsIndex);
+    checklists.splice(checklists.indexOf(checklist), 1);
+    this.data.task.checklists[taskChecklistsIndex].checklist.splice(
+      checklists.indexOf(checklist),
       1
     );
-    this.filteredChecklist.splice(this.filteredChecklist.indexOf(checklist), 1);
     this.calculateChecklistCompleted();
   }
 
-  showHideCompletedChecklist() {
-    console.info("Hiding completed checklist items.");
-    this.showHideCompletedTask = !this.showHideCompletedTask;
-    if (this.showHideCompletedTask) {
-      this.filteredChecklist = this.data.task.checklist.filter(
-        (checklist: CheckList) => {
-          return checklist.done != true;
-        }
-      );
+  showHideCompletedChecklist(index: number) {
+    this.localChecklists[index].showHideCompletedTask =
+      !this.localChecklists[index].showHideCompletedTask;
+    if (this.localChecklists[index].showHideCompletedTask) {
+      this.localChecklists[index].checklist = this.localChecklists[
+        index
+      ].checklist.filter((checklist) => {
+        return checklist.done != true;
+      });
     } else {
-      this.filteredChecklist = cloneDeep(this.data.task.checklist);
+      this.localChecklists[index] = cloneDeep(this.data.task.checklists[index]);
     }
   }
 
-  deleteAllChecklist() {
+  deleteAllChecklist(index: number) {
     console.info("Delete all checklist items.");
-    this.data.task.checklist = [];
-    this.filteredChecklist = [];
+    this.data.task.checklists.splice(index, 1);
+    this.localChecklists.splice(index, 1);
     this.calculateChecklistCompleted();
   }
 
@@ -381,21 +397,32 @@ export class TaskDialogComponent implements OnInit {
   }
 
   openCreateChecklistDialog() {
-    const dialogRef = this.dialog.open(ColorDialogComponent, {
-      width: "500px",
-      height: "600px",
+    console.log(this.data.boardChecklists);
+    const dialogRef = this.dialog.open(ChecklistDialogComponent, {
+      width: "280px",
       data: {
-        color: "",
+        boardChecklists: this.data.boardChecklists,
       },
     });
-    dialogRef.afterClosed().subscribe((result: ColorDialogResult) => {
+    dialogRef.afterClosed().subscribe((result: ChecklistDialogResult) => {
       console.log(result);
       if (!result) {
         return;
       }
 
-      this.data.task.backgroundColor = result.color;
-    }); 
+      if (result.checklistName) {
+        const newChecklist: TaskChecklist = {
+          checklistName: result.checklistName,
+          checklist: result.checklistData,
+        };
+        if (!this.data.task.checklists) {
+          this.data.task.checklists = [];
+          this.localChecklists = [];
+        }
+        this.data.task.checklists.push(newChecklist);
+        this.localChecklists.push(newChecklist);
+      }
+    });
   }
 
   openColorDialog() {
@@ -545,6 +572,7 @@ export interface TaskDialogData {
   boardId: string;
   boardMembers: SharedUser[];
   enableDelete: boolean;
+  boardChecklists?: TaskChecklist[];
 }
 
 export interface TaskDialogResult {

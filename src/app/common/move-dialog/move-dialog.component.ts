@@ -62,8 +62,8 @@ export class MoveDialogComponent implements OnInit {
         // Copy/Create Task in new board
         let newCehcklist = [];
         let newDueDate = null;
-        if (this.data.task.checklist) {
-          newCehcklist = this.data.task.checklist;
+        if (this.data.task.checklists) {
+          newCehcklist = this.data.task.checklists;
         }
 
         if (this.data.task.dueDate) {

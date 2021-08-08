@@ -138,12 +138,12 @@
           <mat-card-content
             cdkDropList
             id="{{ list.id }}"
-            [cdkDropListData]="containerData(list.id)"
+            [cdkDropListData]="list.tasks"
             [cdkDropListConnectedTo]="remainingList(list.id)"
             (cdkDropListDropped)="drop($event)"
             class="list"
           >
-            <p class="empty-label" *ngIf="containerData(list.id).length == 0">
+            <p class="empty-label" *ngIf="list.tasks && list.tasks.length == 0">
               Empty list
             </p>
             <div *ngFor="let task of list.tasks">
@@ -234,7 +234,9 @@
   </div>
 </div>
 
-<div [ngClass]="{'sidenav': !isShowingSidenav, 'sidenav-open': isShowingSidenav}">
+<div
+  [ngClass]="{ sidenav: !isShowingSidenav, 'sidenav-open': isShowingSidenav }"
+>
   <div class="flex-display spacing">
     <p class="menu-header">Menu</p>
     <mat-icon class="icon pointer" (click)="toggleMenuSidenav()"

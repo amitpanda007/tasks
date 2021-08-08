@@ -1,4 +1,11 @@
+import { CheckList } from "./checklist";
+
 export interface TaskChecklist {
-    taskName: string;
-    checklists: [];
+  checklistName: string;
+  checklist: CheckList[];
+  showHideCompletedTask?: boolean;
+  checklistText?: string;
+  checklistCompleted?: number;
+  doneChecklist?: number;
+  totalChecklist?: number;
 }

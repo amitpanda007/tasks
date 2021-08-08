@@ -40,6 +40,7 @@ export class TaskListComponent implements OnInit {
   private routeQueryParams: Subscription;
   private tasksDataUpdated: BehaviorSubject<boolean>;
   private boardId: string;
+  private tasklistCopy: TaskList[];
 
   public hasBoardAccess: boolean = false;
   public showInputField: boolean = false;
@@ -149,11 +150,12 @@ export class TaskListComponent implements OnInit {
       (lists) => {
         console.log(lists);
         this.taskList = lists;
+        this.tasklistCopy = cloneDeep(this.taskList);
         // If tasklist chnaged , but tasks didnt change
-        if(this.tasks && this.tasks.length > 0) {
-          this.taskList.forEach(_list => {
+        if (this.tasks && this.tasks.length > 0) {
+          this.taskList.forEach((_list) => {
             this.addTasksToList(_list);
-            if(_list.sortOrder) {
+            if (_list.sortOrder) {
               this.sortTaskByOrder(_list, _list.sortOrder);
             }
           });
@@ -163,15 +165,18 @@ export class TaskListComponent implements OnInit {
           (tasks) => {
             console.log(tasks);
             this.tasks = tasks;
-            this.taskList.forEach(_list => {
-              _list.tasks = [];
+            //FIXME: Hacky way to fix the Drag & Drop problem. Once task is moved from one list to another.
+            // A dummy copy of data stays on previous task list .
+            this.taskList = [];
+            this.taskList = cloneDeep(this.tasklistCopy);
+            this.taskList.forEach((_list) => {
               this.addTasksToList(_list);
-              if(_list.sortOrder) {
+              if (_list.sortOrder) {
                 this.sortTaskByOrder(_list, _list.sortOrder);
               }
             });
             console.log(this.taskList);
-            this.tasksDataUpdated.next(true);
+            // this.tasksDataUpdated.next(true);
           }
         );
       }
@@ -212,11 +217,11 @@ export class TaskListComponent implements OnInit {
 
   addTasksToList(list: TaskList) {
     list.tasks = [];
-    this.tasks.forEach(task => {
-      if(list.id == task.listId) {
+    this.tasks.forEach((task) => {
+      if (list.id == task.listId) {
         list.tasks.push(task);
       }
-    }); 
+    });
   }
 
   remainingList(curListId: string) {
@@ -247,10 +252,6 @@ export class TaskListComponent implements OnInit {
       if (event.currentIndex === event.previousIndex) {
         return;
       }
-      // let previousIndex: number =
-      //   event.container.data[event.previousIndex].index;
-      // let currentIndex: number =
-      //   previousIndex + (event.currentIndex - event.previousIndex);
 
       moveItemInArray(
         event.container.data,
@@ -276,14 +277,12 @@ export class TaskListComponent implements OnInit {
       if (!event.container.data || !event.previousContainer.data) {
         return;
       }
-
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
-
       const taskTobeUpdated: Task[] = [];
       // console.log(event.previousContainer.data);
       // Fix the index for previous container
@@ -295,7 +294,6 @@ export class TaskListComponent implements OnInit {
         event.previousContainer.data[i].index -= 1;
         taskTobeUpdated.push(event.previousContainer.data[i]);
       }
-
       // console.log(event.container.data);
       event.container.data[event.currentIndex].index = event.currentIndex;
       taskTobeUpdated.push(event.container.data[event.currentIndex]);
@@ -308,7 +306,6 @@ export class TaskListComponent implements OnInit {
         event.container.data[i].index += 1;
         taskTobeUpdated.push(event.container.data[i]);
       }
-
       console.log(taskTobeUpdated);
       this.boardServiceV2.moveTaskBatch(
         this.boardId,
@@ -348,9 +345,18 @@ export class TaskListComponent implements OnInit {
       }
     }
 
+    const checklists = [];
+    this.tasks.forEach((task) => {
+      if (task.checklists) {
+        checklists.push(task.checklists);
+      }
+    });
+
     const clonedTask = cloneDeep(task);
     const clonedLabels = cloneDeep(this.labels);
     const clonedBoardMembers = cloneDeep(this.boardMembers);
+    const clonedAllChecklist = cloneDeep(checklists);
+
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: "768px",
       height: "700px",
@@ -360,6 +366,7 @@ export class TaskListComponent implements OnInit {
         boardId: this.boardId,
         boardMembers: clonedBoardMembers,
         enableDelete: true,
+        boardChecklists: clonedAllChecklist,
       },
     });
     dialogRef.disableClose = true;
@@ -502,12 +509,12 @@ export class TaskListComponent implements OnInit {
 
   sortTasks(taskListId: string, sortBy: string) {
     console.log(sortBy);
-    
+
     const curTaskList = this.taskList.find(
       (taskList) => taskList.id === taskListId
     );
 
-    if(curTaskList.sortOrder && curTaskList.sortOrder === sortBy) {
+    if (curTaskList.sortOrder && curTaskList.sortOrder === sortBy) {
       // return;
     }
     this.sortTaskByOrder(curTaskList, sortBy);
@@ -518,7 +525,11 @@ export class TaskListComponent implements OnInit {
 
   sortTaskByOrder(taskList: TaskList, sortOrder: string = "index") {
     taskList.tasks.sort((task1: Task, task2: Task) => {
-      if(sortOrder == this.sortOrders.INDEX || sortOrder == this.sortOrders.CREATED || sortOrder == this.sortOrders.MODIFIED) {
+      if (
+        sortOrder == this.sortOrders.INDEX ||
+        sortOrder == this.sortOrders.CREATED ||
+        sortOrder == this.sortOrders.MODIFIED
+      ) {
         if (task1[sortOrder] < task2[sortOrder]) {
           return -1;
         }
@@ -526,8 +537,13 @@ export class TaskListComponent implements OnInit {
           return 1;
         }
         return 0;
-      }else if(sortOrder == this.sortOrders.DUEDATE) {
-        if((task1[sortOrder] && task1[sortOrder].date) && (task2[sortOrder] && task2[sortOrder].date)) {
+      } else if (sortOrder == this.sortOrders.DUEDATE) {
+        if (
+          task1[sortOrder] &&
+          task1[sortOrder].date &&
+          task2[sortOrder] &&
+          task2[sortOrder].date
+        ) {
           if (task1[sortOrder].date < task2[sortOrder].date) {
             return -1;
           }
@@ -536,13 +552,13 @@ export class TaskListComponent implements OnInit {
           }
           return 0;
         }
-        if(task1[sortOrder] && task1[sortOrder].date) {
+        if (task1[sortOrder] && task1[sortOrder].date) {
           return -1;
-        }else if(task2[sortOrder] && task2[sortOrder].date) {
+        } else if (task2[sortOrder] && task2[sortOrder].date) {
           return 1;
         }
-      }else if(sortOrder == this.sortOrders.CHECKLIST) {
-        if(task1[sortOrder] && task2[sortOrder]) {
+      } else if (sortOrder == this.sortOrders.CHECKLIST) {
+        if (task1[sortOrder] && task2[sortOrder]) {
           if (task1[sortOrder].length < task2[sortOrder].length) {
             return -1;
           }
@@ -551,9 +567,9 @@ export class TaskListComponent implements OnInit {
           }
           return 0;
         }
-        if(task1[sortOrder] && task1[sortOrder].length > 0) {
+        if (task1[sortOrder] && task1[sortOrder].length > 0) {
           return -1;
-        }else if(task2[sortOrder] && task2[sortOrder].length > 0) {
+        } else if (task2[sortOrder] && task2[sortOrder].length > 0) {
           return 1;
         }
       }
