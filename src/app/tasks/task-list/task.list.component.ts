@@ -176,7 +176,7 @@ export class TaskListComponent implements OnInit {
               }
             });
             console.log(this.taskList);
-            // this.tasksDataUpdated.next(true);
+            this.tasksDataUpdated.next(true);
           }
         );
       }

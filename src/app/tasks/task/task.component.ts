@@ -14,21 +14,31 @@ export class TaskComponent implements OnInit {
   @Output() edit = new EventEmitter<Task>();
   public showLabelText: boolean = false;
   public overDue: boolean = false;
-  public currentState: string = 'initial';
+  public currentState: string = "initial";
+  public checklistsLength: number;
 
   constructor(private boardServiceV2: BoardServiceV2) {}
 
   ngOnInit(): void {
-    this.boardServiceV2.showHidelabel.subscribe(value => {
+    this.boardServiceV2.showHidelabel.subscribe((value) => {
       this.showLabelText = value;
     });
 
-    if(this.task.dueDate) {
-      if(!this.task.dueDate.completed) {
+    if (this.task.dueDate) {
+      if (!this.task.dueDate.completed) {
         this.task.dueDate.completed = false;
       }
     }
     this.checkDueDateStatus();
+
+    this.checklistsLength = 0;
+    if (this.task.checklists) {
+      this.task.checklists.forEach((tskChecklist) => {
+        if (tskChecklist.checklist) {
+          this.checklistsLength += tskChecklist.checklist.length;
+        }
+      });
+    }
   }
 
   hideLabelName() {

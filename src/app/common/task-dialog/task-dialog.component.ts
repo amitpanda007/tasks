@@ -92,8 +92,10 @@ export class TaskDialogComponent implements OnInit {
       this.localChecklists.forEach((localList) => {
         localList.showHideCompletedTask = false;
         localList.checklistText = "";
-        localList.checklistCompleted = 0;
-        localList.doneChecklist = 0;
+        this.resetChecklistCalc(localList);
+        // localList.checklistCompleted = 0;
+        // localList.doneChecklist = 0;
+        // localList.totalChecklist = 0;
       });
     }
 
@@ -149,18 +151,29 @@ export class TaskDialogComponent implements OnInit {
       });
   }
 
+  resetChecklistCalc(tskChecklist: TaskChecklist) {
+    // tskChecklist.showHideCompletedTask = false;
+    // tskChecklist.checklistText = "";
+    tskChecklist.checklistCompleted = 0;
+    tskChecklist.doneChecklist = 0;
+    tskChecklist.totalChecklist = 0;
+  }
+
   calculateChecklistCompleted() {
     if (this.data.task.checklists && this.data.task.checklists.length > 0) {
       this.localChecklists.forEach((localList) => {
-        localList.totalChecklist = localList.checklist.length;
-        localList.checklist.forEach((chklst) => {
-          if (chklst.done) {
-            localList.doneChecklist += 1;
-          }
-        });
-        localList.checklistCompleted = Math.floor(
-          (localList.doneChecklist / localList.totalChecklist) * 100
-        );
+        this.resetChecklistCalc(localList);
+        if (localList.checklist && localList.checklist.length > 0) {
+          localList.totalChecklist = localList.checklist.length;
+          localList.checklist.forEach((chklst) => {
+            if (chklst.done) {
+              localList.doneChecklist += 1;
+            }
+          });
+          localList.checklistCompleted = Math.floor(
+            (localList.doneChecklist / localList.totalChecklist) * 100
+          );
+        }
       });
     }
   }
