@@ -4,8 +4,9 @@ import { BoardServiceV2 } from "../../core/services/boardv2.service";
 import { Board } from "../../boards/board/board";
 import { Invitation } from "../../common/invite-dialog/invitation";
 import { AuthService } from "../../core/services/auth.service";
-import { User } from "firebase";
+
 import { AccountService } from "src/app/core/services/account.service";
+import { User } from "src/app/auth/user";
 
 @Component({
   selector: "share-board",
