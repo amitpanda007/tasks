@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { firestore } from "firebase";
 import { SharedUser } from "src/app/boards/board/board";
 import { AuthService } from "src/app/core/services/auth.service";
+import * as cloneDeep from "lodash/cloneDeep";
 
 @Component({
   selector: "app-member-dialog",
@@ -12,6 +12,7 @@ import { AuthService } from "src/app/core/services/auth.service";
 export class MemberDialogComponent implements OnInit {
   public memberSearch: string;
   public filteredMembers: SharedUser[];
+  public showAllMemberBtn: boolean = false;
   // private taskMembers: SharedUser[];
 
   constructor(
@@ -21,7 +22,6 @@ export class MemberDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.filteredMembers = this.data.members;
     if (!this.data.addedMembers) {
       console.log("Initialted Added Members List");
       this.data.addedMembers = [];
@@ -42,21 +42,15 @@ export class MemberDialogComponent implements OnInit {
       this.data.members.splice(0, 0, currentUser);
     }
     this.calculateAddedMember();
+
+    this.updateFilteredMembers();
+    // let clonedMembers = cloneDeep(this.data.members);
+    // this.filteredMembers = clonedMembers.slice(0, 5);
   }
 
-  calculateAddedMember() {
-    console.log(this.data.members);
-    console.log(this.data.addedMembers);
-    this.data.members.forEach((member) => {
-      const memberIndex = this.data.addedMembers.findIndex(
-        (mem) => mem.id == member.id
-      );
-      if (memberIndex > -1) {
-        member.isAdded = true;
-      } else {
-        member.isAdded = false;
-      }
-    });
+  updateFilteredMembers() {
+    let clonedMembers = cloneDeep(this.data.members);
+    this.filteredMembers = clonedMembers.slice(0, 5);
   }
 
   cancel(): void {
@@ -69,6 +63,21 @@ export class MemberDialogComponent implements OnInit {
 
   showAllMembers() {
     console.log("Showing all members");
+    this.showAllMemberBtn = true;
+    this.filteredMembers = this.data.members;
+  }
+
+  calculateAddedMember() {
+    this.data.members.forEach((member) => {
+      const memberIndex = this.data.addedMembers.findIndex(
+        (mem) => mem.id == member.id
+      );
+      if (memberIndex > -1) {
+        member.isAdded = true;
+      } else {
+        member.isAdded = false;
+      }
+    });
   }
 
   addRemoveMemberFromTask(member: SharedUser) {
@@ -86,6 +95,7 @@ export class MemberDialogComponent implements OnInit {
     }
 
     this.calculateAddedMember();
+    this.updateFilteredMembers();
   }
 
   filterMembers(data) {

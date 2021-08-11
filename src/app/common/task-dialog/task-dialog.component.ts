@@ -50,6 +50,8 @@ import {
   ChecklistDialogResult,
 } from "../checklist-dialog/checklist-dialog.component";
 import { TaskChecklist } from "src/app/tasks/task/taskchecklist";
+import { Subscription } from "rxjs";
+import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
 
 @Component({
   selector: "app-task-dialog",
@@ -59,6 +61,7 @@ import { TaskChecklist } from "src/app/tasks/task/taskchecklist";
 export class TaskDialogComponent implements OnInit {
   private backupTask: Partial<Task> = { ...this.data.task };
   private labels: Label[] = { ...this.data.labels };
+  private labelsSubscription: Subscription;
   private totalChecklist: number;
   public doneChecklist: number;
 
@@ -76,7 +79,8 @@ export class TaskDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<TaskDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: TaskDialogData,
     private dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private boardServiceV2: BoardServiceV2
   ) {}
 
   ngOnInit(): void {
@@ -89,18 +93,28 @@ export class TaskDialogComponent implements OnInit {
 
     //Setup extra flags on local checklist
     if (this.localChecklists) {
-      this.localChecklists.forEach((localList) => {
-        localList.showHideCompletedTask = false;
-        localList.checklistText = "";
-        this.resetChecklistCalc(localList);
-        // localList.checklistCompleted = 0;
-        // localList.doneChecklist = 0;
-        // localList.totalChecklist = 0;
-      });
+      this.addPropertyToCkecklist(this.localChecklists);
+    }
+
+    //Check if labels exist ? else subscribe
+    if (!this.data.labels) {
+      this.labelsSubscription = this.boardServiceV2.labelListChanged.subscribe(
+        (labels) => {
+          console.log(labels);
+          this.data.labels = labels;
+        }
+      );
     }
 
     this.calculateChecklistCompleted();
     this.checkDueDateStatus();
+  }
+
+  ngOnDestroy() {
+    if (this.labelsSubscription) {
+      this.labelsSubscription.unsubscribe();
+      this.boardServiceV2.cancelLabelSubscription();
+    }
   }
 
   save(): void {
@@ -149,6 +163,14 @@ export class TaskDialogComponent implements OnInit {
           this.dialogRef.close({ task: this.data.task, delete: true });
         }
       });
+  }
+
+  addPropertyToCkecklist(localChecklists: TaskChecklist[]) {
+    localChecklists.forEach((localList) => {
+      localList.showHideCompletedTask = false;
+      localList.checklistText = "";
+      this.resetChecklistCalc(localList);
+    });
   }
 
   resetChecklistCalc(tskChecklist: TaskChecklist) {
@@ -295,7 +317,7 @@ export class TaskDialogComponent implements OnInit {
     console.log(curChecklist);
 
     const dialogRef = this.dialog.open(MemberDialogComponent, {
-      width: "360px",
+      width: "280px",
       data: {
         members: this.data.boardMembers,
         addedMembers: curChecklist.members,
@@ -344,6 +366,7 @@ export class TaskDialogComponent implements OnInit {
       });
     } else {
       this.localChecklists[index] = cloneDeep(this.data.task.checklists[index]);
+      this.calculateChecklistCompleted();
     }
   }
 
@@ -432,8 +455,12 @@ export class TaskDialogComponent implements OnInit {
           this.data.task.checklists = [];
           this.localChecklists = [];
         }
-        this.data.task.checklists.push(newChecklist);
-        this.localChecklists.push(newChecklist);
+        const newChecklistLocal = cloneDeep(newChecklist);
+        const newChecklistLocalAll = cloneDeep(newChecklist);
+        this.data.task.checklists.push(newChecklistLocalAll);
+        this.localChecklists.push(newChecklistLocal);
+        this.addPropertyToCkecklist(this.localChecklists);
+        this.calculateChecklistCompleted();
       }
     });
   }

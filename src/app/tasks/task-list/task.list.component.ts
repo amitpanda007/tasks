@@ -26,6 +26,7 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogResult,
 } from "src/app/common/confirm-dialog/confirm-dialog.component";
+import { BoardChecklist, CheckListOption } from "../task/boardchecklist";
 
 @Component({
   selector: "task-list",
@@ -52,6 +53,7 @@ export class TaskListComponent implements OnInit {
   public tasks: Task[];
   public labels: Label[];
   public editingBoardName: boolean;
+  public editingListName: boolean;
   public starred: string;
   public sortOrders: any;
   public isShowingSidenav: boolean = false;
@@ -97,10 +99,10 @@ export class TaskListComponent implements OnInit {
       CHECKLIST: "checklist",
     };
     this.starred = "#FFC107";
-    // this.unstarred = "#FFF";
     this.listName = "";
     this.boardMembers = [];
     this.editingBoardName = false;
+    this.editingListName = false;
     // Check if user has access to this board
     const board: Board = await this.boardServiceV2
       .getBoardWithPromise(this.boardId)
@@ -126,30 +128,16 @@ export class TaskListComponent implements OnInit {
     this.boardServiceV2.getTaskList(this.boardId);
     this.boardServiceV2.getTasks(this.boardId);
     this.boardServiceV2.getLabels(this.boardId);
-
     this.board = (await this.boardServiceV2.getBoard(this.boardId)) as Board;
-
-    // this.taskListsSubscription = this.boardServiceV2.taskListsChanged.subscribe(
-    //   (lists) => {
-    //     console.log(lists);
-    //     this.taskList = lists;
-    //     this.isLoading = false;
-    //   }
-    // );
-
-    // this.tasksSubscription = this.boardServiceV2.tasksChanged.subscribe(
-    //   (tasks) => {
-    //     console.log(tasks);
-    //     this.tasks = tasks;
-    //     this.tasksDataUpdated.next(true);
-    //   }
-    // );
 
     //TODO: This is created with observable inside another observable. Better convert this with switchMap or mergeMap
     this.taskListsSubscription = this.boardServiceV2.taskListsChanged.subscribe(
       (lists) => {
         console.log(lists);
         this.taskList = lists;
+        this.taskList.forEach(list => {
+          list.isEditing = false;
+        });
         this.tasklistCopy = cloneDeep(this.taskList);
         // If tasklist chnaged , but tasks didnt change
         if (this.tasks && this.tasks.length > 0) {
@@ -243,12 +231,29 @@ export class TaskListComponent implements OnInit {
     }
   }
 
+  dropList(event: CdkDragDrop<TaskList[] | null>): void {
+    if (event.previousContainer === event.container) {
+      return;
+    }
+    moveItemInArray(this.taskList, event.previousIndex, event.currentIndex);
+    const listTobeUpdated: TaskList[] = [];
+    this.taskList.forEach((list, arrIndex) => {
+      if (list.index != arrIndex) {
+        list.index = arrIndex;
+        listTobeUpdated.push(list);
+      }
+    });
+    console.log(listTobeUpdated);
+    this.boardServiceV2.moveTaskListBatch(this.boardId, listTobeUpdated);
+  }
+
   drop(event: CdkDragDrop<Task[] | null>): void {
     console.log(event);
     const taskId = event.previousContainer.data[event.previousIndex].id;
     const newTaskListId = event.container.id;
 
     if (event.previousContainer === event.container) {
+      //FIXME: if previous & current index are same the card is moved to back of list.
       if (event.currentIndex === event.previousIndex) {
         return;
       }
@@ -345,17 +350,35 @@ export class TaskListComponent implements OnInit {
       }
     }
 
-    const checklists = [];
+    // Find all checklist from all task in the current board
+    const allChecklists: BoardChecklist[] = [];
     this.tasks.forEach((task) => {
       if (task.checklists) {
-        checklists.push(task.checklists);
+        const checklistData: CheckListOption[] = [];
+        task.checklists.forEach((chklst, idx) => {
+          if(chklst.checklist && chklst.checklist.length > 0) {
+            const checklistOption: CheckListOption = {
+              value: idx,
+              viewValue: chklst.checklistName,
+              checklist: chklst.checklist
+            }
+            checklistData.push(checklistOption);
+          }
+        })
+        const newBoardChecklist: BoardChecklist = {
+          name: task.title,
+          checklists: checklistData
+        }
+        if(newBoardChecklist.checklists && newBoardChecklist.checklists.length > 0) {
+          allChecklists.push(newBoardChecklist);
+        }
       }
     });
 
     const clonedTask = cloneDeep(task);
     const clonedLabels = cloneDeep(this.labels);
     const clonedBoardMembers = cloneDeep(this.boardMembers);
-    const clonedAllChecklist = cloneDeep(checklists);
+    const clonedAllChecklist = cloneDeep(allChecklists);
 
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: "768px",
@@ -438,6 +461,7 @@ export class TaskListComponent implements OnInit {
     const newList: TaskList = {
       name: this.listName,
       list: this.listName + "List",
+      index: this.taskList ? this.taskList.length : 0,
     };
     if (this.listName.trim() === "") {
       return;
@@ -473,6 +497,13 @@ export class TaskListComponent implements OnInit {
     this.editingBoardName = !this.editingBoardName;
     if (saveChange) {
       this.boardServiceV2.updateBoard(this.boardId, this.board);
+    }
+  }
+
+  toggleListNameEditing(saveChange: boolean, taskList: TaskList) {
+    taskList.isEditing = !taskList.isEditing;
+    if (saveChange) {
+      this.boardServiceV2.updateTaskList(this.boardId, taskList.id, taskList);
     }
   }
 

@@ -65,7 +65,11 @@
       </div>
     </div>
     <div id="right" class="flex-display">
-      <div class="flex-display option-bg pointer" (click)="openAutomation()">
+      <div
+        class="flex-display option-bg pointer"
+        (click)="openAutomation()"
+        matTooltip="Feature coming soon"
+      >
         <mat-icon class="flex-display icon-small">bolt</mat-icon>
         <span class="txt-small">Automation</span>
       </div>
@@ -77,14 +81,34 @@
     </div>
   </div>
 
-  <div class="content-wrapper" *ngIf="taskList && tasks && labels">
+  <div
+    class="content-wrapper"
+    *ngIf="taskList && tasks && labels"
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    (cdkDropListDropped)="dropList($event)"
+  >
     <div class="container-wrapper">
-      <div class="container" *ngFor="let list of taskList">
+      <div class="container" *ngFor="let list of taskList" cdkDrag>
         <mat-card class="card">
           <mat-card-header>
             <mat-card-title class="list-header">
-              <div class="list-title">
-                <p>{{ list.name }}</p>
+              <div class="flex-display">
+                <span
+                  *ngIf="!list.isEditing"
+                  class="pointer"
+                  (click)="toggleListNameEditing(false, list)"
+                  >{{ list.name }}</span
+                >
+              </div>
+              <div class="list-title" *ngIf="list.isEditing">
+                <input [(ngModel)]="list.name" class="list-input" />
+                <span (click)="toggleListNameEditing(true, list)" class="done">
+                  <mat-icon class="icon pointer">done</mat-icon>
+                </span>
+                <span (click)="toggleListNameEditing(false, list)" class="close">
+                  <mat-icon class="icon pointer">close</mat-icon>
+                </span>
               </div>
               <div class="list-options">
                 <span
@@ -128,7 +152,7 @@
                   </button>
                 </mat-menu>
 
-                <span aria-label="drag task list" class="drag">
+                <span aria-label="drag task list" class="drag" cdkDragHandle>
                   <mat-icon>drag_indicator</mat-icon>
                 </span>
               </div>
@@ -262,15 +286,15 @@
       <span>more</span>
     </div>
     <div class="nav-option-dividor"></div>
-    <div class="container flex-display">
+    <div class="flex-display">
       <p>Automation</p>
     </div>
     <div class="nav-option-dividor"></div>
-    <div class="container flex-display">
+    <div class="flex-display">
       <p>Power-Ups</p>
     </div>
     <div class="nav-option-dividor"></div>
-    <div class="container flex-display">
+    <div class="flex-display">
       <p>Activity</p>
     </div>
   </div>

@@ -3,6 +3,7 @@
   *ngIf="task"
   (click)="edit.emit(task)"
   [style.background-color]="task.backgroundColor"
+  [style.color]="textColor"
 >
   <p class="title">{{ task.title }}</p>
   <div *ngIf="!showLabelText">

@@ -20,7 +20,7 @@ mat-toolbar > span {
 
 .container {
   width: 220px;
-  margin-right: 5px;
+  margin: 0 5px 10px 0;
 }
 
 .card {
@@ -29,7 +29,7 @@ mat-toolbar > span {
 
 .title {
   // display: flex;
-  width: 200px;
+  width: 174px;
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
@@ -81,7 +81,7 @@ mat-toolbar > span {
 }
 
 .cdk-drag-placeholder {
-  opacity: 0.2;
+  opacity: 0.4;
   border: 2px dashed gray;
 }
 
@@ -166,14 +166,14 @@ mat-toolbar > span {
 
 .boardname-edit-input {
   display: flex;
-  width: 100%;
+  // width: 100%;
   cursor: pointer;
   align-content: center;
   align-items: center;
 }
 
 .board-input {
-  width: 200px;
+  // width: 200px;
   height: 24px;
 }
 
@@ -182,6 +182,17 @@ mat-toolbar > span {
   background-color: #fff;
   font-weight: 700;
   font-size: 18px;
+  height: 24px !important;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.list-input {
+  width: 104px;
+  background-color: #fff;
+  font-weight: 600;
+  font-size: 19px;
   height: 24px !important;
   border: 0;
   margin: 0;
@@ -262,10 +273,6 @@ mat-toolbar > span {
   justify-content: space-between;
 }
 
-.icon {
-  margin-right: 2em;
-}
-
 .nav-option-dividor {
   border-top: 1px solid hsla(0, 0%, 100%, 0.24);
   margin: 1em 3em;
@@ -276,10 +283,6 @@ mat-toolbar > span {
   margin: 0 2em;
 }
 
-.menu-option {
-
-}
-
 .menu-option span{
   margin-left: 1em;
 }
@@ -287,8 +290,4 @@ mat-toolbar > span {
 .menu-option:hover {
   border-radius: 4px;
   background-color: #bdbdbd;
-}
-
-.container {
-  height: 8em;
 }

@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { BoardChecklist, CheckListOption } from "src/app/tasks/task/boardchecklist";
 import { CheckList } from "src/app/tasks/task/checklist";
 import { TaskChecklist } from "src/app/tasks/task/taskchecklist";
 
@@ -10,6 +11,7 @@ import { TaskChecklist } from "src/app/tasks/task/taskchecklist";
 })
 export class ChecklistDialogComponent {
   public checklistName: string;
+  private copyChecklistData: CheckList[];
 
   constructor(
     public dialogRef: MatDialogRef<ChecklistDialogComponent>,
@@ -24,17 +26,20 @@ export class ChecklistDialogComponent {
     const data = [];
     this.dialogRef.close({
       checklistName: this.checklistName.trim(),
-      checklistData: data,
+      checklistData: this.copyChecklistData && this.copyChecklistData.length > 0 ? this.copyChecklistData : [],
     });
   }
 
-  checklistSelectionCHanged(selected: any) {
-    console.log(selected);
+  optionsSelectionChange(event, checklistOption: CheckListOption){
+    if(event.isUserInput) {
+      console.log(checklistOption);
+      this.copyChecklistData = checklistOption.checklist;
+    }
   }
 }
 
 export interface ChecklistDialogData {
-  boardChecklists?: TaskChecklist[];
+  boardChecklists?: BoardChecklist[];
 }
 
 export interface ChecklistDialogResult {

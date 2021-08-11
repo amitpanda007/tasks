@@ -13,16 +13,17 @@
 <h4>Copy checklist from</h4>
 <mat-form-field appearance="fill">
   <mat-label>All Checklists</mat-label>
-  <mat-select (selectionChange)="checklistSelectionCHanged($event)">
+  <mat-select>
     <mat-option>-- None --</mat-option>
     <mat-optgroup
-      *ngFor="let group of checklistGroups"
+      *ngFor="let group of data.boardChecklists"
       [label]="group.name"
       [disabled]="group.disabled"
     >
       <mat-option
         *ngFor="let checklist of group.checklists"
         [value]="checklist.value"
+        (onSelectionChange)="optionsSelectionChange($event, checklist)"
       >
         {{ checklist.viewValue }}
       </mat-option>
@@ -31,6 +32,6 @@
 </mat-form-field>
 
 <div mat-dialog-actions class="options">
-  <button mat-stroked-button (click)="save()">OK</button>
+  <button mat-stroked-button (click)="save()" [disabled]="!checklistName">OK</button>
   <button mat-stroked-button (click)="cancel()">Cancel</button>
 </div>

@@ -11,18 +11,23 @@
       *ngFor="let member of filteredMembers"
       class="member-info"
     >
-      <span class="member">{{ member.name | shortname }}</span>
-      {{ member.name }}
+    <span class="flex-display">
+      <span class="member flex-display">{{ member.name | shortname }}</span>
+      <span>{{ member.name }}</span>
       <mat-icon *ngIf="member.isAdded">done</mat-icon>
+    </span>
     </button>
   </div>
   <button
     mat-stroked-button
     aria-label="show members"
     (click)="showAllMembers()"
+    class="member-info color-gray"
+    *ngIf="!showAllMemberBtn"
   >
     All Board Members
   </button>
+  <p *ngIf="showAllMemberBtn">Showing all available board members</p>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="save()" cdkFocusInitial>Ok</button>

@@ -6,4 +6,6 @@ export interface TaskList {
   list: string;
   sortOrder?: string;
   tasks?: Task[];
+  index: number;
+  isEditing?: boolean;
 }

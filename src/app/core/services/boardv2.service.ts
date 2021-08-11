@@ -167,7 +167,7 @@ export class BoardServiceV2 {
     this.taskListsCollection = this._store
       .collection("boards")
       .doc(boardId)
-      .collection("taskLists");
+      .collection("taskLists", (ref) => ref.orderBy('index', "asc"));
 
     this.taskListsSubscription = this.taskListsCollection
       .valueChanges({ idField: "id" })
@@ -200,6 +200,7 @@ export class BoardServiceV2 {
 
   updateTaskList(boardId: string, taskListId: string, taskList: TaskList) {
     delete taskList.tasks;
+    delete taskList.isEditing;
     this._store
       .collection("boards")
       .doc(boardId)
@@ -215,6 +216,23 @@ export class BoardServiceV2 {
       .collection("taskLists")
       .doc(taskListId)
       .delete();
+  }
+
+  moveTaskListBatch(
+    boardId: string,
+    taskLists: TaskList[],
+  ) {
+    const db = firebase.firestore();
+    const batch = db.batch();
+
+    // Update task index in the batch
+    const taskRefs = taskLists.map((t) =>
+      db.collection("boards").doc(boardId).collection("taskLists").doc(t.id)
+    );
+    taskRefs.forEach((ref, idx) => {
+      batch.update(ref, { index: taskLists[idx].index });
+    });
+    batch.commit();
   }
 
   deleteTaskListBatch(boardId: string, taskListId: string, tasks: Task[]) {
