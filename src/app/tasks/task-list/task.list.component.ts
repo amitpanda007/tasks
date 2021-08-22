@@ -5,6 +5,7 @@ import {
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
 import * as cloneDeep from "lodash/cloneDeep";
+import xor from "lodash/xor";
 import { Task } from "../task/task";
 import {
   TaskDialogComponent,
@@ -406,24 +407,111 @@ export class TaskListComponent implements OnInit {
 
       result.task.modified = new Date();
 
-      // Add Activity details
+      /*
+        Activity details would be evaluated here &
+        should be addedto the task activities list.
+        Activities:
+        1. Title/Descriptionm changed
+        2. Checklist Added/Removed
+        3. Labels Added/Removed
+        4. Users Added/Removed
+        5. Duedate added/removed/updated
+        6. Background color changed
+        7. Card copied (this is applicable to the copied card)        
+      */
+
+      // 1. Title/Descriptionm changed
       if (
         task.title != result.task.title ||
         task.description != result.task.description
       ) {
-        console.log("Title/Description updated");
-
-        const activity: Activity = {
-          user: this.authService.getUserDisplayName(),
-          action: "modified title/description for the task.",
-          dateTime: new Date(),
-        };
         if (!result.task.activities) {
           result.task.activities = [];
         }
+        const activity = this.createNewActivity(
+          "modified title/description for the task."
+        );
         result.task.activities.push(activity);
       }
 
+      // 2. Checklist Added/Removed
+      if (!task.checklists && result.task.checklists) {
+        result.task.checklists.forEach((chklst) => {
+          const activity = this.createNewActivity(
+            `Checklist ${chklst.checklistName} added.`
+          );
+          result.task.activities.push(activity);
+        });
+      }
+
+      if (task.checklists && !result.task.checklists) {
+        task.checklists.forEach((chklst) => {
+          const activity = this.createNewActivity(
+            `Checklist ${chklst.checklistName} removed.`
+          );
+          result.task.activities.push(activity);
+        });
+      }
+
+      if (
+        task.checklists &&
+        result.task.checklists &&
+        (task.checklists.length > result.task.checklists.length ||
+          task.checklists.length < result.task.checklists.length)
+      ) {
+        const taskChecklist = [];
+        task.checklists.forEach((chklst) => {
+          taskChecklist.push(chklst.checklistName);
+        });
+
+        const resultChecklist = [];
+        result.task.checklists.forEach((chklst) => {
+          resultChecklist.push(chklst.checklistName);
+        });
+
+        // FIXME:  this doesnt capture when user created multiple checklist with same name
+        if (taskChecklist.length > resultChecklist.length) {
+          const diffChklst: Array<string> = xor(taskChecklist, resultChecklist);
+          // console.log(diffChklst);
+          diffChklst.forEach((name) => {
+            const activity = this.createNewActivity(
+              `removed checklist ${name}.`
+            );
+            result.task.activities.push(activity);
+          });
+        } else {
+          const diffChklst: Array<string> = xor(resultChecklist, taskChecklist);
+          // console.log(diffChklst);
+          diffChklst.forEach((name) => {
+            const activity = this.createNewActivity(`added checklist ${name}.`);
+            result.task.activities.push(activity);
+          });
+        }
+      }
+
+      // 3. Labels Added/Removed
+
+      // 4. Users Added/Removed
+
+      // 5. Duedate added/removed/updated
+
+      // 6. Background color changed
+      if (!task.backgroundColor && result.task.backgroundColor) {
+        const activity = this.createNewActivity("added background color.");
+        result.task.activities.push(activity);
+      } else if (task.backgroundColor && !result.task.backgroundColor) {
+        const activity = this.createNewActivity("removed background color.");
+        result.task.activities.push(activity);
+      } else if (task.backgroundColor !== result.task.backgroundColor) {
+        const activity = this.createNewActivity("updated background color.");
+        result.task.activities.push(activity);
+      }
+
+      /*
+        Result Delete/Save section.
+        Check if result is set for delete or save the updated result
+        Once result is saved close the task modal pop up
+      */
       if (result.delete) {
         this.labels.forEach((label: Label) => {
           if (label.taskIds && label.taskIds.includes(result.task.id)) {
@@ -443,14 +531,18 @@ export class TaskListComponent implements OnInit {
             this.boardServiceV2.updateLabel(this.boardId, label.id, label);
           });
         }
-        // if (result.labels && result.labels.length > 0) {
-        //   result.labels.forEach((label: Label) => {
-        //     this.boardServiceV2.updateLabel(this.boardId, label.id, label);
-        //   });
-        // }
       }
       this.router.navigate(["."], { relativeTo: this.route });
     });
+  }
+
+  createNewActivity(action: string): Activity {
+    const activity: Activity = {
+      user: this.authService.getUserDisplayName(),
+      action: action,
+      dateTime: new Date(),
+    };
+    return activity;
   }
 
   createNewTask(taskListId: string): void {

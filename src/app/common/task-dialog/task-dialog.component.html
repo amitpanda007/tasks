@@ -99,8 +99,12 @@
       >
         <p class="sub-header">
           {{ checklists.checklistName }}
-          <span *ngIf="checklists.checklist && checklists.checklist.length > 0">
-            <button mat-stroked-button (click)="showHideCompletedChecklist(i)">
+          <span>
+            <button
+              mat-stroked-button
+              (click)="showHideCompletedChecklist(i)"
+              *ngIf="checklists.checklist && checklists.checklist.length > 0"
+            >
               <span *ngIf="checklists.showHideCompletedTask">Show</span
               ><span *ngIf="!checklists.showHideCompletedTask">Hide</span>
               checked items
