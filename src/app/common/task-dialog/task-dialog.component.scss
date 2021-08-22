@@ -51,7 +51,7 @@ section {
   align-content: center;
   justify-content: space-between;
   margin-top: 5px;
-  margin-bottom: .2em;
+  margin-bottom: 0.2em;
   font-size: small;
   font-weight: 600;
   color: dimgray;
@@ -234,4 +234,30 @@ section {
   -webkit-user-select: none;
   user-select: none;
   z-index: 0;
+}
+
+.flex-display {
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.space-btwn {
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.act-container {
+  margin-top: 2rem;
+}
+
+.activity-text span {
+  margin-left: 1rem;
+  font-size: 14px;
+}
+
+.activity-text p {
+  margin-left: 4rem;
+  color: #5e6c84;
+  font-size: 12px;
 }

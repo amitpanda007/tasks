@@ -74,6 +74,7 @@ export class TaskDialogComponent implements OnInit {
   public overDue: boolean;
   public tooltipPosition: string;
   public showHideCompletedTask: boolean;
+  public showHideActivities: boolean;
 
   constructor(
     public dialogRef: MatDialogRef<TaskDialogComponent>,
@@ -86,6 +87,7 @@ export class TaskDialogComponent implements OnInit {
   ngOnInit(): void {
     console.log(this.data.task.id);
     this.tooltipPosition = "right";
+    this.showHideActivities = false;
     // this.showHideCompletedTask = false;
     if (this.data.task.checklists) {
       this.localChecklists = cloneDeep(this.data.task.checklists);
@@ -375,6 +377,10 @@ export class TaskDialogComponent implements OnInit {
     this.data.task.checklists.splice(index, 1);
     this.localChecklists.splice(index, 1);
     this.calculateChecklistCompleted();
+  }
+
+  showHideActivity() {
+    this.showHideActivities = !this.showHideActivities;
   }
 
   openLabelDialog() {

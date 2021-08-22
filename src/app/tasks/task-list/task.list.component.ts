@@ -27,6 +27,7 @@ import {
   ConfirmDialogResult,
 } from "src/app/common/confirm-dialog/confirm-dialog.component";
 import { BoardChecklist, CheckListOption } from "../task/boardchecklist";
+import { Activity } from "../task/activity";
 
 @Component({
   selector: "task-list",
@@ -135,7 +136,7 @@ export class TaskListComponent implements OnInit {
       (lists) => {
         console.log(lists);
         this.taskList = lists;
-        this.taskList.forEach(list => {
+        this.taskList.forEach((list) => {
           list.isEditing = false;
         });
         this.tasklistCopy = cloneDeep(this.taskList);
@@ -356,20 +357,23 @@ export class TaskListComponent implements OnInit {
       if (task.checklists) {
         const checklistData: CheckListOption[] = [];
         task.checklists.forEach((chklst, idx) => {
-          if(chklst.checklist && chklst.checklist.length > 0) {
+          if (chklst.checklist && chklst.checklist.length > 0) {
             const checklistOption: CheckListOption = {
               value: idx,
               viewValue: chklst.checklistName,
-              checklist: chklst.checklist
-            }
+              checklist: chklst.checklist,
+            };
             checklistData.push(checklistOption);
           }
-        })
+        });
         const newBoardChecklist: BoardChecklist = {
           name: task.title,
-          checklists: checklistData
-        }
-        if(newBoardChecklist.checklists && newBoardChecklist.checklists.length > 0) {
+          checklists: checklistData,
+        };
+        if (
+          newBoardChecklist.checklists &&
+          newBoardChecklist.checklists.length > 0
+        ) {
           allChecklists.push(newBoardChecklist);
         }
       }
@@ -401,6 +405,24 @@ export class TaskListComponent implements OnInit {
       console.log(result);
 
       result.task.modified = new Date();
+
+      // Add Activity details
+      if (
+        task.title != result.task.title ||
+        task.description != result.task.description
+      ) {
+        console.log("Title/Description updated");
+
+        const activity: Activity = {
+          user: this.authService.getUserDisplayName(),
+          action: "modified title/description for the task.",
+          dateTime: new Date(),
+        };
+        if (!result.task.activities) {
+          result.task.activities = [];
+        }
+        result.task.activities.push(activity);
+      }
 
       if (result.delete) {
         this.labels.forEach((label: Label) => {

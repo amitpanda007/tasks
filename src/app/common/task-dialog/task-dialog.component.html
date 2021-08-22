@@ -151,6 +151,36 @@
       </section>
     </div>
 
+    <div *ngIf="data.task.activities" class="act-container">
+      <section>
+        <div class="flex-display space-btwn">
+          <span class="flex-display">
+            <mat-icon>subject</mat-icon><span>Activity</span>
+          </span>
+          <button mat-stroked-button (click)="showHideActivity()">
+            <span *ngIf="!showHideActivities">Show</span>
+            <span *ngIf="showHideActivities">Hide</span>
+            Details
+          </button>
+        </div>
+
+        <div *ngIf="showHideActivities">
+          <div
+            *ngFor="let activity of data.task.activities"
+            class="activity-text"
+          >
+            <span class="member" matTooltip="{{ activity.user }}">{{
+              activity.user | shortname
+            }}</span>
+            <span
+              ><b>{{ activity.user }}</b> {{ activity.action }}</span
+            >
+            <p>{{ activity.dateTime | dateformat: "" }}</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
     <div mat-dialog-actions>
       <!-- <button mat-button [mat-dialog-close]="{ task: data.task }">OK</button> -->
       <button mat-button (click)="save()">OK</button>

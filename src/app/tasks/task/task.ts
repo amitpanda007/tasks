@@ -1,4 +1,5 @@
 import { SharedUser } from "src/app/boards/board/board";
+import { Activity } from "./activity";
 import { DueDate } from "./duedate";
 import { TaskChecklist } from "./taskchecklist";
 import { TaskLock } from "./tasklock";
@@ -15,6 +16,7 @@ export interface Task {
   members?: SharedUser[];
   message?: string;
   lockStatus?: TaskLock;
+  activities?: Activity[];
   created: Date;
   modified: Date;
 }
