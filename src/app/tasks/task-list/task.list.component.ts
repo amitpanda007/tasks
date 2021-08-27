@@ -11,7 +11,7 @@ import {
   TaskDialogComponent,
   TaskDialogResult,
 } from "src/app/common/task-dialog/task-dialog.component";
-import { MatDialog, MatSidenav } from "@angular/material";
+import { MatDialog, MatMenuTrigger, MatSidenav } from "@angular/material";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, pipe, Subscription } from "rxjs";
 import { TaskList } from "./tasklist";
@@ -29,6 +29,8 @@ import {
 } from "src/app/common/confirm-dialog/confirm-dialog.component";
 import { BoardChecklist, CheckListOption } from "../task/boardchecklist";
 import { Activity } from "../task/activity";
+import { User } from "src/app/auth/user";
+import { AccountService } from "src/app/core/services/account.service";
 
 @Component({
   selector: "task-list",
@@ -51,6 +53,8 @@ export class TaskListComponent implements OnInit {
   public listName: string;
   public board: Board;
   public boardMembers: SharedUser[];
+  public boardAdmin: User;
+  public menuMember: any;
   public taskList: TaskList[];
   public tasks: Task[];
   public labels: Label[];
@@ -60,12 +64,16 @@ export class TaskListComponent implements OnInit {
   public sortOrders: any;
   public isShowingSidenav: boolean = false;
 
+  @ViewChild('cardMenuTrigger', {static: false}) cardMenuTrigger: MatMenuTrigger;
+
+
   constructor(
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
     private boardServiceV2: BoardServiceV2,
-    private authService: AuthService
+    private authService: AuthService,
+    private accountService: AccountService
   ) {
     this.boardId = this.route.snapshot.params.boardId;
     console.log(this.boardId);
@@ -105,20 +113,31 @@ export class TaskListComponent implements OnInit {
     this.boardMembers = [];
     this.editingBoardName = false;
     this.editingListName = false;
+    this.menuMember = {
+      name: null,
+      permission: {}
+    };
+
     // Check if user has access to this board
-    const board: Board = await this.boardServiceV2
+    this.board = await this.boardServiceV2
       .getBoardWithPromise(this.boardId)
       .then((board) => {
         return board.data() as Board;
       });
+
+    this.boardAdmin = (await this.accountService.getUserById(
+      this.board.owner
+    )) as User;
+    console.log(this.boardAdmin);
+
     const userUID = this.authService.getUID();
     if (
-      board.owner == userUID ||
-      (board.shared && board.shared.includes(this.authService.getUID()))
+      this.board.owner == userUID ||
+      (this.board.shared && this.board.shared.includes(this.authService.getUID()))
     ) {
       console.log("User has access.");
       this.hasBoardAccess = true;
-      this.boardMembers = board.sharedUserInfo;
+      this.boardMembers = this.board.sharedUserInfo;
     } else {
       console.log("You dont have Access to this Board.");
       this.router.navigate(["/boards"]);
@@ -130,7 +149,7 @@ export class TaskListComponent implements OnInit {
     this.boardServiceV2.getTaskList(this.boardId);
     this.boardServiceV2.getTasks(this.boardId);
     this.boardServiceV2.getLabels(this.boardId);
-    this.board = (await this.boardServiceV2.getBoard(this.boardId)) as Board;
+    // this.board = (await this.boardServiceV2.getBoard(this.boardId)) as Board;
 
     //TODO: This is created with observable inside another observable. Better convert this with switchMap or mergeMap
     this.taskListsSubscription = this.boardServiceV2.taskListsChanged.subscribe(
@@ -420,14 +439,15 @@ export class TaskListComponent implements OnInit {
         7. Card copied (this is applicable to the copied card)        
       */
 
+      if (!result.task.activities) {
+        result.task.activities = [];
+      }
+
       // 1. Title/Descriptionm changed
       if (
         task.title != result.task.title ||
         task.description != result.task.description
       ) {
-        if (!result.task.activities) {
-          result.task.activities = [];
-        }
         const activity = this.createNewActivity(
           "modified title/description for the task."
         );
@@ -438,7 +458,7 @@ export class TaskListComponent implements OnInit {
       if (!task.checklists && result.task.checklists) {
         result.task.checklists.forEach((chklst) => {
           const activity = this.createNewActivity(
-            `Checklist ${chklst.checklistName} added.`
+            `added checklist ${chklst.checklistName}.`
           );
           result.task.activities.push(activity);
         });
@@ -447,7 +467,7 @@ export class TaskListComponent implements OnInit {
       if (task.checklists && !result.task.checklists) {
         task.checklists.forEach((chklst) => {
           const activity = this.createNewActivity(
-            `Checklist ${chklst.checklistName} removed.`
+            `removed checklist ${chklst.checklistName}.`
           );
           result.task.activities.push(activity);
         });
@@ -490,10 +510,83 @@ export class TaskListComponent implements OnInit {
       }
 
       // 3. Labels Added/Removed
+      if (result.updatedLabels) {
+        result.updatedLabels.forEach((label) => {
+          if (label.taskIds.includes(task.id)) {
+            const activity = this.createNewActivity(
+              `added label ${label.name}.`
+            );
+            result.task.activities.push(activity);
+          } else {
+            const activity = this.createNewActivity(
+              `removed label ${label.name}.`
+            );
+            result.task.activities.push(activity);
+          }
+        });
+      }
 
       // 4. Users Added/Removed
+      if (!task.members && result.task.members) {
+        result.task.members.forEach((member) => {
+          const activity = this.createNewActivity(`User ${member.name} added.`);
+          result.task.activities.push(activity);
+        });
+      }
 
-      // 5. Duedate added/removed/updated
+      if (task.members && !result.task.members) {
+        task.members.forEach((member) => {
+          const activity = this.createNewActivity(
+            `User ${member.name} removed.`
+          );
+          result.task.activities.push(activity);
+        });
+      }
+
+      if (
+        task.members &&
+        result.task.members &&
+        (task.members.length > result.task.members.length ||
+          task.members.length < result.task.members.length)
+      ) {
+        const taskMembers = [];
+        task.members.forEach((member) => {
+          taskMembers.push(member.name);
+        });
+
+        const resultMembers = [];
+        result.task.members.forEach((member) => {
+          resultMembers.push(member.name);
+        });
+
+        if (taskMembers.length > resultMembers.length) {
+          const diffChklst: Array<string> = xor(taskMembers, resultMembers);
+          diffChklst.forEach((name) => {
+            const activity = this.createNewActivity(`removed user ${name}.`);
+            result.task.activities.push(activity);
+          });
+        } else {
+          const diffChklst: Array<string> = xor(taskMembers, resultMembers);
+          diffChklst.forEach((name) => {
+            const activity = this.createNewActivity(`added user ${name}.`);
+            result.task.activities.push(activity);
+          });
+        }
+      }
+
+      // 5. Due date added/removed/updated
+      if (!task.dueDate && result.task.dueDate) {
+        const activity = this.createNewActivity(`added Due date.`);
+        result.task.activities.push(activity);
+      } else if (task.dueDate != result.task.dueDate) {
+        const activity = this.createNewActivity(`modified Due date.`);
+        result.task.activities.push(activity);
+      }
+
+      if (task.dueDate && !result.task.dueDate) {
+        const activity = this.createNewActivity(`removed Due date.`);
+        result.task.activities.push(activity);
+      }
 
       // 6. Background color changed
       if (!task.backgroundColor && result.task.backgroundColor) {
@@ -727,5 +820,17 @@ export class TaskListComponent implements OnInit {
 
   toggleMenuSidenav() {
     this.isShowingSidenav = !this.isShowingSidenav;
+  }
+
+  openMemberMenu(member: User) {
+    console.log(member);
+    this.menuMember.name = member.name;
+    this.menuMember.permission.admin = false;
+    this.menuMember.permission.normal = true;
+    this.cardMenuTrigger.openMenu();
+  }
+
+  removeUserFromBoard() {
+    
   }
 }

@@ -46,14 +46,56 @@
       </div>
       <span class="option-dividor"></span>
       <div class="flex-display">
+        <div class="members" *ngIf="boardAdmin">
+          <span
+            class="member"
+            matTooltip="{{ boardAdmin.name }}"
+            [matMenuTriggerFor]="memberMenu"
+            #cardMenuTrigger="matMenuTrigger"
+            (click)="openMemberMenu(boardAdmin)"
+            >{{ boardAdmin.name | shortname
+            }}<span class="member-admin admin-img"></span
+          ></span>
+        </div>
+
         <div class="members" *ngIf="boardMembers && boardMembers.length > 0">
           <span
             class="member"
             *ngFor="let member of boardMembers"
             matTooltip="{{ member.name }}"
+            [matMenuTriggerFor]="memberMenu"
+            #cardMenuTrigger="matMenuTrigger"
+            (click)="openMemberMenu(member)"
             >{{ member.name | shortname }}</span
           >
         </div>
+
+        <mat-menu #memberMenu="matMenu">
+          <div class="menucard" *ngIf="menuMember && menuMember.name">
+            <div>
+              <span class="member" matTooltip="{{ menuMember.name }}"
+                >{{ menuMember.name | shortname
+                }}<span class="member-admin admin-img"></span
+              ></span>
+              <p>
+                <span>{{ menuMember.name }}</span>
+              </p>
+              <p><a href="">Edit profile info</a></p>
+            </div>
+
+            <div class="menucard-options">
+              <p>
+                Change permissions…
+                <span *ngIf="menuMember.permission.admin">(Admin)</span
+                ><span *ngIf="!menuMember.permission.admin && menuMember.permission.normal">(Normal)</span>
+              </p>
+              <p (click)="navigateToBoardActivity()">
+                View member’s board activity
+              </p>
+              <p (click)="removeUserFromBoard()">Remove from board</p>
+            </div>
+          </div>
+        </mat-menu>
 
         <mat-icon
           (click)="inviteMembers()"
@@ -106,7 +148,10 @@
                 <span (click)="toggleListNameEditing(true, list)" class="done">
                   <mat-icon class="icon pointer">done</mat-icon>
                 </span>
-                <span (click)="toggleListNameEditing(false, list)" class="close">
+                <span
+                  (click)="toggleListNameEditing(false, list)"
+                  class="close"
+                >
                   <mat-icon class="icon pointer">close</mat-icon>
                 </span>
               </div>

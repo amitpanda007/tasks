@@ -142,6 +142,20 @@ mat-toolbar > span {
   z-index: 0;
 }
 
+.member-admin {
+  background-image: url("../../../assets/images/icons/admin.png");
+}
+
+.admin-img {
+  bottom: 0;
+  height: 10px;
+  position: absolute;
+  right: 1px;
+  width: 10px;
+  z-index: 3;
+  background-size: 100%;
+}
+
 .iconBtn {
   cursor: pointer;
 }
@@ -240,8 +254,8 @@ mat-toolbar > span {
   position: fixed;
   right: 0;
   top: 0;
-  transition-property: transform,width;
-  transition-duration: .3s;
+  transition-property: transform, width;
+  transition-duration: 0.3s;
   transition-timing-function: ease-in;
   transform: translateX(339px);
   width: 339px;
@@ -254,8 +268,8 @@ mat-toolbar > span {
   position: absolute;
   right: 0;
   top: 0;
-  transition-property: transform,width;
-  transition-duration: .3s;
+  transition-property: transform, width;
+  transition-duration: 0.3s;
   transition-timing-function: ease-in;
   transform: translateX(0px) !important;
   width: 339px;
@@ -283,11 +297,27 @@ mat-toolbar > span {
   margin: 0 2em;
 }
 
-.menu-option span{
+.menu-option span {
   margin-left: 1em;
 }
 
 .menu-option:hover {
   border-radius: 4px;
   background-color: #bdbdbd;
+}
+
+.menucard {
+  padding: 1rem;
+}
+
+.menucard-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.menucard-options p {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }

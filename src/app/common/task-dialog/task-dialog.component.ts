@@ -438,6 +438,10 @@ export class TaskDialogComponent implements OnInit {
     });
   }
 
+  removeDueDate() {
+    this.data.task.dueDate = null;
+  }
+
   openCreateChecklistDialog() {
     console.log(this.data.boardChecklists);
     const dialogRef = this.dialog.open(ChecklistDialogComponent, {

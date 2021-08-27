@@ -116,7 +116,11 @@ section {
 
 .due-date {
   margin-left: 1em;
-  width: 10em;
+  width: 13em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
 }
 
 .due-date {

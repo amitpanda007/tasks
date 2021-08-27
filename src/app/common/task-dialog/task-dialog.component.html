@@ -80,7 +80,7 @@
         ></mat-checkbox>
         <span class="due-date">{{
           data.task.dueDate.date | dateformat: ""
-        }}</span>
+        }} <mat-icon [matMenuTriggerFor]="menu">keyboard_arrow_down</mat-icon></span>
         <span class="due-complete" *ngIf="data.task.dueDate.completed"
           >COMPLETED</span
         >
@@ -90,6 +90,10 @@
           >OVERDUE</span
         >
       </div>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="openCalenderDialog()">Update</button>
+        <button mat-menu-item (click)="removeDueDate()">Remove</button>
+      </mat-menu>
     </section>
 
     <div *ngIf="data.task.checklists">
@@ -193,7 +197,7 @@
       <button
         *ngIf="data.enableDelete"
         mat-icon-button
-        color="primary"
+        color="warn"
         aria-label="Delete"
         class="close"
         (click)="delete()"

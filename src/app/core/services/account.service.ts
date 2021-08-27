@@ -48,7 +48,7 @@ export class AccountService {
       .set(user, { merge: true });
   }
 
-  async getUserById(userId: string) {
+  async getUserById(userId: string){
     const db = firebase.firestore();
     const userSnapshot = await db.collection("users").doc(userId).get();
     return userSnapshot.data();
