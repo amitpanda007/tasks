@@ -8,8 +8,8 @@ import {
 } from "../../common/snackbar.component";
 import { AngularFireAuth } from "@angular/fire/auth";
 import { Observable } from "rxjs";
-import { AngularFirestore } from '@angular/fire/firestore';
-import { User } from '../../auth/user';
+import { AngularFirestore } from "@angular/fire/firestore";
+import { User } from "../../auth/user";
 import { APIService } from "./api.service";
 
 @Injectable()
@@ -32,14 +32,15 @@ export class AuthService {
       );
       await resp.user.updateProfile({ displayName: fullName });
       this.apiService.sendAccountCreateEmail(email, fullName);
-      
+
       // Save data to firebase collection
       const UID = resp.user.uid;
       const newUser: User = {
+        id: UID,
         name: fullName,
         email: resp.user.email,
-        creationDate: new Date()
-      }
+        creationDate: new Date(),
+      };
       this._store.collection("users").doc(UID).set(newUser);
 
       this._router.navigate([""]);
@@ -90,7 +91,6 @@ export class AuthService {
         duration: 2000,
       });
     }
-
   }
 
   logout() {

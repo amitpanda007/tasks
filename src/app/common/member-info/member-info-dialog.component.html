@@ -1,0 +1,70 @@
+<div class="menucard" *ngIf="data.member && data.member.name">
+  <div>
+    <span class="member" matTooltip="{{ data.member.name }}"
+      >{{ data.member.name | shortname
+      }}<span class="member-admin admin-img"></span
+    ></span>
+    <p>
+      <span>{{ data.member.name }}</span>
+    </p>
+    <p><a href="">Edit profile info</a></p>
+  </div>
+
+  <div class="menucard-options">
+    <mat-accordion>
+      <mat-expansion-panel
+        (opened)="panelOpenState = true"
+        (closed)="panelOpenState = false"
+        [disabled]="!data.isAdmin"
+      >
+        <mat-expansion-panel-header class="panel-header">
+          <mat-panel-title> Change permissions… </mat-panel-title>
+          <mat-panel-description>
+            <span *ngIf="data.member.permission.admin">(Admin)</span
+            ><span
+              *ngIf="
+                !data.member.permission.admin && data.member.permission.normal
+              "
+              >(Normal)</span
+            >
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <a (click)="addAdminPermission()">
+          Admin <mat-icon *ngIf="data.member.permission.admin">done</mat-icon>
+          <span class="perm-info"
+            >Can view and edit cards, remove members, and change all settings
+            for the board.</span
+          >
+        </a>
+        <a [ngClass]="{ disabled: data.member.permission.normal }">
+          Normal <mat-icon *ngIf="data.member.permission.normal">done</mat-icon>
+          <span class="perm-info"
+            >Can view and edit cards. Can change some board settings.</span
+          >
+        </a>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <p (click)="navigateToBoardActivity()">View member’s board activity</p>
+    <p
+      (click)="removeUserFromBoard()"
+      *ngIf="
+        !data.member.permission.admin &&
+        data.member.permission.normal &&
+        !data.currentUserMember
+      "
+    >
+      Remove from board
+    </p>
+    <p
+      (click)="leaveBoard()"
+      *ngIf="data.currentUserMember && !data.member.permission.admin"
+    >
+      Leave board
+    </p>
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-stroked-button (click)="save()">OK</button>
+  <button mat-stroked-button (click)="cancel()">Cancel</button>
+</div>

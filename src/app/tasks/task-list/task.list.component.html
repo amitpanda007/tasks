@@ -44,14 +44,13 @@
           </span>
         </div>
       </div>
+
       <span class="option-dividor"></span>
-      <div class="flex-display">
+      <div class="flex-display" #menuUser>
         <div class="members" *ngIf="boardAdmin">
           <span
             class="member"
             matTooltip="{{ boardAdmin.name }}"
-            [matMenuTriggerFor]="memberMenu"
-            #cardMenuTrigger="matMenuTrigger"
             (click)="openMemberMenu(boardAdmin)"
             >{{ boardAdmin.name | shortname
             }}<span class="member-admin admin-img"></span
@@ -63,39 +62,10 @@
             class="member"
             *ngFor="let member of boardMembers"
             matTooltip="{{ member.name }}"
-            [matMenuTriggerFor]="memberMenu"
-            #cardMenuTrigger="matMenuTrigger"
             (click)="openMemberMenu(member)"
             >{{ member.name | shortname }}</span
           >
         </div>
-
-        <mat-menu #memberMenu="matMenu">
-          <div class="menucard" *ngIf="menuMember && menuMember.name">
-            <div>
-              <span class="member" matTooltip="{{ menuMember.name }}"
-                >{{ menuMember.name | shortname
-                }}<span class="member-admin admin-img"></span
-              ></span>
-              <p>
-                <span>{{ menuMember.name }}</span>
-              </p>
-              <p><a href="">Edit profile info</a></p>
-            </div>
-
-            <div class="menucard-options">
-              <p>
-                Change permissions…
-                <span *ngIf="menuMember.permission.admin">(Admin)</span
-                ><span *ngIf="!menuMember.permission.admin && menuMember.permission.normal">(Normal)</span>
-              </p>
-              <p (click)="navigateToBoardActivity()">
-                View member’s board activity
-              </p>
-              <p (click)="removeUserFromBoard()">Remove from board</p>
-            </div>
-          </div>
-        </mat-menu>
 
         <mat-icon
           (click)="inviteMembers()"

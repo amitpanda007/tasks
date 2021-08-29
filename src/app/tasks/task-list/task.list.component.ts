@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -31,6 +31,11 @@ import { BoardChecklist, CheckListOption } from "../task/boardchecklist";
 import { Activity } from "../task/activity";
 import { User } from "src/app/auth/user";
 import { AccountService } from "src/app/core/services/account.service";
+import {
+  MemberInfoDialogComponent,
+  MemberInfoDialogResult,
+} from "src/app/common/member-info/member-info-dialog.component";
+import { filter } from "rxjs/operators";
 
 @Component({
   selector: "task-list",
@@ -63,9 +68,10 @@ export class TaskListComponent implements OnInit {
   public starred: string;
   public sortOrders: any;
   public isShowingSidenav: boolean = false;
+  public panelOpenState: boolean = false;
 
-  @ViewChild('cardMenuTrigger', {static: false}) cardMenuTrigger: MatMenuTrigger;
-
+  // @ViewChild("cardMenuTrigger", { static: false }) cardMenuTrigger: MatMenuTrigger;
+  @ViewChild("menuUser", { static: false }) public menuUserRef: ElementRef;
 
   constructor(
     private dialog: MatDialog,
@@ -115,7 +121,7 @@ export class TaskListComponent implements OnInit {
     this.editingListName = false;
     this.menuMember = {
       name: null,
-      permission: {}
+      permission: {},
     };
 
     // Check if user has access to this board
@@ -133,7 +139,8 @@ export class TaskListComponent implements OnInit {
     const userUID = this.authService.getUID();
     if (
       this.board.owner == userUID ||
-      (this.board.shared && this.board.shared.includes(this.authService.getUID()))
+      (this.board.shared &&
+        this.board.shared.includes(this.authService.getUID()))
     ) {
       console.log("User has access.");
       this.hasBoardAccess = true;
@@ -823,14 +830,101 @@ export class TaskListComponent implements OnInit {
   }
 
   openMemberMenu(member: User) {
+    this.menuMember = {
+      id: member.id ? member.id : "",
+      name: null,
+      permission: {},
+    };
     console.log(member);
-    this.menuMember.name = member.name;
-    this.menuMember.permission.admin = false;
-    this.menuMember.permission.normal = true;
-    this.cardMenuTrigger.openMenu();
-  }
 
-  removeUserFromBoard() {
-    
+    let isOwner: boolean = false;
+    let isAdmin: boolean = false;
+    let currentUserMember: boolean = false;
+
+    if (member.id == this.board.owner) {
+      this.menuMember.name = member.name;
+      this.menuMember.permission.admin = true;
+      this.menuMember.permission.normal = true;
+      isOwner = true;
+    } else {
+      this.menuMember.name = member.name;
+      this.menuMember.permission.admin = member.permission.admin;
+      this.menuMember.permission.normal = member.permission.normal;
+    }
+
+    if (member.id == this.authService.getUID()) {
+      currentUserMember = true;
+      isAdmin = true;
+    }
+
+    if (this.board.owner == this.authService.getUID()) {
+      isAdmin = true;
+    } else {
+      this.boardMembers.forEach((membr) => {
+        if (membr.id == this.authService.getUID()) {
+          if (membr.permission.admin) {
+            isAdmin: true;
+          }
+        }
+      });
+    }
+
+    const dialogRef = this.dialog.open(MemberInfoDialogComponent, {
+      width: "380px",
+      // hasBackdrop: false,
+      autoFocus: false,
+      data: {
+        member: this.menuMember,
+        positionRelativeToElement: this.menuUserRef,
+        isOwner: isOwner,
+        isAdmin: isAdmin,
+        currentUserMember: currentUserMember,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: MemberInfoDialogResult) => {
+      if (!result) {
+        return;
+      }
+      console.log(result);
+
+      if (result.isUserRemoved) {
+        // Remove user from shared & sharedUserInfo
+        const shared: Array<string> = cloneDeep(this.board.shared);
+        const index = this.board.shared.indexOf(result.member.id);
+        shared.splice(index, 1);
+
+        const sharedUserInfo: SharedUser[] = cloneDeep(
+          this.board.sharedUserInfo
+        );
+        sharedUserInfo.forEach((usrInfo, idx) => {
+          if (usrInfo.id == result.member.id) {
+            sharedUserInfo.splice(idx, 1);
+          }
+        });
+
+        const tasks: Task[] = [];
+
+        this.tasks.forEach((task) => {
+          if (task.members && task.members.length > 0) {
+            task.members.forEach((mbr) => {
+              if (mbr.id == result.member.id) {
+                tasks.push(task);
+              }
+            });
+          }
+        });
+
+        console.log(shared);
+        console.log(sharedUserInfo);
+        console.log(tasks);
+        this.boardServiceV2.removeUserFromBoard(
+          this.boardId,
+          shared,
+          sharedUserInfo,
+          tasks,
+          result.member.id
+        );
+      }
+    });
   }
 }

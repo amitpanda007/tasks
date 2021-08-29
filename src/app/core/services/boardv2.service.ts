@@ -4,7 +4,7 @@ import {
   AngularFirestoreCollection,
 } from "@angular/fire/firestore";
 import { Subject, BehaviorSubject } from "rxjs";
-import { Board } from "src/app/boards/board/board";
+import { Board, SharedUser } from "src/app/boards/board/board";
 import { Task } from "src/app/tasks/task/task";
 import { AuthService } from "./auth.service";
 import { TaskList } from "../../tasks/task-list/tasklist";
@@ -139,6 +139,10 @@ export class BoardServiceV2 {
     const userInfo = {
       id: this.authService.getUID(),
       name: this.authService.getUserDisplayName(),
+      permission: {
+        admin: false,
+        normal: true,
+      },
     };
     this._store.firestore.runTransaction(() => {
       return Promise.all([
@@ -147,7 +151,14 @@ export class BoardServiceV2 {
           .doc(boardId)
           .collection("invitations")
           .doc(invitationId)
-          .set({ accepted: true, acceptedUser: this.authService.getUID(), modified: new Date()}, { merge: true }),
+          .set(
+            {
+              accepted: true,
+              acceptedUser: this.authService.getUID(),
+              modified: new Date(),
+            },
+            { merge: true }
+          ),
         this._store
           .collection("boards")
           .doc(boardId)
@@ -159,6 +170,40 @@ export class BoardServiceV2 {
     });
   }
 
+  removeUserFromBoard(
+    boardId: string,
+    shared: Array<string>,
+    sharedUserInfo: Array<SharedUser>,
+    tasks: Task[],
+    removedUserId: string
+  ) {
+    const db = firebase.firestore();
+    const batch = db.batch();
+
+    const boardRef = db.collection("boards").doc(boardId);
+
+    // Update board with removed user
+    batch.update(boardRef, { shared: shared, sharedUserInfo: sharedUserInfo });
+
+    // Remove user from all tasks
+    const taskRefs = tasks.map((t) =>
+      db.collection("boards").doc(boardId).collection("tasks").doc(t.id)
+    );
+    taskRefs.forEach((ref, idx1) => {
+      const task = tasks[idx1];
+      task.members.forEach((mbrs, idx2) => {
+        if (mbrs.id == removedUserId) {
+          delete task.members[idx2];
+        }
+      });
+      batch.update(ref, { members: task.members });
+    });
+
+    // Remove user from all checklist under task
+
+    batch.commit();
+  }
+
   /**
   / TaskLists API Call section
   **/
@@ -167,7 +212,7 @@ export class BoardServiceV2 {
     this.taskListsCollection = this._store
       .collection("boards")
       .doc(boardId)
-      .collection("taskLists", (ref) => ref.orderBy('index', "asc"));
+      .collection("taskLists", (ref) => ref.orderBy("index", "asc"));
 
     this.taskListsSubscription = this.taskListsCollection
       .valueChanges({ idField: "id" })
@@ -218,10 +263,7 @@ export class BoardServiceV2 {
       .delete();
   }
 
-  moveTaskListBatch(
-    boardId: string,
-    taskLists: TaskList[],
-  ) {
+  moveTaskListBatch(boardId: string, taskLists: TaskList[]) {
     const db = firebase.firestore();
     const batch = db.batch();
 

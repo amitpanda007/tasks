@@ -1,6 +1,13 @@
 export interface User {
-    name: string;
-    email: string;
-    creationDate: Date;
-    modifiedDate?: Date;
+  id: string;
+  name: string;
+  email: string;
+  creationDate: Date;
+  modifiedDate?: Date;
+  permission?: Permission;
+}
+
+export interface Permission {
+  admin: boolean;
+  normal: boolean;
 }

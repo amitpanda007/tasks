@@ -1,0 +1,74 @@
+.member {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  font-weight: 700;
+  background-color: #dfe1e6;
+  border-radius: 25em;
+  color: #172b4d;
+  cursor: pointer;
+  float: left;
+  height: 44px;
+  margin: 0 4px 0 0;
+  overflow: visible;
+  position: relative;
+  width: 44px;
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+  z-index: 0;
+  font-size: 24px;
+}
+
+.menucard {
+  padding: 1rem;
+}
+
+.menucard-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.menucard-options p {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.panel-header {
+  font-size: 14px;
+}
+
+a {
+  cursor: pointer;
+  display: block;
+  font-weight: 400;
+  margin: 0 -12px;
+  padding: 6px 12px;
+  position: relative;
+  text-decoration: none;
+}
+
+.perm-info {
+  clear: both;
+  color: #5e6c84;
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  margin-top: 4px;
+}
+
+.disabled {
+  background: none !important;
+  color: #a5adba;
+  cursor: default;
+}
+
+.disabled span {
+  background: none !important;
+  color: #a5adba;
+  cursor: default;
+}
