@@ -25,6 +25,10 @@
   padding: 1rem;
 }
 
+.menucard-title {
+  height: 4rem;
+}
+
 .menucard-options {
   display: flex;
   flex-direction: column;
@@ -62,6 +66,7 @@ a {
 }
 
 .disabled {
+  pointer-events: none;
   background: none !important;
   color: #a5adba;
   cursor: default;

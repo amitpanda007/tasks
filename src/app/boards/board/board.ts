@@ -13,6 +13,7 @@ export interface SharedUser {
   name: string;
   isAdded?: boolean;
   permission?: Permission;
+  isCurrentUser?: boolean;
 }
 export interface Permission {
   admin: boolean;

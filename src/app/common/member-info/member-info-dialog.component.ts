@@ -3,9 +3,12 @@ import {
   MAT_DIALOG_DATA,
   MatDialogRef,
   MatDialogConfig,
+  MatDialog,
 } from "@angular/material/dialog";
-import { ColorEvent } from "ngx-color";
 import { User } from "src/app/auth/user";
+import { Activity } from "src/app/tasks/task/activity";
+import { Task } from "src/app/tasks/task/task";
+import { MemberActivityDialogComponent } from "../member-activity/member-activity-dialog.component";
 
 @Component({
   selector: "app-member-info-dialog",
@@ -18,7 +21,8 @@ export class MemberInfoDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<MemberInfoDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: MemberInfoDialogData
+    @Inject(MAT_DIALOG_DATA) public data: MemberInfoDialogData,
+    private dialog: MatDialog,
   ) {
     this.positionRelativeToElement = data.positionRelativeToElement;
     console.log(data);
@@ -38,26 +42,77 @@ export class MemberInfoDialogComponent implements OnInit {
   }
 
   save() {
-    this.dialogRef.close({ member: this.data.member, isUserRemoved: false });
+    this.dialogRef.close({
+      member: this.data.member,
+      isUserRemoved: false,
+      isMadeAdmin: false,
+      isAdminRemoved: false,
+    });
   }
 
   //TODO: Implement this feature
   removeUserFromBoard() {
     console.log("Removing user from shared & sharedUserInfo");
-    this.dialogRef.close({ member: this.data.member, isUserRemoved: true });
+    this.dialogRef.close({
+      member: this.data.member,
+      isUserRemoved: true,
+      isMadeAdmin: false,
+      isAdminRemoved: false,
+    });
   }
 
   leaveBoard() {
     console.log("Leaving user form the board");
-    this.dialogRef.close({ member: this.data.member, isUserRemoved: true });
+    this.dialogRef.close({
+      member: this.data.member,
+      isUserRemoved: true,
+      isMadeAdmin: false,
+      isAdminRemoved: false,
+    });
   }
 
   addAdminPermission() {
-    console.log("Addming ADMIN permission to user");
+    console.log("Adding/Removing ADMIN permission to user");
+    if (this.data.member.permission.admin) {
+      this.dialogRef.close({
+        member: this.data.member,
+        isUserRemoved: false,
+        isMadeAdmin: false,
+        isAdminRemoved: true,
+      });
+    } else {
+      this.dialogRef.close({
+        member: this.data.member,
+        isUserRemoved: false,
+        isMadeAdmin: true,
+        isAdminRemoved: false,
+      });
+    }
   }
 
   navigateToBoardActivity() {
     console.log("Navigating to User Board Activity");
+    const activityList: Activity[] = [];
+
+    this.data.tasks.forEach((task) => {
+      if (task.activities && task.activities.length > 0) {
+        task.activities.forEach((activity) => {
+          if(activity.id == this.data.member.id) {
+            activityList.push(activity);
+          }
+        });
+      }
+    });
+
+    const dialogRef = this.dialog.open(MemberActivityDialogComponent, {
+      width: "420px",
+      maxHeight: "600px",
+      autoFocus: false,
+      data: {
+        member: this.data.member,
+        activities: activityList
+      },
+    });
   }
 }
 
@@ -66,10 +121,13 @@ export interface MemberInfoDialogData {
   positionRelativeToElement?: ElementRef;
   isOwner: boolean;
   isAdmin: boolean;
+  tasks: Task[];
   currentUserMember: boolean;
 }
 
 export interface MemberInfoDialogResult {
   member: User;
   isUserRemoved: boolean;
+  isMadeAdmin: boolean;
+  isAdminRemoved: boolean;
 }

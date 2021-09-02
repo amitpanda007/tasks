@@ -69,6 +69,7 @@ export class TaskListComponent implements OnInit {
   public sortOrders: any;
   public isShowingSidenav: boolean = false;
   public panelOpenState: boolean = false;
+  public isCurrentUser: boolean = false;
 
   // @ViewChild("cardMenuTrigger", { static: false }) cardMenuTrigger: MatMenuTrigger;
   @ViewChild("menuUser", { static: false }) public menuUserRef: ElementRef;
@@ -151,16 +152,32 @@ export class TaskListComponent implements OnInit {
       return;
     }
 
+    if(this.board.owner == this.authService.getUID()) {
+      this.isCurrentUser = true;
+    }
+
     console.log("TASK LIST INITIATED");
     this.isLoading = true;
+    this.boardServiceV2.getSingleBoard(this.boardId);
     this.boardServiceV2.getTaskList(this.boardId);
     this.boardServiceV2.getTasks(this.boardId);
     this.boardServiceV2.getLabels(this.boardId);
     // this.board = (await this.boardServiceV2.getBoard(this.boardId)) as Board;
 
+    this.boardSubscription = this.boardServiceV2.boardChanged.subscribe(
+      (board: Board) => {
+        this.boardMembers = board.sharedUserInfo;
+        this.boardMembers.forEach((boardMember) => {
+          if(boardMember.id == this.authService.getUID()) {
+            boardMember.isCurrentUser = true;
+          }
+        })
+      }
+    );
+
     //TODO: This is created with observable inside another observable. Better convert this with switchMap or mergeMap
     this.taskListsSubscription = this.boardServiceV2.taskListsChanged.subscribe(
-      (lists) => {
+      (lists: TaskList[]) => {
         console.log(lists);
         this.taskList = lists;
         this.taskList.forEach((list) => {
@@ -178,7 +195,7 @@ export class TaskListComponent implements OnInit {
         }
 
         this.tasksSubscription = this.boardServiceV2.tasksChanged.subscribe(
-          (tasks) => {
+          (tasks: Task[]) => {
             console.log(tasks);
             this.tasks = tasks;
             //FIXME: Hacky way to fix the Drag & Drop problem. Once task is moved from one list to another.
@@ -199,7 +216,7 @@ export class TaskListComponent implements OnInit {
     );
 
     this.labelsSubscription = this.boardServiceV2.labelListChanged.subscribe(
-      (labels) => {
+      (labels: Label[]) => {
         console.log(labels);
         this.labels = labels;
       }
@@ -212,7 +229,7 @@ export class TaskListComponent implements OnInit {
 
     if (this.boardSubscription) {
       this.boardSubscription.unsubscribe();
-      this.boardServiceV2.cancelBoardSuscriotion();
+      this.boardServiceV2.cancelSingleBoardSuscriotion();
     }
 
     if (this.taskListsSubscription) {
@@ -638,6 +655,7 @@ export class TaskListComponent implements OnInit {
 
   createNewActivity(action: string): Activity {
     const activity: Activity = {
+      id: this.authService.getUID(),
       user: this.authService.getUserDisplayName(),
       action: action,
       dateTime: new Date(),
@@ -854,21 +872,19 @@ export class TaskListComponent implements OnInit {
 
     if (member.id == this.authService.getUID()) {
       currentUserMember = true;
-      isAdmin = true;
     }
 
     if (this.board.owner == this.authService.getUID()) {
       isAdmin = true;
     } else {
       this.boardMembers.forEach((membr) => {
-        if (membr.id == this.authService.getUID()) {
-          if (membr.permission.admin) {
-            isAdmin: true;
-          }
+        if (membr.permission.admin) {
+          isAdmin = true;
         }
       });
     }
 
+    const tasks = cloneDeep(this.tasks);
     const dialogRef = this.dialog.open(MemberInfoDialogComponent, {
       width: "380px",
       // hasBackdrop: false,
@@ -878,6 +894,7 @@ export class TaskListComponent implements OnInit {
         positionRelativeToElement: this.menuUserRef,
         isOwner: isOwner,
         isAdmin: isAdmin,
+        tasks: tasks,
         currentUserMember: currentUserMember,
       },
     });
@@ -903,6 +920,7 @@ export class TaskListComponent implements OnInit {
         });
 
         const tasks: Task[] = [];
+        const taskChecklist: Task[] = [];
 
         this.tasks.forEach((task) => {
           if (task.members && task.members.length > 0) {
@@ -912,19 +930,56 @@ export class TaskListComponent implements OnInit {
               }
             });
           }
+
+          if (task.checklists && task.checklists.length > 0) {
+            task.checklists.forEach((checklist) => {
+              if (checklist && checklist.checklist.length > 0) {
+                checklist.checklist.forEach((chklst) => {
+                  if (chklst.members && chklst.members.length > 0) {
+                    chklst.members.forEach((mbr) => {
+                      if (mbr.id == result.member.id) {
+                        taskChecklist.push(task);
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          }
         });
 
         console.log(shared);
         console.log(sharedUserInfo);
         console.log(tasks);
+        console.log(taskChecklist);
         this.boardServiceV2.removeUserFromBoard(
           this.boardId,
           shared,
           sharedUserInfo,
           tasks,
+          taskChecklist,
           result.member.id
         );
       }
+
+      if(result.isMadeAdmin) {
+        this.board.sharedUserInfo.forEach(userInfo => {
+          if(result.member.id == userInfo.id) {
+            userInfo.permission.admin = true;
+          }
+        });
+        this.boardServiceV2.updateBoard(this.boardId, this.board);
+      }
+
+      if(result.isAdminRemoved) {
+        this.board.sharedUserInfo.forEach(userInfo => {
+          if(result.member.id == userInfo.id) {
+            userInfo.permission.admin = false;
+          }
+        });
+        this.boardServiceV2.updateBoard(this.boardId, this.board);
+      }
+
     });
   }
 }

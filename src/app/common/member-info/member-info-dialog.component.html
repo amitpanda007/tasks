@@ -1,5 +1,5 @@
 <div class="menucard" *ngIf="data.member && data.member.name">
-  <div>
+  <div class="menucard-title">
     <span class="member" matTooltip="{{ data.member.name }}"
       >{{ data.member.name | shortname
       }}<span class="member-admin admin-img"></span
@@ -7,11 +7,11 @@
     <p>
       <span>{{ data.member.name }}</span>
     </p>
-    <p><a href="">Edit profile info</a></p>
+    <p *ngIf="data.currentUserMember"><a href="">Edit profile info</a></p>
   </div>
 
   <div class="menucard-options">
-    <mat-accordion>
+    <mat-accordion *ngIf="showAccordian">
       <mat-expansion-panel
         (opened)="panelOpenState = true"
         (closed)="panelOpenState = false"
@@ -29,7 +29,10 @@
             >
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <a (click)="addAdminPermission()">
+        <a
+          (click)="addAdminPermission()"
+          [ngClass]="{ disabled: data.isOwner }"
+        >
           Admin <mat-icon *ngIf="data.member.permission.admin">done</mat-icon>
           <span class="perm-info"
             >Can view and edit cards, remove members, and change all settings
@@ -61,6 +64,9 @@
     >
       Leave board
     </p>
+    <span class="perm-info" *ngIf="data.currentUserMember && data.member.permission.admin && !data.isOwner"
+      >You are an Admin for this Board. Remove Admin permission to leave this board.</span
+    >
   </div>
 </div>
 

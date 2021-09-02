@@ -35,8 +35,16 @@
   <div class="links">
     <div *ngIf="invitationLink">
       <div class="flex-display spacing">
-        <p class="txt-small link-text" matTooltip="{{invitationLink}}" matTooltipClass="my-custom-tooltip">{{ invitationLink }}</p>
-        <mat-icon (click)="copyInviteLinkURL()" class="pointer">content_copy</mat-icon>
+        <p
+          class="txt-small link-text"
+          matTooltip="{{ invitationLink }}"
+          matTooltipClass="my-custom-tooltip"
+        >
+          {{ invitationLink }}
+        </p>
+        <button mat-icon-button (click)="copyInviteLinkURL()">
+          <mat-icon class="icon-small">content_copy</mat-icon>
+        </button>
       </div>
       <div class="flex-display spacing">
         <qrcode
@@ -46,8 +54,12 @@
           [elementType]="'svg'"
         ></qrcode>
         <div class="flex-display spacing">
-          <p class="txt-small">Or let anyone scan this QR code to invite them to this board</p>
-          <mat-icon class="pointer" (click)="downloadQRImage()">file_download</mat-icon>
+          <p class="txt-small">
+            Or let anyone scan this QR code to invite them to this board
+          </p>
+          <mat-icon class="pointer" (click)="downloadQRImage()"
+            >file_download</mat-icon
+          >
         </div>
       </div>
     </div>

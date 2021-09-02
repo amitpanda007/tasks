@@ -43,6 +43,7 @@ import { FilterSearchComponent } from "./common/filter-search.component";
 import { QRCodeModule } from "angularx-qrcode";
 import { ChecklistDialogComponent } from "./common/checklist-dialog/checklist-dialog.component";
 import { MemberInfoDialogComponent } from "./common/member-info/member-info-dialog.component";
+import { MemberActivityDialogComponent } from "./common/member-activity/member-activity-dialog.component";
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { MemberInfoDialogComponent } from "./common/member-info/member-info-dial
     FilterSearchComponent,
     ChecklistDialogComponent,
     MemberInfoDialogComponent,
+    MemberActivityDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -109,6 +111,7 @@ import { MemberInfoDialogComponent } from "./common/member-info/member-info-dial
     MessageDialogComponent,
     ChecklistDialogComponent,
     MemberInfoDialogComponent,
+    MemberActivityDialogComponent
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

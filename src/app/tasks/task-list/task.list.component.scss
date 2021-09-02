@@ -142,6 +142,11 @@ mat-toolbar > span {
   z-index: 0;
 }
 
+.current-member {
+  color: #ffffff;
+  background-color: #00bcd4;
+}
+
 .member-admin {
   background-image: url("../../../assets/images/icons/admin.png");
 }
@@ -151,6 +156,20 @@ mat-toolbar > span {
   height: 10px;
   position: absolute;
   right: 1px;
+  width: 10px;
+  z-index: 3;
+  background-size: 100%;
+}
+
+.member-owner {
+  background-image: url("../../../assets/images/icons/owner.png");
+}
+
+.owner-img {
+  bottom: 0;
+  height: 10px;
+  position: absolute;
+  left: 1px;
   width: 10px;
   z-index: 3;
   background-size: 100%;

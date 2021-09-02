@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import {
   AngularFirestore,
   AngularFirestoreCollection,
+  AngularFirestoreDocument,
 } from "@angular/fire/firestore";
 import { Subject, BehaviorSubject } from "rxjs";
 import { Board, SharedUser } from "src/app/boards/board/board";
@@ -13,27 +14,32 @@ import { Subscription } from "rxjs";
 import { Invitation } from "../../common/invite-dialog/invitation";
 import { firestore } from "firebase/app";
 import * as firebase from "firebase/app";
+import { userInfo } from "os";
 
 @Injectable()
 export class BoardServiceV2 {
+  private boardDocument: AngularFirestoreDocument<Board>;
   private boardsCollection: AngularFirestoreCollection<Board>;
   private sharedBoardsCollection: AngularFirestoreCollection<Board>;
   private taskListsCollection: AngularFirestoreCollection<TaskList>;
   private tasksCollection: AngularFirestoreCollection<Task>;
   private labelsCollection: AngularFirestoreCollection<Label>;
 
+  private singleBoard: Board;
   private allBoards: Board[];
   private allSharedBoards: Board[];
   private allTaskLists: TaskList[];
   private allTasks: Task[];
   private allLabelList: Label[];
 
+  private boardSubscription: Subscription;
   private boardsSubscription: Subscription;
   private sharedBoardsSubscription: Subscription;
   private taskListsSubscription: Subscription;
   private tasksSubscription: Subscription;
   private labelsSubscription: Subscription;
 
+  public boardChanged = new Subject<Board>();
   public boardsChanged = new Subject<Board[]>();
   public sharedBoardsChanged = new Subject<Board[]>();
   public taskListsChanged = new Subject<TaskList[]>();
@@ -98,6 +104,21 @@ export class BoardServiceV2 {
     });
   }
 
+  getSingleBoard(boardId: string) {
+    this.boardDocument = this._store.collection<Board>("boards").doc(boardId);
+
+    this.boardSubscription = this.boardDocument
+      .valueChanges()
+      .subscribe((board) => {
+        this.singleBoard = board;
+        this.boardChanged.next(this.singleBoard);
+      });
+  }
+
+  cancelSingleBoardSuscriotion() {
+    this.boardSubscription.unsubscribe();
+  }
+
   async getBoard(boardId: string) {
     const db = firebase.firestore();
     const boardSnapshot = await db.collection("boards").doc(boardId).get();
@@ -113,6 +134,13 @@ export class BoardServiceV2 {
   }
 
   updateBoard(boardId: string, board: Board) {
+    console.log(board);
+    // Remove unwanted properties from board object
+    if(board.sharedUserInfo && board.sharedUserInfo.length > 0) {
+      board.sharedUserInfo.forEach(userInfo => {
+        delete userInfo.isCurrentUser;
+      });
+    }
     this._store.collection("boards").doc(boardId).set(board, { merge: true });
   }
 
@@ -124,15 +152,13 @@ export class BoardServiceV2 {
       .doc(invitationId);
   }
 
-  createInvitation(boardId: string, invitation: Invitation) {
-    return this._store
+  async createInvitation(boardId: string, invitation: Invitation) {
+    const docRef = await this._store
       .collection("boards")
       .doc(boardId)
       .collection("invitations")
-      .add(invitation)
-      .then((docRef) => {
-        return docRef.id;
-      });
+      .add(invitation);
+    return docRef.id;
   }
 
   acceptInvitation(boardId: string, invitationId: string) {
@@ -175,16 +201,14 @@ export class BoardServiceV2 {
     shared: Array<string>,
     sharedUserInfo: Array<SharedUser>,
     tasks: Task[],
+    taskChecklist: Task[],
     removedUserId: string
   ) {
     const db = firebase.firestore();
     const batch = db.batch();
-
     const boardRef = db.collection("boards").doc(boardId);
-
     // Update board with removed user
     batch.update(boardRef, { shared: shared, sharedUserInfo: sharedUserInfo });
-
     // Remove user from all tasks
     const taskRefs = tasks.map((t) =>
       db.collection("boards").doc(boardId).collection("tasks").doc(t.id)
@@ -193,14 +217,35 @@ export class BoardServiceV2 {
       const task = tasks[idx1];
       task.members.forEach((mbrs, idx2) => {
         if (mbrs.id == removedUserId) {
-          delete task.members[idx2];
+          task.members.splice(idx2, 1);
+          // delete task.members[idx2];
         }
       });
       batch.update(ref, { members: task.members });
     });
+    // Remove user from all tasks
+    const taskChklstRefs = taskChecklist.map((t) =>
+      db.collection("boards").doc(boardId).collection("tasks").doc(t.id)
+    );
+    taskChklstRefs.forEach((ref, idx1) => {
+      const task = taskChecklist[idx1];
+      task.checklists.forEach((chklst, idx) => {
+        if (chklst.checklist && chklst.checklist.length > 0) {
+          chklst.checklist.forEach((chk) => {
+            if (chk.members && chk.members.length > 0) {
+              chk.members.forEach((mbr, idx2) => {
+                if (mbr.id == removedUserId) {
+                  chk.members.splice(idx2, 1);
+                }
+              });
+            }
+          });
+        }
+      });
+      batch.update(ref, { checklists: task.checklists });
+    });
 
     // Remove user from all checklist under task
-
     batch.commit();
   }
 
@@ -341,15 +386,13 @@ export class BoardServiceV2 {
     return taskSnapshot.data();
   }
 
-  addTask(boardId: string, task: Task) {
-    return this._store
+  async addTask(boardId: string, task: Task) {
+    const docRef = await this._store
       .collection("boards")
       .doc(boardId)
       .collection("tasks")
-      .add(task)
-      .then((docRef) => {
-        return docRef.id;
-      });
+      .add(task);
+    return docRef.id;
   }
 
   updateTask(boardId: string, taskId: string, task: Task) {
@@ -500,15 +543,13 @@ export class BoardServiceV2 {
     });
   }
 
-  addLabel(boardId: string, label: Label) {
-    return this._store
+  async addLabel(boardId: string, label: Label) {
+    const docRef = await this._store
       .collection("boards")
       .doc(boardId)
       .collection("labels")
-      .add(label)
-      .then((docRef) => {
-        return docRef.id;
-      });
+      .add(label);
+    return docRef.id;
   }
 
   addLabelWithGivenId(boardId: string, labelId: string, label: Label) {

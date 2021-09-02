@@ -1,0 +1,68 @@
+.act-container {
+  margin-top: 2rem;
+}
+
+.activity-text {
+  margin-top: 1rem;
+}
+
+.activity-text span {
+  margin-left: 1rem;
+  font-size: 14px;
+}
+
+.activity-text p {
+  margin-left: 4rem;
+  color: #5e6c84;
+  font-size: 12px;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  font-weight: 700;
+  background-color: #dfe1e6;
+  border-radius: 25em;
+  color: #172b4d;
+  cursor: pointer;
+  float: left;
+  height: 32px;
+  margin: 0 2px 0 2px;
+  overflow: visible;
+  position: relative;
+  width: 32px;
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.flex-display {
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.empty-label {
+  font-size: 2em;
+  padding-top: 10px;
+  text-align: center;
+  opacity: 0.2;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  color: #8c8989;
+  font-size: 28px;
+}
+
+.header span {
+  color: #8c898999;
+  font-size: 22px;
+  margin-left: 1rem;
+}

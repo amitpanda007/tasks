@@ -1,0 +1,21 @@
+<div class="act-container">
+  <p class="header">
+    Activity - <span>{{ data.member.name }}</span>
+  </p>
+  <div *ngIf="!data.activities || data.activities.length == 0">
+    <p class="empty-label">No Activity Found</p>
+  </div>
+  <section *ngIf="data.activities && data.activities.length > 0">
+    <div>
+      <div *ngFor="let activity of data.activities" class="activity-text">
+        <span class="member" matTooltip="{{ activity.user }}">{{
+          activity.user | shortname
+        }}</span>
+        <span style="font-size:12px;"
+          ><b style="font-size:14px;">{{ activity.user }}</b> {{ activity.action }}</span
+        >
+        <p>{{ activity.dateTime | dateformat: "" }}</p>
+      </div>
+    </div>
+  </section>
+</div>

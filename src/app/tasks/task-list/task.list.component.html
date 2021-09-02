@@ -50,21 +50,31 @@
         <div class="members" *ngIf="boardAdmin">
           <span
             class="member"
+            [ngClass]="{ 'current-member': isCurrentUser }"
             matTooltip="{{ boardAdmin.name }}"
+            [matTooltipPosition]="'above'"
             (click)="openMemberMenu(boardAdmin)"
+            ><span class="member-owner owner-img" matTooltip="owner"></span
             >{{ boardAdmin.name | shortname
-            }}<span class="member-admin admin-img"></span
+            }}<span class="member-admin admin-img" matTooltip="admin"></span
           ></span>
         </div>
 
         <div class="members" *ngIf="boardMembers && boardMembers.length > 0">
+          <span *ngFor="let member of boardMembers">
           <span
             class="member"
-            *ngFor="let member of boardMembers"
+            [ngClass]="{ 'current-member': member.isCurrentUser }"
             matTooltip="{{ member.name }}"
             (click)="openMemberMenu(member)"
-            >{{ member.name | shortname }}</span
-          >
+            >{{ member.name | shortname
+            }}<span
+              *ngIf="member.permission.admin"
+              class="member-admin admin-img"
+              matTooltip="admin"
+            ></span
+          ></span>
+        </span>
         </div>
 
         <mat-icon
