@@ -45,12 +45,12 @@ export class AuthService {
 
       this._router.navigate([""]);
       this._snackBar.openFromComponent(SuccessSnackbar, {
-        data: "User Created Successfully",
+        data: {text: "User Created Successfully"},
         duration: 2000,
       });
     } catch (error) {
       this._snackBar.openFromComponent(ErrorSnackbar, {
-        data: "Something went wrong.",
+        data: {text: "Something went wrong."},
         duration: 2000,
       });
     }
@@ -66,12 +66,12 @@ export class AuthService {
       );
       this._router.navigate([""]);
       this._snackBar.openFromComponent(SuccessSnackbar, {
-        data: "Login Successful",
+        data: {text: "Login Successful"},
         duration: 2000,
       });
     } catch (error) {
       this._snackBar.openFromComponent(ErrorSnackbar, {
-        data: error.message,
+        data: {text: error.message},
         duration: 2000,
       });
     }
@@ -82,12 +82,12 @@ export class AuthService {
       await this._afAuth.auth.sendPasswordResetEmail(email);
       console.log("Email sent successfully");
       this._snackBar.openFromComponent(SuccessSnackbar, {
-        data: "Email sent successfully",
+        data: {text: "Email sent successfully"},
         duration: 2000,
       });
     } catch (error) {
       this._snackBar.openFromComponent(ErrorSnackbar, {
-        data: error.message,
+        data: {text: error.message},
         duration: 2000,
       });
     }

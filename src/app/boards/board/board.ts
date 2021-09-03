@@ -3,9 +3,9 @@ export interface Board {
   title: string;
   description: string;
   owner: string;
-  shared?: string[];
+  shared?: Array<string>;
   sharedUserInfo?: SharedUser[];
-  favourite?: boolean;
+  favourite?: Array<string>;
 }
 
 export interface SharedUser {

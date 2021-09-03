@@ -11,7 +11,7 @@ import {
   TaskDialogComponent,
   TaskDialogResult,
 } from "src/app/common/task-dialog/task-dialog.component";
-import { MatDialog, MatMenuTrigger, MatSidenav } from "@angular/material";
+import { MatDialog, MatMenuTrigger, MatSidenav, MatSnackBar } from "@angular/material";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, pipe, Subscription } from "rxjs";
 import { TaskList } from "./tasklist";
@@ -35,7 +35,7 @@ import {
   MemberInfoDialogComponent,
   MemberInfoDialogResult,
 } from "src/app/common/member-info/member-info-dialog.component";
-import { filter } from "rxjs/operators";
+import { ErrorSnackbar, SuccessSnackbar } from "src/app/common/snackbar.component";
 
 @Component({
   selector: "task-list",
@@ -70,6 +70,7 @@ export class TaskListComponent implements OnInit {
   public isShowingSidenav: boolean = false;
   public panelOpenState: boolean = false;
   public isCurrentUser: boolean = false;
+  public isFavourite: boolean = false;
 
   // @ViewChild("cardMenuTrigger", { static: false }) cardMenuTrigger: MatMenuTrigger;
   @ViewChild("menuUser", { static: false }) public menuUserRef: ElementRef;
@@ -80,7 +81,8 @@ export class TaskListComponent implements OnInit {
     private router: Router,
     private boardServiceV2: BoardServiceV2,
     private authService: AuthService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private snackBar: MatSnackBar
   ) {
     this.boardId = this.route.snapshot.params.boardId;
     console.log(this.boardId);
@@ -108,6 +110,28 @@ export class TaskListComponent implements OnInit {
   }
 
   async ngOnInit() {
+    // Setup event listeners to detect online/offline state of connecton.
+    window.addEventListener('offline', (e) => {
+      this.snackBar.openFromComponent(ErrorSnackbar, {
+        data: {
+          text: "Connection interrupted. retrying...",
+          icon: "wifi_off"
+        },
+        duration: 15000,
+      });
+    });
+
+    window.addEventListener('online', (e) => {
+      this.snackBar.openFromComponent(SuccessSnackbar, {
+        data: {
+          text: "Connection is back online",
+          icon: "wifi",
+          close: true
+        },
+        duration: 15000,
+      });
+    });
+
     this.sortOrders = {
       INDEX: "index",
       CREATED: "created",
@@ -152,7 +176,7 @@ export class TaskListComponent implements OnInit {
       return;
     }
 
-    if(this.board.owner == this.authService.getUID()) {
+    if (this.board.owner == this.authService.getUID()) {
       this.isCurrentUser = true;
     }
 
@@ -166,12 +190,18 @@ export class TaskListComponent implements OnInit {
 
     this.boardSubscription = this.boardServiceV2.boardChanged.subscribe(
       (board: Board) => {
+        if (board.favourite) {
+          this.isFavourite = board.favourite.includes(
+            this.authService.getUID()
+          );
+        }
+
         this.boardMembers = board.sharedUserInfo;
         this.boardMembers.forEach((boardMember) => {
-          if(boardMember.id == this.authService.getUID()) {
+          if (boardMember.id == this.authService.getUID()) {
             boardMember.isCurrentUser = true;
           }
-        })
+        });
       }
     );
 
@@ -762,10 +792,14 @@ export class TaskListComponent implements OnInit {
   }
 
   markBoardFavourite() {
-    if (this.board && this.board.favourite) {
-      this.board.favourite = false;
+    if (!this.board.favourite) {
+      this.board.favourite = [];
+    }
+    if (!this.isFavourite) {
+      this.board.favourite.push(this.authService.getUID());
     } else {
-      this.board.favourite = true;
+      const index = this.board.favourite.indexOf(this.authService.getUID());
+      this.board.favourite.splice(index, 1);
     }
     this.boardServiceV2.updateBoard(this.boardId, this.board);
   }
@@ -962,24 +996,23 @@ export class TaskListComponent implements OnInit {
         );
       }
 
-      if(result.isMadeAdmin) {
-        this.board.sharedUserInfo.forEach(userInfo => {
-          if(result.member.id == userInfo.id) {
+      if (result.isMadeAdmin) {
+        this.board.sharedUserInfo.forEach((userInfo) => {
+          if (result.member.id == userInfo.id) {
             userInfo.permission.admin = true;
           }
         });
         this.boardServiceV2.updateBoard(this.boardId, this.board);
       }
 
-      if(result.isAdminRemoved) {
-        this.board.sharedUserInfo.forEach(userInfo => {
-          if(result.member.id == userInfo.id) {
+      if (result.isAdminRemoved) {
+        this.board.sharedUserInfo.forEach((userInfo) => {
+          if (result.member.id == userInfo.id) {
             userInfo.permission.admin = false;
           }
         });
         this.boardServiceV2.updateBoard(this.boardId, this.board);
       }
-
     });
   }
 }

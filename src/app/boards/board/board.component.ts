@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
 import { Board } from "./board";
 import { Router, ActivatedRoute } from '@angular/router';
+import { AuthService } from "src/app/core/services/auth.service";
 
 @Component({
   selector: "board",
@@ -10,10 +11,15 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class BoardComponent implements OnInit {
   @Input() board: Board | null = null;
   @Output() edit = new EventEmitter<Board>();
+  public isFavourite: boolean = false;
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if(this.board.favourite) {
+      this.isFavourite = this.board.favourite.includes(this.authService.getUID());
+    }
+  }
 
   openBoard() {
     const boardId = this.board.id;

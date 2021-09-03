@@ -45,6 +45,7 @@
             >Can view and edit cards. Can change some board settings.</span
           >
         </a>
+        <span *ngIf="data.isOwner" class="perm-info">You can’t change roles because you are the owner of this board.</span>
       </mat-expansion-panel>
     </mat-accordion>
     <p (click)="navigateToBoardActivity()">View member’s board activity</p>
