@@ -62,19 +62,19 @@
 
         <div class="members" *ngIf="boardMembers && boardMembers.length > 0">
           <span *ngFor="let member of boardMembers">
-          <span
-            class="member"
-            [ngClass]="{ 'current-member': member.isCurrentUser }"
-            matTooltip="{{ member.name }}"
-            (click)="openMemberMenu(member)"
-            >{{ member.name | shortname
-            }}<span
-              *ngIf="member.permission.admin"
-              class="member-admin admin-img"
-              matTooltip="admin"
-            ></span
-          ></span>
-        </span>
+            <span
+              class="member"
+              [ngClass]="{ 'current-member': member.isCurrentUser }"
+              matTooltip="{{ member.name }}"
+              (click)="openMemberMenu(member)"
+              >{{ member.name | shortname
+              }}<span
+                *ngIf="member.permission.admin"
+                class="member-admin admin-img"
+                matTooltip="admin"
+              ></span
+            ></span>
+          </span>
         </div>
 
         <mat-icon
@@ -287,16 +287,31 @@
   [ngClass]="{ sidenav: !isShowingSidenav, 'sidenav-open': isShowingSidenav }"
 >
   <div class="flex-display spacing">
-    <p class="menu-header">Menu</p>
+    <mat-icon
+      class="icon pointer"
+      (click)="backToMenu()"
+      *ngIf="isShowingAboutBoard"
+      >keyboard_arrow_left</mat-icon
+    >
+    <p class="menu-header" *ngIf="!isShowingAboutBoard">Menu</p>
+    <p class="menu-header" *ngIf="isShowingAboutBoard">About this board</p>
     <mat-icon class="icon pointer" (click)="toggleMenuSidenav()"
       >close</mat-icon
     >
   </div>
   <div class="nav-option-dividor"></div>
-  <div class="menu-options">
-    <div class="menu-option flex-display pointer">
-      <mat-icon>read_more</mat-icon>
-      <span>About this board</span>
+
+  <div class="menu-options" *ngIf="!isShowingAboutBoard">
+    <div class="menu-option pointer" (click)="backToMenu()">
+      <div class="flex-display">
+        <mat-icon>read_more</mat-icon>
+        <div class="about">
+          <span>About this board</span>
+          <span class="menu-option-sub-info"
+            >Add a description to your board</span
+          >
+        </div>
+      </div>
     </div>
     <div class="menu-option flex-display pointer">
       <mat-icon>wallpaper</mat-icon>
@@ -311,16 +326,82 @@
       <span>more</span>
     </div>
     <div class="nav-option-dividor"></div>
-    <div class="flex-display">
-      <p>Automation</p>
+    <div class="menu-option">
+      <div class="flex-display">
+        <mat-icon>bolt</mat-icon>
+        <div class="menu-options-info">
+          <p>Automation</p>
+          <p>Automate cards and more…</p>
+        </div>
+      </div>
     </div>
     <div class="nav-option-dividor"></div>
-    <div class="flex-display">
-      <p>Power-Ups</p>
+    <div class="menu-option">
+      <div class="flex-display">
+        <mat-icon>charging_station</mat-icon>
+        <div class="menu-options-info">
+          <p>Power-Ups</p>
+          <p>Add power up…</p>
+        </div>
+      </div>
     </div>
     <div class="nav-option-dividor"></div>
-    <div class="flex-display">
-      <p>Activity</p>
+    <section class="activity">
+      <div class="flex-display space-btwn">
+        <span class="flex-display">
+          <mat-icon>subject</mat-icon><span>Activity</span>
+        </span>
+      </div>
+
+      <div>
+        <div *ngFor="let activity of activities" class="activity-text">
+          <span class="member" matTooltip="{{ activity.user }}">{{
+            activity.user | shortname
+          }}</span>
+          <div class="member-info">
+            <span
+              ><b>{{ activity.user }}</b> {{ activity.action }}</span
+            >
+            <p>{{ activity.dateTime | dateformat: "" }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div *ngIf="isShowingAboutBoard" class="menucard">
+    <div class="flex-display about-sec">
+      <mat-icon>person</mat-icon>
+      <span>Board admins</span>
     </div>
+
+    <div class="line about-sec">
+      <span
+        class="member"
+        matTooltip="{{ admin.name }}"
+        *ngFor="let admin of allAdmins"
+        >{{ admin.name | shortname }}</span
+      >
+    </div>
+
+    <div class="about-sec">
+      <div class="flex-display">
+        <mat-icon>description</mat-icon>
+        <span>Description</span>
+      </div>
+      <mat-form-field class="full-width" appearance="fill">
+        <textarea
+          [(ngModel)]="board.description"
+          matInput
+          rows="5"
+          placeholder="It’s your board’s time to shine! Let people know what this board is used for and what they can expect to see."
+        ></textarea>
+      </mat-form-field>
+      <button mat-flat-button color="primary" (click)="saveDescription()">
+        save
+      </button>
+    </div>
+
+    <div class="nav-option-dividor"></div>
   </div>
 </div>

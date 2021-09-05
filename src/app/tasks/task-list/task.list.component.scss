@@ -269,6 +269,7 @@ mat-toolbar > span {
 }
 
 .sidenav {
+  overflow: auto;
   bottom: 0;
   position: fixed;
   right: 0;
@@ -283,12 +284,13 @@ mat-toolbar > span {
 }
 
 .sidenav-open {
+  overflow: auto;
   bottom: 0;
   position: absolute;
   right: 0;
   top: 0;
   transition-property: transform, width;
-  transition-duration: 0.3s;
+  transition-duration: 0.2s;
   transition-timing-function: ease-in;
   transform: translateX(0px) !important;
   width: 339px;
@@ -300,29 +302,42 @@ mat-toolbar > span {
   font-size: 24px;
   font-weight: 500;
   margin-left: 1em;
+  flex: 1;
+  line-height: 20px;
+  margin: 14px 32px;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  transition: margin 0.12s ease-in;
+  white-space: nowrap;
 }
 
 .spacing {
   justify-content: space-between;
 }
 
-.nav-option-dividor {
-  border-top: 1px solid hsla(0, 0%, 100%, 0.24);
-  margin: 1em 3em;
-  border-color: rgba(0, 0, 0, 0.2);
-}
+// .nav-option-dividor {
+//   border-top: 1px solid hsla(0, 0%, 100%, 0.24);
+//   margin: 1em 3em;
+//   border-color: rgba(0, 0, 0, 0.2);
+// }
 
 .menu-options {
   margin: 0 2em;
+  border-radius: 3px;
+  font-weight: 600;
+  line-height: 20px;
+  text-decoration: none;
 }
 
 .menu-option span {
-  margin-left: 1em;
+  padding: 6px 6px 6px 40px;
 }
 
 .menu-option:hover {
+  cursor: pointer;
   border-radius: 4px;
-  background-color: #bdbdbd;
+  background-color: #091e4214;
 }
 
 .menucard {
@@ -339,4 +354,71 @@ mat-toolbar > span {
   display: flex;
   align-items: center;
   cursor: pointer;
+}
+
+.menu-options-info {
+  margin-left: 1rem;
+  padding: 10px 0px;
+}
+
+.menu-option-sub-info {
+  font-weight: 400;
+  color: #5e6c84;
+}
+
+.nav-option-dividor {
+  background-color: #091e4221;
+  border: 0;
+  height: 1px;
+  margin: 16px 0;
+  padding: 0;
+  width: 100%;
+}
+
+.about {
+  display: flex;
+  flex-direction: column;
+}
+
+.space-btwn {
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.activity-text {
+  margin-top: 1rem;
+}
+
+.activity-text span {
+  font-size: 14px;
+}
+
+.activity-text p {
+  color: #5e6c84;
+  font-size: 12px;
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.activity {
+  margin-bottom: 4rem;
+}
+
+.icon {
+  padding: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.line {
+  display: inline-flex;
+}
+
+.about-sec {
+  margin-bottom: 1rem;
 }

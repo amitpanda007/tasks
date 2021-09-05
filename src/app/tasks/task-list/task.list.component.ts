@@ -11,7 +11,12 @@ import {
   TaskDialogComponent,
   TaskDialogResult,
 } from "src/app/common/task-dialog/task-dialog.component";
-import { MatDialog, MatMenuTrigger, MatSidenav, MatSnackBar } from "@angular/material";
+import {
+  MatDialog,
+  MatMenuTrigger,
+  MatSidenav,
+  MatSnackBar,
+} from "@angular/material";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, pipe, Subscription } from "rxjs";
 import { TaskList } from "./tasklist";
@@ -35,7 +40,10 @@ import {
   MemberInfoDialogComponent,
   MemberInfoDialogResult,
 } from "src/app/common/member-info/member-info-dialog.component";
-import { ErrorSnackbar, SuccessSnackbar } from "src/app/common/snackbar.component";
+import {
+  ErrorSnackbar,
+  SuccessSnackbar,
+} from "src/app/common/snackbar.component";
 
 @Component({
   selector: "task-list",
@@ -59,6 +67,7 @@ export class TaskListComponent implements OnInit {
   public board: Board;
   public boardMembers: SharedUser[];
   public boardAdmin: User;
+  public allAdmins: any[] = [];
   public menuMember: any;
   public taskList: TaskList[];
   public tasks: Task[];
@@ -71,6 +80,8 @@ export class TaskListComponent implements OnInit {
   public panelOpenState: boolean = false;
   public isCurrentUser: boolean = false;
   public isFavourite: boolean = false;
+  public activities: Activity[] = [];
+  public isShowingAboutBoard: boolean = false;
 
   // @ViewChild("cardMenuTrigger", { static: false }) cardMenuTrigger: MatMenuTrigger;
   @ViewChild("menuUser", { static: false }) public menuUserRef: ElementRef;
@@ -111,22 +122,22 @@ export class TaskListComponent implements OnInit {
 
   async ngOnInit() {
     // Setup event listeners to detect online/offline state of connecton.
-    window.addEventListener('offline', (e) => {
+    window.addEventListener("offline", (e) => {
       this.snackBar.openFromComponent(ErrorSnackbar, {
         data: {
           text: "Connection interrupted. retrying...",
-          icon: "wifi_off"
+          icon: "wifi_off",
         },
         duration: 15000,
       });
     });
 
-    window.addEventListener('online', (e) => {
+    window.addEventListener("online", (e) => {
       this.snackBar.openFromComponent(SuccessSnackbar, {
         data: {
           text: "Connection is back online",
           icon: "wifi",
-          close: true
+          close: true,
         },
         duration: 15000,
       });
@@ -228,6 +239,7 @@ export class TaskListComponent implements OnInit {
           (tasks: Task[]) => {
             console.log(tasks);
             this.tasks = tasks;
+
             //FIXME: Hacky way to fix the Drag & Drop problem. Once task is moved from one list to another.
             // A dummy copy of data stays on previous task list .
             this.taskList = [];
@@ -240,6 +252,12 @@ export class TaskListComponent implements OnInit {
             });
             console.log(this.taskList);
             this.tasksDataUpdated.next(true);
+
+            tasks.forEach((task) => {
+              if (task.activities && task.activities.length > 0) {
+                this.activities = this.activities.concat(task.activities);
+              }
+            });
           }
         );
       }
@@ -878,7 +896,24 @@ export class TaskListComponent implements OnInit {
   }
 
   toggleMenuSidenav() {
+    this.allAdmins = [];
+    this.allAdmins.push(this.boardAdmin);
+
+    this.boardMembers.forEach((boardMember) => {
+      if (boardMember.permission.admin) {
+        this.allAdmins.push(boardMember);
+      }
+    });
+
     this.isShowingSidenav = !this.isShowingSidenav;
+  }
+
+  backToMenu() {
+    this.isShowingAboutBoard = !this.isShowingAboutBoard;
+  }
+
+  saveDescription() {
+    this.boardServiceV2.updateBoard(this.boardId, this.board);
   }
 
   openMemberMenu(member: User) {
