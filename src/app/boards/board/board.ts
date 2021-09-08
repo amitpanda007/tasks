@@ -6,6 +6,8 @@ export interface Board {
   shared?: Array<string>;
   sharedUserInfo?: SharedUser[];
   favourite?: Array<string>;
+  backgroundUrl?: string;
+  backgroundColors?: BGColor;
 }
 
 export interface SharedUser {
@@ -18,4 +20,8 @@ export interface SharedUser {
 export interface Permission {
   admin: boolean;
   normal: boolean;
+}
+export interface BGColor {
+  primary?: any;
+  secondary?: any;
 }

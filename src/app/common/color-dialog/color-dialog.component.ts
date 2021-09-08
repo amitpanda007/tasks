@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ColorEvent } from "ngx-color";
 
@@ -11,7 +11,9 @@ export class ColorDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ColorDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ColorDialogData
-  ) {}
+  ) {
+    console.log(data);
+  }
 
   cancel(): void {
     this.dialogRef.close();

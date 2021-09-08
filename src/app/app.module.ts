@@ -25,6 +25,7 @@ import { BoardsModule } from "./boards/boards.module";
 import { LabelDialogComponent } from "./common/label-dialog/label-dialog.component";
 import { ColorCircleModule } from "ngx-color/circle";
 import { ColorSwatchesModule } from "ngx-color/swatches";
+import { ColorChromeModule } from 'ngx-color/chrome';
 import { CalenderDialogComponent } from "./common/calender-dialog/calender-dialog.component";
 import { ColorDialogComponent } from "./common/color-dialog/color-dialog.component";
 import { MemberDialogComponent } from "./common/member-dialog/member-dialog.component";

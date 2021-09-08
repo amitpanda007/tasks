@@ -476,11 +476,13 @@ export class TaskDialogComponent implements OnInit {
   }
 
   openColorDialog() {
+    const curBgColor = this.data.task.backgroundColor ? this.data.task.backgroundColor : "";
+
     const dialogRef = this.dialog.open(ColorDialogComponent, {
       width: "500px",
       height: "600px",
       data: {
-        color: "",
+        color: curBgColor
       },
     });
     dialogRef.afterClosed().subscribe((result: ColorDialogResult) => {

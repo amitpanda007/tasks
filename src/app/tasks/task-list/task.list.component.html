@@ -112,7 +112,7 @@
   >
     <div class="container-wrapper">
       <div class="container" *ngFor="let list of taskList" cdkDrag>
-        <mat-card class="card">
+        <mat-card class="card" [style.background-color]="list.backgroundColor">
           <mat-card-header>
             <mat-card-title class="list-header">
               <div class="flex-display">
@@ -215,6 +215,15 @@
             </button>
             <button
               mat-icon-button
+              (click)="setBackgroundColor(list)"
+              color="accent"
+              aria-label="task list background color"
+              matTooltip="add background color"
+            >
+              <mat-icon class="material-icons-outlined">palette</mat-icon>
+            </button>
+            <button
+              mat-icon-button
               (click)="deleteTaskList(list.id)"
               color="warn"
               aria-label="drag task list"
@@ -290,19 +299,57 @@
     <mat-icon
       class="icon pointer"
       (click)="backToMenu()"
-      *ngIf="isShowingAboutBoard"
+      *ngIf="
+        isShowingAboutBoard ||
+        isShowingChangeBackgroundBoard ||
+        isShowingColors ||
+        isShowingPhotos ||
+        isSearchingCard
+      "
       >keyboard_arrow_left</mat-icon
     >
-    <p class="menu-header" *ngIf="!isShowingAboutBoard">Menu</p>
+    <p
+      class="menu-header"
+      *ngIf="
+        !isShowingAboutBoard &&
+        !isShowingChangeBackgroundBoard &&
+        !isShowingColors &&
+        !isShowingPhotos &&
+        !isSearchingCard
+      "
+    >
+      Menu
+    </p>
     <p class="menu-header" *ngIf="isShowingAboutBoard">About this board</p>
+    <p
+      class="menu-header"
+      *ngIf="
+        isShowingChangeBackgroundBoard &&
+        !isShowingColors &&
+        !isShowingPhotos &&
+        !isSearchingCard
+      "
+    >
+      Change background
+    </p>
+    <p class="menu-header" *ngIf="isShowingColors">Colors</p>
+    <p class="menu-header" *ngIf="isShowingPhotos">Photos</p>
+    <p class="menu-header" *ngIf="isSearchingCard">Search cards</p>
     <mat-icon class="icon pointer" (click)="toggleMenuSidenav()"
       >close</mat-icon
     >
   </div>
   <div class="nav-option-dividor"></div>
 
-  <div class="menu-options" *ngIf="!isShowingAboutBoard">
-    <div class="menu-option pointer" (click)="backToMenu()">
+  <div
+    class="menu-options"
+    *ngIf="
+      !isShowingAboutBoard &&
+      !isShowingChangeBackgroundBoard &&
+      !isSearchingCard
+    "
+  >
+    <div class="menu-option pointer" (click)="showAboutBoard()">
       <div class="flex-display">
         <mat-icon>read_more</mat-icon>
         <div class="about">
@@ -313,11 +360,11 @@
         </div>
       </div>
     </div>
-    <div class="menu-option flex-display pointer">
+    <div class="menu-option flex-display pointer" (click)="showChangeBgColor()">
       <mat-icon>wallpaper</mat-icon>
       <span>Change background</span>
     </div>
-    <div class="menu-option flex-display pointer">
+    <div class="menu-option flex-display pointer" (click)="showSearchCard()">
       <mat-icon>search</mat-icon>
       <span>Search cards</span>
     </div>
@@ -370,7 +417,7 @@
   </div>
 
   <div *ngIf="isShowingAboutBoard" class="menucard">
-    <div class="flex-display about-sec">
+    <div class="flex-display sub-sec">
       <mat-icon>person</mat-icon>
       <span>Board admins</span>
     </div>
@@ -380,8 +427,8 @@
         class="member"
         matTooltip="{{ admin.name }}"
         *ngFor="let admin of allAdmins"
-        >{{ admin.name | shortname }}</span
-      >
+        [innerHTML]="admin.name | shortname"
+      ></span>
     </div>
 
     <div class="about-sec">
@@ -403,5 +450,162 @@
     </div>
 
     <div class="nav-option-dividor"></div>
+  </div>
+
+  <div *ngIf="isShowingChangeBackgroundBoard" class="menucard">
+    <div class="flex-display sub-sec">
+      <mat-card class="box pointer" (click)="showPhotos()">
+        <mat-card-header>Photos</mat-card-header>
+      </mat-card>
+      <mat-card class="box pointer color-bg" (click)="showColors()">
+        <mat-card-header>Colors</mat-card-header>
+      </mat-card>
+    </div>
+    <div class="nav-option-dividor"></div>
+  </div>
+
+  <div *ngIf="isShowingColors" class="menucard">
+    <div>
+      <p class="info-text">Primary background color</p>
+      <div class="flex-display spacing">
+        <color-chrome
+          [color]="
+            board.backgroundColors.primary != ''
+              ? board.backgroundColors.primary
+              : ''
+          "
+          (onChangeComplete)="changeBGColorComplete($event, 'primary')"
+        ></color-chrome>
+        <div>
+          <div class="btn-pad">
+            <button
+              mat-mini-fab
+              color="primary"
+              matTooltip="remove"
+              aria-label="save primary color"
+              (click)="saveBGColor('primary')"
+              [disabled]="!boardBGColorPrimary != ''"
+            >
+              <mat-icon>save</mat-icon>
+            </button>
+          </div>
+          <div class="btn-pad">
+            <button
+              mat-mini-fab
+              color="warn"
+              matTooltip="remove"
+              aria-label="remove primary color"
+              (click)="removeBGColor('primary')"
+              [disabled]="board.backgroundColors.primary == ''"
+            >
+              <mat-icon>remove_circle_outline</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-option-dividor"></div>
+    <p class="info-text">
+      If you wish to create a gradient, choose a Secndary color
+    </p>
+    <div class="nav-option-dividor"></div>
+    <div>
+      <p class="info-text">Secondary background color</p>
+      <div class="flex-display spacing">
+        <color-chrome
+          [color]="
+            board.backgroundColors.secondary != ''
+              ? board.backgroundColors.secondary
+              : ''
+          "
+          (onChangeComplete)="changeBGColorComplete($event, 'secondary')"
+        ></color-chrome>
+        <div>
+          <div class="btn-pad">
+            <button
+              mat-mini-fab
+              color="primary"
+              matTooltip="save"
+              aria-label="save secondary color"
+              (click)="saveBGColor('secondary')"
+              [disabled]="!boardBGColorSecondary != ''"
+            >
+              <mat-icon>save</mat-icon>
+            </button>
+          </div>
+          <div class="btn-pad">
+            <button
+              mat-mini-fab
+              color="warn"
+              matTooltip="remove"
+              aria-label="remove secondary color"
+              (click)="removeBGColor('secondary')"
+              [disabled]="board.backgroundColors.secondary == ''"
+            >
+              <mat-icon>remove_circle_outline</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isShowingPhotos" class="menucard">
+    <p>Photos</p>
+  </div>
+
+  <div *ngIf="isSearchingCard" class="menucard">
+    <input
+      cdkFocusInitial
+      class="search-input"
+      name="searchCard"
+      type="email"
+      placeholder="Search for cards"
+      [(ngModel)]="searchCard"
+      autocomplete="off"
+      (ngModelChange)="searchCardChanged()"
+    />
+    <p class="info-text">Search by term, label, member, or due time.</p>
+    <div class="nav-option-dividor"></div>
+    <div>
+      <p
+        *ngFor="let label of searchLabels"
+        class="flex-display box-outer pointer"
+        (click)="searchCardFilter(label, 'label')"
+      >
+        <span [style.backgroundColor]="label.color" class="label-box"></span>
+        <span class="label-text" [innerHTML]="label.name"></span>
+        <mat-icon *ngIf="label.selected">done</mat-icon>
+      </p>
+    </div>
+    <div class="nav-option-dividor"></div>
+    <div>
+      <p>
+        <span
+          *ngFor="let member of searchMembers"
+          class="flex-display box-outer pointer"
+          (click)="searchCardFilter(member, 'member')"
+        >
+          <span
+            class="member"
+            [matTooltip]="member.name"
+            [innerHTML]="member.name | shortname"
+          ></span>
+          <span [innerHTML]="member.name"></span>
+          <mat-icon *ngIf="member.selected">done</mat-icon>
+        </span>
+      </p>
+    </div>
+    <div class="nav-option-dividor"></div>
+    <div>
+      <p
+        class="flex-display box-outer pointer"
+        *ngFor="let dueOpts of dueOptions"
+        (click)="searchCardFilter(dueOpts, 'due')"
+      >
+        <span [innerHTML]="dueOpts.text"></span
+        ><mat-icon *ngIf="dueOpts.selected">done</mat-icon>
+      </p>
+    </div>
   </div>
 </div>

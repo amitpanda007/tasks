@@ -193,12 +193,12 @@ export class DailyTaskComponent implements OnInit {
     }
   }
 
-  calculateTimeDiff(dateTimeOne, dateTimeTwo) {
+  calculateTimeDiff(dateTimeOne: any, dateTimeTwo: any) {
     let diffTime = Math.abs(dateTimeOne - dateTimeTwo);
     return diffTime;
   }
 
-  calculateDays(dateOne, dateTwo) {
+  calculateDays(dateOne: any, dateTwo: any) {
     let diffTime = Math.abs(dateTwo - dateOne);
     let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     if (dateOne > dateTwo) {

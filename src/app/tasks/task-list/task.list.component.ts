@@ -44,6 +44,11 @@ import {
   ErrorSnackbar,
   SuccessSnackbar,
 } from "src/app/common/snackbar.component";
+import {
+  ColorDialogComponent,
+  ColorDialogResult,
+} from "src/app/common/color-dialog/color-dialog.component";
+import { Constants } from "./taskListConstants";
 
 @Component({
   selector: "task-list",
@@ -70,6 +75,7 @@ export class TaskListComponent implements OnInit {
   public allAdmins: any[] = [];
   public menuMember: any;
   public taskList: TaskList[];
+  private taskListBackup: TaskList[];
   public tasks: Task[];
   public labels: Label[];
   public editingBoardName: boolean;
@@ -82,6 +88,22 @@ export class TaskListComponent implements OnInit {
   public isFavourite: boolean = false;
   public activities: Activity[] = [];
   public isShowingAboutBoard: boolean = false;
+  public isShowingChangeBackgroundBoard: boolean = false;
+  public isShowingColors: boolean = false;
+  private boardBGColorPrimary: string;
+  private boardBGColorSecondary: string;
+  public isShowingPhotos: boolean = false;
+  public isSearchingCard: boolean = false;
+
+  public searchLabels: Label[] = [];
+  public searchMembers: SharedUser[] = [];
+  public dueOptions = Constants.DUE_OPTIONS;
+
+  private selectedFilters = {
+    labels: [],
+    members: [],
+    dues: [],
+  };
 
   // @ViewChild("cardMenuTrigger", { static: false }) cardMenuTrigger: MatMenuTrigger;
   @ViewChild("menuUser", { static: false }) public menuUserRef: ElementRef;
@@ -201,6 +223,53 @@ export class TaskListComponent implements OnInit {
 
     this.boardSubscription = this.boardServiceV2.boardChanged.subscribe(
       (board: Board) => {
+        console.log(board);
+        // Set document background image & design
+        if (this.board.backgroundUrl) {
+          document.body.style.backgroundImage = `url(${this.board.backgroundUrl})`;
+          document.body.style.backgroundPosition = "center center";
+          document.body.style.backgroundRepeat = "no-repeat";
+          document.body.style.backgroundAttachment = "fixed";
+          document.body.style.backgroundSize = "cover";
+        } else if (this.board.backgroundColors) {
+          // document.body.style.backgroundImage = `linear-gradient(#eb01a5, #d13531)`;
+          let primaryColor = "";
+          let secondaryColor = "";
+          if (this.board.backgroundColors.primary) {
+            const p = this.board.backgroundColors.primary;
+            primaryColor = `rgb(${p.r},${p.g},${p.b},${p.a})`;
+          }
+          if (this.board.backgroundColors.secondary) {
+            const s = this.board.backgroundColors.secondary;
+            secondaryColor = `rgb(${s.r},${s.g},${s.b},${s.a})`;
+          }
+
+          if (
+            this.board.backgroundColors.primary === "" &&
+            this.board.backgroundColors.secondary === ""
+          ) {
+            document.body.style.backgroundColor = "";
+          } else if (
+            this.board.backgroundColors.primary !== "" &&
+            this.board.backgroundColors.secondary === ""
+          ) {
+            document.body.style.backgroundColor = primaryColor;
+            document.body.style.backgroundImage = "";
+          } else if (
+            this.board.backgroundColors.primary === "" &&
+            this.board.backgroundColors.secondary !== ""
+          ) {
+            document.body.style.backgroundColor = secondaryColor;
+            document.body.style.backgroundImage = "";
+          } else {
+            document.body.style.backgroundImage = `linear-gradient(${primaryColor}, ${secondaryColor})`;
+          }
+          document.body.style.backgroundPosition = "center center";
+          document.body.style.backgroundRepeat = "no-repeat";
+          document.body.style.backgroundAttachment = "fixed";
+          document.body.style.backgroundSize = "cover";
+        }
+
         if (board.favourite) {
           this.isFavourite = board.favourite.includes(
             this.authService.getUID()
@@ -251,6 +320,7 @@ export class TaskListComponent implements OnInit {
               }
             });
             console.log(this.taskList);
+            this.taskListBackup = cloneDeep(this.taskList);
             this.tasksDataUpdated.next(true);
 
             tasks.forEach((task) => {
@@ -906,10 +976,366 @@ export class TaskListComponent implements OnInit {
     });
 
     this.isShowingSidenav = !this.isShowingSidenav;
+
+    this.isShowingAboutBoard = false;
+    this.isShowingChangeBackgroundBoard = false;
+    this.isShowingColors = false;
+    this.boardBGColorPrimary = "";
+    this.boardBGColorSecondary = "";
+    this.isShowingPhotos = false;
+    this.isSearchingCard = false;
+  }
+
+  showAboutBoard() {
+    this.isShowingAboutBoard = true;
+  }
+
+  showChangeBgColor() {
+    this.isShowingChangeBackgroundBoard = true;
+  }
+
+  showColors() {
+    this.boardBGColorPrimary = "";
+    this.boardBGColorSecondary = "";
+    this.isShowingColors = true;
+  }
+
+  showPhotos() {
+    this.isShowingPhotos = true;
   }
 
   backToMenu() {
-    this.isShowingAboutBoard = !this.isShowingAboutBoard;
+    this.isShowingAboutBoard = false;
+    this.isShowingChangeBackgroundBoard = false;
+    this.isShowingColors = false;
+    this.boardBGColorPrimary = "";
+    this.boardBGColorSecondary = "";
+    this.isShowingPhotos = false;
+    this.isSearchingCard = false;
+  }
+
+  changeBGColorComplete($event: any, type: string) {
+    if (type === "primary") {
+      this.boardBGColorPrimary = $event.color.rgb;
+    } else if (type === "secondary") {
+      this.boardBGColorSecondary = $event.color.rgb;
+    }
+  }
+
+  saveBGColor(type: string) {
+    if (!this.board.backgroundColors) {
+      this.board.backgroundColors = {};
+    }
+
+    if (type === "primary") {
+      this.board.backgroundColors.primary = this.boardBGColorPrimary;
+    } else if (type === "secondary") {
+      this.board.backgroundColors.secondary = this.boardBGColorSecondary;
+    }
+
+    console.log(this.board);
+    this.boardServiceV2.updateBoard(this.boardId, this.board);
+  }
+
+  removeBGColor(type: string) {
+    if (type === "primary") {
+      this.board.backgroundColors.primary = "";
+    } else if (type === "secondary") {
+      this.board.backgroundColors.secondary = "";
+    }
+
+    console.log(this.board);
+    this.boardServiceV2.updateBoard(this.boardId, this.board);
+  }
+
+  showSearchCard() {
+    this.searchLabels = [];
+    this.searchMembers = [];
+    // set up labels for search
+    const noLabel: Label = {
+      id: "1",
+      color: "#b3bac5",
+      name: "No labels",
+      isSelected: false,
+    };
+    this.searchLabels.push(noLabel);
+    const labels = cloneDeep(this.labels);
+    this.searchLabels.push(...labels);
+
+    // set up members for search
+    const noMember: SharedUser = {
+      id: "1",
+      name: "No Member",
+    };
+    this.searchMembers.push(noMember);
+    this.searchMembers.push(cloneDeep(this.boardAdmin));
+    const boardMembers = cloneDeep(this.boardMembers);
+    this.searchMembers.push(...boardMembers);
+
+    // Check if already selected user & label is there
+    if (this.selectedFilters.labels.length > 0) {
+      this.searchLabels.forEach((label: any) => {
+        if (this.selectedFilters.labels.includes(label.id)) {
+          label.selected = true;
+        }
+      });
+    }
+
+    if (this.selectedFilters.members.length > 0) {
+      this.searchMembers.forEach((member: any) => {
+        if (this.selectedFilters.members.includes(member.id)) {
+          member.selected = true;
+        }
+      });
+    }
+
+    if (this.selectedFilters.members.length > 0) {
+    }
+
+    this.isSearchingCard = true;
+  }
+
+  searchCardFilter(data: any, type: string) {
+    console.log(type);
+    console.log(data);
+
+    if (type === "label") {
+      if (data.selected) {
+        //TODO: Check if user selected No Label
+        this.selectedFilters.labels.splice(
+          this.selectedFilters.labels.indexOf(data.id),
+          1
+        );
+
+        if (
+          this.selectedFilters.labels.length == 0 &&
+          this.selectedFilters.members.length == 0
+        ) {
+          this.taskList = cloneDeep(this.taskListBackup);
+        } else {
+          this.taskList = cloneDeep(this.taskListBackup);
+          this.taskList.forEach((list) => {
+            const tasks = [];
+            list.tasks.forEach((task) => {
+              let taskAdded = false;
+              this.labels.forEach((label) => {
+                if (this.selectedFilters.labels.includes(label.id)) {
+                  if (label.taskIds.includes(task.id)) {
+                    tasks.push(task);
+                    taskAdded = true;
+                  }
+                }
+              });
+
+              if (!taskAdded && task.members) {
+                let taskAlreadyAdded = false;
+                task.members.forEach((member) => {
+                  if (this.selectedFilters.members.includes(member.id)) {
+                    if(!taskAlreadyAdded) {
+                      tasks.push(task);
+                      taskAlreadyAdded = true;
+                    }
+                  }
+                });
+              }
+            });
+            list.tasks = tasks;
+          });
+        }
+
+        data.selected = false;
+      } else {
+        //TODO: Check if user selected No Label
+        this.selectedFilters.labels.push(data.id);
+
+        this.taskList.forEach((list) => {
+          const tasks = [];
+          list.tasks.forEach((task) => {
+            if (data.taskIds.includes(task.id)) {
+              tasks.push(task);
+            }
+          });
+          list.tasks = tasks;
+        });
+
+        data.selected = true;
+      }
+    } else if (type === "member") {
+      if (data.selected) {
+        //TODO: Check if user selected No Member
+        this.selectedFilters.members.splice(
+          this.selectedFilters.members.indexOf(data.id),
+          1
+        );
+
+        console.log(this.selectedFilters.members);
+        if (
+          this.selectedFilters.members.length == 0 &&
+          this.selectedFilters.labels.length == 0
+        ) {
+          this.taskList = cloneDeep(this.taskListBackup);
+        } else {
+          this.taskList = cloneDeep(this.taskListBackup);
+          this.taskList.forEach((list) => {
+            const tasks = [];
+            list.tasks.forEach((task) => {
+              let taskAdded: boolean = false;
+              if (task.members) {
+                task.members.forEach((member) => {
+                  let taskAlreadyAdded = false;
+                  if (this.selectedFilters.members.includes(member.id)) {
+                    if(!taskAlreadyAdded) {
+                      tasks.push(task);
+                      taskAlreadyAdded = true;
+                    }
+                    taskAdded = true;
+                  }
+                });
+              }
+              if (!taskAdded) {
+                this.labels.forEach((label) => {
+                  if (this.selectedFilters.labels.includes(label.id)) {
+                    if (label.taskIds.includes(task.id)) {
+                      tasks.push(task);
+                    }
+                  }
+                });
+              }
+            });
+            list.tasks = tasks;
+          });
+        }
+        data.selected = false;
+      } else {
+        //TODO: Check if user selected No Member
+        this.selectedFilters.members.push(data.id);
+
+        this.taskList.forEach((list) => {
+          const tasks = [];
+          list.tasks.forEach((task) => {
+            if (task.members) {
+              task.members.forEach((member) => {
+                if (member.id == data.id) {
+                  tasks.push(task);
+                }
+              });
+            }
+          });
+          list.tasks = tasks;
+        });
+        data.selected = true;
+      }
+    } else if (type === "due") {
+      this.dueOptions.forEach((opts) => {
+        if (opts.text != data.text) {
+          opts.selected = false;
+        }
+      });
+
+      this.taskList = cloneDeep(this.taskListBackup);
+      if (data.selected) {
+        data.selected = false;
+      } else {
+        this.taskList.forEach((list) => {
+          const tasks = [];
+          list.tasks.forEach((task) => {
+            if (data.text == "Has no due date") {
+              if (!task.dueDate || !task.dueDate.date) {
+                tasks.push(task);
+              }
+            } else if (data.text == "Due in the next day") {
+              if (task.dueDate && task.dueDate.date) {
+                const diffDays = this.calculateDays(
+                  new Date(),
+                  task.dueDate.date.toDate()
+                );
+                console.log(diffDays);
+                if (diffDays >= 0 && diffDays < 2) {
+                  tasks.push(task);
+                }
+              }
+            } else if (data.text == "Due in the next week") {
+              if (task.dueDate && task.dueDate.date) {
+                const today = new Date();
+                const diffDays = this.calculateDays(
+                  today,
+                  task.dueDate.date.toDate()
+                );
+                const d = new Date();
+                const nextWeekMonday = new Date(
+                  d.setDate(d.getDate() + ((1 + 7 - d.getDay()) % 7 || 7))
+                );
+                const diffDaysForMonday = this.calculateDays(
+                  today,
+                  nextWeekMonday
+                );
+                if (
+                  diffDays >= diffDaysForMonday - 1 &&
+                  diffDays < diffDaysForMonday - 1 + 7
+                ) {
+                  tasks.push(task);
+                }
+              }
+            } else if (data.text == "Due in the next month") {
+              if (task.dueDate && task.dueDate.date) {
+                const today = new Date();
+                const diffDays = this.calculateDays(
+                  today,
+                  task.dueDate.date.toDate()
+                );
+                const d = new Date();
+                const nextMonthStart = new Date(
+                  d.setDate(d.getDate() + ((1 + 30 - d.getMonth()) % 30 || 30))
+                );
+                const diffDaysForMonthStart = this.calculateDays(
+                  today,
+                  nextMonthStart
+                );
+                if (
+                  diffDays >= diffDaysForMonthStart - 1 &&
+                  diffDays < diffDaysForMonthStart - 1 + 30
+                ) {
+                  tasks.push(task);
+                }
+              }
+            } else if (data.text == "Overdue") {
+              if (task.dueDate && task.dueDate.date) {
+                const diffDays = this.calculateDays(
+                  new Date(),
+                  task.dueDate.date.toDate()
+                );
+                if (diffDays <= 0) {
+                  tasks.push(task);
+                }
+              }
+            } else if (data.text == "Due date marked complete") {
+              if (task.dueDate && task.dueDate.date) {
+                if (task.dueDate && task.dueDate.completed) {
+                  tasks.push(task);
+                }
+              }
+            } else if (data.text == "Not marked as complete") {
+              if (task.dueDate && task.dueDate.date) {
+                if (task.dueDate && !task.dueDate.completed) {
+                  tasks.push(task);
+                }
+              }
+            }
+          });
+          list.tasks = tasks;
+        });
+        data.selected = true;
+      }
+    }
+  }
+
+  calculateDays(dateOne: any, dateTwo: any) {
+    let diffTime = Math.abs(dateTwo - dateOne);
+    let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    if (dateOne > dateTwo) {
+      diffDays = diffDays * -1;
+    }
+    return diffDays;
   }
 
   saveDescription() {
@@ -1048,6 +1474,27 @@ export class TaskListComponent implements OnInit {
         });
         this.boardServiceV2.updateBoard(this.boardId, this.board);
       }
+    });
+  }
+
+  setBackgroundColor(list: TaskList) {
+    const curBgColor = list.backgroundColor ? list.backgroundColor : "";
+
+    const dialogRef = this.dialog.open(ColorDialogComponent, {
+      width: "500px",
+      height: "600px",
+      data: {
+        color: curBgColor,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: ColorDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+
+      list.backgroundColor = result.color;
+      this.boardServiceV2.updateTaskList(this.boardId, list.id, list);
     });
   }
 }

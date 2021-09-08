@@ -299,11 +299,11 @@ mat-toolbar > span {
 }
 
 .menu-header {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 500;
   margin-left: 1em;
   flex: 1;
-  line-height: 20px;
+  line-height: 32px;
   margin: 14px 32px;
   overflow: hidden;
   text-align: center;
@@ -419,6 +419,77 @@ mat-toolbar > span {
   display: inline-flex;
 }
 
-.about-sec {
+.sub-sec {
   margin-bottom: 1rem;
+}
+
+.box {
+  height: 60px;
+  width: 120px;
+  margin: 4px;
+}
+
+.info-text {
+  clear: both;
+  color: #5e6c84;
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.btn-pad {
+  padding: 4px;
+}
+
+.color-bg {
+  background: linear-gradient(180deg, #f7d6ff 0%, #005686 100%),
+    linear-gradient(180deg, #ffffff 0%, #060046 100%),
+    linear-gradient(130deg, #00ffa3 0%, #1a003c 100%),
+    linear-gradient(307deg, #ff0000 0%, #3300c6 100%),
+    radial-gradient(50% 72% at 50% 50%, #004584 0%, #00ffb2 100%),
+    radial-gradient(100% 140% at 100% 0%, #5ed500 0%, #2200aa 100%);
+  background-blend-mode: soft-light, overlay, difference, difference, color-burn,
+    normal;
+  color: white;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.search-input {
+  -moz-box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+  -webkit-appearance: none !important;
+  -webkit-box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  border: 0;
+  border-radius: 5px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+  color: #6c757d;
+  font-size: 0.9rem;
+  height: 1.2rem;
+  outline: none;
+  padding: 0.6rem 0.6rem 0.6rem 1.5rem;
+  width: 90%;
+  margin: 1em 0;
+}
+
+.box-outer {
+  padding: 8px;
+}
+
+.box-outer:hover {
+  background-color: #091e4214;
+}
+
+.label-box {
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  width: 30px;
+}
+
+.label-text {
+  margin-left: 1rem;
 }

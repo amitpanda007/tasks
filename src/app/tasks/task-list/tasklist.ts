@@ -8,4 +8,5 @@ export interface TaskList {
   tasks?: Task[];
   index: number;
   isEditing?: boolean;
+  backgroundColor?: string;
 }
