@@ -349,6 +349,10 @@ mat-toolbar > span {
   flex-direction: column;
 }
 
+.flex-column {
+  flex-direction: column;
+}
+
 .menucard-options p {
   height: 30px;
   display: flex;
@@ -492,4 +496,13 @@ mat-toolbar > span {
 
 .label-text {
   margin-left: 1rem;
+}
+
+.my-chip {
+  color: white;
+  min-height: 30px;
+  width: 90%;
+  border: 2px solid white;
+  margin: 1px !important;
+  font-size: 14px;
 }

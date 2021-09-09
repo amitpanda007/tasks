@@ -52,6 +52,7 @@ import {
 import { TaskChecklist } from "src/app/tasks/task/taskchecklist";
 import { Subscription } from "rxjs";
 import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
+import { Activity } from "src/app/tasks/task/activity";
 
 @Component({
   selector: "app-task-dialog",
@@ -556,6 +557,15 @@ export class TaskDialogComponent implements OnInit {
         return;
       }
     });
+  }
+
+  archiveTask() {
+    const task: Task = this.data.task as Task;
+    if(task.archived) {
+      task.archived = false;
+    }else {
+      task.archived = true;
+    }
   }
 
   async shareBoard() {

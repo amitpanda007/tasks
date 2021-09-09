@@ -2,7 +2,7 @@
   <div *ngIf="data.enableCalender">
     <p>Select Due Date</p>
     <mat-calendar
-      [selected]="data.date"
+      [selected]="currentDate"
       (selectedChange)="dueDateChanged($event)"
     >
     </mat-calendar>

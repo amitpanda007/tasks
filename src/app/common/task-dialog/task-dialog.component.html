@@ -291,14 +291,25 @@
         </span>
       </button>
 
-      <button mat-stroked-button [disabled]="true">
+      <button mat-stroked-button (click)="archiveTask()" *ngIf="!data.task.archived">
         <span
           class="option-content"
-          matTooltip="Feature not available"
+          matTooltip="archive this task"
           [matTooltipDisabled]="false"
           [matTooltipPosition]="tooltipPosition"
         >
           <mat-icon class="material-icons-outlined">archive</mat-icon> Archive
+        </span>
+      </button>
+
+      <button mat-stroked-button (click)="archiveTask()" *ngIf="data.task.archived">
+        <span
+          class="option-content"
+          matTooltip="move task back to board"
+          [matTooltipDisabled]="false"
+          [matTooltipPosition]="tooltipPosition"
+        >
+          <mat-icon class="material-icons-outlined">refresh</mat-icon> Send to board 
         </span>
       </button>
 

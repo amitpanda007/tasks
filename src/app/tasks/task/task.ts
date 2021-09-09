@@ -17,6 +17,7 @@ export interface Task {
   message?: string;
   lockStatus?: TaskLock;
   activities?: Activity[];
+  archived?: boolean;
   created: Date;
   modified: Date;
 }

@@ -89,6 +89,19 @@
     <div id="right" class="flex-display">
       <div
         class="flex-display option-bg pointer"
+        *ngIf="removeSearch"
+        [style.backgroundColor]="'#00e676'"
+      >
+        <span class="txt-small">{{ searchTaskCount }} search results</span>
+        <mat-icon
+          class="flex-display icon-small"
+          (click)="removeSearchResults()"
+          >close</mat-icon
+        >
+      </div>
+      <span class="option-dividor" *ngIf="removeSearch"></span>
+      <div
+        class="flex-display option-bg pointer"
         (click)="openAutomation()"
         matTooltip="Feature coming soon"
       >
@@ -98,7 +111,7 @@
       <span class="option-dividor"></span>
       <div class="flex-display option-bg pointer" (click)="toggleMenuSidenav()">
         <mat-icon class="flex-display icon-small">more_horiz</mat-icon>
-        <span class="txt-small"> Menu</span>
+        <span class="txt-small">Menu</span>
       </div>
     </div>
   </div>
@@ -216,7 +229,7 @@
             <button
               mat-icon-button
               (click)="setBackgroundColor(list)"
-              color="accent"
+              [style.color]="'grey'"
               aria-label="task list background color"
               matTooltip="add background color"
             >
@@ -304,7 +317,11 @@
         isShowingChangeBackgroundBoard ||
         isShowingColors ||
         isShowingPhotos ||
-        isSearchingCard
+        isSearchingCard ||
+        isShowingMore ||
+        isShowingMoreSetting ||
+        isShowingAllLabels ||
+        isShowingArchivedTasks
       "
       >keyboard_arrow_left</mat-icon
     >
@@ -315,7 +332,11 @@
         !isShowingChangeBackgroundBoard &&
         !isShowingColors &&
         !isShowingPhotos &&
-        !isSearchingCard
+        !isSearchingCard &&
+        !isShowingMore &&
+        !isShowingMoreSetting &&
+        !isShowingAllLabels &&
+        !isShowingArchivedTasks
       "
     >
       Menu
@@ -327,7 +348,11 @@
         isShowingChangeBackgroundBoard &&
         !isShowingColors &&
         !isShowingPhotos &&
-        !isSearchingCard
+        !isSearchingCard &&
+        !isShowingMore &&
+        !isShowingMoreSetting &&
+        !isShowingAllLabels && 
+        !isShowingArchivedTasks
       "
     >
       Change background
@@ -335,18 +360,27 @@
     <p class="menu-header" *ngIf="isShowingColors">Colors</p>
     <p class="menu-header" *ngIf="isShowingPhotos">Photos</p>
     <p class="menu-header" *ngIf="isSearchingCard">Search cards</p>
+    <p class="menu-header" *ngIf="isShowingMore">More</p>
+    <p class="menu-header" *ngIf="isShowingMoreSetting">Settings</p>
+    <p class="menu-header" *ngIf="isShowingAllLabels">Labels</p>
+    <p class="menu-header" *ngIf="isShowingArchivedTasks">Archive</p>
     <mat-icon class="icon pointer" (click)="toggleMenuSidenav()"
       >close</mat-icon
     >
   </div>
   <div class="nav-option-dividor"></div>
 
+  <!-- About Board Section -->
   <div
     class="menu-options"
     *ngIf="
       !isShowingAboutBoard &&
       !isShowingChangeBackgroundBoard &&
-      !isSearchingCard
+      !isSearchingCard &&
+      !isShowingMore &&
+      !isShowingMoreSetting &&
+      !isShowingAllLabels &&
+      !isShowingArchivedTasks
     "
   >
     <div class="menu-option pointer" (click)="showAboutBoard()">
@@ -368,7 +402,7 @@
       <mat-icon>search</mat-icon>
       <span>Search cards</span>
     </div>
-    <div class="menu-option flex-display pointer">
+    <div class="menu-option flex-display pointer" (click)="showMore()">
       <mat-icon>more_horiz</mat-icon>
       <span>more</span>
     </div>
@@ -416,6 +450,91 @@
     </section>
   </div>
 
+  <!-- More Section -->
+  <div class="menu-options" *ngIf="isShowingMore">
+    <div>
+      <div class="menu-option flex-display pointer" (click)="moreMenuSetting()">
+        <mat-icon class="material-icons-outlined">settings</mat-icon>
+        <span>Settings</span>
+      </div>
+      <div class="menu-option flex-display pointer" (click)="allBoardLabels()">
+        <mat-icon class="material-icons-outlined">label</mat-icon>
+        <span>Labels</span>
+      </div>
+      <div
+        class="menu-option flex-display pointer"
+        (click)="allArchivedTasks()"
+      >
+        <mat-icon class="material-icons-outlined">archive</mat-icon>
+        <span>Archived items</span>
+      </div>
+    </div>
+    <div class="nav-option-dividor"></div>
+    <div class="menu-option flex-display pointer" (click)="emailToBoard()">
+      <mat-icon class="material-icons-outlined">email</mat-icon>
+      <span>Email-to-board settings</span>
+    </div>
+    <div class="menu-option flex-display pointer" (click)="watchBoard()">
+      <mat-icon class="material-icons-outlined">visibility</mat-icon>
+      <span>Watch</span>
+    </div>
+    <div class="menu-option flex-display pointer" (click)="makeBoardTemplate()">
+      <mat-icon class="material-icons-outlined">content_paste</mat-icon>
+      <span>Make template</span>
+    </div>
+    <div class="menu-option flex-display pointer" (click)="copyBoardContent()">
+      <mat-icon class="material-icons-outlined">content_copy</mat-icon>
+      <span>Copy board</span>
+    </div>
+    <div class="menu-option flex-display pointer" (click)="printExport()">
+      <mat-icon class="material-icons-outlined">print</mat-icon>
+      <span>Print and export</span>
+    </div>
+    <div class="nav-option-dividor"></div>
+    <div class="menu-option flex-display pointer" (click)="closeBoard()">
+      <span>Close board</span>
+    </div>
+  </div>
+
+  <!-- More Section: Settings -->
+  <div *ngIf="isShowingMoreSetting">
+    <p>Card cover enabled</p>
+    <p class="info-text">
+      Show image attachments and colors on the front of cards.
+    </p>
+    <div class="nav-option-dividor"></div>
+    <p>Commenting Permissions</p>
+    <p class="info-text">Members</p>
+    <p>Add/Remove Permissions</p>
+    <p class="info-text">Admins</p>
+    <div class="nav-option-dividor"></div>
+    <p>Allow Workspace members to edit and join</p>
+    <p>
+      Any Workspace member can edit and join this board. To enable this, the
+      board can't be private.
+    </p>
+  </div>
+
+  <!-- More Section: Labels -->
+  <div *ngIf="isShowingAllLabels" class="flex-display flex-column">
+    <span *ngFor="let label of labels" [style.width]="'90%'">
+      <mat-chip
+        [style.background-color]="label.color"
+        class="single-label my-chip"
+      >
+        {{ label.name }}
+      </mat-chip>
+    </span>
+    <button mat-stroked-button (click)="createNewLabel()">Create a new label</button>
+    <button mat-stroked-button (click)="showMoreLabels()">Show more labels</button>
+  </div>
+
+  <!-- More Section: Labels -->
+  <div *ngIf="isShowingArchivedTasks">
+    <p>Archived Tasks</p>
+  </div>
+
+  <!-- About Board Section -->
   <div *ngIf="isShowingAboutBoard" class="menucard">
     <div class="flex-display sub-sec">
       <mat-icon>person</mat-icon>
@@ -452,6 +571,7 @@
     <div class="nav-option-dividor"></div>
   </div>
 
+  <!-- Change Background Section -->
   <div *ngIf="isShowingChangeBackgroundBoard" class="menucard">
     <div class="flex-display sub-sec">
       <mat-card class="box pointer" (click)="showPhotos()">
@@ -464,6 +584,7 @@
     <div class="nav-option-dividor"></div>
   </div>
 
+  <!-- Change Background Section : Colors -->
   <div *ngIf="isShowingColors" class="menucard">
     <div>
       <p class="info-text">Primary background color</p>
@@ -550,10 +671,12 @@
     </div>
   </div>
 
+  <!-- Change Background Section : Photos -->
   <div *ngIf="isShowingPhotos" class="menucard">
     <p>Photos</p>
   </div>
 
+  <!-- Search Cards Section -->
   <div *ngIf="isSearchingCard" class="menucard">
     <input
       cdkFocusInitial

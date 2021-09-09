@@ -49,6 +49,7 @@ import {
   ColorDialogResult,
 } from "src/app/common/color-dialog/color-dialog.component";
 import { Constants } from "./taskListConstants";
+import { firestore } from "firebase";
 
 @Component({
   selector: "task-list",
@@ -94,6 +95,10 @@ export class TaskListComponent implements OnInit {
   private boardBGColorSecondary: string;
   public isShowingPhotos: boolean = false;
   public isSearchingCard: boolean = false;
+  public isShowingMore: boolean = false;
+  public isShowingMoreSetting: boolean = false;
+  public isShowingAllLabels: boolean = false;
+  public isShowingArchivedTasks: boolean = false;
 
   public searchLabels: Label[] = [];
   public searchMembers: SharedUser[] = [];
@@ -104,6 +109,9 @@ export class TaskListComponent implements OnInit {
     members: [],
     dues: [],
   };
+
+  public removeSearch: boolean = false;
+  public searchTaskCount: number = 0;
 
   // @ViewChild("cardMenuTrigger", { static: false }) cardMenuTrigger: MatMenuTrigger;
   @ViewChild("menuUser", { static: false }) public menuUserRef: ElementRef;
@@ -720,9 +728,33 @@ export class TaskListComponent implements OnInit {
       if (!task.dueDate && result.task.dueDate) {
         const activity = this.createNewActivity(`added Due date.`);
         result.task.activities.push(activity);
-      } else if (task.dueDate != result.task.dueDate) {
-        const activity = this.createNewActivity(`modified Due date.`);
-        result.task.activities.push(activity);
+      } else {
+        if(result.task.dueDate.date && result.task.dueDate.date.hasOwnProperty("seconds")) {
+          if (
+            task.dueDate.date.toDate().getDate() !=
+              result.task.dueDate.date.toDate().getDate() ||
+            task.dueDate.date.toDate().getMonth() !=
+              result.task.dueDate.date.toDate().getMonth()
+          ) {
+            console.log("modified Due date.");
+            const activity = this.createNewActivity(`modified Due date.`);
+            result.task.activities.push(activity);
+          }
+        }else {
+          console.log(result.task.dueDate);
+          const changedDate = result.task.dueDate.date as any;
+          if (
+            task.dueDate.date.toDate().getDate() !=
+            changedDate.getDate() ||
+            task.dueDate.date.toDate().getMonth() !=
+            changedDate.getMonth()
+          ) {
+            console.log("modified Due date.");
+            const activity = this.createNewActivity(`modified Due date.`);
+            result.task.activities.push(activity);
+          }
+        }
+        
       }
 
       if (task.dueDate && !result.task.dueDate) {
@@ -739,6 +771,15 @@ export class TaskListComponent implements OnInit {
         result.task.activities.push(activity);
       } else if (task.backgroundColor !== result.task.backgroundColor) {
         const activity = this.createNewActivity("updated background color.");
+        result.task.activities.push(activity);
+      }
+
+      // 7. Archived Task
+      if (!task.archived && result.task.archived) {
+        const activity = this.createNewActivity("archived this card");
+        result.task.activities.push(activity);
+      } else if (task.archived && !result.task.archived) {
+        const activity = this.createNewActivity("send this task back to board");
         result.task.activities.push(activity);
       }
 
@@ -984,6 +1025,9 @@ export class TaskListComponent implements OnInit {
     this.boardBGColorSecondary = "";
     this.isShowingPhotos = false;
     this.isSearchingCard = false;
+    this.isShowingMore = false;
+    this.isShowingMoreSetting = false;
+    this.isShowingArchivedTasks = false;
   }
 
   showAboutBoard() {
@@ -1004,6 +1048,47 @@ export class TaskListComponent implements OnInit {
     this.isShowingPhotos = true;
   }
 
+  showMore() {
+    this.isShowingMore = true;
+  }
+
+  moreMenuSetting() {
+    this.isShowingMore = false;
+    this.isShowingAllLabels = false;
+    this.isShowingArchivedTasks = false;
+    this.isShowingMoreSetting = true;
+  }
+
+  allBoardLabels() {
+    this.isShowingMore = false;
+    this.isShowingMoreSetting = false;
+    this.isShowingAllLabels = true;
+    this.isShowingArchivedTasks = false;
+  }
+
+  createNewLabel() {}
+
+  showMoreLabels() {}
+
+  allArchivedTasks() {
+    this.isShowingMore = false;
+    this.isShowingMoreSetting = false;
+    this.isShowingAllLabels = false;
+    this.isShowingArchivedTasks = true;
+  }
+
+  emailToBoard() {}
+
+  watchBoard() {}
+
+  makeBoardTemplate() {}
+
+  copyBoardContent() {}
+
+  printExport() {}
+
+  closeBoard() {}
+
   backToMenu() {
     this.isShowingAboutBoard = false;
     this.isShowingChangeBackgroundBoard = false;
@@ -1012,6 +1097,42 @@ export class TaskListComponent implements OnInit {
     this.boardBGColorSecondary = "";
     this.isShowingPhotos = false;
     this.isSearchingCard = false;
+
+    // this.isShowingMore = false;
+    // this.isShowingMoreSetting = false;
+    // this.isShowingAllLabels = false;
+    // this.isShowingArchivedTasks = false;
+
+    if (this.isShowingMore) {
+      this.isShowingMore = false;
+    }
+
+    if (this.isShowingAllLabels) {
+      this.isShowingMore = true;
+      this.isShowingAllLabels = false;
+      this.isShowingMoreSetting = false;
+      this.isShowingArchivedTasks = false;
+    } else {
+      this.isShowingAllLabels = false;
+    }
+
+    if (this.isShowingMoreSetting) {
+      this.isShowingMore = true;
+      this.isShowingMoreSetting = false;
+      this.isShowingAllLabels = false;
+      this.isShowingArchivedTasks = false;
+    } else {
+      this.isShowingMoreSetting = false;
+    }
+
+    if (this.isShowingArchivedTasks) {
+      this.isShowingMore = true;
+      this.isShowingArchivedTasks = false;
+      this.isShowingAllLabels = false;
+      this.isShowingMoreSetting = false;
+    } else {
+      this.isShowingArchivedTasks = false;
+    }
   }
 
   changeBGColorComplete($event: any, type: string) {
@@ -1099,6 +1220,8 @@ export class TaskListComponent implements OnInit {
     console.log(type);
     console.log(data);
 
+    this.removeSearch = true;
+
     if (type === "label") {
       if (data.selected) {
         //TODO: Check if user selected No Label
@@ -1131,7 +1254,7 @@ export class TaskListComponent implements OnInit {
                 let taskAlreadyAdded = false;
                 task.members.forEach((member) => {
                   if (this.selectedFilters.members.includes(member.id)) {
-                    if(!taskAlreadyAdded) {
+                    if (!taskAlreadyAdded) {
                       tasks.push(task);
                       taskAlreadyAdded = true;
                     }
@@ -1184,7 +1307,7 @@ export class TaskListComponent implements OnInit {
                 task.members.forEach((member) => {
                   let taskAlreadyAdded = false;
                   if (this.selectedFilters.members.includes(member.id)) {
-                    if(!taskAlreadyAdded) {
+                    if (!taskAlreadyAdded) {
                       tasks.push(task);
                       taskAlreadyAdded = true;
                     }
@@ -1299,7 +1422,11 @@ export class TaskListComponent implements OnInit {
                 }
               }
             } else if (data.text == "Overdue") {
-              if (task.dueDate && task.dueDate.date) {
+              if (
+                task.dueDate &&
+                task.dueDate.date &&
+                !task.dueDate.completed
+              ) {
                 const diffDays = this.calculateDays(
                   new Date(),
                   task.dueDate.date.toDate()
@@ -1327,6 +1454,29 @@ export class TaskListComponent implements OnInit {
         data.selected = true;
       }
     }
+
+    if (
+      !(
+        this.selectedFilters.dues.length == 0 &&
+        this.selectedFilters.labels.length == 0 &&
+        this.selectedFilters.members.length == 0
+      )
+    ) {
+      console.log(this.taskList);
+      this.searchTaskCount = 0;
+      this.taskList.forEach((list) => {
+        list.tasks.forEach((task) => {
+          this.searchTaskCount += 1;
+        });
+      });
+    } else {
+      this.searchTaskCount = 0;
+      this.taskList.forEach((list) => {
+        list.tasks.forEach((task) => {
+          this.searchTaskCount += 1;
+        });
+      });
+    }
   }
 
   calculateDays(dateOne: any, dateTwo: any) {
@@ -1336,6 +1486,24 @@ export class TaskListComponent implements OnInit {
       diffDays = diffDays * -1;
     }
     return diffDays;
+  }
+
+  removeSearchResults() {
+    this.removeSearch = false;
+    this.searchTaskCount = 0;
+    this.selectedFilters.members = [];
+    this.selectedFilters.labels = [];
+    this.selectedFilters.dues = [];
+    this.searchLabels.forEach((label: any) => {
+      label.selected = false;
+    });
+    this.searchMembers.forEach((member: any) => {
+      member.selected = false;
+    });
+    this.dueOptions.forEach((opts) => {
+      opts.selected = false;
+    });
+    this.taskList = cloneDeep(this.taskListBackup);
   }
 
   saveDescription() {
