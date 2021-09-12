@@ -24,11 +24,8 @@ export class NavComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.baseClass = "toolbar";
-
     this.navService.newClass$.subscribe((className) => {
       console.log(className);
-      this.baseClass = className;
     });
 
     this.auth.isAdmin().subscribe((value) => {
@@ -55,4 +52,18 @@ export class NavComponent implements OnInit {
   openAccount() {
     this.router.navigate(["/account"]);
   }
+
+  navigateHome() {
+    this.router.navigate(["/"]).then((_) => {
+      window.location.reload();
+    });
+  }
+
+  createBoard() {}
+
+  showAllBoards() {}
+
+  showInfo() {}
+
+  showNotification() {}
 }

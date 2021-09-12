@@ -351,7 +351,7 @@
         !isSearchingCard &&
         !isShowingMore &&
         !isShowingMoreSetting &&
-        !isShowingAllLabels && 
+        !isShowingAllLabels &&
         !isShowingArchivedTasks
       "
     >
@@ -497,19 +497,50 @@
   </div>
 
   <!-- More Section: Settings -->
-  <div *ngIf="isShowingMoreSetting">
-    <p>Card cover enabled</p>
+  <div *ngIf="isShowingMoreSetting" class="menu-options">
+    <div class="menu-option">
+      <p>Change Workspace</p>
+      <p class="info-text">Task workspace</p>
+    </div>
+
+    <div class="nav-option-dividor"></div>
+    <div class="menu-option no-pads" (click)="cardCoverSetting()">
+      <span *ngIf="!board.settings.cardCoverEnabled">Enable card covers</span>
+      <span class="flex-display">
+        <span *ngIf="board.settings.cardCoverEnabled">Card covers enabled</span>
+        <span
+          ><mat-icon class="icon-small" *ngIf="board.settings.cardCoverEnabled"
+            >done</mat-icon
+          ></span
+        >
+      </span>
+      <p class="info-text">
+        Show image attachments and colors on the front of cards.
+      </p>
+    </div>
+
+    <div class="nav-option-dividor"></div>
+    <div
+      class="menu-option"
+      #commentPermission
+      (click)="openCommentPermissionModal()"
+    >
+      <p>Commenting Permissions</p>
+      <p class="info-text">Members</p>
+    </div>
+
+    <div
+      class="menu-option"
+      #addRemovePermission
+      (click)="openAddRemovePermissionModal()"
+    >
+      <p>Add/Remove Permissions</p>
+      <p class="info-text">Admins</p>
+    </div>
+
+    <div class="nav-option-dividor"></div>
+    <p class="info-text">Allow Workspace members to edit and join</p>
     <p class="info-text">
-      Show image attachments and colors on the front of cards.
-    </p>
-    <div class="nav-option-dividor"></div>
-    <p>Commenting Permissions</p>
-    <p class="info-text">Members</p>
-    <p>Add/Remove Permissions</p>
-    <p class="info-text">Admins</p>
-    <div class="nav-option-dividor"></div>
-    <p>Allow Workspace members to edit and join</p>
-    <p>
       Any Workspace member can edit and join this board. To enable this, the
       board can't be private.
     </p>
@@ -524,14 +555,32 @@
       >
         {{ label.name }}
       </mat-chip>
+      <span><mat-icon (click)="openLabelDialog()">edit</mat-icon></span>
     </span>
-    <button mat-stroked-button (click)="createNewLabel()">Create a new label</button>
-    <button mat-stroked-button (click)="showMoreLabels()">Show more labels</button>
+    <button mat-stroked-button class="label-btn" (click)="openLabelDialog()">
+      Create a new label
+    </button>
+    <button mat-stroked-button class="label-btn" (click)="showMoreLabels()">
+      Show more labels
+    </button>
   </div>
 
-  <!-- More Section: Labels -->
+  <!-- More Section: Archived Tasks -->
   <div *ngIf="isShowingArchivedTasks">
-    <p>Archived Tasks</p>
+    <div
+      *ngFor="let archivedTask of this.archivedTasks"
+      class="archived-container"
+    >
+      <task
+        (edit)="editTask($event)"
+        [task]="archivedTask"
+        [labels]="labels"
+      ></task>
+      <div class="archived-opts">
+        <span (click)="sendTaskToBoard(archivedTask)">Send to board</span> -
+        <span (click)="deleteArchivedTask(archivedTask)">Delete</span>
+      </div>
+    </div>
   </div>
 
   <!-- About Board Section -->

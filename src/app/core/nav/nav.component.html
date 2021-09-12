@@ -1,54 +1,90 @@
 <!-- Toolbar -->
-<div class="{{ baseClass }}" role="banner">
-  <a href="/"
-    ><img width="25" alt="Tasks Logo" src="assets/images/clipboard.png"
-  /></a>
-  <span class="title">TASKS</span>
-  <div class="spacer" *ngIf="afAuth.user | async as user">
+<div class="toolbar flex-display" role="banner">
+  <!-- <div class="bar" *ngIf="afAuth.user | async as user">
     <span>Welcome, {{ user.displayName }}</span>
+  </div> -->
+
+  <!-- Section Left -->
+  <div class="bar">
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="menuApps"
+      aria-label="site navigation"
+    >
+      <mat-icon>apps</mat-icon>
+    </button>
+    <mat-menu #menuApps="matMenu">
+      <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="openBoards()">
+        <mat-icon>space_dashboard</mat-icon>
+        <a *ngIf="auth.isLoggedIn()" class="nav-padding"><span>Boards</span></a>
+      </button>
+      <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="openDaily()">
+        <mat-icon>event</mat-icon>
+        <a *ngIf="auth.isLoggedIn()" class="nav-padding"><span>Daily</span></a>
+      </button>
+    </mat-menu>
+
+    <button
+      mat-icon-button
+      aria-label="home page"
+      (click)="navigateHome(); (false)"
+    >
+      <mat-icon>home</mat-icon>
+    </button>
+    <button mat-icon-button aria-label="show boards" (click)="showAllBoards()">
+      <mat-icon>space_dashboard</mat-icon>
+      Boards
+    </button>
   </div>
 
-  <button
-    mat-icon-button
-    [matMenuTriggerFor]="menuApps"
-    aria-label="site navigation"
-  >
-    <mat-icon>apps</mat-icon>
-  </button>
-  <mat-menu #menuApps="matMenu">
-    <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="openBoards()">
-      <mat-icon>dashboard</mat-icon>
-      <a *ngIf="auth.isLoggedIn()" class="nav-padding"><span>Boards</span></a>
-    </button>
-    <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="openDaily()">
-      <mat-icon>event</mat-icon>
-      <a *ngIf="auth.isLoggedIn()" class="nav-padding"><span>Daily</span></a>
-    </button>
-  </mat-menu>
+  <!-- Section Middle -->
+  <div class="bar">
+    <a href="/"
+      ><img width="25" alt="Tasks Logo" src="assets/images/clipboard.png"
+    /></a>
+    <span class="title">TASKS</span>
+  </div>
 
-  <button
-    mat-icon-button
-    [matMenuTriggerFor]="menu"
-    aria-label="manage account"
-  >
-    <mat-icon>manage_accounts</mat-icon>
-  </button>
-  <mat-menu #menu="matMenu">
-    <button mat-menu-item *ngIf="!auth.isLoggedIn()" (click)="openLogin()">
-      <mat-icon>login</mat-icon>
-      <a class="nav-padding"><span>Login</span></a>
+  <!-- Section Right -->
+  <div class="bar" *ngIf="afAuth.user | async as user">
+    <button mat-icon-button aria-label="create board" (click)="createBoard()">
+      <mat-icon>add_circle</mat-icon>
     </button>
-    <button mat-menu-item *ngIf="!auth.isLoggedIn()" (click)="openRegister()">
-      <mat-icon>add_circle_outline</mat-icon>
-      <a class="nav-padding"><span>Register</span></a>
+    <button mat-icon-button aria-label="show boards" (click)="showInfo()">
+      <mat-icon>info</mat-icon>
     </button>
-    <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="openAccount()">
-      <mat-icon>manage_accounts</mat-icon>
-      <a class="nav-padding"><span>Account</span></a>
+    <button
+      mat-icon-button
+      aria-label="show boards"
+      (click)="showNotification()"
+    >
+      <mat-icon matBadge="15" matBadgeColor="warn">notifications</mat-icon>
     </button>
-    <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="auth.logout()">
-      <mat-icon>logout</mat-icon>
-      <a class="nav-padding"><span>Logout</span></a>
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      [matTooltip]="user.displayName"
+      aria-label="manage account"
+    >
+      <mat-icon>account_circle</mat-icon>
     </button>
-  </mat-menu>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item *ngIf="!auth.isLoggedIn()" (click)="openLogin()">
+        <mat-icon>login</mat-icon>
+        <a class="nav-padding"><span>Login</span></a>
+      </button>
+      <button mat-menu-item *ngIf="!auth.isLoggedIn()" (click)="openRegister()">
+        <mat-icon>add_circle_outline</mat-icon>
+        <a class="nav-padding"><span>Register</span></a>
+      </button>
+      <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="openAccount()">
+        <mat-icon>manage_accounts</mat-icon>
+        <a class="nav-padding"><span>Account</span></a>
+      </button>
+      <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="auth.logout()">
+        <mat-icon>logout</mat-icon>
+        <a class="nav-padding"><span>Logout</span></a>
+      </button>
+    </mat-menu>
+  </div>
 </div>

@@ -1,0 +1,51 @@
+<div class="close" (click)="cancel()">
+  <mat-icon>close</mat-icon>
+</div>
+<div *ngIf="data.isCommentingPermission">
+  <div class="opts">
+    <p>Disabled</p>
+    <p class="info-text">No one can comment or react.</p>
+  </div>
+
+  <div class="opts">
+    <p>Members</p>
+    <p class="info-text">Admins and board members can comment and react.</p>
+  </div>
+
+  <div class="opts">
+    <p>Members and observers</p>
+    <p class="info-text">
+      Admins, board members, and observers can comment and react.
+    </p>
+  </div>
+
+  <div class="opts">
+    <p>Workspace members</p>
+    <p class="info-text">
+      Admins, board members, observers, and team members can comment and react.
+    </p>
+  </div>
+
+  <div class="opts">
+    <p>Any Trello user</p>
+    <p class="info-text">
+      Any Trello user can comment and react, provided they can see this board.
+    </p>
+  </div>
+</div>
+
+<div *ngIf="data.isAddRemovePermission">
+  <div class="opts">
+    <p>Admins</p>
+    <p class="info-text">
+      Allow only admins to add and remove members from this board.
+    </p>
+  </div>
+
+  <div class="opts">
+    <p>All members</p>
+    <p class="info-text">
+      Allow all members and admins to add and remove members from this board.
+    </p>
+  </div>
+</div>

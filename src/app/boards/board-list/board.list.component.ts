@@ -7,8 +7,8 @@ import {
 } from "src/app/common/board-dialog/board-dialog.component";
 import { Subscription } from "rxjs";
 import { BoardService } from "src/app/core/services/board.service";
-import { BoardServiceV2 } from '../../core/services/boardv2.service';
-import { AuthService } from '../../core/services/auth.service';
+import { BoardServiceV2 } from "../../core/services/boardv2.service";
+import { AuthService } from "../../core/services/auth.service";
 
 @Component({
   selector: "board-list",
@@ -21,7 +21,11 @@ export class BaordListComponent implements OnInit {
   private boardSubscription: Subscription;
   public isLoading: boolean;
 
-  constructor(private dialog: MatDialog, private boardServiceV2: BoardServiceV2, private authService: AuthService) {}
+  constructor(
+    private dialog: MatDialog,
+    private boardServiceV2: BoardServiceV2,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     console.log("BOARDLIST IS INITIATED");
@@ -59,12 +63,15 @@ export class BaordListComponent implements OnInit {
       if (!result) {
         return;
       }
-      
+
       const board: Board = {
         title: result.board.title,
         description: result.board.description,
-        owner: this.authService.getUID()
-      }
+        owner: this.authService.getUID(),
+        settings: {
+          cardCoverEnabled: false,
+        },
+      };
       this.boardServiceV2.addBoard(board);
     });
   }

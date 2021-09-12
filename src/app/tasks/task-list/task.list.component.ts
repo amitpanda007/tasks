@@ -49,7 +49,14 @@ import {
   ColorDialogResult,
 } from "src/app/common/color-dialog/color-dialog.component";
 import { Constants } from "./taskListConstants";
-import { firestore } from "firebase";
+import {
+  LabelDialogComponent,
+  LabelDialogResult,
+} from "src/app/common/label-dialog/label-dialog.component";
+import {
+  BoardSettingsDialogComponent,
+  BoardSettingsDialogResult,
+} from "src/app/common/board-settings/board-settings-dialog.component";
 
 @Component({
   selector: "task-list",
@@ -78,6 +85,7 @@ export class TaskListComponent implements OnInit {
   public taskList: TaskList[];
   private taskListBackup: TaskList[];
   public tasks: Task[];
+  public archivedTasks: Task[];
   public labels: Label[];
   public editingBoardName: boolean;
   public editingListName: boolean;
@@ -115,6 +123,10 @@ export class TaskListComponent implements OnInit {
 
   // @ViewChild("cardMenuTrigger", { static: false }) cardMenuTrigger: MatMenuTrigger;
   @ViewChild("menuUser", { static: false }) public menuUserRef: ElementRef;
+  @ViewChild("commentPermission", { static: false })
+  public commentPermissionRef: ElementRef;
+  @ViewChild("addRemovePermission", { static: false })
+  public addRemovePermissionRef: ElementRef;
 
   constructor(
     private dialog: MatDialog,
@@ -232,6 +244,14 @@ export class TaskListComponent implements OnInit {
     this.boardSubscription = this.boardServiceV2.boardChanged.subscribe(
       (board: Board) => {
         console.log(board);
+
+        // Settings available for board
+        if (!board.settings) {
+          this.board.settings = {
+            cardCoverEnabled: false,
+          };
+        }
+
         // Set document background image & design
         if (this.board.backgroundUrl) {
           document.body.style.backgroundImage = `url(${this.board.backgroundUrl})`;
@@ -293,6 +313,13 @@ export class TaskListComponent implements OnInit {
       }
     );
 
+    this.labelsSubscription = this.boardServiceV2.labelListChanged.subscribe(
+      (labels: Label[]) => {
+        console.log(labels);
+        this.labels = labels;
+      }
+    );
+
     //TODO: This is created with observable inside another observable. Better convert this with switchMap or mergeMap
     this.taskListsSubscription = this.boardServiceV2.taskListsChanged.subscribe(
       (lists: TaskList[]) => {
@@ -340,13 +367,6 @@ export class TaskListComponent implements OnInit {
         );
       }
     );
-
-    this.labelsSubscription = this.boardServiceV2.labelListChanged.subscribe(
-      (labels: Label[]) => {
-        console.log(labels);
-        this.labels = labels;
-      }
-    );
   }
 
   ngOnDestroy() {
@@ -378,7 +398,9 @@ export class TaskListComponent implements OnInit {
     list.tasks = [];
     this.tasks.forEach((task) => {
       if (list.id == task.listId) {
-        list.tasks.push(task);
+        if (!task.archived) {
+          list.tasks.push(task);
+        }
       }
     });
   }
@@ -729,7 +751,11 @@ export class TaskListComponent implements OnInit {
         const activity = this.createNewActivity(`added Due date.`);
         result.task.activities.push(activity);
       } else {
-        if(result.task.dueDate.date && result.task.dueDate.date.hasOwnProperty("seconds")) {
+        if (
+          result.task.dueDate &&
+          result.task.dueDate.date &&
+          result.task.dueDate.date.hasOwnProperty("seconds")
+        ) {
           if (
             task.dueDate.date.toDate().getDate() !=
               result.task.dueDate.date.toDate().getDate() ||
@@ -740,21 +766,19 @@ export class TaskListComponent implements OnInit {
             const activity = this.createNewActivity(`modified Due date.`);
             result.task.activities.push(activity);
           }
-        }else {
-          console.log(result.task.dueDate);
-          const changedDate = result.task.dueDate.date as any;
-          if (
-            task.dueDate.date.toDate().getDate() !=
-            changedDate.getDate() ||
-            task.dueDate.date.toDate().getMonth() !=
-            changedDate.getMonth()
-          ) {
-            console.log("modified Due date.");
-            const activity = this.createNewActivity(`modified Due date.`);
-            result.task.activities.push(activity);
+        } else {
+          if (result.task.dueDate) {
+            const changedDate = result.task.dueDate.date as any;
+            if (
+              task.dueDate.date.toDate().getDate() != changedDate.getDate() ||
+              task.dueDate.date.toDate().getMonth() != changedDate.getMonth()
+            ) {
+              console.log("modified Due date.");
+              const activity = this.createNewActivity(`modified Due date.`);
+              result.task.activities.push(activity);
+            }
           }
         }
-        
       }
 
       if (task.dueDate && !result.task.dueDate) {
@@ -797,16 +821,19 @@ export class TaskListComponent implements OnInit {
         });
         this.boardServiceV2.deleteTask(this.boardId, result.task.id);
       } else {
+        // FIXME: Label is not updated once task is created and label is added just after that without refresh
+        if (result.updatedLabels && result.updatedLabels.length > 0) {
+          result.updatedLabels.forEach((label) => {
+            console.log("Updating Label with task ID");
+            this.boardServiceV2.updateLabel(this.boardId, label.id, label);
+          });
+        }
+        console.log("Updating task");
         this.boardServiceV2.updateTask(
           this.boardId,
           result.task.id,
           result.task
         );
-        if (result.updatedLabels && result.updatedLabels.length > 0) {
-          result.updatedLabels.forEach((label) => {
-            this.boardServiceV2.updateLabel(this.boardId, label.id, label);
-          });
-        }
       }
       this.router.navigate(["."], { relativeTo: this.route });
     });
@@ -1066,15 +1093,92 @@ export class TaskListComponent implements OnInit {
     this.isShowingArchivedTasks = false;
   }
 
-  createNewLabel() {}
+  cardCoverSetting() {
+    this.board.settings.cardCoverEnabled =
+      !this.board.settings.cardCoverEnabled;
+    this.boardServiceV2.updateBoardSettings(this.boardId, this.board.settings);
+  }
+
+  openLabelDialog() {
+    const allLabels = cloneDeep(this.labels);
+    const dialogRef = this.dialog.open(LabelDialogComponent, {
+      width: "360px",
+      data: {
+        labels: allLabels,
+        enableDelete: false,
+        taskId: "",
+        boardId: this.boardId,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: LabelDialogResult) => {
+      if (!result) {
+        return;
+      }
+    });
+  }
 
   showMoreLabels() {}
 
   allArchivedTasks() {
+    // Gathering all archived tasks
+    this.archivedTasks = [];
+    this.tasks.forEach((task) => {
+      if (task.archived) {
+        this.archivedTasks.push(task);
+      }
+    });
+
     this.isShowingMore = false;
     this.isShowingMoreSetting = false;
     this.isShowingAllLabels = false;
     this.isShowingArchivedTasks = true;
+  }
+
+  sendTaskToBoard(archivedTask: Task) {
+    console.log(archivedTask);
+    archivedTask.archived = false;
+    this.boardServiceV2.updateTask(this.boardId, archivedTask.id, archivedTask);
+  }
+
+  deleteArchivedTask(archivedTask: Task) {
+    console.log(archivedTask);
+    this.boardServiceV2.deleteTask(this.boardId, archivedTask.id);
+  }
+
+  openCommentPermissionModal() {
+    const dialogRef = this.dialog.open(BoardSettingsDialogComponent, {
+      width: "280px",
+      hasBackdrop: false,
+      autoFocus: false,
+      data: {
+        positionRelativeToElement: this.commentPermissionRef,
+        isAddRemovePermission: false,
+        isCommentingPermission: true,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: BoardSettingsDialogResult) => {
+      if (!result) {
+        return;
+      }
+    });
+  }
+
+  openAddRemovePermissionModal() {
+    const dialogRef = this.dialog.open(BoardSettingsDialogComponent, {
+      width: "280px",
+      hasBackdrop: false,
+      autoFocus: false,
+      data: {
+        positionRelativeToElement: this.addRemovePermissionRef,
+        isAddRemovePermission: true,
+        isCommentingPermission: false,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: BoardSettingsDialogResult) => {
+      if (!result) {
+        return;
+      }
+    });
   }
 
   emailToBoard() {}

@@ -136,12 +136,19 @@ export class BoardServiceV2 {
   updateBoard(boardId: string, board: Board) {
     console.log(board);
     // Remove unwanted properties from board object
-    if(board.sharedUserInfo && board.sharedUserInfo.length > 0) {
-      board.sharedUserInfo.forEach(userInfo => {
+    if (board.sharedUserInfo && board.sharedUserInfo.length > 0) {
+      board.sharedUserInfo.forEach((userInfo) => {
         delete userInfo.isCurrentUser;
       });
     }
     this._store.collection("boards").doc(boardId).set(board, { merge: true });
+  }
+
+  updateBoardSettings(boardId: string, settings: Object) {
+    this._store
+      .collection("boards")
+      .doc(boardId)
+      .set({ settings: settings }, { merge: true });
   }
 
   getBoardInvitation(boardId: string, invitationId: string) {

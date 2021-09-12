@@ -25,7 +25,7 @@ import { BoardsModule } from "./boards/boards.module";
 import { LabelDialogComponent } from "./common/label-dialog/label-dialog.component";
 import { ColorCircleModule } from "ngx-color/circle";
 import { ColorSwatchesModule } from "ngx-color/swatches";
-import { ColorChromeModule } from 'ngx-color/chrome';
+import { ColorChromeModule } from "ngx-color/chrome";
 import { CalenderDialogComponent } from "./common/calender-dialog/calender-dialog.component";
 import { ColorDialogComponent } from "./common/color-dialog/color-dialog.component";
 import { MemberDialogComponent } from "./common/member-dialog/member-dialog.component";
@@ -45,6 +45,7 @@ import { QRCodeModule } from "angularx-qrcode";
 import { ChecklistDialogComponent } from "./common/checklist-dialog/checklist-dialog.component";
 import { MemberInfoDialogComponent } from "./common/member-info/member-info-dialog.component";
 import { MemberActivityDialogComponent } from "./common/member-activity/member-activity-dialog.component";
+import { BoardSettingsDialogComponent } from "./common/board-settings/board-settings-dialog.component";
 
 @NgModule({
   declarations: [
@@ -68,7 +69,8 @@ import { MemberActivityDialogComponent } from "./common/member-activity/member-a
     FilterSearchComponent,
     ChecklistDialogComponent,
     MemberInfoDialogComponent,
-    MemberActivityDialogComponent
+    MemberActivityDialogComponent,
+    BoardSettingsDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -112,7 +114,8 @@ import { MemberActivityDialogComponent } from "./common/member-activity/member-a
     MessageDialogComponent,
     ChecklistDialogComponent,
     MemberInfoDialogComponent,
-    MemberActivityDialogComponent
+    MemberActivityDialogComponent,
+    BoardSettingsDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

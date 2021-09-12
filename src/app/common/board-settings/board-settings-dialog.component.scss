@@ -1,0 +1,20 @@
+.info-text {
+  clear: both;
+  color: #5e6c84;
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.opts {
+  margin-bottom: 1rem;
+}
+
+.close {
+  display: flex;
+  justify-content: end;
+  cursor: pointer;
+}

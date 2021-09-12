@@ -8,6 +8,7 @@ export interface Board {
   favourite?: Array<string>;
   backgroundUrl?: string;
   backgroundColors?: BGColor;
+  settings: Settings;
 }
 
 export interface SharedUser {
@@ -24,4 +25,8 @@ export interface Permission {
 export interface BGColor {
   primary?: any;
   secondary?: any;
+}
+
+export interface Settings {
+  cardCoverEnabled: boolean;
 }
