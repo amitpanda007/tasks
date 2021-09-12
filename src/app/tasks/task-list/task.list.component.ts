@@ -99,8 +99,8 @@ export class TaskListComponent implements OnInit {
   public isShowingAboutBoard: boolean = false;
   public isShowingChangeBackgroundBoard: boolean = false;
   public isShowingColors: boolean = false;
-  private boardBGColorPrimary: string;
-  private boardBGColorSecondary: string;
+  public boardBGColorPrimary: string;
+  public boardBGColorSecondary: string;
   public isShowingPhotos: boolean = false;
   public isSearchingCard: boolean = false;
   public isShowingMore: boolean = false;
@@ -120,6 +120,7 @@ export class TaskListComponent implements OnInit {
 
   public removeSearch: boolean = false;
   public searchTaskCount: number = 0;
+  public searchCard: string;
 
   // @ViewChild("cardMenuTrigger", { static: false }) cardMenuTrigger: MatMenuTrigger;
   @ViewChild("menuUser", { static: false }) public menuUserRef: ElementRef;
@@ -1581,6 +1582,10 @@ export class TaskListComponent implements OnInit {
         });
       });
     }
+  }
+
+  searchCardChanged() {
+    console.log(this.searchCard);
   }
 
   calculateDays(dateOne: any, dateTwo: any) {
