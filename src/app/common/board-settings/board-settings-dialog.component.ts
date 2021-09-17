@@ -5,10 +5,6 @@ import {
   MatDialogConfig,
   MatDialog,
 } from "@angular/material/dialog";
-import { User } from "src/app/auth/user";
-import { Activity } from "src/app/tasks/task/activity";
-import { Task } from "src/app/tasks/task/task";
-import { MemberActivityDialogComponent } from "../member-activity/member-activity-dialog.component";
 
 @Component({
   selector: "app-board-settings-dialog",
@@ -17,6 +13,8 @@ import { MemberActivityDialogComponent } from "../member-activity/member-activit
 })
 export class BoardSettingsDialogComponent implements OnInit {
   private positionRelativeToElement: ElementRef;
+  public commentingPermission: CommentingPermission;
+  public addRemovePermission: AddRemovePermission;
 
   constructor(
     public dialogRef: MatDialogRef<BoardSettingsDialogComponent>,
@@ -37,17 +35,74 @@ export class BoardSettingsDialogComponent implements OnInit {
       left: `${rect.left + 2}px`,
     };
     this.dialogRef.updatePosition(matDialogConfig.position);
+
+    if (this.data.isAddRemovePermission) {
+      this.addRemovePermission = this.data.addRemovePermission;
+    }
+    if (this.data.isCommentingPermission) {
+      this.commentingPermission = this.data.commentingPermission;
+    }
   }
 
   cancel(): void {
     this.dialogRef.close();
   }
+
+  changePermission(type: string, permission: string): void {
+    if (type === "AddRemovePermission") {
+      Object.keys(this.addRemovePermission).map((key) => {
+        if (key == permission) {
+          this.addRemovePermission[key] = true;
+        } else {
+          this.addRemovePermission[key] = false;
+        }
+      });
+      this.dialogRef.close({
+        isAddRemovePermission: true,
+        isCommentingPermission: false,
+        addRemovePermission: this.addRemovePermission,
+      });
+    } else if (type === "CommentingPermission") {
+      Object.keys(this.commentingPermission).map((key) => {
+        if (key == permission) {
+          this.commentingPermission[key] = true;
+        } else {
+          this.commentingPermission[key] = false;
+        }
+      });
+      this.dialogRef.close({
+        isAddRemovePermission: false,
+        isCommentingPermission: true,
+        commentingPermission: this.commentingPermission,
+      });
+    }
+  }
 }
 
 export interface BoardSettingsDialogData {
   positionRelativeToElement?: ElementRef;
-  isAddRemovePermission: boolean;
-  isCommentingPermission: boolean;
+  isAddRemovePermission?: boolean;
+  addRemovePermission?: AddRemovePermission;
+  isCommentingPermission?: boolean;
+  commentingPermission?: CommentingPermission;
 }
 
-export interface BoardSettingsDialogResult {}
+export interface BoardSettingsDialogResult {
+  isAddRemovePermission?: boolean;
+  addRemovePermission?: AddRemovePermission;
+  isCommentingPermission?: boolean;
+  commentingPermission?: CommentingPermission;
+}
+
+export interface AddRemovePermission {
+  admin: boolean;
+  allMembers: boolean;
+}
+
+export interface CommentingPermission {
+  disabled: boolean;
+  members: boolean;
+  membersAndObservers: boolean;
+  AllBoardMembers: boolean;
+  anyUser: boolean;
+}

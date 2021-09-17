@@ -46,6 +46,9 @@ import { ChecklistDialogComponent } from "./common/checklist-dialog/checklist-di
 import { MemberInfoDialogComponent } from "./common/member-info/member-info-dialog.component";
 import { MemberActivityDialogComponent } from "./common/member-activity/member-activity-dialog.component";
 import { BoardSettingsDialogComponent } from "./common/board-settings/board-settings-dialog.component";
+import { CloseBoardDialogComponent } from "./common/close-board/close-board-dialog.component";
+import { ClosedBoardContentDialogComponent } from "./common/closed-board-content/closed-board-content-dialog.component";
+import { CopyBoardDialogComponent } from "./common/copy-board-dialog/copy-board-dialog.component";
 
 @NgModule({
   declarations: [
@@ -71,6 +74,9 @@ import { BoardSettingsDialogComponent } from "./common/board-settings/board-sett
     MemberInfoDialogComponent,
     MemberActivityDialogComponent,
     BoardSettingsDialogComponent,
+    CloseBoardDialogComponent,
+    ClosedBoardContentDialogComponent,
+    CopyBoardDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -116,6 +122,9 @@ import { BoardSettingsDialogComponent } from "./common/board-settings/board-sett
     MemberInfoDialogComponent,
     MemberActivityDialogComponent,
     BoardSettingsDialogComponent,
+    CloseBoardDialogComponent,
+    ClosedBoardContentDialogComponent,
+    CopyBoardDialogComponent
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

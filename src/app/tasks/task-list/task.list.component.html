@@ -82,6 +82,7 @@
           aria-label="invite memebers"
           matTooltip="Invite member"
           class="iconBtn"
+          *ngIf="hasMemberAddAccess"
           >add</mat-icon
         >
       </div>
@@ -211,6 +212,8 @@
             <div *ngFor="let task of list.tasks">
               <task
                 (edit)="editTask($event)"
+                (priorityChnaged)="setTaskPriority($event)"
+                (statusChanged)="setTaskStatus($event)"
                 cdkDrag
                 [task]="task"
                 [labels]="labels"
@@ -491,9 +494,10 @@
       <span>Print and export</span>
     </div>
     <div class="nav-option-dividor"></div>
-    <div class="menu-option flex-display pointer" (click)="closeBoard()">
+    <div #closeBoardElm class="menu-option flex-display pointer" (click)="closeBoard()">
       <span>Close board</span>
     </div>
+    <div class="nav-option-dividor"></div>
   </div>
 
   <!-- More Section: Settings -->
@@ -504,7 +508,8 @@
     </div>
 
     <div class="nav-option-dividor"></div>
-    <div class="menu-option no-pads" (click)="cardCoverSetting()">
+    <span [ngClass]="{'disabled-section': !isCurrentUserAdmin()}">
+    <div class="menu-option no-pads" (click)="cardCoverSetting()" >
       <span *ngIf="!board.settings.cardCoverEnabled">Enable card covers</span>
       <span class="flex-display">
         <span *ngIf="board.settings.cardCoverEnabled">Card covers enabled</span>
@@ -526,7 +531,11 @@
       (click)="openCommentPermissionModal()"
     >
       <p>Commenting Permissions</p>
-      <p class="info-text">Members</p>
+      <p class="info-text" *ngIf="board.settings.commentingPermission.disabled">Disabled</p>
+      <p class="info-text" *ngIf="board.settings.commentingPermission.members">Members</p>
+      <p class="info-text" *ngIf="board.settings.commentingPermission.membersAndObservers">Members and observers</p>
+      <p class="info-text" *ngIf="board.settings.commentingPermission.AllBoardMembers">All Board members</p>
+      <p class="info-text" *ngIf="board.settings.commentingPermission.anyUser">Any Tasks user</p>
     </div>
 
     <div
@@ -535,7 +544,8 @@
       (click)="openAddRemovePermissionModal()"
     >
       <p>Add/Remove Permissions</p>
-      <p class="info-text">Admins</p>
+      <p class="info-text" *ngIf="board.settings.addRemovePermission.admin">Admins</p>
+      <p class="info-text" *ngIf="board.settings.addRemovePermission.allMembers">All Members</p>
     </div>
 
     <div class="nav-option-dividor"></div>
@@ -544,6 +554,7 @@
       Any Workspace member can edit and join this board. To enable this, the
       board can't be private.
     </p>
+    </span>
   </div>
 
   <!-- More Section: Labels -->
@@ -639,11 +650,7 @@
       <p class="info-text">Primary background color</p>
       <div class="flex-display spacing">
         <color-chrome
-          [color]="
-            board.backgroundColors.primary != ''
-              ? board.backgroundColors.primary
-              : ''
-          "
+          [color]="selectedPrimaryColor"
           (onChangeComplete)="changeBGColorComplete($event, 'primary')"
         ></color-chrome>
         <div>
@@ -654,7 +661,7 @@
               matTooltip="remove"
               aria-label="save primary color"
               (click)="saveBGColor('primary')"
-              [disabled]="boardBGColorPrimary != ''"
+              [disabled]="boardBGColorPrimary == ''"
             >
               <mat-icon>save</mat-icon>
             </button>
@@ -666,7 +673,7 @@
               matTooltip="remove"
               aria-label="remove primary color"
               (click)="removeBGColor('primary')"
-              [disabled]="board.backgroundColors.primary == ''"
+              [disabled]="selectedPrimaryColor == ''"
             >
               <mat-icon>remove_circle_outline</mat-icon>
             </button>
@@ -683,11 +690,7 @@
       <p class="info-text">Secondary background color</p>
       <div class="flex-display spacing">
         <color-chrome
-          [color]="
-            board.backgroundColors.secondary != ''
-              ? board.backgroundColors.secondary
-              : ''
-          "
+          [color]="selectedSecondaryColor"
           (onChangeComplete)="changeBGColorComplete($event, 'secondary')"
         ></color-chrome>
         <div>
@@ -698,7 +701,7 @@
               matTooltip="save"
               aria-label="save secondary color"
               (click)="saveBGColor('secondary')"
-              [disabled]="boardBGColorSecondary != ''"
+              [disabled]="boardBGColorSecondary == ''"
             >
               <mat-icon>save</mat-icon>
             </button>
@@ -710,7 +713,7 @@
               matTooltip="remove"
               aria-label="remove secondary color"
               (click)="removeBGColor('secondary')"
-              [disabled]="board.backgroundColors.secondary == ''"
+              [disabled]="selectedSecondaryColor == ''"
             >
               <mat-icon>remove_circle_outline</mat-icon>
             </button>

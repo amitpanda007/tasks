@@ -2,6 +2,8 @@ import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
 import { Task } from "./task";
 import { Label } from "./label";
 import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
+import { Constant } from "src/app/shared/constants";
+import { Status } from "src/app/daily/daily-task/status";
 
 @Component({
   selector: "task",
@@ -12,15 +14,44 @@ export class TaskComponent implements OnInit {
   @Input() task: Task | null = null;
   @Input() labels: Label[] | null = null;
   @Output() edit = new EventEmitter<Task>();
+  @Output() priorityChnaged = new EventEmitter();
+  @Output() statusChanged = new EventEmitter();
+
   public showLabelText: boolean = false;
   public overDue: boolean = false;
   public currentState: string = "initial";
   public checklistsLength: number;
+  public checklistsCompletedLength: number;
   public textColor: string;
+  public priority: string;
+  public isPriorityIconSelected: boolean;
+
+  public isStatusIconSelected: boolean;
+  public statusOptions: Status[];
+  public selectStatusBackgroundColor: string;
+  public selectStatusColor: string;
 
   constructor(private boardServiceV2: BoardServiceV2) {}
 
   ngOnInit(): void {
+    if (this.task.priority) {
+      this.priority = this.task.priority;
+    } else {
+      this.priority = "blocker";
+    }
+
+    this.statusOptions = Constant.STATUS_OPTIONS;
+    if (this.task.status) {
+      const currentStatus = this.statusOptions.filter(
+        (status) => status.name == this.task.status
+      );
+      this.selectStatusBackgroundColor = currentStatus[0].backgroundColor;
+      this.selectStatusColor = currentStatus[0].color;
+    } else {
+      this.selectStatusBackgroundColor = "#CFD8DC";
+      this.selectStatusColor = "#455A64";
+    }
+
     this.textColor = "#000000";
     this.boardServiceV2.showHidelabel.subscribe((value) => {
       this.showLabelText = value;
@@ -34,10 +65,12 @@ export class TaskComponent implements OnInit {
     this.checkDueDateStatus();
 
     this.checklistsLength = 0;
+    this.checklistsCompletedLength = 0;
     if (this.task.checklists) {
       this.task.checklists.forEach((tskChecklist) => {
         if (tskChecklist.checklist) {
           this.checklistsLength += tskChecklist.checklist.length;
+          this.checklistsCompletedLength += tskChecklist.checklist.filter(chklst => chklst.done == true).length;
         }
       });
     }
@@ -46,11 +79,64 @@ export class TaskComponent implements OnInit {
       this.getTextColor(this.task.backgroundColor);
       // this.textColor = this.setAdaptiveTextColor(this.task.backgroundColor, 2);
     }
+
+    this.isPriorityIconSelected = false;
+    this.isStatusIconSelected = false;
   }
 
   hideLabelName() {
     // this.showLabelText = !this.showLabelText;
     this.boardServiceV2.showHideTaskLabelName(this.showLabelText);
+  }
+
+  editTask() {
+    if(!this.isStatusIconSelected) {
+      this.edit.emit(this.task);
+    }
+  }
+
+  setTaskPriority() {
+    console.log("CLICKED ON PRIORITY ICON");
+    this.isPriorityIconSelected = true;
+  }
+  
+  selectedMenu(priority: string) {
+    console.log(priority);
+    const taskPriority = {
+      task: this.task,
+      priority: priority,
+    };
+    this.priorityChnaged.emit(taskPriority);
+  }
+
+  priorityMenuClosed() {
+    console.log("PRIORITY MENU IS CLOSED.");
+    this.isPriorityIconSelected = false;
+  }
+
+
+  onStatusChange(selectedStatus) {
+    console.log(selectedStatus);
+    const status: Status = this.statusOptions.find(
+      (status) => status.id == selectedStatus
+    );
+    this.statusChanged.emit({ task: this.task, status: status });
+  }
+
+  statusIconClicked() {
+    console.log("STATUS MENU OPENED.");
+    this.isStatusIconSelected = true;
+  }
+
+  statusMenuClosed() {
+    console.log("STATUS MENU CLOSED.");
+    this.isStatusIconSelected = false;
+  }
+
+  isStatusSelected(status: Status) {
+    if (status.name == this.task.status) {
+      return true;
+    }
   }
 
   getTextColor(backgroundColor: string) {

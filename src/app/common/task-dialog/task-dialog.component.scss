@@ -269,3 +269,22 @@ section {
   color: #5e6c84;
   font-size: 12px;
 }
+
+.archive-header {
+  display: flex;
+  background-size: 14px 14px;
+  min-height: 30px;
+  padding: 12px 12px 12px 50px;
+  position: relative;
+  background-color: #fdfae5;
+  background-image: linear-gradient(
+    to bottom right,
+    rgba(0, 0, 0, 0.05) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.05) 50%,
+    rgba(0, 0, 0, 0.05) 75%,
+    transparent 75%,
+    transparent
+  );
+}

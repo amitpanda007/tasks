@@ -1,0 +1,28 @@
+<div class="title">
+  <span>
+    <mat-icon>delete</mat-icon>
+    <span>Closed boards</span>
+  </span>
+  <mat-icon class="btn-icon" (click)="cancel()">close</mat-icon>
+</div>
+<div class="data" *ngFor="let board of data.closedBoards">
+  <a href="/boards/{{ board.id }}" [innerHTML]="board.title"></a>
+  <span>
+    <button
+      mat-stroked-button
+      color="warn"
+      aria-label="delete board permanently"
+      (click)="deletePermanently(board)"
+    >
+      <mat-icon>clear</mat-icon> Delete
+    </button>
+    <button
+      mat-stroked-button
+      color="primary"
+      aria-label="reopen the board"
+      (click)="reopenBoard(board)"
+    >
+      <mat-icon>replay</mat-icon> Re-open
+    </button>
+  </span>
+</div>

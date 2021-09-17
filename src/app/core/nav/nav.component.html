@@ -46,24 +46,25 @@
   </div>
 
   <!-- Section Right -->
-  <div class="bar" *ngIf="afAuth.user | async as user">
-    <button mat-icon-button aria-label="create board" (click)="createBoard()">
-      <mat-icon>add_circle</mat-icon>
-    </button>
-    <button mat-icon-button aria-label="show boards" (click)="showInfo()">
-      <mat-icon>info</mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      aria-label="show boards"
-      (click)="showNotification()"
-    >
-      <mat-icon matBadge="15" matBadgeColor="warn">notifications</mat-icon>
-    </button>
+  <div class="bar">
+    <span *ngIf="afAuth.user | async as user">
+      <button mat-icon-button aria-label="create board" (click)="createBoard()">
+        <mat-icon>add_circle</mat-icon>
+      </button>
+      <button mat-icon-button aria-label="show boards" (click)="showInfo()">
+        <mat-icon>info</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        aria-label="show boards"
+        (click)="showNotification()"
+      >
+        <mat-icon matBadge="15" matBadgeColor="warn">notifications</mat-icon>
+      </button>
+    </span>
     <button
       mat-icon-button
       [matMenuTriggerFor]="menu"
-      [matTooltip]="user.displayName"
       aria-label="manage account"
     >
       <mat-icon>account_circle</mat-icon>

@@ -32,6 +32,7 @@ export class CalenderDialogComponent implements OnInit {
 
   dueDateChanged($event) {
     // this.data.date = firestore.Timestamp.fromDate($event);
+    this.currentDate = $event;
     this.data.date = $event;
   }
 }

@@ -48,7 +48,6 @@ import {
   ColorDialogComponent,
   ColorDialogResult,
 } from "src/app/common/color-dialog/color-dialog.component";
-import { Constants } from "./taskListConstants";
 import {
   LabelDialogComponent,
   LabelDialogResult,
@@ -57,6 +56,12 @@ import {
   BoardSettingsDialogComponent,
   BoardSettingsDialogResult,
 } from "src/app/common/board-settings/board-settings-dialog.component";
+import {
+  CloseBoardDialogComponent,
+  CloseBoardDialogResult,
+} from "src/app/common/close-board/close-board-dialog.component";
+import { CopyBoardDialogComponent, CopyBoardDialogResult } from "src/app/common/copy-board-dialog/copy-board-dialog.component";
+import { Constant } from "src/app/shared/constants";
 
 @Component({
   selector: "task-list",
@@ -101,6 +106,8 @@ export class TaskListComponent implements OnInit {
   public isShowingColors: boolean = false;
   public boardBGColorPrimary: string;
   public boardBGColorSecondary: string;
+  public selectedPrimaryColor: string;
+  public selectedSecondaryColor: string;
   public isShowingPhotos: boolean = false;
   public isSearchingCard: boolean = false;
   public isShowingMore: boolean = false;
@@ -110,7 +117,7 @@ export class TaskListComponent implements OnInit {
 
   public searchLabels: Label[] = [];
   public searchMembers: SharedUser[] = [];
-  public dueOptions = Constants.DUE_OPTIONS;
+  public dueOptions = Constant.DUE_OPTIONS;
 
   private selectedFilters = {
     labels: [],
@@ -121,6 +128,7 @@ export class TaskListComponent implements OnInit {
   public removeSearch: boolean = false;
   public searchTaskCount: number = 0;
   public searchCard: string;
+  public hasMemberAddAccess: boolean = false;
 
   // @ViewChild("cardMenuTrigger", { static: false }) cardMenuTrigger: MatMenuTrigger;
   @ViewChild("menuUser", { static: false }) public menuUserRef: ElementRef;
@@ -128,6 +136,8 @@ export class TaskListComponent implements OnInit {
   public commentPermissionRef: ElementRef;
   @ViewChild("addRemovePermission", { static: false })
   public addRemovePermissionRef: ElementRef;
+  @ViewChild("closeBoardElm", { static: false })
+  public closeBoardRef: ElementRef;
 
   constructor(
     private dialog: MatDialog,
@@ -245,12 +255,34 @@ export class TaskListComponent implements OnInit {
     this.boardSubscription = this.boardServiceV2.boardChanged.subscribe(
       (board: Board) => {
         console.log(board);
+        //Check Settings for Board
+        //TODO: Duplicate code, move to one function
+        if (board.settings.addRemovePermission.admin) {
+          this.hasMemberAddAccess = this.isCurrentUserAdmin();
 
-        // Settings available for board
-        if (!board.settings) {
-          this.board.settings = {
-            cardCoverEnabled: false,
-          };
+          // if (this.board.owner == this.authService.getUID()) {
+          //   this.hasMemberAddAccess = true;
+          // } else {
+          //   this.boardMembers.forEach((membr) => {
+          //     if(membr.id == this.authService.getUID()) {
+          //       if (membr.permission.admin) {
+          //         this.hasMemberAddAccess = true;
+          //       }
+          //     }
+          //   });
+          // }
+        } else if (board.settings.addRemovePermission.allMembers) {
+          this.hasMemberAddAccess = true;
+        }
+
+        this.selectedPrimaryColor = "";
+        if(board.backgroundColors && board.backgroundColors.primary) {
+          this.selectedPrimaryColor = board.backgroundColors.primary;
+        }
+
+        this.selectedSecondaryColor = "";
+        if(board.backgroundColors && board.backgroundColors.secondary) {
+          this.selectedSecondaryColor = board.backgroundColors.secondary;
         }
 
         // Set document background image & design
@@ -306,11 +338,13 @@ export class TaskListComponent implements OnInit {
         }
 
         this.boardMembers = board.sharedUserInfo;
-        this.boardMembers.forEach((boardMember) => {
-          if (boardMember.id == this.authService.getUID()) {
-            boardMember.isCurrentUser = true;
-          }
-        });
+        if(this.boardMembers && this.boardMembers.length > 0) {
+          this.boardMembers.forEach((boardMember) => {
+            if (boardMember.id == this.authService.getUID()) {
+              boardMember.isCurrentUser = true;
+            }
+          });
+        }
       }
     );
 
@@ -371,6 +405,8 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnDestroy() {
+    document.body.style.backgroundColor = "";
+    document.body.style.backgroundImage = "";
     console.log("TASK LIST DESTROYED");
     this.routeQueryParams.unsubscribe();
 
@@ -840,6 +876,19 @@ export class TaskListComponent implements OnInit {
     });
   }
 
+  setTaskPriority(data) {
+    const task = data.task;
+    task.priority = data.priority;
+
+    this.boardServiceV2.updateTask(this.boardId, task.id, task);
+  }
+
+  setTaskStatus(data) {
+    const task = data.task;
+    task.status = data.status.name;
+    this.boardServiceV2.updateTask(this.boardId, task.id, task);
+  }
+
   createNewActivity(action: string): Activity {
     const activity: Activity = {
       id: this.authService.getUID(),
@@ -1030,6 +1079,38 @@ export class TaskListComponent implements OnInit {
     });
   }
 
+  isAdmin(): boolean {
+    let isAdmin: boolean = false;
+    if (this.board.owner == this.authService.getUID()) {
+      isAdmin = true;
+    } else {
+      this.boardMembers.forEach((membr) => {
+        if (membr.permission.admin) {
+          isAdmin = true;
+        }
+      });
+    }
+
+    return isAdmin;
+  }
+
+  isCurrentUserAdmin(): boolean {
+    let isUserAdmin: boolean = false;
+    if (this.board.owner == this.authService.getUID()) {
+      isUserAdmin = true;
+    } else {
+      this.boardMembers.forEach((membr) => {
+        if (membr.id == this.authService.getUID()) {
+          if (membr.permission.admin) {
+            isUserAdmin = true;
+          }
+        }
+      });
+    }
+
+    return isUserAdmin;
+  }
+
   openAutomation() {
     console.log("Opening Automation dialog");
   }
@@ -1038,11 +1119,13 @@ export class TaskListComponent implements OnInit {
     this.allAdmins = [];
     this.allAdmins.push(this.boardAdmin);
 
-    this.boardMembers.forEach((boardMember) => {
-      if (boardMember.permission.admin) {
-        this.allAdmins.push(boardMember);
-      }
-    });
+    if (this.boardMembers && this.boardMembers.length > 0) {
+      this.boardMembers.forEach((boardMember) => {
+        if (boardMember.permission.admin) {
+          this.allAdmins.push(boardMember);
+        }
+      });
+    }
 
     this.isShowingSidenav = !this.isShowingSidenav;
 
@@ -1095,9 +1178,16 @@ export class TaskListComponent implements OnInit {
   }
 
   cardCoverSetting() {
-    this.board.settings.cardCoverEnabled =
-      !this.board.settings.cardCoverEnabled;
-    this.boardServiceV2.updateBoardSettings(this.boardId, this.board.settings);
+    const isAdmin = this.isCurrentUserAdmin();
+
+    if (isAdmin) {
+      this.board.settings.cardCoverEnabled =
+        !this.board.settings.cardCoverEnabled;
+      this.boardServiceV2.updateBoardSettings(
+        this.boardId,
+        this.board.settings
+      );
+    }
   }
 
   openLabelDialog() {
@@ -1147,52 +1237,122 @@ export class TaskListComponent implements OnInit {
   }
 
   openCommentPermissionModal() {
-    const dialogRef = this.dialog.open(BoardSettingsDialogComponent, {
-      width: "280px",
-      hasBackdrop: false,
-      autoFocus: false,
-      data: {
-        positionRelativeToElement: this.commentPermissionRef,
-        isAddRemovePermission: false,
-        isCommentingPermission: true,
-      },
-    });
-    dialogRef.afterClosed().subscribe((result: BoardSettingsDialogResult) => {
-      if (!result) {
-        return;
-      }
-    });
+    const isAdmin = this.isCurrentUserAdmin();
+
+    if (isAdmin) {
+      const dialogRef = this.dialog.open(BoardSettingsDialogComponent, {
+        width: "280px",
+        hasBackdrop: false,
+        autoFocus: false,
+        data: {
+          positionRelativeToElement: this.commentPermissionRef,
+          isAddRemovePermission: false,
+          isCommentingPermission: true,
+          commentingPermission: this.board.settings.commentingPermission,
+        },
+      });
+      dialogRef.afterClosed().subscribe((result: BoardSettingsDialogResult) => {
+        console.log(result);
+        if (!result) {
+          return;
+        }
+
+        this.board.settings.commentingPermission = result.commentingPermission;
+        this.boardServiceV2.updateBoardSettings(
+          this.boardId,
+          this.board.settings
+        );
+      });
+    }
   }
 
   openAddRemovePermissionModal() {
-    const dialogRef = this.dialog.open(BoardSettingsDialogComponent, {
-      width: "280px",
-      hasBackdrop: false,
-      autoFocus: false,
-      data: {
-        positionRelativeToElement: this.addRemovePermissionRef,
-        isAddRemovePermission: true,
-        isCommentingPermission: false,
-      },
-    });
-    dialogRef.afterClosed().subscribe((result: BoardSettingsDialogResult) => {
-      if (!result) {
-        return;
-      }
-    });
+    const isAdmin = this.isCurrentUserAdmin();
+    if (isAdmin) {
+      const dialogRef = this.dialog.open(BoardSettingsDialogComponent, {
+        width: "280px",
+        hasBackdrop: false,
+        autoFocus: false,
+        data: {
+          positionRelativeToElement: this.addRemovePermissionRef,
+          isAddRemovePermission: true,
+          addRemovePermission: this.board.settings.addRemovePermission,
+          isCommentingPermission: false,
+        },
+      });
+      dialogRef.afterClosed().subscribe((result: BoardSettingsDialogResult) => {
+        console.log(result);
+        if (!result) {
+          return;
+        }
+
+        this.board.settings.addRemovePermission = result.addRemovePermission;
+        this.boardServiceV2.updateBoardSettings(
+          this.boardId,
+          this.board.settings
+        );
+      });
+    }
   }
 
-  emailToBoard() {}
+  emailToBoard() {
+    console.log("Currently not supported");
+  }
 
-  watchBoard() {}
+  watchBoard() {
+    console.log("Currently not supported. Need Firebase functions");
+  }
 
   makeBoardTemplate() {}
 
-  copyBoardContent() {}
+  copyBoardContent() {
+    const isAdmin = this.isCurrentUserAdmin();
+    if (isAdmin) {
+      const dialogRef = this.dialog.open(CopyBoardDialogComponent, {
+        width: "280px",
+        hasBackdrop: true,
+        data: {
+          board: this.board
+        },
+      });
+      dialogRef.afterClosed().subscribe((result: CopyBoardDialogResult) => {
+        console.log(result);
+        if (!result) {
+          return;
+        }
+        
+        this.boardServiceV2.copyBoardDoc("boards", this.boardId, result.boardTitle, result.boardDescription, "boards", true, {}, true);
+      });
+    }
+  }
 
   printExport() {}
 
-  closeBoard() {}
+  closeBoard() {
+    console.log(this.closeBoardRef);
+    const isAdmin = this.isCurrentUserAdmin();
+    if (isAdmin) {
+      const dialogRef = this.dialog.open(CloseBoardDialogComponent, {
+        width: "280px",
+        hasBackdrop: false,
+        autoFocus: false,
+        data: {
+          positionRelativeToElement: this.closeBoardRef,
+        },
+      });
+      dialogRef.afterClosed().subscribe((result: CloseBoardDialogResult) => {
+        console.log(result);
+        if (!result) {
+          return;
+        }
+
+        if (result.delete) {
+          this.board.closed = true;
+          this.boardServiceV2.updateBoard(this.boardId, this.board);
+        }
+      });
+    }
+  }
 
   backToMenu() {
     this.isShowingAboutBoard = false;
@@ -1296,7 +1456,9 @@ export class TaskListComponent implements OnInit {
     this.searchMembers.push(noMember);
     this.searchMembers.push(cloneDeep(this.boardAdmin));
     const boardMembers = cloneDeep(this.boardMembers);
-    this.searchMembers.push(...boardMembers);
+    if(boardMembers && boardMembers.length > 0) {
+      this.searchMembers.push(...boardMembers);
+    }
 
     // Check if already selected user & label is there
     if (this.selectedFilters.labels.length > 0) {
@@ -1646,15 +1808,7 @@ export class TaskListComponent implements OnInit {
       currentUserMember = true;
     }
 
-    if (this.board.owner == this.authService.getUID()) {
-      isAdmin = true;
-    } else {
-      this.boardMembers.forEach((membr) => {
-        if (membr.permission.admin) {
-          isAdmin = true;
-        }
-      });
-    }
+    isAdmin = this.isCurrentUserAdmin();
 
     const tasks = cloneDeep(this.tasks);
     const dialogRef = this.dialog.open(MemberInfoDialogComponent, {

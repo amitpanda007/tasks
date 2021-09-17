@@ -4,8 +4,50 @@
 
 .item {
   margin-bottom: 5px;
-  cursor: pointer;
   padding: 8px;
+}
+
+.heading-info {
+  cursor: pointer;
+}
+
+.top-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.status-icon {
+  height: 12px;
+}
+
+.status {
+  display: flex;
+}
+
+.status span {
+  justify-content: center;
+  display: flex;
+  padding: 2px;
+  color: #333333;
+  background-color: #eeeeee;
+  border: 1px solid #dddddd;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 900;
+  min-width: 55px;
+}
+
+.status {
+  opacity: 0;
+}
+
+.heading-info:hover .status {
+  opacity: 1;
+}
+
+.status-selected {
+  opacity: 1;
 }
 
 .title {
@@ -58,14 +100,6 @@
   align-content: center;
 }
 
-.checklist-count {
-  // margin-top: 15px;
-}
-
-.message-info {
-  margin-left: 12px;
-}
-
 .action-schedule {
   display: flex;
   margin-right: 6px;
@@ -75,6 +109,61 @@
 
 .action-schedule span {
   font-weight: 500;
+}
+
+.checklist-data {
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.checklist-text {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.images {
+  display: block;
+  max-width: 18px;
+  max-height: 18px;
+  width: auto;
+  height: auto;
+  margin-bottom: 1px;
+  cursor: pointer;
+  margin-top: -2px;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.menu-opts {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-between;
+}
+
+.opts {
+  opacity: 0;
+}
+
+.actions-info:hover .opts {
+  opacity: 1;
+}
+
+.priority-selected {
+  opacity: 1;
+}
+
+.priority-sec {
+  display: flex;
+  width: 18px;
+  margin-left: 2px;
 }
 
 mat-icon span {
@@ -109,6 +198,10 @@ mat-icon span {
 
 ::ng-deep html.cdk-global-scrollblock {
   top: 0px !important;
+}
+
+::ng-deep .mat-menu-content {
+  padding: 8px;
 }
 
 .members {

@@ -1,5 +1,10 @@
 <div class="container">
   <div class="main">
+    <div *ngIf="data.task.archived" class="archive-header">
+      <mat-icon class="material-icons-outlined">archive</mat-icon>
+      <span>This card is archived.</span>
+    </div>
+
     <mat-form-field class="title">
       <mat-label>Title</mat-label>
       <input
@@ -257,6 +262,16 @@
         </span>
       </button>
 
+      <button
+        mat-stroked-button
+        (click)="addMessage()"
+        matTooltip="Add special message"
+      >
+        <span class="option-content">
+          <mat-icon class="material-icons-outlined">message</mat-icon> Message
+        </span>
+      </button>
+
       <button mat-stroked-button (click)="openColorDialog()">
         <span class="option-content">
           <mat-icon class="material-icons-outlined">palette</mat-icon>
@@ -316,16 +331,6 @@
       <button mat-stroked-button (click)="shareBoard()">
         <span class="option-content">
           <mat-icon class="material-icons-outlined">share</mat-icon> Share
-        </span>
-      </button>
-
-      <button
-        mat-stroked-button
-        (click)="addMessage()"
-        matTooltip="Add special message"
-      >
-        <span class="option-content">
-          <mat-icon class="material-icons-outlined">message</mat-icon> Message
         </span>
       </button>
 

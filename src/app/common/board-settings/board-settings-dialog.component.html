@@ -2,48 +2,48 @@
   <mat-icon>close</mat-icon>
 </div>
 <div *ngIf="data.isCommentingPermission">
-  <div class="opts">
-    <p>Disabled</p>
+  <div class="opts" (click)="changePermission('CommentingPermission','disabled')">
+    <p>Disabled<mat-icon class="small-icon" *ngIf="commentingPermission.disabled">done</mat-icon></p>
     <p class="info-text">No one can comment or react.</p>
   </div>
 
-  <div class="opts">
-    <p>Members</p>
+  <div class="opts" (click)="changePermission('CommentingPermission','members')">
+    <p>Members<mat-icon class="small-icon" *ngIf="commentingPermission.members">done</mat-icon></p>
     <p class="info-text">Admins and board members can comment and react.</p>
   </div>
 
-  <div class="opts">
-    <p>Members and observers</p>
+  <div class="opts" (click)="changePermission('CommentingPermission','membersAndObservers')">
+    <p>Members and observers<mat-icon class="small-icon" *ngIf="commentingPermission.membersAndObservers">done</mat-icon></p>
     <p class="info-text">
       Admins, board members, and observers can comment and react.
     </p>
   </div>
 
-  <div class="opts">
-    <p>Workspace members</p>
+  <div class="opts" (click)="changePermission('CommentingPermission','AllBoardMembers')">
+    <p>All Board members<mat-icon class="small-icon" *ngIf="commentingPermission.AllBoardMembers">done</mat-icon></p>
     <p class="info-text">
       Admins, board members, observers, and team members can comment and react.
     </p>
   </div>
 
-  <div class="opts">
-    <p>Any Trello user</p>
+  <div class="opts" (click)="changePermission('CommentingPermission','anyUser')">
+    <p>Any Tasks user<mat-icon class="small-icon" *ngIf="commentingPermission.anyUser">done</mat-icon></p>
     <p class="info-text">
-      Any Trello user can comment and react, provided they can see this board.
+      Any Tasks user can comment and react, provided they can see this board.
     </p>
   </div>
 </div>
 
 <div *ngIf="data.isAddRemovePermission">
-  <div class="opts">
-    <p>Admins</p>
+  <div class="opts" (click)="changePermission('AddRemovePermission','admin')">
+    <p>Admins<mat-icon class="small-icon" *ngIf="addRemovePermission.admin">done</mat-icon></p>
     <p class="info-text">
       Allow only admins to add and remove members from this board.
     </p>
   </div>
 
-  <div class="opts">
-    <p>All members</p>
+  <div class="opts" (click)="changePermission('AddRemovePermission','allMembers')">
+    <p>All members<mat-icon class="small-icon" *ngIf="addRemovePermission.allMembers">done</mat-icon></p>
     <p class="info-text">
       Allow all members and admins to add and remove members from this board.
     </p>

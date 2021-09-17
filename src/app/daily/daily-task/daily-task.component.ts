@@ -18,6 +18,7 @@ import {
   MessageDialogComponent,
   MessageDialogResult,
 } from "src/app/common/message-dialog/message-dialog.component";
+import { Constant } from "src/app/shared/constants";
 import { DailyTask } from "./dailytask";
 import { Status } from "./status";
 
@@ -60,38 +61,7 @@ export class DailyTaskComponent implements OnInit {
       this.priority = "blocker";
     }
 
-    this.statusOptions = [
-      {
-        id: 1,
-        name: "ToDo",
-        backgroundColor: "#CFD8DC",
-        color: "#455A64",
-      },
-      {
-        id: 2,
-        name: "Open",
-        backgroundColor: "#0048b0",
-        color: "#ffffff",
-      },
-      {
-        id: 3,
-        name: "Inprogress",
-        backgroundColor: "#BBDEFB",
-        color: "#0D47A1",
-      },
-      {
-        id: 4,
-        name: "Done",
-        backgroundColor: "#B9F6CA",
-        color: "#2E7D32",
-      },
-      {
-        id: 5,
-        name: "Blocked",
-        backgroundColor: "#FF9E80",
-        color: "#D84315",
-      },
-    ];
+    this.statusOptions = Constant.STATUS_OPTIONS;
 
     if (this.dailyTask.status) {
       const currentStatus = this.statusOptions.filter(

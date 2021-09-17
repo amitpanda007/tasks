@@ -1,0 +1,37 @@
+<div mat-dialog-content>
+  <h4>Copy Board</h4>
+
+  <p class="sub-header">Title</p>
+  <mat-form-field class="input-sec">
+    <mat-label>Title</mat-label>
+    <input matInput placeholder="Buy Pizza" [(ngModel)]="boardTitleText" />
+  </mat-form-field>
+  <mat-form-field class="input-sec">
+    <mat-label>Description</mat-label>
+    <textarea
+      matInput
+      [(ngModel)]="boardDescriptionText"
+      rows="2"
+      cols="50"
+    ></textarea>
+  </mat-form-field>
+
+  <p class="sub-header">Keep</p>
+  <div class="checkboxes">
+    <mat-checkbox [color]="primaryColor" [(ngModel)]="keepLabels"
+      >Labels</mat-checkbox
+    >
+    <mat-checkbox [color]="primaryColor" [(ngModel)]="keepTaskLists"
+      >TaskLists</mat-checkbox
+    >
+    <mat-checkbox [color]="primaryColor" [(ngModel)]="keepTasks"
+      >Tasks</mat-checkbox
+    >
+  </div>
+
+  
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="copy()" cdkFocusInitial>Copy</button>
+  <button mat-button (click)="cancel()">Cancel</button>
+</div>

@@ -7,7 +7,9 @@ mat-toolbar > span {
 }
 
 .content-wrapper {
-  max-width: 1400px;
+  width: 100%;
+  overflow: auto;
+  // max-width: 1400px;
   margin: auto;
   margin-top: 1em;
 }
@@ -277,6 +279,7 @@ mat-toolbar > span {
 
 .icon-small {
   font-size: 18px;
+  height: 18px;
 }
 
 .sidenav {
@@ -540,4 +543,9 @@ mat-toolbar > span {
 .archived-opts span {
   cursor: pointer;
   text-decoration: underline;
+}
+
+.disabled-section {
+  pointer-events: none;
+  color: #a5adba;
 }

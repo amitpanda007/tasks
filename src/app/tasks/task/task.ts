@@ -15,6 +15,8 @@ export interface Task {
   checklists?: TaskChecklist[];
   members?: SharedUser[];
   message?: string;
+  priority?: string;
+  status?: string;
   lockStatus?: TaskLock;
   activities?: Activity[];
   archived?: boolean;

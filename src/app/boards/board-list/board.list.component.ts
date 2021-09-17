@@ -9,6 +9,7 @@ import { Subscription } from "rxjs";
 import { BoardService } from "src/app/core/services/board.service";
 import { BoardServiceV2 } from "../../core/services/boardv2.service";
 import { AuthService } from "../../core/services/auth.service";
+import { ClosedBoardContentDialogComponent, ClosedBoardContentDialogResult } from "src/app/common/closed-board-content/closed-board-content-dialog.component";
 
 @Component({
   selector: "board-list",
@@ -17,6 +18,7 @@ import { AuthService } from "../../core/services/auth.service";
 })
 export class BaordListComponent implements OnInit {
   public boards: Board[];
+  public closedBoards: Board[];
   public sharedBoards: Board[];
   private boardSubscription: Subscription;
   public isLoading: boolean;
@@ -33,7 +35,16 @@ export class BaordListComponent implements OnInit {
     this.boardServiceV2.getBoards();
     this.boardSubscription = this.boardServiceV2.boardsChanged.subscribe(
       (boards) => {
-        this.boards = boards;
+        this.boards = [];
+        this.closedBoards = [];
+        boards.forEach(board => {
+          if(!board.closed) {
+            this.boards.push(board);
+          }else {
+            this.closedBoards.push(board);
+          }
+        })
+        // this.boards = boards;
         this.isLoading = false;
       }
     );
@@ -70,6 +81,17 @@ export class BaordListComponent implements OnInit {
         owner: this.authService.getUID(),
         settings: {
           cardCoverEnabled: false,
+          addRemovePermission: {
+            admin: true,
+            allMembers: false,
+          },
+          commentingPermission: {
+            disabled: true,
+            members: false,
+            membersAndObservers: false,
+            AllBoardMembers: false,
+            anyUser: false
+          }
         },
       };
       this.boardServiceV2.addBoard(board);
@@ -94,6 +116,20 @@ export class BaordListComponent implements OnInit {
         this.boards.splice(boardIndex, 1);
       } else {
         this.boards[boardIndex] = board;
+      }
+    });
+  }
+
+  showClosedBoards() {
+    const dialogRef = this.dialog.open(ClosedBoardContentDialogComponent, {
+      width: "540px",
+      data: {
+        closedBoards: this.closedBoards,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: ClosedBoardContentDialogResult) => {
+      if (!result) {
+        return;
       }
     });
   }

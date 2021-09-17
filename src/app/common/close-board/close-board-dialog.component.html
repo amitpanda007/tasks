@@ -1,0 +1,8 @@
+<div class="close" (click)="cancel()">
+  <span>Close board?</span>
+  <mat-icon class="icon-btn">close</mat-icon>
+</div>
+<div>
+  <p>You can find and reopen closed boards at the bottom of <a href="/boards">your boards page.</a></p>
+  <button mat-flat-button color="warn" (click)="deleteBoard()" class="btn">Close</button>
+</div>

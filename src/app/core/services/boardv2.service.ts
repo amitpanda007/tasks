@@ -15,6 +15,7 @@ import { Invitation } from "../../common/invite-dialog/invitation";
 import { firestore } from "firebase/app";
 import * as firebase from "firebase/app";
 import { userInfo } from "os";
+import { create } from "domain";
 
 @Injectable()
 export class BoardServiceV2 {
@@ -254,6 +255,114 @@ export class BoardServiceV2 {
 
     // Remove user from all checklist under task
     batch.commit();
+  }
+
+  // Referrence from https://leechy.dev/firestore-move
+  public newDocId: any;
+  async copyBoardDoc(
+    collectionFrom: string,
+    docId: string,
+    boardTitle: string = "",
+    boardDescription: string = "",
+    collectionTo: string,
+    create: boolean,
+    addData: any = {},
+    recursive = false
+  ): Promise<boolean> {
+    const db = firebase.firestore();
+    // document reference
+    const docRef = db.collection(collectionFrom).doc(docId);
+
+    // copy the document
+    const docData = await docRef
+      .get()
+      .then((doc) => doc.exists && doc.data())
+      .catch((error) => {
+        console.error(
+          "Error reading document",
+          `${collectionFrom}/${docId}`,
+          JSON.stringify(error)
+        );
+      });
+
+    
+    if (docData) {
+      // document exists, create the new item
+      try {
+        if (create) {
+          docData.title = boardTitle;
+          docData.description = boardDescription;
+          this.newDocId = await db
+            .collection(collectionTo)
+            .add({ ...docData, ...addData });
+        }else {
+          await db
+            .collection(collectionTo)
+            .doc(docId)
+            .set({ ...docData, ...addData });
+        }
+      } catch (error) {
+        console.error(
+          "Error creating document",
+          `${collectionTo}/${docId}`,
+          JSON.stringify(error)
+        );
+      }
+      console.log(this.newDocId.id);
+
+      // if copying of the subcollections is needed
+      if (recursive) {
+        // subcollections
+        const labelCollection = docRef.collection("labels");
+        const taskListsCollection = docRef.collection("taskLists");
+        const tasksCollection = docRef.collection("tasks");
+        // const subcollections = await docRef.listCollections();
+        const subcollections = [
+          labelCollection,
+          taskListsCollection,
+          tasksCollection,
+        ];
+
+        for await (const subcollectionRef of subcollections) {
+          const subcollectionPath = `${collectionFrom}/${docId}/${subcollectionRef.id}`;
+
+          console.log(subcollectionPath);
+          // get all the documents in the collection
+          await subcollectionRef
+            .get()
+            .then(async (snapshot) => {
+              const docs = snapshot.docs;
+              for await (const doc of docs) {
+                console.log(doc);
+                await this.copyBoardDoc(
+                  subcollectionPath,
+                  doc.id,
+                  "",
+                  "",
+                  `${collectionTo}/${this.newDocId.id}/${subcollectionRef.id}`,
+                  false,
+                  {},
+                  true
+                );
+              }
+              return true;
+            })
+            .catch((error) => {
+              console.error(
+                "Error reading subcollection",
+                subcollectionPath,
+                error
+              );
+            });
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  deleteBoard(boardId: string) {
+    this._store.collection("boards").doc(boardId).delete();
   }
 
   /**

@@ -1,3 +1,5 @@
+import { AddRemovePermission, CommentingPermission } from "src/app/common/board-settings/board-settings-dialog.component";
+
 export interface Board {
   id?: string;
   title: string;
@@ -9,6 +11,7 @@ export interface Board {
   backgroundUrl?: string;
   backgroundColors?: BGColor;
   settings: Settings;
+  closed?: boolean;
 }
 
 export interface SharedUser {
@@ -29,4 +32,6 @@ export interface BGColor {
 
 export interface Settings {
   cardCoverEnabled: boolean;
+  commentingPermission: CommentingPermission;
+  addRemovePermission: AddRemovePermission;
 }
