@@ -1,5 +1,5 @@
 <div mat-dialog-content>
-  <p>{{ data.message }}</p>
+  <p [innerHTML]="data.message"></p>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="confirm()" cdkFocusInitial>OK</button>

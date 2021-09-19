@@ -60,8 +60,15 @@ import {
   CloseBoardDialogComponent,
   CloseBoardDialogResult,
 } from "src/app/common/close-board/close-board-dialog.component";
-import { CopyBoardDialogComponent, CopyBoardDialogResult } from "src/app/common/copy-board-dialog/copy-board-dialog.component";
+import {
+  CopyBoardDialogComponent,
+  CopyBoardDialogResult,
+} from "src/app/common/copy-board-dialog/copy-board-dialog.component";
 import { Constant } from "src/app/shared/constants";
+import {
+  BoardTemplateDialogComponent,
+  BoardTemplateDialogResult,
+} from "src/app/common/board-template-dialog/board-template-dialog.component";
 
 @Component({
   selector: "task-list",
@@ -276,12 +283,12 @@ export class TaskListComponent implements OnInit {
         }
 
         this.selectedPrimaryColor = "";
-        if(board.backgroundColors && board.backgroundColors.primary) {
+        if (board.backgroundColors && board.backgroundColors.primary) {
           this.selectedPrimaryColor = board.backgroundColors.primary;
         }
 
         this.selectedSecondaryColor = "";
-        if(board.backgroundColors && board.backgroundColors.secondary) {
+        if (board.backgroundColors && board.backgroundColors.secondary) {
           this.selectedSecondaryColor = board.backgroundColors.secondary;
         }
 
@@ -338,7 +345,7 @@ export class TaskListComponent implements OnInit {
         }
 
         this.boardMembers = board.sharedUserInfo;
-        if(this.boardMembers && this.boardMembers.length > 0) {
+        if (this.boardMembers && this.boardMembers.length > 0) {
           this.boardMembers.forEach((boardMember) => {
             if (boardMember.id == this.authService.getUID()) {
               boardMember.isCurrentUser = true;
@@ -462,9 +469,15 @@ export class TaskListComponent implements OnInit {
   }
 
   dropList(event: CdkDragDrop<TaskList[] | null>): void {
-    if (event.previousContainer === event.container) {
+    console.log(event);
+    // if (event.previousContainer === event.container) {
+    //   console.log("Same Container");
+    //   return;
+    // }
+    if (event.previousIndex === event.currentIndex) {
       return;
     }
+
     moveItemInArray(this.taskList, event.previousIndex, event.currentIndex);
     const listTobeUpdated: TaskList[] = [];
     this.taskList.forEach((list, arrIndex) => {
@@ -620,6 +633,7 @@ export class TaskListComponent implements OnInit {
         task: clonedTask,
         labels: clonedLabels,
         boardId: this.boardId,
+        isTemplateBoard: this.board.isTemplate,
         boardMembers: clonedBoardMembers,
         enableDelete: true,
         boardChecklists: clonedAllChecklist,
@@ -1303,7 +1317,64 @@ export class TaskListComponent implements OnInit {
     console.log("Currently not supported. Need Firebase functions");
   }
 
-  makeBoardTemplate() {}
+  makeBoardTemplate() {
+    const isAdmin = this.isCurrentUserAdmin();
+    if (isAdmin) {
+      const dialogRef = this.dialog.open(BoardTemplateDialogComponent, {
+        width: "280px",
+        hasBackdrop: true,
+        data: {},
+      });
+      dialogRef
+        .afterClosed()
+        .subscribe(async (result: BoardTemplateDialogResult) => {
+          console.log(result);
+          if (!result) {
+            return;
+          }
+
+          if (result.isTemplate) {
+            const copiedBoard = await this.boardServiceV2.copyBoardDoc(
+              "boards",
+              this.boardId,
+              this.board.title,
+              this.board.description,
+              "boards",
+              true,
+              {},
+              true,
+              true
+            );
+            console.log(`BOARD COPY COMPLETE: ${copiedBoard}`);
+
+            if (copiedBoard) {
+              const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                width: "240px",
+                data: {
+                  message: `<span>Navigate to copied Template</span>: <a href="/boards/${copiedBoard}">Copied Board</a>`,
+                },
+              });
+              dialogRef.disableClose = true;
+              dialogRef
+                .afterClosed()
+                .subscribe((result: ConfirmDialogResult) => {
+                  if (!result) {
+                    return;
+                  }
+                  console.log(result);
+                  if (result.confirm) {
+                    this.router
+                      .navigateByUrl(`/boards/${copiedBoard}`)
+                      .then(() => {
+                        window.location.reload();
+                      });
+                  }
+                });
+            }
+          }
+        });
+    }
+  }
 
   copyBoardContent() {
     const isAdmin = this.isCurrentUserAdmin();
@@ -1312,18 +1383,57 @@ export class TaskListComponent implements OnInit {
         width: "280px",
         hasBackdrop: true,
         data: {
-          board: this.board
+          board: this.board,
         },
       });
-      dialogRef.afterClosed().subscribe((result: CopyBoardDialogResult) => {
-        console.log(result);
-        if (!result) {
-          return;
-        }
-        
-        this.boardServiceV2.copyBoardDoc("boards", this.boardId, result.boardTitle, result.boardDescription, "boards", true, {}, true);
-      });
+      dialogRef
+        .afterClosed()
+        .subscribe(async (result: CopyBoardDialogResult) => {
+          console.log(result);
+          if (!result) {
+            return;
+          }
+
+          const copiedBoard = await this.boardServiceV2.copyBoardDoc(
+            "boards",
+            this.boardId,
+            result.boardTitle,
+            result.boardDescription,
+            "boards",
+            true,
+            {},
+            false,
+            true
+          );
+          console.log(`BOARD COPY COMPLETE: ${copiedBoard}`);
+
+          if (copiedBoard) {
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+              width: "240px",
+              data: {
+                message: `<span>Navigate to copied board</span>: <a href="/boards/${copiedBoard}">Copied Board</a>`,
+              },
+            });
+            dialogRef.disableClose = true;
+            dialogRef.afterClosed().subscribe((result: ConfirmDialogResult) => {
+              if (!result) {
+                return;
+              }
+              console.log(result);
+              if (result.confirm) {
+                this.router.navigateByUrl(`/boards/${copiedBoard}`).then(() => {
+                  window.location.reload();
+                });
+              }
+            });
+          }
+        });
     }
+  }
+
+  convertToBoard() {
+    this.board.isTemplate = false;
+    this.boardServiceV2.updateBoard(this.boardId, this.board);
   }
 
   printExport() {}
@@ -1456,7 +1566,7 @@ export class TaskListComponent implements OnInit {
     this.searchMembers.push(noMember);
     this.searchMembers.push(cloneDeep(this.boardAdmin));
     const boardMembers = cloneDeep(this.boardMembers);
-    if(boardMembers && boardMembers.length > 0) {
+    if (boardMembers && boardMembers.length > 0) {
       this.searchMembers.push(...boardMembers);
     }
 

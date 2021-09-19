@@ -49,6 +49,7 @@ import { BoardSettingsDialogComponent } from "./common/board-settings/board-sett
 import { CloseBoardDialogComponent } from "./common/close-board/close-board-dialog.component";
 import { ClosedBoardContentDialogComponent } from "./common/closed-board-content/closed-board-content-dialog.component";
 import { CopyBoardDialogComponent } from "./common/copy-board-dialog/copy-board-dialog.component";
+import { BoardTemplateDialogComponent } from "./common/board-template-dialog/board-template-dialog.component";
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import { CopyBoardDialogComponent } from "./common/copy-board-dialog/copy-board-
     BoardSettingsDialogComponent,
     CloseBoardDialogComponent,
     ClosedBoardContentDialogComponent,
-    CopyBoardDialogComponent
+    CopyBoardDialogComponent,
+    BoardTemplateDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -124,7 +126,8 @@ import { CopyBoardDialogComponent } from "./common/copy-board-dialog/copy-board-
     BoardSettingsDialogComponent,
     CloseBoardDialogComponent,
     ClosedBoardContentDialogComponent,
-    CopyBoardDialogComponent
+    CopyBoardDialogComponent,
+    BoardTemplateDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

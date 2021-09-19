@@ -1,0 +1,27 @@
+<div mat-dialog-content>
+  <div class="template">
+    <div class="header">
+      <span>Make Template</span>
+      <mat-icon (click)="cancel()" class="pointer">close</mat-icon>
+    </div>
+    <div class="nav-option-dividor"></div>
+    <div class="template-content">
+      <img src="../../../assets/images/template.png" class="template-img" />
+      <p>
+        Turn this board into a template for others to copy. Comments and
+        activity will be hidden, but members will remain on template.
+      </p>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button
+    mat-flat-button
+    color="accent"
+    (click)="makeTemplate()"
+    cdkFocusInitial
+    class="icon-btn"
+  >
+    Make Template
+  </button>
+</div>

@@ -1,4 +1,7 @@
-import { AddRemovePermission, CommentingPermission } from "src/app/common/board-settings/board-settings-dialog.component";
+import {
+  AddRemovePermission,
+  CommentingPermission,
+} from "src/app/common/board-settings/board-settings-dialog.component";
 
 export interface Board {
   id?: string;
@@ -11,6 +14,7 @@ export interface Board {
   backgroundUrl?: string;
   backgroundColors?: BGColor;
   settings: Settings;
+  isTemplate?: boolean;
   closed?: boolean;
 }
 

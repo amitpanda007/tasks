@@ -1,4 +1,17 @@
 <div *ngIf="hasBoardAccess">
+  <!-- BOARD TEMPLATE SECTION -->
+  <div class="template-options" *ngIf="board.isTemplate">
+    <mat-icon>public</mat-icon>
+    <span>This is a public template for anyone on the internet to copy.</span>
+    <button mat-flat-button color="primary" (click)="copyBoardContent()">
+      Create board from template
+    </button>
+    <button mat-icon-button aria-label="share template">
+      <mat-icon>share</mat-icon>Share template
+    </button>
+  </div>
+
+  <!-- BOARD OPTION SECTION -->
   <div class="board-options">
     <div id="left" class="flex-display">
       <div class="board-input" *ngIf="board">
@@ -7,8 +20,9 @@
             *ngIf="!editingBoardName"
             class="title option-bg"
             (click)="toggleBoardNameEditing(false)"
-            >{{ board.title }}</span
-          >
+            [innerHTML]="board.title"
+          ></span>
+          <p class="template" *ngIf="board.isTemplate">Template</p>
           <span *ngIf="!editingBoardName">
             <svg
               width="18"
@@ -473,29 +487,59 @@
       </div>
     </div>
     <div class="nav-option-dividor"></div>
-    <div class="menu-option flex-display pointer" (click)="emailToBoard()">
+    <div
+      class="menu-option flex-display pointer"
+      (click)="emailToBoard()"
+      *ngIf="!board.isTemplate"
+    >
       <mat-icon class="material-icons-outlined">email</mat-icon>
       <span>Email-to-board settings</span>
     </div>
-    <div class="menu-option flex-display pointer" (click)="watchBoard()">
+    <div
+      class="menu-option flex-display pointer"
+      (click)="watchBoard()"
+      *ngIf="!board.isTemplate"
+    >
       <mat-icon class="material-icons-outlined">visibility</mat-icon>
       <span>Watch</span>
     </div>
-    <div class="menu-option flex-display pointer" (click)="makeBoardTemplate()">
+    <div
+      class="menu-option flex-display pointer"
+      (click)="makeBoardTemplate()"
+      *ngIf="!board.isTemplate"
+    >
       <mat-icon class="material-icons-outlined">content_paste</mat-icon>
       <span>Make template</span>
     </div>
-    <div class="menu-option flex-display pointer" (click)="copyBoardContent()">
+    <div
+      class="menu-option flex-display pointer"
+      (click)="copyBoardContent()"
+      *ngIf="!board.isTemplate"
+    >
       <mat-icon class="material-icons-outlined">content_copy</mat-icon>
       <span>Copy board</span>
+    </div>
+    <div
+      class="menu-option flex-display pointer"
+      (click)="convertToBoard()"
+      *ngIf="board.isTemplate"
+    >
+      <mat-icon class="material-icons-outlined">restart_alt</mat-icon>
+      <span>Convert to board</span>
     </div>
     <div class="menu-option flex-display pointer" (click)="printExport()">
       <mat-icon class="material-icons-outlined">print</mat-icon>
       <span>Print and export</span>
     </div>
     <div class="nav-option-dividor"></div>
-    <div #closeBoardElm class="menu-option flex-display pointer" (click)="closeBoard()">
-      <span>Close board</span>
+    <div
+      #closeBoardElm
+      class="menu-option flex-display pointer"
+      (click)="closeBoard()"
+    >
+      <span>Close</span>
+      <span *ngIf="!board.isTemplate" class="no-pads"> board</span>
+      <span *ngIf="board.isTemplate" class="no-pads"> template</span>
     </div>
     <div class="nav-option-dividor"></div>
   </div>
@@ -508,52 +552,90 @@
     </div>
 
     <div class="nav-option-dividor"></div>
-    <span [ngClass]="{'disabled-section': !isCurrentUserAdmin()}">
-    <div class="menu-option no-pads" (click)="cardCoverSetting()" >
-      <span *ngIf="!board.settings.cardCoverEnabled">Enable card covers</span>
-      <span class="flex-display">
-        <span *ngIf="board.settings.cardCoverEnabled">Card covers enabled</span>
-        <span
-          ><mat-icon class="icon-small" *ngIf="board.settings.cardCoverEnabled"
-            >done</mat-icon
-          ></span
+    <span [ngClass]="{ 'disabled-section': !isCurrentUserAdmin() }">
+      <div class="menu-option no-pads" (click)="cardCoverSetting()">
+        <span *ngIf="!board.settings.cardCoverEnabled">Enable card covers</span>
+        <span class="flex-display">
+          <span *ngIf="board.settings.cardCoverEnabled"
+            >Card covers enabled</span
+          >
+          <span
+            ><mat-icon
+              class="icon-small"
+              *ngIf="board.settings.cardCoverEnabled"
+              >done</mat-icon
+            ></span
+          >
+        </span>
+        <p class="info-text">
+          Show image attachments and colors on the front of cards.
+        </p>
+      </div>
+
+      <div class="nav-option-dividor"></div>
+      <div *ngIf="!board.isTemplate">
+        <div
+          class="menu-option"
+          #commentPermission
+          (click)="openCommentPermissionModal()"
         >
-      </span>
-      <p class="info-text">
-        Show image attachments and colors on the front of cards.
-      </p>
-    </div>
+          <p>Commenting Permissions</p>
+          <p
+            class="info-text"
+            *ngIf="board.settings.commentingPermission.disabled"
+          >
+            Disabled
+          </p>
+          <p
+            class="info-text"
+            *ngIf="board.settings.commentingPermission.members"
+          >
+            Members
+          </p>
+          <p
+            class="info-text"
+            *ngIf="board.settings.commentingPermission.membersAndObservers"
+          >
+            Members and observers
+          </p>
+          <p
+            class="info-text"
+            *ngIf="board.settings.commentingPermission.AllBoardMembers"
+          >
+            All Board members
+          </p>
+          <p
+            class="info-text"
+            *ngIf="board.settings.commentingPermission.anyUser"
+          >
+            Any Tasks user
+          </p>
+        </div>
 
-    <div class="nav-option-dividor"></div>
-    <div
-      class="menu-option"
-      #commentPermission
-      (click)="openCommentPermissionModal()"
-    >
-      <p>Commenting Permissions</p>
-      <p class="info-text" *ngIf="board.settings.commentingPermission.disabled">Disabled</p>
-      <p class="info-text" *ngIf="board.settings.commentingPermission.members">Members</p>
-      <p class="info-text" *ngIf="board.settings.commentingPermission.membersAndObservers">Members and observers</p>
-      <p class="info-text" *ngIf="board.settings.commentingPermission.AllBoardMembers">All Board members</p>
-      <p class="info-text" *ngIf="board.settings.commentingPermission.anyUser">Any Tasks user</p>
-    </div>
+        <div
+          class="menu-option"
+          #addRemovePermission
+          (click)="openAddRemovePermissionModal()"
+        >
+          <p>Add/Remove Permissions</p>
+          <p class="info-text" *ngIf="board.settings.addRemovePermission.admin">
+            Admins
+          </p>
+          <p
+            class="info-text"
+            *ngIf="board.settings.addRemovePermission.allMembers"
+          >
+            All Members
+          </p>
+        </div>
 
-    <div
-      class="menu-option"
-      #addRemovePermission
-      (click)="openAddRemovePermissionModal()"
-    >
-      <p>Add/Remove Permissions</p>
-      <p class="info-text" *ngIf="board.settings.addRemovePermission.admin">Admins</p>
-      <p class="info-text" *ngIf="board.settings.addRemovePermission.allMembers">All Members</p>
-    </div>
-
-    <div class="nav-option-dividor"></div>
-    <p class="info-text">Allow Workspace members to edit and join</p>
-    <p class="info-text">
-      Any Workspace member can edit and join this board. To enable this, the
-      board can't be private.
-    </p>
+        <div class="nav-option-dividor"></div>
+        <p class="info-text">Allow Workspace members to edit and join</p>
+        <p class="info-text">
+          Any Workspace member can edit and join this board. To enable this, the
+          board can't be private.
+        </p>
+      </div>
     </span>
   </div>
 

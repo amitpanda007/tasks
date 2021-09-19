@@ -83,9 +83,12 @@
           [(ngModel)]="data.task.dueDate.completed"
           color="primary"
         ></mat-checkbox>
-        <span class="due-date">{{
-          data.task.dueDate.date | dateformat: ""
-        }} <mat-icon [matMenuTriggerFor]="menu">keyboard_arrow_down</mat-icon></span>
+        <span class="due-date"
+          >{{ data.task.dueDate.date | dateformat: "" }}
+          <mat-icon [matMenuTriggerFor]="menu"
+            >keyboard_arrow_down</mat-icon
+          ></span
+        >
         <span class="due-complete" *ngIf="data.task.dueDate.completed"
           >COMPLETED</span
         >
@@ -164,7 +167,10 @@
       </section>
     </div>
 
-    <div *ngIf="data.task.activities" class="act-container">
+    <div
+      *ngIf="data.task.activities && !data.isTemplateBoard"
+      class="act-container"
+    >
       <section>
         <div class="flex-display space-btwn">
           <span class="flex-display">
@@ -306,7 +312,11 @@
         </span>
       </button>
 
-      <button mat-stroked-button (click)="archiveTask()" *ngIf="!data.task.archived">
+      <button
+        mat-stroked-button
+        (click)="archiveTask()"
+        *ngIf="!data.task.archived"
+      >
         <span
           class="option-content"
           matTooltip="archive this task"
@@ -317,14 +327,19 @@
         </span>
       </button>
 
-      <button mat-stroked-button (click)="archiveTask()" *ngIf="data.task.archived">
+      <button
+        mat-stroked-button
+        (click)="archiveTask()"
+        *ngIf="data.task.archived"
+      >
         <span
           class="option-content"
           matTooltip="move task back to board"
           [matTooltipDisabled]="false"
           [matTooltipPosition]="tooltipPosition"
         >
-          <mat-icon class="material-icons-outlined">refresh</mat-icon> Send to board 
+          <mat-icon class="material-icons-outlined">refresh</mat-icon> Send to
+          board
         </span>
       </button>
 

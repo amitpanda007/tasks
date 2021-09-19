@@ -477,13 +477,15 @@ export class TaskDialogComponent implements OnInit {
   }
 
   openColorDialog() {
-    const curBgColor = this.data.task.backgroundColor ? this.data.task.backgroundColor : "";
+    const curBgColor = this.data.task.backgroundColor
+      ? this.data.task.backgroundColor
+      : "";
 
     const dialogRef = this.dialog.open(ColorDialogComponent, {
       width: "500px",
       height: "600px",
       data: {
-        color: curBgColor
+        color: curBgColor,
       },
     });
     dialogRef.afterClosed().subscribe((result: ColorDialogResult) => {
@@ -561,9 +563,9 @@ export class TaskDialogComponent implements OnInit {
 
   archiveTask() {
     const task: Task = this.data.task as Task;
-    if(task.archived) {
+    if (task.archived) {
       task.archived = false;
-    }else {
+    } else {
       task.archived = true;
     }
   }
@@ -632,6 +634,7 @@ export interface TaskDialogData {
   labels: Label[];
   updatedLabels?: Label[];
   boardId: string;
+  isTemplateBoard: boolean;
   boardMembers: SharedUser[];
   enableDelete: boolean;
   boardChecklists?: TaskChecklist[];

@@ -267,7 +267,8 @@ export class BoardServiceV2 {
     collectionTo: string,
     create: boolean,
     addData: any = {},
-    recursive = false
+    isTemplate: boolean = false,
+    recursive: boolean = false
   ): Promise<boolean> {
     const db = firebase.firestore();
     // document reference
@@ -285,17 +286,19 @@ export class BoardServiceV2 {
         );
       });
 
-    
     if (docData) {
       // document exists, create the new item
       try {
         if (create) {
           docData.title = boardTitle;
           docData.description = boardDescription;
+          if (isTemplate) {
+            docData.isTemplate = true;
+          }
           this.newDocId = await db
             .collection(collectionTo)
             .add({ ...docData, ...addData });
-        }else {
+        } else {
           await db
             .collection(collectionTo)
             .doc(docId)
@@ -342,6 +345,7 @@ export class BoardServiceV2 {
                   `${collectionTo}/${this.newDocId.id}/${subcollectionRef.id}`,
                   false,
                   {},
+                  false,
                   true
                 );
               }
@@ -356,9 +360,9 @@ export class BoardServiceV2 {
             });
         }
       }
-      return true;
+      return this.newDocId.id;
     }
-    return false;
+    return this.newDocId.id;
   }
 
   deleteBoard(boardId: string) {

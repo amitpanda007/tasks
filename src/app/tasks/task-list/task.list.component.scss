@@ -549,3 +549,33 @@ mat-toolbar > span {
   pointer-events: none;
   color: #a5adba;
 }
+
+.template {
+  display: inline;
+  border-radius: 3px;
+  background-color: rgba(224, 224, 224, 0.7);
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  line-height: 16px;
+  align-items: center;
+  color: #172b4d;
+  width: fit-content;
+  width: -moz-fit-content;
+}
+
+.template-options {
+  word-wrap: break-word;
+  align-items: center;
+  background-color: #172b4d;
+  border-bottom: 1px solid #172b4d;
+  color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.no-pads {
+  padding: 0 !important;
+}
