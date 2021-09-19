@@ -17,11 +17,13 @@ import { BoardServiceV2 } from "./services/boardv2.service";
 import { DailyService } from "./services/daily.service";
 import { AccountService } from "./services/account.service";
 import { APIService } from "./services/api.service";
+import { LoaderService } from "./services/loader.service";
+import { LoaderComponent } from "./loader/loader.component";
 
 @NgModule({
   imports: [CommonModule, SharedModule],
-  exports: [NavComponent],
-  declarations: [NavComponent],
+  exports: [NavComponent, LoaderComponent],
+  declarations: [NavComponent, LoaderComponent],
   providers: [
     AuthService,
     CacheService,
@@ -34,6 +36,7 @@ import { APIService } from "./services/api.service";
     DailyService,
     AccountService,
     APIService,
+    LoaderService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
 })

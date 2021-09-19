@@ -69,6 +69,7 @@ import {
   BoardTemplateDialogComponent,
   BoardTemplateDialogResult,
 } from "src/app/common/board-template-dialog/board-template-dialog.component";
+import { LoaderService } from "src/app/core/services/loader.service";
 
 @Component({
   selector: "task-list",
@@ -87,7 +88,6 @@ export class TaskListComponent implements OnInit {
 
   public hasBoardAccess: boolean = false;
   public showInputField: boolean = false;
-  public isLoading: boolean;
   public listName: string;
   public board: Board;
   public boardMembers: SharedUser[];
@@ -147,6 +147,7 @@ export class TaskListComponent implements OnInit {
   public closeBoardRef: ElementRef;
 
   constructor(
+    private loaderService: LoaderService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
@@ -252,7 +253,7 @@ export class TaskListComponent implements OnInit {
     }
 
     console.log("TASK LIST INITIATED");
-    this.isLoading = true;
+    this.loaderService.changeLoading(true);
     this.boardServiceV2.getSingleBoard(this.boardId);
     this.boardServiceV2.getTaskList(this.boardId);
     this.boardServiceV2.getTasks(this.boardId);
@@ -405,6 +406,8 @@ export class TaskListComponent implements OnInit {
                 this.activities = this.activities.concat(task.activities);
               }
             });
+
+            this.loaderService.changeLoading(false);
           }
         );
       }
@@ -1334,6 +1337,7 @@ export class TaskListComponent implements OnInit {
           }
 
           if (result.isTemplate) {
+            this.loaderService.changeLoading(true);
             const copiedBoard = await this.boardServiceV2.copyBoardDoc(
               "boards",
               this.boardId,
@@ -1346,6 +1350,7 @@ export class TaskListComponent implements OnInit {
               true
             );
             console.log(`BOARD COPY COMPLETE: ${copiedBoard}`);
+            this.loaderService.changeLoading(false);
 
             if (copiedBoard) {
               const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -1394,6 +1399,7 @@ export class TaskListComponent implements OnInit {
             return;
           }
 
+          this.loaderService.changeLoading(true);
           const copiedBoard = await this.boardServiceV2.copyBoardDoc(
             "boards",
             this.boardId,
@@ -1406,6 +1412,7 @@ export class TaskListComponent implements OnInit {
             true
           );
           console.log(`BOARD COPY COMPLETE: ${copiedBoard}`);
+          this.loaderService.changeLoading(false);
 
           if (copiedBoard) {
             const dialogRef = this.dialog.open(ConfirmDialogComponent, {
