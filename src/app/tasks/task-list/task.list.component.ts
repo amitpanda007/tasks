@@ -70,6 +70,8 @@ import {
   BoardTemplateDialogResult,
 } from "src/app/common/board-template-dialog/board-template-dialog.component";
 import { LoaderService } from "src/app/core/services/loader.service";
+import { TaskTemplateDialogComponent, TaskTemplateDialogResult } from "src/app/common/task-template-dialog/task-template-dialog.component";
+import { TaskOption } from "../task/taskoptions";
 
 @Component({
   selector: "task-list",
@@ -86,6 +88,7 @@ export class TaskListComponent implements OnInit {
   private boardId: string;
   private tasklistCopy: TaskList[];
 
+  public taskOptions: TaskOption;
   public hasBoardAccess: boolean = false;
   public showInputField: boolean = false;
   public listName: string;
@@ -204,13 +207,12 @@ export class TaskListComponent implements OnInit {
       });
     });
 
-    this.sortOrders = {
-      INDEX: "index",
-      CREATED: "created",
-      MODIFIED: "modified",
-      DUEDATE: "dueDate",
-      CHECKLIST: "checklist",
-    };
+    this.taskOptions = {
+      showTaskPriority: true,
+      showTaskStatus: true
+    }
+
+    this.sortOrders = Constant.SORT_ORDERS;
     this.starred = "#FFC107";
     this.listName = "";
     this.boardMembers = [];
@@ -916,11 +918,11 @@ export class TaskListComponent implements OnInit {
     return activity;
   }
 
-  createNewTask(taskListId: string): void {
+  createNewTask(taskListId: string, task = {}): void {
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: "768px",
       data: {
-        task: {},
+        task: task,
         boardId: this.boardId,
         enableDelete: false,
       },
@@ -937,7 +939,42 @@ export class TaskListComponent implements OnInit {
       result.task.index = tasksUnderList.length;
       result.task.created = new Date();
       result.task.modified = new Date();
+
+      if (!result.task.activities) {
+        result.task.activities = [];
+      }
+      const activity = this.createNewActivity(
+        `Created this card.`
+      );
+      result.task.activities.push(activity);
+
       this.boardServiceV2.addTask(this.boardId, result.task);
+    });
+  }
+
+  createTaskFromTemplate(taskListId: string): void {
+    console.log(`TaskList ID: ${taskListId}`);
+
+    const tempateTasks = this.tasks.filter(task => task.isTemplateTask == true);
+    const dialogRef = this.dialog.open(TaskTemplateDialogComponent, {
+      width: "320px",
+      data: {
+        boardId: this.boardId,
+        taskListId: taskListId,
+        templateTasks: tempateTasks,
+        labels: this.labels
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: TaskTemplateDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+      if(result.isCreatingTemplate) {
+        const task: any = {};
+        task.isTemplateTask = true;
+        this.createNewTask(taskListId, task);
+      }
     });
   }
 

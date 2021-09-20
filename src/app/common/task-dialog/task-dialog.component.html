@@ -2,7 +2,15 @@
   <div class="main">
     <div *ngIf="data.task.archived" class="archive-header">
       <mat-icon class="material-icons-outlined">archive</mat-icon>
-      <span>This card is archived.</span>
+      <span>This task is archived.</span>
+    </div>
+
+    <div *ngIf="data.task.isTemplateTask" class="template-header">
+      <span class="option-content">
+        <img src="../../../assets/images/template.png" class="template-img" />
+        <span>This is a Template Task</span>
+      </span>
+      <button mat-flat-button color="primary"><mat-icon class="material-icons-outlined">add_box</mat-icon>Create task from template</button>
     </div>
 
     <mat-form-field class="title">
@@ -298,6 +306,20 @@
       <button mat-stroked-button (click)="openCopyDialog()">
         <span class="option-content">
           <mat-icon class="material-icons-outlined">content_copy</mat-icon> Copy
+        </span>
+      </button>
+
+      <button mat-stroked-button (click)="makeTaskTemplate()">
+        <span class="option-content" *ngIf="!data.task.isTemplateTask">
+          <mat-icon class="material-icons-outlined">event_note</mat-icon> Make
+          template
+        </span>
+        <span class="option-content" *ngIf="data.task.isTemplateTask">
+          <mat-icon class="material-icons-outlined">event_note</mat-icon>
+          Template
+          <mat-icon class="material-icons-outlined" class="done-icon"
+            >done</mat-icon
+          >
         </span>
       </button>
 

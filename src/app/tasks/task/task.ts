@@ -20,6 +20,7 @@ export interface Task {
   lockStatus?: TaskLock;
   activities?: Activity[];
   archived?: boolean;
+  isTemplateTask?: boolean;
   created: Date;
   modified: Date;
 }

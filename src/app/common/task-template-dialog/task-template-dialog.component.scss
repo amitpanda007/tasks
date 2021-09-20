@@ -1,0 +1,61 @@
+.sub-header {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-between;
+  margin-top: 5px;
+  margin-bottom: 1em;
+  font-size: small;
+  font-weight: 600;
+  color: dimgray;
+  font-size: 1em;
+}
+
+.checkboxes {
+  display: grid;
+  margin-bottom: 1rem;
+}
+
+.nav-option-dividor {
+  background-color: #091e4221;
+  border: 0;
+  height: 1px;
+  margin: 16px 0;
+  padding: 0;
+  width: 100%;
+}
+
+.btn-lrg {
+  width: 100%;
+}
+
+.flex-display {
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.spacing {
+  justify-content: space-around;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.task-container {
+  display: flex;
+}
+
+.task {
+  width: 100%;
+}
+
+.task-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.tite-input {
+  width: 95%;
+}

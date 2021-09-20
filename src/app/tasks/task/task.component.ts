@@ -4,6 +4,7 @@ import { Label } from "./label";
 import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
 import { Constant } from "src/app/shared/constants";
 import { Status } from "src/app/daily/daily-task/status";
+import { TaskOption } from "./taskoptions";
 
 @Component({
   selector: "task",
@@ -13,6 +14,10 @@ import { Status } from "src/app/daily/daily-task/status";
 export class TaskComponent implements OnInit {
   @Input() task: Task | null = null;
   @Input() labels: Label[] | null = null;
+  @Input() options: TaskOption = {
+    showTaskPriority: false,
+    showTaskStatus: false
+  };
   @Output() edit = new EventEmitter<Task>();
   @Output() priorityChnaged = new EventEmitter();
   @Output() statusChanged = new EventEmitter();

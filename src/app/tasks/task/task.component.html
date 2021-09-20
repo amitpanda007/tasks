@@ -14,6 +14,7 @@
           'status-selected': task.status || isStatusIconSelected
         }"
         matTooltip="Set status"
+        *ngIf="options.showTaskStatus"
       >
         <span
           [matMenuTriggerFor]="statusMenu"
@@ -110,7 +111,7 @@
       >
     </p>
 
-    <p class="priority-sec">
+    <p class="priority-sec" *ngIf="options.showTaskPriority">
       <img
         class="opts images icon"
         [ngClass]="{
@@ -161,5 +162,10 @@
         >{{ member.name | shortname }}</span
       >
     </div>
+  </div>
+
+  <div class="badge template" *ngIf="task.isTemplateTask">
+    <img src="../../../assets/images/template.png" height="18px" width="18px"/>
+    <span>This card is a template</span>
   </div>
 </mat-card>

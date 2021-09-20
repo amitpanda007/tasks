@@ -261,6 +261,14 @@
             >
               <mat-icon>delete</mat-icon>
             </button>
+            <button
+              mat-icon-button
+              (click)="createTaskFromTemplate(list.id)"
+              aria-label="Create from template"
+              matTooltip="Create from template"
+            >
+              <mat-icon>event_note</mat-icon>
+            </button>
           </div>
         </mat-card>
       </div>
@@ -289,15 +297,6 @@
             </div>
 
             <div>
-              <!-- <button
-                (click)="createNewList()"
-                mat-icon-button
-                color="primary"
-                aria-label="create list button"
-              >
-                <mat-icon>done</mat-icon>
-              </button> -->
-
               <button
                 mat-stroked-button
                 (click)="createNewList()"
@@ -322,6 +321,7 @@
   </div>
 </div>
 
+<!-- Sidenav for Board Settings -->
 <div
   [ngClass]="{ sidenav: !isShowingSidenav, 'sidenav-open': isShowingSidenav }"
 >
@@ -508,7 +508,7 @@
       (click)="makeBoardTemplate()"
       *ngIf="!board.isTemplate"
     >
-      <mat-icon class="material-icons-outlined">content_paste</mat-icon>
+      <mat-icon class="material-icons-outlined">event_note</mat-icon>
       <span>Make template</span>
     </div>
     <div
@@ -668,6 +668,7 @@
         (edit)="editTask($event)"
         [task]="archivedTask"
         [labels]="labels"
+        [options]="taskOptions"
       ></task>
       <div class="archived-opts">
         <span (click)="sendTaskToBoard(archivedTask)">Send to board</span> -

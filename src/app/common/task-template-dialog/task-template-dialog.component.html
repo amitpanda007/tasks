@@ -1,0 +1,80 @@
+<div mat-dialog-content>
+  <!-- Card Template Options -->
+  <div *ngIf="!isCreatingCard">
+    <div class="flex-display spacing">
+      <p>Task templates</p>
+      <span><mat-icon (click)="cancel()" class="pointer">close</mat-icon></span>
+    </div>
+    <div class="nav-option-dividor"></div>
+    <div *ngFor="let task of data.templateTasks" class="task-container">
+      <task
+        (edit)="selectTemplate($event)"
+        [task]="task"
+        [labels]="data.labels"
+        class="task"
+      ></task>
+      <div class="task-options" *ngIf="isEditTemplate">
+        <button
+          mat-icon-button
+          aria-label="edit template"
+          (click)="editTemplate(task)"
+        >
+          <mat-icon class="material-icons-outlined">edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          aria-label="delete template"
+          (click)="deleteTemplate(task)"
+        >
+          <mat-icon class="material-icons-outlined">delete</mat-icon>
+        </button>
+      </div>
+    </div>
+    <button mat-flat-button class="btn-lrg" (click)="createTemplate()">
+      <mat-icon>add</mat-icon>
+      Create a new template
+    </button>
+  </div>
+  <!-- Create card from template -->
+  <div *ngIf="isCreatingCard">
+    <div class="flex-display spacing">
+      <span
+        ><mat-icon (click)="back()" class="pointer"
+          >navigate_before</mat-icon
+        ></span
+      >
+      <p>Create card</p>
+      <span><mat-icon (click)="cancel()" class="pointer">close</mat-icon></span>
+    </div>
+
+    <p class="sub-header">Title</p>
+    <mat-form-field class="tite-input">
+      <mat-label>Title</mat-label>
+      <input matInput placeholder="Buy Pizza" [(ngModel)]="curTask.title" />
+    </mat-form-field>
+
+    <p class="sub-header">Keep</p>
+    <div class="checkboxes">
+      <mat-checkbox [color]="primaryColor" [(ngModel)]="keepChecklist"
+        >Checklists</mat-checkbox
+      >
+      <mat-checkbox [color]="primaryColor" [(ngModel)]="keepLabels"
+        >Labels</mat-checkbox
+      >
+    </div>
+
+    <button mat-flat-button [color]="primaryColor" class="btn-lrg" (click)="createCard()">
+      <mat-icon>add</mat-icon>
+      Create card
+    </button>
+
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="enableEditTemplate()" class="btn-lrg" *ngIf="!isCreatingCard">
+    Edit templates
+  </button>
+  <button mat-button (click)="editSelectedTemplate()" class="btn-lrg" *ngIf="isCreatingCard">
+    Edit this templates
+  </button>
+</div>

@@ -40,4 +40,11 @@ export const Constant = {
     { text: "Due date marked complete", selected: false },
     { text: "Not marked as complete", selected: false },
   ],
+  SORT_ORDERS: {
+    INDEX: "index",
+    CREATED: "created",
+    MODIFIED: "modified",
+    DUEDATE: "dueDate",
+    CHECKLIST: "checklist",
+  }
 };

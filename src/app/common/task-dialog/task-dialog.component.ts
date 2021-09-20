@@ -561,6 +561,15 @@ export class TaskDialogComponent implements OnInit {
     });
   }
 
+  makeTaskTemplate() {
+    console.log(this.data.task.isTemplateTask);
+    if(!this.data.task.isTemplateTask) {
+      this.data.task.isTemplateTask = false;
+    }
+
+    this.data.task.isTemplateTask = !this.data.task.isTemplateTask;
+  }
+
   archiveTask() {
     const task: Task = this.data.task as Task;
     if (task.archived) {

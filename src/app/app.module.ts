@@ -50,6 +50,7 @@ import { CloseBoardDialogComponent } from "./common/close-board/close-board-dial
 import { ClosedBoardContentDialogComponent } from "./common/closed-board-content/closed-board-content-dialog.component";
 import { CopyBoardDialogComponent } from "./common/copy-board-dialog/copy-board-dialog.component";
 import { BoardTemplateDialogComponent } from "./common/board-template-dialog/board-template-dialog.component";
+import { TaskTemplateDialogComponent } from "./common/task-template-dialog/task-template-dialog.component";
 
 @NgModule({
   declarations: [
@@ -79,6 +80,7 @@ import { BoardTemplateDialogComponent } from "./common/board-template-dialog/boa
     ClosedBoardContentDialogComponent,
     CopyBoardDialogComponent,
     BoardTemplateDialogComponent,
+    TaskTemplateDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -128,6 +130,7 @@ import { BoardTemplateDialogComponent } from "./common/board-template-dialog/boa
     ClosedBoardContentDialogComponent,
     CopyBoardDialogComponent,
     BoardTemplateDialogComponent,
+    TaskTemplateDialogComponent
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],
