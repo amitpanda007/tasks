@@ -21,7 +21,7 @@ mat-toolbar > span {
 }
 
 .container {
-  width: 220px;
+  width: 260px;
   margin: 0 5px 10px 0;
 }
 
@@ -274,7 +274,11 @@ mat-toolbar > span {
   align-content: center;
   align-items: center;
   justify-content: space-between;
-  width: 200px;
+  // width: 200px;
+}
+
+.list-options {
+  margin-left: 2rem;
 }
 
 .icon-small {
@@ -427,6 +431,16 @@ mat-toolbar > span {
 
 .activity {
   margin-bottom: 4rem;
+}
+
+.activity-card {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.activity-btn {
+  margin-top: 1rem;
+  width: 100%;
 }
 
 .icon {

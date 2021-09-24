@@ -3,6 +3,7 @@ import { AuthService } from "../services/auth.service";
 import { Router } from "@angular/router";
 import { NavService } from "../services/nav.service";
 import { AngularFireAuth } from "@angular/fire/auth";
+import { BoardServiceV2 } from "../services/boardv2.service";
 
 @Component({
   moduleId: module.id,
@@ -20,7 +21,8 @@ export class NavComponent implements OnInit {
     public auth: AuthService,
     private router: Router,
     private navService: NavService,
-    public afAuth: AngularFireAuth
+    public afAuth: AngularFireAuth,
+    private boardServiceV2: BoardServiceV2,
   ) {}
 
   ngOnInit(): void {

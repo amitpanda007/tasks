@@ -231,6 +231,7 @@
                 cdkDrag
                 [task]="task"
                 [labels]="labels"
+                [options]="taskOptions"
               ></task>
             </div>
           </mat-card-content>
@@ -321,7 +322,7 @@
   </div>
 </div>
 
-<!-- Sidenav for Board Settings -->
+<!-- Sidenav for Board Menu Section -->
 <div
   [ngClass]="{ sidenav: !isShowingSidenav, 'sidenav-open': isShowingSidenav }"
 >
@@ -451,18 +452,24 @@
         </span>
       </div>
 
-      <div>
-        <div *ngFor="let activity of activities" class="activity-text">
+      <div *ngIf="activities">
+        <div *ngFor="let activity of activities | slice:sliceLimitStart:sliceLimitEnd" class="activity-text">
           <span class="member" matTooltip="{{ activity.user }}">{{
             activity.user | shortname
           }}</span>
           <div class="member-info">
             <span
-              ><b>{{ activity.user }}</b> {{ activity.action }}</span
-            >
+              ><b>{{ activity.user }}</b> {{ activity.action }} on
+              <span
+                [innerHTML]="activity.taskTitle"
+                (click)="activityToCard(activity.taskId)"
+                class="activity-card"
+              ></span
+            ></span>
             <p>{{ activity.dateTime | dateformat: "" }}</p>
           </div>
         </div>
+        <button mat-flat-button (click)="viewAllActivity()" class="activity-btn" *ngIf="!(sliceLimitEnd >= activities.length)">View all activity</button>
       </div>
     </section>
   </div>
@@ -487,14 +494,14 @@
       </div>
     </div>
     <div class="nav-option-dividor"></div>
-    <div
+    <!-- <div
       class="menu-option flex-display pointer"
       (click)="emailToBoard()"
       *ngIf="!board.isTemplate"
     >
       <mat-icon class="material-icons-outlined">email</mat-icon>
       <span>Email-to-board settings</span>
-    </div>
+    </div> -->
     <div
       class="menu-option flex-display pointer"
       (click)="watchBoard()"
@@ -648,7 +655,7 @@
       >
         {{ label.name }}
       </mat-chip>
-      <span><mat-icon (click)="openLabelDialog()">edit</mat-icon></span>
+      <span><mat-icon (click)="openLabelDialog()" class="pointer">edit</mat-icon></span>
     </span>
     <button mat-stroked-button class="label-btn" (click)="openLabelDialog()">
       Create a new label
@@ -668,7 +675,6 @@
         (edit)="editTask($event)"
         [task]="archivedTask"
         [labels]="labels"
-        [options]="taskOptions"
       ></task>
       <div class="archived-opts">
         <span (click)="sendTaskToBoard(archivedTask)">Send to board</span> -
@@ -858,7 +864,7 @@
     <div>
       <p
         class="flex-display box-outer pointer"
-        *ngFor="let dueOpts of dueOptions"
+        *ngFor="let dueOpts of constant.DUE_OPTIONS"
         (click)="searchCardFilter(dueOpts, 'due')"
       >
         <span [innerHTML]="dueOpts.text"></span

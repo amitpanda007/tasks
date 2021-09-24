@@ -40,11 +40,27 @@ export const Constant = {
     { text: "Due date marked complete", selected: false },
     { text: "Not marked as complete", selected: false },
   ],
+  DUE_OPTIONS_TEXT: {
+    HAS_NO_DUE_DATE: "Has no due date",
+    DUE_NEXT_DAY: "Due in the next day",
+    DUE_NEXT_WEEK: "Due in the next week",
+    DUE_NEXT_MONTH: "Due in the next month",
+    OVERDUE: "Overdue",
+    DUE_COMPLETED: "Due date marked complete",
+    DUE_NOT_COMPLETE: "Not marked as complete",
+  },
   SORT_ORDERS: {
     INDEX: "index",
     CREATED: "created",
     MODIFIED: "modified",
     DUEDATE: "dueDate",
     CHECKLIST: "checklist",
-  }
+  },
+  CARD_FILTERS: {
+    LABEL: "label",
+    MEMBER: "member",
+    DUE: "due"
+  },
+  LABLE_FILTER_NO_LABEL: "No labels",
+  LABLE_FILTER_NO_MEMBER: "No Member"
 };

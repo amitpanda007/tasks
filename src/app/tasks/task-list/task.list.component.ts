@@ -70,7 +70,10 @@ import {
   BoardTemplateDialogResult,
 } from "src/app/common/board-template-dialog/board-template-dialog.component";
 import { LoaderService } from "src/app/core/services/loader.service";
-import { TaskTemplateDialogComponent, TaskTemplateDialogResult } from "src/app/common/task-template-dialog/task-template-dialog.component";
+import {
+  TaskTemplateDialogComponent,
+  TaskTemplateDialogResult,
+} from "src/app/common/task-template-dialog/task-template-dialog.component";
 import { TaskOption } from "../task/taskoptions";
 
 @Component({
@@ -110,6 +113,8 @@ export class TaskListComponent implements OnInit {
   public panelOpenState: boolean = false;
   public isCurrentUser: boolean = false;
   public isFavourite: boolean = false;
+  public sliceLimitStart: number;
+  public sliceLimitEnd: number;
   public activities: Activity[] = [];
   public isShowingAboutBoard: boolean = false;
   public isShowingChangeBackgroundBoard: boolean = false;
@@ -127,7 +132,10 @@ export class TaskListComponent implements OnInit {
 
   public searchLabels: Label[] = [];
   public searchMembers: SharedUser[] = [];
-  public dueOptions = Constant.DUE_OPTIONS;
+  public constant = Constant;
+  // public dueOptions = Constant.DUE_OPTIONS;
+  // public cardFilters = Constant.CARD_FILTERS;
+  // public dueOptionText = Constant.DUE_OPTIONS_TEXT;
 
   private selectedFilters = {
     labels: [],
@@ -209,10 +217,12 @@ export class TaskListComponent implements OnInit {
 
     this.taskOptions = {
       showTaskPriority: true,
-      showTaskStatus: true
-    }
+      showTaskStatus: true,
+    };
 
     this.sortOrders = Constant.SORT_ORDERS;
+    this.sliceLimitStart = 0;
+    this.sliceLimitEnd = 10;
     this.starred = "#FFC107";
     this.listName = "";
     this.boardMembers = [];
@@ -405,9 +415,23 @@ export class TaskListComponent implements OnInit {
 
             tasks.forEach((task) => {
               if (task.activities && task.activities.length > 0) {
-                this.activities = this.activities.concat(task.activities);
+                let curActivities: Activity[] = [];
+                curActivities = curActivities.concat(task.activities);
+                curActivities.forEach((activity) => {
+                  activity.taskTitle = task.title;
+                  activity.taskId = task.id;
+                });
+
+                this.activities.push(...curActivities);
               }
             });
+            this.activities.sort((a, b) => {
+              if (a.dateTime > b.dateTime) return -1;
+              else if (a.dateTime < b.dateTime) return 1;
+              else return 0;
+            });
+
+            // console.log(this.activities);
 
             this.loaderService.changeLoading(false);
           }
@@ -943,9 +967,7 @@ export class TaskListComponent implements OnInit {
       if (!result.task.activities) {
         result.task.activities = [];
       }
-      const activity = this.createNewActivity(
-        `Created this card.`
-      );
+      const activity = this.createNewActivity(`Created this card.`);
       result.task.activities.push(activity);
 
       this.boardServiceV2.addTask(this.boardId, result.task);
@@ -955,14 +977,16 @@ export class TaskListComponent implements OnInit {
   createTaskFromTemplate(taskListId: string): void {
     console.log(`TaskList ID: ${taskListId}`);
 
-    const tempateTasks = this.tasks.filter(task => task.isTemplateTask == true);
+    const tempateTasks = this.tasks.filter(
+      (task) => task.isTemplateTask == true
+    );
     const dialogRef = this.dialog.open(TaskTemplateDialogComponent, {
       width: "320px",
       data: {
         boardId: this.boardId,
         taskListId: taskListId,
         templateTasks: tempateTasks,
-        labels: this.labels
+        labels: this.labels,
       },
     });
     dialogRef.afterClosed().subscribe((result: TaskTemplateDialogResult) => {
@@ -970,7 +994,7 @@ export class TaskListComponent implements OnInit {
       if (!result) {
         return;
       }
-      if(result.isCreatingTemplate) {
+      if (result.isCreatingTemplate) {
         const task: any = {};
         task.isTemplateTask = true;
         this.createNewTask(taskListId, task);
@@ -1195,6 +1219,16 @@ export class TaskListComponent implements OnInit {
     this.isShowingArchivedTasks = false;
   }
 
+  activityToCard(taskId: string) {
+    this.router.navigate([], { queryParams: { task: `${taskId}` } });
+  }
+
+  viewAllActivity() {
+    if (this.sliceLimitEnd < this.activities.length) {
+      this.sliceLimitEnd += 10;
+    }
+  }
+
   showAboutBoard() {
     this.isShowingAboutBoard = true;
   }
@@ -1349,9 +1383,9 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  emailToBoard() {
-    console.log("Currently not supported");
-  }
+  // emailToBoard() {
+  //   console.log("Currently not supported");
+  // }
 
   watchBoard() {
     console.log("Currently not supported. Need Firebase functions");
@@ -1637,15 +1671,16 @@ export class TaskListComponent implements OnInit {
     this.isSearchingCard = true;
   }
 
+  //TODO: Refactor this code fro better maintainability.
+  //FIXME: Not all filter scenarios work properly. mostly removing filter across groups needs attention.
   searchCardFilter(data: any, type: string) {
     console.log(type);
     console.log(data);
 
     this.removeSearch = true;
 
-    if (type === "label") {
+    if (type === this.constant.CARD_FILTERS.LABEL) {
       if (data.selected) {
-        //TODO: Check if user selected No Label
         this.selectedFilters.labels.splice(
           this.selectedFilters.labels.indexOf(data.id),
           1
@@ -1655,9 +1690,16 @@ export class TaskListComponent implements OnInit {
           this.selectedFilters.labels.length == 0 &&
           this.selectedFilters.members.length == 0
         ) {
+          console.log("All filters exhausted");
           this.taskList = cloneDeep(this.taskListBackup);
         } else {
           this.taskList = cloneDeep(this.taskListBackup);
+
+          // Check if currest filter selected has 'No Label' selected
+          if (this.selectedFilters.labels.includes("1")) {
+            console.log("Filter has No label");
+          }
+
           this.taskList.forEach((list) => {
             const tasks = [];
             list.tasks.forEach((task) => {
@@ -1689,22 +1731,40 @@ export class TaskListComponent implements OnInit {
 
         data.selected = false;
       } else {
-        //TODO: Check if user selected No Label
         this.selectedFilters.labels.push(data.id);
 
-        this.taskList.forEach((list) => {
-          const tasks = [];
-          list.tasks.forEach((task) => {
-            if (data.taskIds.includes(task.id)) {
-              tasks.push(task);
-            }
+        //TODO: Check if user selected No Label
+        if (data.name == this.constant.LABLE_FILTER_NO_LABEL) {
+          const taskWithLabels = new Set();
+          this.labels.forEach((label) => {
+            label.taskIds.forEach((taskId) => {
+              taskWithLabels.add(taskId);
+            });
           });
-          list.tasks = tasks;
-        });
 
+          this.taskList.forEach((list) => {
+            const tasks = [];
+            list.tasks.forEach((task) => {
+              if (!taskWithLabels.has(task.id)) {
+                tasks.push(task);
+              }
+            });
+            list.tasks = tasks;
+          });
+        } else {
+          this.taskList.forEach((list) => {
+            const tasks = [];
+            list.tasks.forEach((task) => {
+              if (data.taskIds.includes(task.id)) {
+                tasks.push(task);
+              }
+            });
+            list.tasks = tasks;
+          });
+        }
         data.selected = true;
       }
-    } else if (type === "member") {
+    } else if (type === this.constant.CARD_FILTERS.MEMBER) {
       if (data.selected) {
         //TODO: Check if user selected No Member
         this.selectedFilters.members.splice(
@@ -1754,23 +1814,35 @@ export class TaskListComponent implements OnInit {
         //TODO: Check if user selected No Member
         this.selectedFilters.members.push(data.id);
 
-        this.taskList.forEach((list) => {
-          const tasks = [];
-          list.tasks.forEach((task) => {
-            if (task.members) {
-              task.members.forEach((member) => {
-                if (member.id == data.id) {
-                  tasks.push(task);
-                }
-              });
-            }
+        if (data.name == this.constant.LABLE_FILTER_NO_MEMBER) {
+          this.taskList.forEach((list) => {
+            const tasks = [];
+            list.tasks.forEach((task) => {
+              if (!task.members) {
+                tasks.push(task);
+              }
+            });
+            list.tasks = tasks;
           });
-          list.tasks = tasks;
-        });
+        } else {
+          this.taskList.forEach((list) => {
+            const tasks = [];
+            list.tasks.forEach((task) => {
+              if (task.members) {
+                task.members.forEach((member) => {
+                  if (member.id == data.id) {
+                    tasks.push(task);
+                  }
+                });
+              }
+            });
+            list.tasks = tasks;
+          });
+        }
         data.selected = true;
       }
-    } else if (type === "due") {
-      this.dueOptions.forEach((opts) => {
+    } else if (type === this.constant.CARD_FILTERS.DUE) {
+      this.constant.DUE_OPTIONS.forEach((opts) => {
         if (opts.text != data.text) {
           opts.selected = false;
         }
@@ -1783,11 +1855,13 @@ export class TaskListComponent implements OnInit {
         this.taskList.forEach((list) => {
           const tasks = [];
           list.tasks.forEach((task) => {
-            if (data.text == "Has no due date") {
+            if (data.text == this.constant.DUE_OPTIONS_TEXT.HAS_NO_DUE_DATE) {
               if (!task.dueDate || !task.dueDate.date) {
                 tasks.push(task);
               }
-            } else if (data.text == "Due in the next day") {
+            } else if (
+              data.text == this.constant.DUE_OPTIONS_TEXT.DUE_NEXT_DAY
+            ) {
               if (task.dueDate && task.dueDate.date) {
                 const diffDays = this.calculateDays(
                   new Date(),
@@ -1798,7 +1872,9 @@ export class TaskListComponent implements OnInit {
                   tasks.push(task);
                 }
               }
-            } else if (data.text == "Due in the next week") {
+            } else if (
+              data.text == this.constant.DUE_OPTIONS_TEXT.DUE_NEXT_WEEK
+            ) {
               if (task.dueDate && task.dueDate.date) {
                 const today = new Date();
                 const diffDays = this.calculateDays(
@@ -1820,7 +1896,9 @@ export class TaskListComponent implements OnInit {
                   tasks.push(task);
                 }
               }
-            } else if (data.text == "Due in the next month") {
+            } else if (
+              data.text == this.constant.DUE_OPTIONS_TEXT.DUE_NEXT_MONTH
+            ) {
               if (task.dueDate && task.dueDate.date) {
                 const today = new Date();
                 const diffDays = this.calculateDays(
@@ -1842,7 +1920,7 @@ export class TaskListComponent implements OnInit {
                   tasks.push(task);
                 }
               }
-            } else if (data.text == "Overdue") {
+            } else if (data.text == this.constant.DUE_OPTIONS_TEXT.OVERDUE) {
               if (
                 task.dueDate &&
                 task.dueDate.date &&
@@ -1856,13 +1934,17 @@ export class TaskListComponent implements OnInit {
                   tasks.push(task);
                 }
               }
-            } else if (data.text == "Due date marked complete") {
+            } else if (
+              data.text == this.constant.DUE_OPTIONS_TEXT.DUE_COMPLETED
+            ) {
               if (task.dueDate && task.dueDate.date) {
                 if (task.dueDate && task.dueDate.completed) {
                   tasks.push(task);
                 }
               }
-            } else if (data.text == "Not marked as complete") {
+            } else if (
+              data.text == this.constant.DUE_OPTIONS_TEXT.DUE_NOT_COMPLETE
+            ) {
               if (task.dueDate && task.dueDate.date) {
                 if (task.dueDate && !task.dueDate.completed) {
                   tasks.push(task);
@@ -1925,7 +2007,7 @@ export class TaskListComponent implements OnInit {
     this.searchMembers.forEach((member: any) => {
       member.selected = false;
     });
-    this.dueOptions.forEach((opts) => {
+    this.constant.DUE_OPTIONS.forEach((opts) => {
       opts.selected = false;
     });
     this.taskList = cloneDeep(this.taskListBackup);
