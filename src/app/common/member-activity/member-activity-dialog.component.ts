@@ -1,8 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import {
-  MAT_DIALOG_DATA,
-  MatDialogRef
-} from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { User } from "src/app/auth/user";
 import { Activity } from "src/app/tasks/task/activity";
 
@@ -11,13 +8,15 @@ import { Activity } from "src/app/tasks/task/activity";
   templateUrl: "./member-activity-dialog.component.html",
   styleUrls: ["./member-activity-dialog.component.scss"],
 })
-export class MemberActivityDialogComponent{
-
+export class MemberActivityDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<MemberActivityDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MemberActivityDialogData
   ) {}
 
+  activityToCard(taskId: string) {
+    this.dialogRef.close({ openTask: true, taskId: taskId });
+  }
 }
 
 export interface MemberActivityDialogData {
@@ -25,4 +24,7 @@ export interface MemberActivityDialogData {
   activities: Activity[];
 }
 
-export interface MemberActivityDialogResult {}
+export interface MemberActivityDialogResult {
+  openTask?: boolean;
+  taskId?: string;
+}

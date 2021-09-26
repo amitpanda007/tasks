@@ -2141,6 +2141,10 @@ export class TaskListComponent implements OnInit {
         });
         this.boardServiceV2.updateBoard(this.boardId, this.board);
       }
+
+      if (result.taskId) {
+        this.activityToCard(result.taskId);
+      }
     });
   }
 

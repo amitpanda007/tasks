@@ -8,7 +8,10 @@ import {
 import { User } from "src/app/auth/user";
 import { Activity } from "src/app/tasks/task/activity";
 import { Task } from "src/app/tasks/task/task";
-import { MemberActivityDialogComponent } from "../member-activity/member-activity-dialog.component";
+import {
+  MemberActivityDialogComponent,
+  MemberActivityDialogResult,
+} from "../member-activity/member-activity-dialog.component";
 
 @Component({
   selector: "app-member-info-dialog",
@@ -22,7 +25,7 @@ export class MemberInfoDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<MemberInfoDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MemberInfoDialogData,
-    private dialog: MatDialog,
+    private dialog: MatDialog
   ) {
     this.positionRelativeToElement = data.positionRelativeToElement;
     console.log(data);
@@ -97,7 +100,7 @@ export class MemberInfoDialogComponent implements OnInit {
     this.data.tasks.forEach((task) => {
       if (task.activities && task.activities.length > 0) {
         task.activities.forEach((activity) => {
-          if(activity.id == this.data.member.id) {
+          if (activity.id == this.data.member.id) {
             activityList.push(activity);
           }
         });
@@ -110,8 +113,23 @@ export class MemberInfoDialogComponent implements OnInit {
       autoFocus: false,
       data: {
         member: this.data.member,
-        activities: activityList
+        activities: activityList,
       },
+    });
+    dialogRef.afterClosed().subscribe((result: MemberActivityDialogResult) => {
+      if (!result) {
+        return;
+      }
+
+      if (result.openTask) {
+        this.dialogRef.close({
+          member: this.data.member,
+          isUserRemoved: false,
+          isMadeAdmin: false,
+          isAdminRemoved: false,
+          taskId: result.taskId,
+        });
+      }
     });
   }
 }
@@ -130,4 +148,5 @@ export interface MemberInfoDialogResult {
   isUserRemoved: boolean;
   isMadeAdmin: boolean;
   isAdminRemoved: boolean;
+  taskId?: string;
 }
