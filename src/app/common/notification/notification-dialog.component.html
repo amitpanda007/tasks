@@ -1,0 +1,24 @@
+<div class="header flex-display spacing" (click)="cancel()">
+  <span>Notifications</span>
+  <mat-icon class="icon-btn">close</mat-icon>
+</div>
+<div class="notification-section">
+  <div *ngFor="let notification of data.notifications">
+    <p [innerHTML]="notification.text"></p>
+  </div>
+  <div
+    *ngIf="data.notifications && data.notifications.length == 0"
+    class="no-notification"
+  >
+    <img src="../../../assets/images/sleeping.png" />
+    <h3>No unread notifications</h3>
+  </div>
+</div>
+<div class="notification-options">
+  <button mat-stroked-button (click)="chageNotificationFreq()">
+    Change notification email frequency
+  </button>
+  <button mat-stroked-button (click)="showDesktopNotification()">
+    Allow desktop notifications
+  </button>
+</div>

@@ -1,0 +1,68 @@
+<div *ngIf="!data.isCreate">
+  <div class="flex-display spacing title">
+    <span class="pad-small">All Boards</span>
+    <mat-icon class="pad-small pointer" (click)="cancel()">close</mat-icon>
+  </div>
+  <div *ngIf="boards">
+    <board
+      (open)="openBoard($event)"
+      *ngFor="let board of boards"
+      [board]="board"
+      [showDescription]="false"
+      [compactBoard]="true"
+    ></board>
+  </div>
+</div>
+
+<div *ngIf="data.isCreate">
+  <div class="flex-display spacing title">
+    <span class="pad-small">Create</span>
+    <mat-icon class="pad-small pointer" (click)="cancel()">close</mat-icon>
+  </div>
+  <div *ngIf="!isShowingTemplateBoard">
+    <div class="info-sec pointer" (click)="createNewBoard()">
+      <p class="flex-display">
+        <mat-icon>space_dashboard</mat-icon><span>Create board</span>
+      </p>
+      <p class="info-txt">
+        A board is made up of cards ordered on lists. Use it to manage projects,
+        track information, or organize anything.
+      </p>
+    </div>
+
+    <div class="info-sec pointer" (click)="createNewTemplateBoard()">
+      <p class="flex-display">
+        <mat-icon>space_dashboard</mat-icon><span>Start with a template</span>
+      </p>
+      <p class="info-txt">Get started faster with a board template.</p>
+    </div>
+  </div>
+
+  <!-- Template Options -->
+  <div *ngIf="isShowingTemplateBoard">
+    <div>
+      <p class="temp-header">My templates</p>
+      <board
+        (open)="createFromTemplateBoard(board)"
+        *ngFor="let board of templateBoards"
+        [board]="board"
+        [showDescription]="false"
+        [compactBoard]="true"
+      ></board>
+    </div>
+    <div>
+      <p class="temp-header">Top templates</p>
+      <board
+        (open)="createFromExternalTemplateBoard(board)"
+        *ngFor="let board of topTemplateBoards"
+        [board]="board"
+        [showDescription]="false"
+        [compactBoard]="true"
+      ></board>
+      <p class="empty-label">No Template Found</p>
+    </div>
+    <button mat-stroked-button (click)="exploreTemplates()" class="btn">
+      Explore templates
+    </button>
+  </div>
+</div>

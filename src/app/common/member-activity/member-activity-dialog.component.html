@@ -11,9 +11,15 @@
         <span class="member" matTooltip="{{ activity.user }}">{{
           activity.user | shortname
         }}</span>
-        <span style="font-size:12px;"
-          ><b style="font-size:14px;">{{ activity.user }}</b> {{ activity.action }}</span
-        >
+        <span style="font-size: 12px"
+          ><b style="font-size: 14px">{{ activity.user }}</b>
+          {{ activity.action }} on
+          <span
+            [innerHTML]="activity.taskTitle"
+            (click)="activityToCard(activity.taskId)"
+            class="activity-card"
+          ></span
+        ></span>
         <p>{{ activity.dateTime | dateformat: "" }}</p>
       </div>
     </div>

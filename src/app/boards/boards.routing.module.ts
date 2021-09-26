@@ -20,8 +20,8 @@ const routes: Routes = [
         path: ":taskId",
         component: TaskListComponent,
         canActivate: [AngularFireAuthGuard],
-      }
-    ]
+      },
+    ],
   },
 ];
 

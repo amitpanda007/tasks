@@ -10,4 +10,5 @@ export interface User {
 export interface Permission {
   admin: boolean;
   normal: boolean;
+  owner: boolean;
 }

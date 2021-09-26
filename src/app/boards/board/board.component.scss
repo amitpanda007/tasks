@@ -12,6 +12,22 @@
   justify-content: flex-end;
 }
 
+.flex-display {
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.item-compact {
+  box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%),
+    0 1px 3px 0 rgb(0 0 0 / 12%);
+  padding: 1rem;
+}
+
+.spacing {
+  justify-content: space-between;
+}
+
 .template {
   display: inline;
   border-radius: 3px;
@@ -25,4 +41,8 @@
   color: #172b4d;
   width: fit-content;
   width: -moz-fit-content;
+}
+
+.board-title {
+  font-size: 14px;
 }

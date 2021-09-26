@@ -28,6 +28,7 @@ export interface SharedUser {
 export interface Permission {
   admin: boolean;
   normal: boolean;
+  owner: boolean;
 }
 export interface BGColor {
   primary?: any;

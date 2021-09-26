@@ -61,7 +61,7 @@
 
       <span class="option-dividor"></span>
       <div class="flex-display" #menuUser>
-        <div class="members" *ngIf="boardAdmin">
+        <!-- <div class="members" *ngIf="boardAdmin">
           <span
             class="member"
             [ngClass]="{ 'current-member': isCurrentUser }"
@@ -72,7 +72,7 @@
             >{{ boardAdmin.name | shortname
             }}<span class="member-admin admin-img" matTooltip="admin"></span
           ></span>
-        </div>
+        </div> -->
 
         <div class="members" *ngIf="boardMembers && boardMembers.length > 0">
           <span *ngFor="let member of boardMembers">
@@ -80,7 +80,13 @@
               class="member"
               [ngClass]="{ 'current-member': member.isCurrentUser }"
               matTooltip="{{ member.name }}"
+              [matTooltipPosition]="'above'"
               (click)="openMemberMenu(member)"
+              ><span
+                *ngIf="member.permission.owner"
+                class="member-owner owner-img"
+                matTooltip="owner"
+              ></span
               >{{ member.name | shortname
               }}<span
                 *ngIf="member.permission.admin"
@@ -453,7 +459,12 @@
       </div>
 
       <div *ngIf="activities">
-        <div *ngFor="let activity of activities | slice:sliceLimitStart:sliceLimitEnd" class="activity-text">
+        <div
+          *ngFor="
+            let activity of activities | slice: sliceLimitStart:sliceLimitEnd
+          "
+          class="activity-text"
+        >
           <span class="member" matTooltip="{{ activity.user }}">{{
             activity.user | shortname
           }}</span>
@@ -469,7 +480,14 @@
             <p>{{ activity.dateTime | dateformat: "" }}</p>
           </div>
         </div>
-        <button mat-flat-button (click)="viewAllActivity()" class="activity-btn" *ngIf="!(sliceLimitEnd >= activities.length)">View all activity</button>
+        <button
+          mat-flat-button
+          (click)="viewAllActivity()"
+          class="activity-btn"
+          *ngIf="!(sliceLimitEnd >= activities.length)"
+        >
+          View all activity
+        </button>
       </div>
     </section>
   </div>
@@ -655,7 +673,11 @@
       >
         {{ label.name }}
       </mat-chip>
-      <span><mat-icon (click)="openLabelDialog()" class="pointer">edit</mat-icon></span>
+      <span
+        ><mat-icon (click)="openLabelDialog()" class="pointer"
+          >edit</mat-icon
+        ></span
+      >
     </span>
     <button mat-stroked-button class="label-btn" (click)="openLabelDialog()">
       Create a new label

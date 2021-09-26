@@ -133,9 +133,6 @@ export class TaskListComponent implements OnInit {
   public searchLabels: Label[] = [];
   public searchMembers: SharedUser[] = [];
   public constant = Constant;
-  // public dueOptions = Constant.DUE_OPTIONS;
-  // public cardFilters = Constant.CARD_FILTERS;
-  // public dueOptionText = Constant.DUE_OPTIONS_TEXT;
 
   private selectedFilters = {
     labels: [],
@@ -167,11 +164,13 @@ export class TaskListComponent implements OnInit {
     private accountService: AccountService,
     private snackBar: MatSnackBar
   ) {
+    // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.boardId = this.route.snapshot.params.boardId;
     console.log(this.boardId);
     this.tasksDataUpdated = new BehaviorSubject(false);
 
     this.routeQueryParams = this.route.queryParams.subscribe((params) => {
+      console.log(params);
       if (params["task"]) {
         if (this.tasks && this.tasks.length > 0) {
           const task = this.tasks.find((_task) => _task.id == params["task"]);
@@ -234,23 +233,20 @@ export class TaskListComponent implements OnInit {
     };
 
     // Check if user has access to this board
+    //TODO: Duplicate boards call. need to fix this for if board data already available get the board else call getBoards()
     this.board = await this.boardServiceV2
       .getBoardWithPromise(this.boardId)
       .then((board) => {
         return board.data() as Board;
       });
 
-    this.boardAdmin = (await this.accountService.getUserById(
-      this.board.owner
-    )) as User;
-    console.log(this.boardAdmin);
+    // this.boardAdmin = (await this.accountService.getUserById(
+    //   this.board.owner
+    // )) as User;
+    // console.log(this.boardAdmin);
 
     const userUID = this.authService.getUID();
-    if (
-      this.board.owner == userUID ||
-      (this.board.shared &&
-        this.board.shared.includes(this.authService.getUID()))
-    ) {
+    if (this.board.shared && this.board.shared.includes(userUID)) {
       console.log("User has access.");
       this.hasBoardAccess = true;
       this.boardMembers = this.board.sharedUserInfo;
@@ -260,9 +256,9 @@ export class TaskListComponent implements OnInit {
       return;
     }
 
-    if (this.board.owner == this.authService.getUID()) {
-      this.isCurrentUser = true;
-    }
+    // if (this.board.owner == userUID) {
+    //   this.isCurrentUser = true;
+    // }
 
     console.log("TASK LIST INITIATED");
     this.loaderService.changeLoading(true);
@@ -279,18 +275,6 @@ export class TaskListComponent implements OnInit {
         //TODO: Duplicate code, move to one function
         if (board.settings.addRemovePermission.admin) {
           this.hasMemberAddAccess = this.isCurrentUserAdmin();
-
-          // if (this.board.owner == this.authService.getUID()) {
-          //   this.hasMemberAddAccess = true;
-          // } else {
-          //   this.boardMembers.forEach((membr) => {
-          //     if(membr.id == this.authService.getUID()) {
-          //       if (membr.permission.admin) {
-          //         this.hasMemberAddAccess = true;
-          //       }
-          //     }
-          //   });
-          // }
         } else if (board.settings.addRemovePermission.allMembers) {
           this.hasMemberAddAccess = true;
         }
@@ -325,20 +309,28 @@ export class TaskListComponent implements OnInit {
             secondaryColor = `rgb(${s.r},${s.g},${s.b},${s.a})`;
           }
 
+          console.log(this.board.backgroundColors.primary);
+          console.log(this.board.backgroundColors.secondary);
           if (
-            this.board.backgroundColors.primary === "" &&
-            this.board.backgroundColors.secondary === ""
+            (this.board.backgroundColors.primary == "" ||
+              this.board.backgroundColors.primary == undefined) &&
+            (this.board.backgroundColors.secondary == undefined ||
+              this.board.backgroundColors.secondary == "")
           ) {
             document.body.style.backgroundColor = "";
           } else if (
-            this.board.backgroundColors.primary !== "" &&
-            this.board.backgroundColors.secondary === ""
+            (this.board.backgroundColors.primary != undefined ||
+              this.board.backgroundColors.primary != "") &&
+            (this.board.backgroundColors.secondary == undefined ||
+              this.board.backgroundColors.secondary == "")
           ) {
             document.body.style.backgroundColor = primaryColor;
             document.body.style.backgroundImage = "";
           } else if (
-            this.board.backgroundColors.primary === "" &&
-            this.board.backgroundColors.secondary !== ""
+            (this.board.backgroundColors.primary == undefined ||
+              this.board.backgroundColors.primary == "") &&
+            (this.board.backgroundColors.secondary != undefined ||
+              this.board.backgroundColors.secondary != "")
           ) {
             document.body.style.backgroundColor = secondaryColor;
             document.body.style.backgroundImage = "";
@@ -1174,17 +1166,25 @@ export class TaskListComponent implements OnInit {
 
   isCurrentUserAdmin(): boolean {
     let isUserAdmin: boolean = false;
-    if (this.board.owner == this.authService.getUID()) {
-      isUserAdmin = true;
-    } else {
-      this.boardMembers.forEach((membr) => {
-        if (membr.id == this.authService.getUID()) {
-          if (membr.permission.admin) {
-            isUserAdmin = true;
-          }
+    // if (this.board.owner == this.authService.getUID()) {
+    //   isUserAdmin = true;
+    // } else {
+    //   this.boardMembers.forEach((membr) => {
+    //     if (membr.id == this.authService.getUID()) {
+    //       if (membr.permission.admin) {
+    //         isUserAdmin = true;
+    //       }
+    //     }
+    //   });
+    // }
+
+    this.boardMembers.forEach((membr) => {
+      if (membr.id == this.authService.getUID()) {
+        if (membr.permission.admin) {
+          isUserAdmin = true;
         }
-      });
-    }
+      }
+    });
 
     return isUserAdmin;
   }
@@ -2017,7 +2017,7 @@ export class TaskListComponent implements OnInit {
     this.boardServiceV2.updateBoard(this.boardId, this.board);
   }
 
-  openMemberMenu(member: User) {
+  openMemberMenu(member: SharedUser) {
     this.menuMember = {
       id: member.id ? member.id : "",
       name: null,

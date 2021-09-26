@@ -1,15 +1,18 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { Board } from "../board/board";
+import { Board, SharedUser } from "../board/board";
 import { MatDialog } from "@angular/material";
 import {
   BoardDialogComponent,
   BoardDialogResult,
 } from "src/app/common/board-dialog/board-dialog.component";
 import { Subscription } from "rxjs";
-import { BoardService } from "src/app/core/services/board.service";
 import { BoardServiceV2 } from "../../core/services/boardv2.service";
 import { AuthService } from "../../core/services/auth.service";
-import { ClosedBoardContentDialogComponent, ClosedBoardContentDialogResult } from "src/app/common/closed-board-content/closed-board-content-dialog.component";
+import {
+  ClosedBoardContentDialogComponent,
+  ClosedBoardContentDialogResult,
+} from "src/app/common/closed-board-content/closed-board-content-dialog.component";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "board-list",
@@ -26,24 +29,28 @@ export class BaordListComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private boardServiceV2: BoardServiceV2,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     console.log("BOARDLIST IS INITIATED");
     this.isLoading = true;
-    this.boardServiceV2.getBoards();
+    // this.boardServiceV2.getBoards();
     this.boardSubscription = this.boardServiceV2.boardsChanged.subscribe(
       (boards) => {
+        if (boards && boards.length == 0) {
+          this.boardServiceV2.getBoards();
+        }
         this.boards = [];
         this.closedBoards = [];
-        boards.forEach(board => {
-          if(!board.closed) {
+        boards.forEach((board) => {
+          if (!board.closed) {
             this.boards.push(board);
-          }else {
+          } else {
             this.closedBoards.push(board);
           }
-        })
+        });
         // this.boards = boards;
         this.isLoading = false;
       }
@@ -75,10 +82,21 @@ export class BaordListComponent implements OnInit {
         return;
       }
 
+      const userUID = this.authService.getUID();
+      const user: SharedUser = {
+        id: userUID,
+        name: this.authService.getUserDisplayName(),
+        permission: {
+          admin: true,
+          normal: false,
+          owner: true,
+        },
+      };
+
       const board: Board = {
         title: result.board.title,
         description: result.board.description,
-        owner: this.authService.getUID(),
+        owner: userUID,
         settings: {
           cardCoverEnabled: false,
           addRemovePermission: {
@@ -90,9 +108,11 @@ export class BaordListComponent implements OnInit {
             members: false,
             membersAndObservers: false,
             AllBoardMembers: false,
-            anyUser: false
-          }
+            anyUser: false,
+          },
         },
+        shared: [userUID],
+        sharedUserInfo: [user],
       };
       this.boardServiceV2.addBoard(board);
     });
@@ -120,6 +140,10 @@ export class BaordListComponent implements OnInit {
     });
   }
 
+  openBoard(boardId: string) {
+    this.router.navigate([`boards/${boardId}`], { replaceUrl: true });
+  }
+
   showClosedBoards() {
     const dialogRef = this.dialog.open(ClosedBoardContentDialogComponent, {
       width: "540px",
@@ -127,10 +151,12 @@ export class BaordListComponent implements OnInit {
         closedBoards: this.closedBoards,
       },
     });
-    dialogRef.afterClosed().subscribe((result: ClosedBoardContentDialogResult) => {
-      if (!result) {
-        return;
-      }
-    });
+    dialogRef
+      .afterClosed()
+      .subscribe((result: ClosedBoardContentDialogResult) => {
+        if (!result) {
+          return;
+        }
+      });
   }
 }

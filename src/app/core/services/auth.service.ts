@@ -45,12 +45,12 @@ export class AuthService {
 
       this._router.navigate([""]);
       this._snackBar.openFromComponent(SuccessSnackbar, {
-        data: {text: "User Created Successfully"},
+        data: { text: "User Created Successfully" },
         duration: 2000,
       });
     } catch (error) {
       this._snackBar.openFromComponent(ErrorSnackbar, {
-        data: {text: "Something went wrong."},
+        data: { text: "Something went wrong." },
         duration: 2000,
       });
     }
@@ -66,12 +66,12 @@ export class AuthService {
       );
       this._router.navigate([""]);
       this._snackBar.openFromComponent(SuccessSnackbar, {
-        data: {text: "Login Successful"},
+        data: { text: "Login Successful" },
         duration: 2000,
       });
     } catch (error) {
       this._snackBar.openFromComponent(ErrorSnackbar, {
-        data: {text: error.message},
+        data: { text: error.message },
         duration: 2000,
       });
     }
@@ -82,12 +82,12 @@ export class AuthService {
       await this._afAuth.auth.sendPasswordResetEmail(email);
       console.log("Email sent successfully");
       this._snackBar.openFromComponent(SuccessSnackbar, {
-        data: {text: "Email sent successfully"},
+        data: { text: "Email sent successfully" },
         duration: 2000,
       });
     } catch (error) {
       this._snackBar.openFromComponent(ErrorSnackbar, {
-        data: {text: error.message},
+        data: { text: error.message },
         duration: 2000,
       });
     }
@@ -124,5 +124,21 @@ export class AuthService {
 
   getUserDisplayName() {
     return this._afAuth.auth.currentUser.displayName;
+  }
+
+  authStateChanged() {
+    return new Observable((subscriber) => {
+      this._afAuth.authState.subscribe((state) => {
+        if (state) {
+          if (state.uid) {
+            subscriber.next(true);
+          } else {
+            subscriber.next(false);
+          }
+        } else {
+          subscriber.next(false);
+        }
+      });
+    });
   }
 }

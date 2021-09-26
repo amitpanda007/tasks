@@ -14,8 +14,6 @@ import { Subscription } from "rxjs";
 import { Invitation } from "../../common/invite-dialog/invitation";
 import { firestore } from "firebase/app";
 import * as firebase from "firebase/app";
-import { userInfo } from "os";
-import { create } from "domain";
 
 @Injectable()
 export class BoardServiceV2 {
@@ -41,7 +39,8 @@ export class BoardServiceV2 {
   private labelsSubscription: Subscription;
 
   public boardChanged = new Subject<Board>();
-  public boardsChanged = new Subject<Board[]>();
+  // public boardsChanged = new Subject<Board[]>();
+  public boardsChanged = new BehaviorSubject<Board[]>([]);
   public sharedBoardsChanged = new Subject<Board[]>();
   public taskListsChanged = new Subject<TaskList[]>();
   public tasksChanged = new Subject<Task[]>();
@@ -78,7 +77,9 @@ export class BoardServiceV2 {
     this.sharedBoardsCollection = this._store.collection<Board>(
       "boards",
       (ref) =>
-        ref.where("shared", "array-contains-any", [this.authService.getUID()])
+        ref
+          .where("shared", "array-contains-any", [this.authService.getUID()])
+          .where("owner", "!=", this.authService.getUID())
     );
 
     this.sharedBoardsSubscription = this.sharedBoardsCollection
@@ -176,6 +177,7 @@ export class BoardServiceV2 {
       permission: {
         admin: false,
         normal: true,
+        owner: false,
       },
     };
     this._store.firestore.runTransaction(() => {
@@ -204,6 +206,7 @@ export class BoardServiceV2 {
     });
   }
 
+  //FIXME: These changes should be done in some server environment as user can refresh page in between actions.
   removeUserFromBoard(
     boardId: string,
     shared: Array<string>,
@@ -259,6 +262,7 @@ export class BoardServiceV2 {
 
   // Referrence from https://leechy.dev/firestore-move
   public newDocId: any;
+  //FIXME: These changes should be done in some server environment as user can refresh page in between actions.
   async copyBoardDoc(
     collectionFrom: string,
     docId: string,
@@ -292,6 +296,9 @@ export class BoardServiceV2 {
         if (create) {
           docData.title = boardTitle;
           docData.description = boardDescription;
+          if (docData.isTemplate) {
+            docData.isTemplate = false;
+          }
           if (isTemplate) {
             docData.isTemplate = true;
           }

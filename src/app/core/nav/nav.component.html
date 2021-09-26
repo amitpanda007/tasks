@@ -16,7 +16,9 @@
     <mat-menu #menuApps="matMenu">
       <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="openBoards()">
         <mat-icon>space_dashboard</mat-icon>
-        <a *ngIf="auth.isLoggedIn()" class="nav-padding"><span>Boards</span></a>
+        <a *ngIf="auth.isLoggedIn()" class="nav-padding" #showBoardElm
+          ><span>Boards</span></a
+        >
       </button>
       <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="openDaily()">
         <mat-icon>event</mat-icon>
@@ -48,18 +50,38 @@
   <!-- Section Right -->
   <div class="bar">
     <span *ngIf="afAuth.user | async as user">
-      <button mat-icon-button aria-label="create board" (click)="createBoard()">
+      <button
+        mat-icon-button
+        aria-label="create board"
+        (click)="createBoard()"
+        matTooltip="create board"
+      >
         <mat-icon>add_circle</mat-icon>
-      </button>
-      <button mat-icon-button aria-label="show boards" (click)="showInfo()">
-        <mat-icon>info</mat-icon>
+        <span #createBoardElm></span>
       </button>
       <button
         mat-icon-button
-        aria-label="show boards"
-        (click)="showNotification()"
+        aria-label="information"
+        (click)="showInfo()"
+        matTooltip="info"
       >
-        <mat-icon matBadge="15" matBadgeColor="warn">notifications</mat-icon>
+        <mat-icon>info</mat-icon>
+        <span #infoElm></span>
+      </button>
+      <button
+        mat-icon-button
+        aria-label="notification"
+        (click)="showNotification()"
+        matTooltip="notification"
+      >
+        <mat-icon
+          *ngIf="notificationCount > 0"
+          [matBadge]="notificationCount"
+          matBadgeColor="warn"
+          >notifications</mat-icon
+        >
+        <mat-icon *ngIf="notificationCount == 0">notifications</mat-icon>
+        <span #notificationElm></span>
       </button>
     </span>
     <button
