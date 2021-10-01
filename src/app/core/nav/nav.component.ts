@@ -34,6 +34,7 @@ import {
 } from "src/app/common/notification/notification-dialog.component";
 import { NotificationService } from "../services/notification.service";
 import { AppNotification } from "src/app/common/notification/notification";
+import { Information } from "src/app/common/information/information";
 
 @Component({
   moduleId: module.id,
@@ -49,8 +50,10 @@ export class NavComponent implements OnInit {
   public boards: Board[];
   public notifications: AppNotification[];
   public notificationCount: number;
+  private informations: Information[];
 
   private notificationSubscription: Subscription;
+  private informationSubscription: Subscription;
 
   @ViewChild("createBoardElm", { static: false })
   public createBoardRef: ElementRef;
@@ -88,6 +91,7 @@ export class NavComponent implements OnInit {
       console.log(loggedIn);
       if (loggedIn) {
         this.notificationService.getAllNotificaions();
+        this.notificationService.getAllInformation();
       }
     });
 
@@ -95,8 +99,24 @@ export class NavComponent implements OnInit {
       this.notificationService.notificationDataChanged.subscribe(
         (notifications: AppNotification[]) => {
           console.log(notifications);
-          this.notifications = notifications;
-          this.notificationCount = notifications.length;
+          this.notifications = [];
+          if(notifications) {
+            notifications.forEach(notification => {
+                if(!notification.isRead) {
+                  this.notifications.push(notification);
+                }
+            })
+          }
+          // this.notifications = notifications;
+          this.notificationCount = this.notifications.length;
+        }
+      );
+
+    this.informationSubscription =
+      this.notificationService.informationDataChanged.subscribe(
+        (informations: Information[]) => {
+          console.log(informations);
+          this.informations = informations;
         }
       );
   }
@@ -104,6 +124,10 @@ export class NavComponent implements OnInit {
   ngOnDestroy(): void {
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
+    }
+
+    if (this.informationSubscription) {
+      this.informationSubscription.unsubscribe();
     }
   }
 
@@ -292,10 +316,11 @@ export class NavComponent implements OnInit {
 
   showInfo() {
     const dialogRef = this.dialog.open(InformationDialogComponent, {
-      width: "320px",
+      width: "350px",
       maxHeight: "600px",
       data: {
         positionRelativeToElement: this.infoRef,
+        informations: this.informations
       },
     });
     dialogRef.afterClosed().subscribe((result: InformationDialogResult) => {

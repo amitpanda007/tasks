@@ -12,8 +12,25 @@
   justify-content: space-between;
 }
 
+.end {
+  justify-content: end;
+}
+
+.small-height {
+  height: 12px
+}
+
+.notification-container {
+  margin-top: 1rem;
+}
+
 .icon-btn {
   cursor: pointer;
+}
+
+.icon {
+  color: rgb(0, 82, 204);
+  font-size: 14px;
 }
 
 .no-notification {
@@ -28,4 +45,27 @@
 .notification-options button {
   margin-top: 1rem;
   width: 100%;
+}
+
+.notification-title {
+  font-size: 12px;
+}
+
+.options {
+  display: flex;
+}
+
+.notification-description {
+  background: none !important;
+  color: #a5adba;
+  cursor: default;
+  font-size: 10px;
+}
+
+.notification-date {
+  font-size: 12px;
+  color: rgb(107, 119, 140);
+  font-weight: 400;
+  white-space: nowrap;
+  margin-left: 4px;
 }

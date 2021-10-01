@@ -165,7 +165,62 @@
   </div>
 
   <div class="badge template" *ngIf="task.isTemplateTask">
-    <img src="../../../assets/images/template.png" height="18px" width="18px"/>
+    <img src="../../../assets/images/template.png" height="18px" width="18px" />
     <span>This card is a template</span>
   </div>
 </mat-card>
+
+<!-- Accordion Implementation for checklist to show in task -->
+<!-- <mat-accordion
+  class="accordion"
+  multi
+  *ngIf="task.checklists && checklistsLength > 0"
+>
+  <mat-expansion-panel [style.background-color]="task.backgroundColor">
+    <mat-expansion-panel-header>
+      <mat-panel-title [style.color]="textColor">
+        <p class="checklist-data">
+          <mat-icon
+            matBadgeColor="accent"
+            class="material-icons-outlined task-icon"
+            >check_box</mat-icon
+          ><span class="checklist-text"
+            >{{ checklistsCompletedLength }}/{{ checklistsLength }}</span
+          >
+          <span class="cdk-visually-hidden">
+            Example with a home icon with overlaid badge showing the number 15
+          </span>
+        </p>
+      </mat-panel-title>
+      
+    </mat-expansion-panel-header>
+
+    <div *ngIf="task.checklists">
+      <section
+        class="checklist"
+        *ngFor="let checklists of localChecklists; let i = index"
+      >
+        <p class="sub-header">
+          {{ checklists.checklistName }}
+        </p>
+        <div
+          cdkDropList
+          (cdkDropListDropped)="drop($event)"
+          class="checklist-list"
+        >
+          <checklist
+            cdkDrag
+            *ngFor="let checklist of checklists.checklist; let j = index"
+            class="checklist-box"
+            [checklist]="checklist"
+            (duedate)="setDueDateChecklist($event, j, i)"
+            (assign)="assignChecklist($event, j, i)"
+            (delete)="deleteChecklist($event, checklists.checklist, i)"
+            (done)="checklistClicked($event, i)"
+          ></checklist>
+        </div>
+
+      </section>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion> -->

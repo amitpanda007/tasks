@@ -25,6 +25,7 @@
       </p>
       <board
         (edit)="editBoard($event)"
+        (open)="openBoard($event)"
         *ngFor="let shareBoard of sharedBoards"
         [board]="shareBoard"
       ></board>

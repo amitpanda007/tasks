@@ -5,6 +5,9 @@ import {
   MatDialogConfig,
   MatDialog,
 } from "@angular/material/dialog";
+import { Subscription } from "rxjs";
+import { NotificationService } from "src/app/core/services/notification.service";
+import { Information } from "./information";
 
 @Component({
   selector: "app-information-board-dialog",
@@ -14,10 +17,13 @@ import {
 export class InformationDialogComponent implements OnInit {
   private positionRelativeToElement: ElementRef =
     this.data.positionRelativeToElement;
+  public informationImage: string;
+  private imageSubscription: Subscription;
 
   constructor(
     public dialogRef: MatDialogRef<InformationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: InformationDialogData
+    @Inject(MAT_DIALOG_DATA) public data: InformationDialogData,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -30,6 +36,19 @@ export class InformationDialogComponent implements OnInit {
       left: `${rect.left - 284}px`,
     };
     this.dialogRef.updatePosition(matDialogConfig.position);
+
+    this.imageSubscription = this.notificationService
+      .getInformationImage(this.data.informations[0].url)
+      .subscribe((image) => {
+        console.log(image);
+        this.informationImage = image;
+      });
+  }
+
+  ngOnDestroy(): void {
+    if (this.imageSubscription) {
+      this.imageSubscription.unsubscribe();
+    }
   }
 
   cancel(): void {
@@ -39,6 +58,7 @@ export class InformationDialogComponent implements OnInit {
 
 export interface InformationDialogData {
   positionRelativeToElement: ElementRef;
+  informations: Information[];
 }
 
 export interface InformationDialogResult {}

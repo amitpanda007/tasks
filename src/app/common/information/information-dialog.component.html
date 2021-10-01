@@ -1,14 +1,15 @@
-<div class="header" (click)="cancel()">
+<div class="header flex-display spacing" (click)="cancel()">
   <span>Information</span>
   <mat-icon class="icon-btn">close</mat-icon>
 </div>
 <div>
   <div class="info-img">
-    <span>Information Image goes here</span>
+    <mat-progress-bar mode="indeterminate" *ngIf="!informationImage"></mat-progress-bar>
+    <img src="{{informationImage}}"/>
   </div>
 
   <div class="info-header">
-    <span>Information Header goes here</span>
+    <span [innerHTML]="data.informations[0].text"></span>
   </div>
   <hr />
 

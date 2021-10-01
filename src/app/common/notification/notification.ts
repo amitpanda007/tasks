@@ -1,5 +1,8 @@
 export interface AppNotification {
+  id?: string;
   text: string;
+  description?: string;
   isRead: boolean;
-  viewedTime?: Date;
+  created: Date;
+  modified?: Date;
 }

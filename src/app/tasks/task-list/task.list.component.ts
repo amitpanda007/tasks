@@ -18,7 +18,7 @@ import {
   MatSnackBar,
 } from "@angular/material";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BehaviorSubject, pipe, Subscription } from "rxjs";
+import { BehaviorSubject, combineLatest, pipe, Subscription } from "rxjs";
 import { TaskList } from "./tasklist";
 import { Label } from "../task/label";
 import {
@@ -75,6 +75,9 @@ import {
   TaskTemplateDialogResult,
 } from "src/app/common/task-template-dialog/task-template-dialog.component";
 import { TaskOption } from "../task/taskoptions";
+import { map } from "rxjs/internal/operators/map";
+import { AppNotification } from "src/app/common/notification/notification";
+import { NotificationService } from "src/app/core/services/notification.service";
 
 @Component({
   selector: "task-list",
@@ -162,7 +165,8 @@ export class TaskListComponent implements OnInit {
     private boardServiceV2: BoardServiceV2,
     private authService: AuthService,
     private accountService: AccountService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private notificationService: NotificationService
   ) {
     // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.boardId = this.route.snapshot.params.boardId;
@@ -430,6 +434,25 @@ export class TaskListComponent implements OnInit {
         );
       }
     );
+
+
+    //FIXME: SOLUTION: combining observables for TaskList & Tasks
+    //https://www.youtube.com/watch?v=0EefbG6N3vY : watched video fro some usage
+
+    // const allTasks = combineLatest([
+    //   this.boardServiceV2.taskListsChanged,
+    //   this.boardServiceV2.tasksChanged
+    // ]).pipe(
+    //   map(([taskLists, tasks]) => taskLists.map(taskList => ({
+    //     ...taskList,
+    //     tasks: tasks.filter(task => taskList.id === task.listId)
+    //   }) as TaskList))
+    // )
+
+    // allTasks.subscribe(data => {
+    //   console.log(data);
+    // })
+    
   }
 
   ngOnDestroy() {
@@ -2122,6 +2145,16 @@ export class TaskListComponent implements OnInit {
           taskChecklist,
           result.member.id
         );
+
+        //FIXME: This should be done through firebase functions
+        const curUserName = this.authService.getUserDisplayName();
+        const newNotification: AppNotification = {
+          text: `<b>${curUserName}</b> removed you from board <b>${this.board.title}</b>`,
+          description: "You wont be able to access the board. Get in touch with Board owner to get access back.",
+          isRead: false,
+          created: new Date()
+        }
+        this.notificationService.addNotification(result.member.id, newNotification);
       }
 
       if (result.isMadeAdmin) {
@@ -2131,6 +2164,16 @@ export class TaskListComponent implements OnInit {
           }
         });
         this.boardServiceV2.updateBoard(this.boardId, this.board);
+
+        //FIXME: This should be done through firebase functions
+        const curUserName = this.authService.getUserDisplayName();
+        const newNotification: AppNotification = {
+          text: `<b>${curUserName}</b> made you admin for board <b>${this.board.title}</b>`,
+          description: "You can view and edit cards, remove members, and change all settings for the board.",
+          isRead: false,
+          created: new Date()
+        }
+        this.notificationService.addNotification(result.member.id, newNotification);
       }
 
       if (result.isAdminRemoved) {
@@ -2140,6 +2183,15 @@ export class TaskListComponent implements OnInit {
           }
         });
         this.boardServiceV2.updateBoard(this.boardId, this.board);
+
+        const curUserName = this.authService.getUserDisplayName();
+        const newNotification: AppNotification = {
+          text: `<b>${curUserName}</b> updated your role from admin to normal for board <b>${this.board.title}</b>`,
+          description: "You can view and edit cards. Can change some board settings.",
+          isRead: false,
+          created: new Date()
+        }
+        this.notificationService.addNotification(result.member.id, newNotification);
       }
 
       if (result.taskId) {

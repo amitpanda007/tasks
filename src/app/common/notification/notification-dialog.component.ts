@@ -4,6 +4,7 @@ import {
   MatDialogRef,
   MatDialogConfig,
 } from "@angular/material/dialog";
+import { NotificationService } from "src/app/core/services/notification.service";
 import { AppNotification } from "./notification";
 
 @Component({
@@ -17,7 +18,8 @@ export class NotificationDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<NotificationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: NotificationDialogData
+    @Inject(MAT_DIALOG_DATA) public data: NotificationDialogData,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -34,6 +36,11 @@ export class NotificationDialogComponent implements OnInit {
 
   cancel(): void {
     this.dialogRef.close();
+  }
+
+  markNotificationAsRead(notification: AppNotification): void {
+    notification.isRead = true;
+    this.notificationService.updateNotification(notification.id);
   }
 
   chageNotificationFreq() {

@@ -18,6 +18,7 @@ import { environment } from "src/environments/environment";
 import { DeleteConfirmationDialogComponent } from "./common/delete.dialog.component";
 import { AuthModule } from "./auth/auth.module";
 import { AngularFireAuthGuardModule } from "@angular/fire/auth-guard";
+import { AngularFireStorageModule } from '@angular/fire/storage';
 import { FileUploadDialogComponent } from "./common/file-upload.dialog.component";
 import { TaskDialogComponent } from "./common/task-dialog/task-dialog.component";
 import { BoardDialogComponent } from "./common/board-dialog/board-dialog.component";
@@ -104,6 +105,7 @@ import { InformationDialogComponent } from "./common/information/information-dia
     AngularFirestoreModule,
     AngularFireAuthModule,
     AngularFireAuthGuardModule,
+    AngularFireStorageModule,
     ColorCircleModule,
     ColorSwatchesModule,
     DragDropModule,

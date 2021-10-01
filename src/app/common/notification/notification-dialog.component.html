@@ -3,8 +3,34 @@
   <mat-icon class="icon-btn">close</mat-icon>
 </div>
 <div class="notification-section">
-  <div *ngFor="let notification of data.notifications">
-    <p [innerHTML]="notification.text"></p>
+  <div
+    *ngFor="let notification of data.notifications"
+    class="notification-container"
+  >
+    <mat-card>
+      <!-- <mat-card-title [innerHTML]="notification.text" class="notification-title"></mat-card-title>
+      <mat-card-subtitle [innerHTML]="notification.description"></mat-card-subtitle> -->
+      <mat-card-content>
+        <span [innerHTML]="notification.text" class="notification-title"></span>
+        <span class="notification-date">{{ notification.created | dateformat: "short" }}</span>
+
+        <p
+          [innerHTML]="notification.description"
+          class="notification-description"
+        ></p>
+        <div class="flex-display end small-height">
+          <button
+            mat-icon-button
+            aria-label="mark read button"
+            *ngIf="!notification.isRead"
+            matTooltip="Mark as read"
+            (click)="markNotificationAsRead(notification)"
+          >
+            <mat-icon class="icon">fiber_manual_record</mat-icon>
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
   <div
     *ngIf="data.notifications && data.notifications.length == 0"

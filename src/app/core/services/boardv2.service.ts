@@ -95,9 +95,20 @@ export class BoardServiceV2 {
   }
 
   getBoardsWithoutObserver() {
-    return this._store.collection<Board>("boards", (ref) =>
-      ref.where("owner", "==", this.authService.getUID())
-    );
+    return this._store
+      .collection<Board>("boards", (ref) =>
+        ref.where("owner", "==", this.authService.getUID())
+      )
+      .valueChanges({ idField: "id" });
+  }
+
+  async getBoardsAsync() {
+    const db = firebase.firestore();
+    const boardSnapshot = await db
+      .collection("boards")
+      .where("owner", "==", this.authService.getUID())
+      .get();
+    return boardSnapshot.docs;
   }
 
   addBoard(board: Board) {
@@ -406,6 +417,16 @@ export class BoardServiceV2 {
       .valueChanges({ idField: "id" });
   }
 
+  async getTaskListAsync(boardId: string) {
+    const db = firebase.firestore();
+    const boardSnapshot = await db
+      .collection("boards")
+      .doc(boardId)
+      .collection("taskLists")
+      .get();
+    return boardSnapshot.docs;
+  }
+
   addTaskList(boardId: string, taskList: TaskList) {
     delete taskList.tasks;
     this._store
@@ -562,6 +583,52 @@ export class BoardServiceV2 {
   //     .set({ index: newIndex }, { merge: true });
   // }
 
+  copyTaskBatch(
+    task: Task,
+    boardId: string,
+    updateLabels: Label[],
+    createLabels: Label[]
+  ) {
+    const db = firebase.firestore();
+    const batch = db.batch();
+
+    //Task Ref: Add new task
+    const taskRef = db
+      .collection("boards")
+      .doc(boardId)
+      .collection("tasks")
+      .doc();
+
+    batch.set(taskRef, task);
+    // Label Ref: Update or Create Label
+    // If copying into same board no need to create new labels. just need to add the taskId into the label
+
+    // If copying into new board
+    //1. Check if Label already exist in new board, If label exist just update the task id in label
+    //2. If Label doesnt exist in new board. Add the label with task id updated
+    if (updateLabels && updateLabels.length > 0) {
+      const updateLabelRefs = updateLabels.map((l) =>
+        db.collection("boards").doc(boardId).collection("labels").doc(l.id)
+      );
+      updateLabelRefs.forEach((ref, idx) => {
+        const currentLabel: Label = updateLabels[idx];
+        currentLabel.taskIds.push(taskRef.id);
+        batch.update(ref, currentLabel);
+      });
+    }
+
+    if (createLabels && createLabels.length > 0) {
+      createLabels.map((l) => {
+        const ref = db.collection("boards").doc(boardId).collection("labels").doc();
+        l.taskIds = [];
+        l.taskIds.push(taskRef.id);
+        batch.set(ref, l);
+      });
+    }
+
+    batch.commit();
+  }
+
   moveTaskBatch(
     boardId: string,
     taskListId: string,
@@ -613,6 +680,16 @@ export class BoardServiceV2 {
 
   cancelLabelSubscription() {
     this.labelsSubscription.unsubscribe();
+  }
+
+  async getLabelsSnapshot(boardId: string) {
+    const db = firebase.firestore();
+    const boardSnapshot = await db
+      .collection("boards")
+      .doc(boardId)
+      .collection("labels")
+      .get();
+    return boardSnapshot.docs;
   }
 
   findLabel(boardId: string, label: Label) {

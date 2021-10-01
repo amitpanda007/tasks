@@ -5,6 +5,7 @@ import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
 import { Constant } from "src/app/shared/constants";
 import { Status } from "src/app/daily/daily-task/status";
 import { TaskOption } from "./taskoptions";
+import { TaskChecklist } from "./taskchecklist";
 
 @Component({
   selector: "task",
@@ -35,6 +36,7 @@ export class TaskComponent implements OnInit {
   public statusOptions: Status[];
   public selectStatusBackgroundColor: string;
   public selectStatusColor: string;
+  public localChecklists: TaskChecklist[];
 
   constructor(private boardServiceV2: BoardServiceV2) {}
 
@@ -84,6 +86,8 @@ export class TaskComponent implements OnInit {
       this.getTextColor(this.task.backgroundColor);
       // this.textColor = this.setAdaptiveTextColor(this.task.backgroundColor, 2);
     }
+
+    this.localChecklists = this.task.checklists;
 
     this.isPriorityIconSelected = false;
     this.isStatusIconSelected = false;

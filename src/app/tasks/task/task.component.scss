@@ -253,3 +253,23 @@ mat-icon span {
   margin-top: 8px;
   font-size: 12px;
 }
+
+
+.accordion .mat-expansion-panel-header-title,
+.accordion .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.accordion .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accordion .mat-form-field + .mat-form-field {
+  margin-left: 8px;
+}
+
+.accordion mat-expansion-panel {
+  margin-bottom: 5px;
+  margin-top: -5px;
+}
