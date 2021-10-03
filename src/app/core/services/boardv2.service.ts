@@ -619,11 +619,75 @@ export class BoardServiceV2 {
 
     if (createLabels && createLabels.length > 0) {
       createLabels.map((l) => {
-        const ref = db.collection("boards").doc(boardId).collection("labels").doc();
+        const ref = db
+          .collection("boards")
+          .doc(boardId)
+          .collection("labels")
+          .doc();
         l.taskIds = [];
         l.taskIds.push(taskRef.id);
         batch.set(ref, l);
       });
+    }
+
+    batch.commit();
+  }
+
+  moveBoardTaskBatch(
+    task: Task,
+    currentBoardId: string,
+    newBoardId: string,
+    updateLabels: Label[],
+    createLabels: Label[],
+    isDeleteTaskFromCurrentBoard: boolean
+  ) {
+    const db = firebase.firestore();
+    const batch = db.batch();
+
+    //Task Ref: Add new task
+    const taskRef = db
+      .collection("boards")
+      .doc(newBoardId)
+      .collection("tasks")
+      .doc(task.id);
+
+    batch.set(taskRef, task);
+    // Label Ref: Update or Create Label
+    // If copying into new board
+    //1. Check if Label already exist in new board, If label exist just update the task id in label
+    //2. If Label doesnt exist in new board. Add the label with task id updated
+    if (updateLabels && updateLabels.length > 0) {
+      const updateLabelRefs = updateLabels.map((l) =>
+        db.collection("boards").doc(newBoardId).collection("labels").doc(l.id)
+      );
+      updateLabelRefs.forEach((ref, idx) => {
+        const currentLabel: Label = updateLabels[idx];
+        currentLabel.taskIds.push(taskRef.id);
+        batch.update(ref, currentLabel);
+      });
+    }
+
+    if (createLabels && createLabels.length > 0) {
+      createLabels.map((l) => {
+        const ref = db
+          .collection("boards")
+          .doc(newBoardId)
+          .collection("labels")
+          .doc();
+        l.taskIds = [];
+        l.taskIds.push(taskRef.id);
+        batch.set(ref, l);
+      });
+    }
+
+    if (isDeleteTaskFromCurrentBoard) {
+      const curTaskRef = db
+        .collection("boards")
+        .doc(currentBoardId)
+        .collection("tasks")
+        .doc(task.id);
+
+      batch.delete(curTaskRef);
     }
 
     batch.commit();

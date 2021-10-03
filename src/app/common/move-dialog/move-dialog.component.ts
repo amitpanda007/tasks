@@ -1,11 +1,12 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Subscription } from "rxjs";
-import { BoardService } from "../../core/services/board.service";
 import { Board } from "../../boards/board/board";
 import { TaskList } from "../../tasks/task-list/tasklist";
 import { Label } from "src/app/tasks/task/label";
 import { Task } from "src/app/tasks/task/task";
+import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
+import * as cloneDeep from "lodash/cloneDeep";
 
 @Component({
   selector: "app-move-dialog",
@@ -23,27 +24,31 @@ export class MoveDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<MoveDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MoveDialogData,
-    private boardService: BoardService
+    private boardServiceV2: BoardServiceV2
   ) {}
 
   ngOnInit(): void {
-    // this.boardService.getBoards();
-    this.boardListSubscription = this.boardService
-      .getBoardsWithoutObserver()
-      .subscribe((_boards) => {
-        console.log(_boards);
-        this.moveBoards = _boards;
+    this.moveBoards = [];
+    this.boardServiceV2.getBoardsAsync().then((_boards) => {
+      console.log(_boards);
+      _boards.forEach((board) => {
+        const data = board.data() as Board;
+        data.id = board.id;
+        this.moveBoards.push(data);
       });
+
+      this.selectedBoard = this.moveBoards.filter(
+        (board) => board.id == this.data.boardId
+      )[0];
+
+      this.moveTaskLists = this.data.taskLists;
+      this.selectedList = this.data.taskLists.filter(
+        (list) => list.id == this.data.task.listId
+      )[0];
+    });
   }
 
-  ngOnDestroy(): void {
-    this.boardListSubscription.unsubscribe();
-    this.moveBoards = null;
-    if (this.taskListSubscription) {
-      this.taskListSubscription.unsubscribe();
-      this.moveTaskLists = null;
-    }
-  }
+  ngOnDestroy(): void {}
 
   cancel(): void {
     this.dialogRef.close();
@@ -51,105 +56,80 @@ export class MoveDialogComponent implements OnInit {
 
   async move() {
     if (this.selectedBoard && this.selectedList) {
+      const newTask: Task = cloneDeep(this.data.task);
+
       if (this.selectedBoard.id == this.data.boardId) {
-        this.boardService.moveTasks(
-          this.selectedBoard.id,
-          this.data.task.id,
-          this.selectedList.id
-        );
-        this.dialogRef.close({ targetListId: this.selectedList.id });
-      } else {
-        // Copy/Create Task in new board
-        let newCehcklist = [];
-        let newDueDate = null;
-        if (this.data.task.checklists) {
-          newCehcklist = this.data.task.checklists;
+        if (this.selectedList.id == newTask.listId) {
+          return;
         }
 
-        if (this.data.task.dueDate) {
-          newDueDate = this.data.task.dueDate;
-        }
-
-        //FIXME: inxed needs to be determine where the task is getting moved to.
-        const newTask = {
-          index: 0,
-          title: this.data.task.title,
-          description: this.data.task.description,
-          backgroundColor: this.data.task.backgroundColor,
-          listId: this.selectedList.id,
-          dueDate: newDueDate,
-          checklist: newCehcklist,
-          created: new Date(),
-          modified: new Date(),
-        };
-        console.log(newTask);
-        const taskId = await this.boardService.addTask(
+        newTask.listId = this.selectedList.id;
+        this.boardServiceV2.updateTask(
           this.selectedBoard.id,
+          newTask.id,
           newTask
         );
+      } else {
+        delete newTask.members;
+        newTask.listId = this.selectedList.id;
 
-        const filteredLabels = this.data.labels.filter((label) => {
+        let filteredLabels: Label[] = [];
+        let updateLabels: Label[] = [];
+        let createLabels: Label[] = [];
+        let labelsFromNewBoard: Label[] = [];
+
+        filteredLabels = this.data.labels.filter((label) => {
           if (label.taskIds) {
             return label.taskIds.includes(this.data.task.id);
           }
         });
-        console.log(filteredLabels);
-        filteredLabels.forEach(async (label) => {
-          if (this.selectedBoard.id == this.data.boardId) {
-            label.taskIds.push(taskId);
-            console.log(this.selectedBoard.id, this.data.boardId);
-            this.boardService.updateLabel(
-              this.selectedBoard.id,
-              label.id,
-              label
-            );
-          } else {
-            let foundLabel: any = await this.boardService.findLabelPromise(
-              this.selectedBoard.id,
-              label
-            );
-            console.log(`Current Label: ${label.name}`);
-            console.log(foundLabel);
-            if (foundLabel == undefined) {
-              console.log("Label Not Found. Adding New Label");
-              // Remove current board label information
-              label.taskIds = [];
-              label.taskIds.push(taskId);
-              this.boardService.addLabelWithGivenId(
-                this.selectedBoard.id,
-                label.id,
-                label
-              );
-            } else {
-              foundLabel.taskIds.splice(
-                foundLabel.taskIds.indexOf(this.data.task.id),
-                1
-              );
-              foundLabel.taskIds.push(taskId);
-              console.log("Existing Label Found");
-              this.boardService.updateLabel(
-                this.selectedBoard.id,
-                foundLabel.id,
-                foundLabel
-              );
+
+        const labelSnapstot = await this.boardServiceV2.getLabelsSnapshot(
+          this.selectedBoard.id
+        );
+        labelSnapstot.forEach((label) => {
+          const newLabel = label.data() as Label;
+          newLabel.id = label.id;
+          labelsFromNewBoard.push(newLabel);
+        });
+
+        filteredLabels.forEach((fltrLabel) => {
+          let itemFound = false;
+          labelsFromNewBoard.forEach((label) => {
+            if (fltrLabel.name == label.name) {
+              updateLabels.push(label);
+              itemFound = true;
             }
+          });
+          if (!itemFound) {
+            createLabels.push(fltrLabel);
           }
         });
 
-        //Delete task from current board
-        this.boardService.deleteTask(this.data.boardId, this.data.task.id);
-        this.dialogRef.close({ targetListId: null });
+        this.boardServiceV2.moveBoardTaskBatch(
+          newTask,
+          this.data.boardId,
+          this.selectedBoard.id,
+          updateLabels,
+          createLabels,
+          true
+        );
       }
     }
+    this.dialogRef.close();
   }
 
   async boardSelected($event) {
     this.selectedBoard = $event.value;
-    // this.boardService.getTaskList(this.selectedBoard.id);
-    this.taskListSubscription = this.boardService
-      .getTaskListWithoutSubscription(this.selectedBoard.id)
-      .subscribe((_tasklist) => {
-        this.moveTaskLists = _tasklist;
+    this.moveTaskLists = [];
+    this.boardServiceV2
+      .getTaskListAsync(this.selectedBoard.id)
+      .then((_tasklist) => {
+        _tasklist.forEach((list) => {
+          const data = list.data() as TaskList;
+          data.id = list.id;
+          this.moveTaskLists.push(data);
+        });
       });
   }
 
@@ -162,6 +142,7 @@ export interface MoveDialogData {
   task: Task;
   boardId: string;
   labels: Label[];
+  taskLists: TaskList[];
 }
 
 export interface MoveDialogResult {

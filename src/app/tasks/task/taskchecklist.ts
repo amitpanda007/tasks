@@ -8,4 +8,5 @@ export interface TaskChecklist {
   checklistCompleted?: number;
   doneChecklist?: number;
   totalChecklist?: number;
+  showHideChecklistAddItem?: boolean;
 }

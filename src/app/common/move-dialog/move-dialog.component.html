@@ -3,7 +3,11 @@
   <h4>Select Destination</h4>
   <mat-form-field appearance="fill" class="section">
     <mat-label>Select Board</mat-label>
-    <mat-select name="board" (selectionChange)="boardSelected($event)">
+    <mat-select
+      name="board"
+      (selectionChange)="boardSelected($event)"
+      [(value)]="selectedBoard"
+    >
       <mat-option *ngFor="let board of moveBoards" [value]="board">
         {{ board.title }}
       </mat-option>
@@ -11,7 +15,11 @@
   </mat-form-field>
   <mat-form-field appearance="fill" class="section">
     <mat-label>Select List</mat-label>
-    <mat-select name="list" (selectionChange)="listSelected($event)">
+    <mat-select
+      name="list"
+      (selectionChange)="listSelected($event)"
+      [(value)]="selectedList"
+    >
       <mat-option *ngFor="let list of moveTaskLists" [value]="list">
         {{ list.name }}
       </mat-option>
@@ -19,6 +27,6 @@
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="move()" cdkFocusInitial>Move</button>
+  <button mat-button (click)="move()">Move</button>
   <button mat-button (click)="cancel()">Cancel</button>
 </div>

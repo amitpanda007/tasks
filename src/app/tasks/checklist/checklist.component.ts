@@ -1,4 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
+import { Subject } from "rxjs";
+import { debounceTime } from "rxjs/operators";
 import { CheckList } from "../task/checklist";
 
 @Component({
@@ -28,6 +30,10 @@ export class ChecklistComponent implements OnInit {
 
   toggleChecklistEditing(checklist: CheckList) {
     checklist.isEditing = !checklist.isEditing;
+  }
+
+  markChecklistDone(checklist: CheckList) {
+    this.done.emit(checklist);
   }
 
   checkDueDateStatus() {

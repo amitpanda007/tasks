@@ -35,7 +35,6 @@ import {
 import { BoardChecklist, CheckListOption } from "../task/boardchecklist";
 import { Activity } from "../task/activity";
 import { User } from "src/app/auth/user";
-import { AccountService } from "src/app/core/services/account.service";
 import {
   MemberInfoDialogComponent,
   MemberInfoDialogResult,
@@ -164,7 +163,6 @@ export class TaskListComponent implements OnInit {
     private router: Router,
     private boardServiceV2: BoardServiceV2,
     private authService: AuthService,
-    private accountService: AccountService,
     private snackBar: MatSnackBar,
     private notificationService: NotificationService
   ) {
@@ -243,11 +241,6 @@ export class TaskListComponent implements OnInit {
       .then((board) => {
         return board.data() as Board;
       });
-
-    // this.boardAdmin = (await this.accountService.getUserById(
-    //   this.board.owner
-    // )) as User;
-    // console.log(this.boardAdmin);
 
     const userUID = this.authService.getUID();
     if (this.board.shared && this.board.shared.includes(userUID)) {
@@ -435,7 +428,6 @@ export class TaskListComponent implements OnInit {
       }
     );
 
-
     //FIXME: SOLUTION: combining observables for TaskList & Tasks
     //https://www.youtube.com/watch?v=0EefbG6N3vY : watched video fro some usage
 
@@ -452,7 +444,6 @@ export class TaskListComponent implements OnInit {
     // allTasks.subscribe(data => {
     //   console.log(data);
     // })
-    
   }
 
   ngOnDestroy() {
@@ -669,6 +660,7 @@ export class TaskListComponent implements OnInit {
     const clonedLabels = cloneDeep(this.labels);
     const clonedBoardMembers = cloneDeep(this.boardMembers);
     const clonedAllChecklist = cloneDeep(allChecklists);
+    const clonedTaskLists = cloneDeep(this.taskList);
 
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: "768px",
@@ -681,6 +673,7 @@ export class TaskListComponent implements OnInit {
         boardMembers: clonedBoardMembers,
         enableDelete: true,
         boardChecklists: clonedAllChecklist,
+        taskLists: clonedTaskLists,
       },
     });
     dialogRef.disableClose = true;
@@ -2150,11 +2143,15 @@ export class TaskListComponent implements OnInit {
         const curUserName = this.authService.getUserDisplayName();
         const newNotification: AppNotification = {
           text: `<b>${curUserName}</b> removed you from board <b>${this.board.title}</b>`,
-          description: "You wont be able to access the board. Get in touch with Board owner to get access back.",
+          description:
+            "You wont be able to access the board. Get in touch with Board owner to get access back.",
           isRead: false,
-          created: new Date()
-        }
-        this.notificationService.addNotification(result.member.id, newNotification);
+          created: new Date(),
+        };
+        this.notificationService.addNotification(
+          result.member.id,
+          newNotification
+        );
       }
 
       if (result.isMadeAdmin) {
@@ -2169,11 +2166,15 @@ export class TaskListComponent implements OnInit {
         const curUserName = this.authService.getUserDisplayName();
         const newNotification: AppNotification = {
           text: `<b>${curUserName}</b> made you admin for board <b>${this.board.title}</b>`,
-          description: "You can view and edit cards, remove members, and change all settings for the board.",
+          description:
+            "You can view and edit cards, remove members, and change all settings for the board.",
           isRead: false,
-          created: new Date()
-        }
-        this.notificationService.addNotification(result.member.id, newNotification);
+          created: new Date(),
+        };
+        this.notificationService.addNotification(
+          result.member.id,
+          newNotification
+        );
       }
 
       if (result.isAdminRemoved) {
@@ -2187,11 +2188,15 @@ export class TaskListComponent implements OnInit {
         const curUserName = this.authService.getUserDisplayName();
         const newNotification: AppNotification = {
           text: `<b>${curUserName}</b> updated your role from admin to normal for board <b>${this.board.title}</b>`,
-          description: "You can view and edit cards. Can change some board settings.",
+          description:
+            "You can view and edit cards. Can change some board settings.",
           isRead: false,
-          created: new Date()
-        }
-        this.notificationService.addNotification(result.member.id, newNotification);
+          created: new Date(),
+        };
+        this.notificationService.addNotification(
+          result.member.id,
+          newNotification
+        );
       }
 
       if (result.taskId) {

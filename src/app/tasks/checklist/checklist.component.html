@@ -1,8 +1,13 @@
-<div [ngClass]="{'single-checklist': !checklist.isEditing, 'single-checklist-edit': checklist.isEditing}">
+<div
+  [ngClass]="{
+    'single-checklist': !checklist.isEditing,
+    'single-checklist-edit': checklist.isEditing
+  }"
+>
   <mat-checkbox
     [(ngModel)]="checklist.done"
     color="primary"
-    (click)="done.emit(checklist)"
+    (click)="markChecklistDone(checklist)"
   ></mat-checkbox>
   <span
     (click)="toggleChecklistEditing(checklist)"
@@ -25,7 +30,12 @@
     <mat-icon class="icon">schedule</mat-icon>
     <span>{{ checklist.dueDate.date | dateformat: "short" }}</span>
   </p>
-  <p class="members" *ngIf="checklist.members && checklist.members.length > 0 && !checklist.isEditing">
+  <p
+    class="members"
+    *ngIf="
+      checklist.members && checklist.members.length > 0 && !checklist.isEditing
+    "
+  >
     <span
       class="member"
       *ngFor="let member of checklist.members"
@@ -45,7 +55,10 @@
   </div>
 
   <div class="checklist-options" *ngIf="!checklist.isEditing">
-    <span (click)="duedate.emit(checklist)" *ngIf="!checklist.dueDate && showDuedate">
+    <span
+      (click)="duedate.emit(checklist)"
+      *ngIf="!checklist.dueDate && showDuedate"
+    >
       <mat-icon class="icon">schedule</mat-icon>
     </span>
     <span (click)="assign.emit(checklist)" *ngIf="showAssign">

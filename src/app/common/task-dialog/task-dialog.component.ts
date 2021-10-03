@@ -53,6 +53,7 @@ import { TaskChecklist } from "src/app/tasks/task/taskchecklist";
 import { Subscription } from "rxjs";
 import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
 import { Activity } from "src/app/tasks/task/activity";
+import { TaskList } from "src/app/tasks/task-list/tasklist";
 
 @Component({
   selector: "app-task-dialog",
@@ -76,6 +77,7 @@ export class TaskDialogComponent implements OnInit {
   public tooltipPosition: string;
   public showHideCompletedTask: boolean;
   public showHideActivities: boolean;
+  public showHideChecklistAddItem: boolean;
 
   constructor(
     public dialogRef: MatDialogRef<TaskDialogComponent>,
@@ -89,6 +91,7 @@ export class TaskDialogComponent implements OnInit {
     console.log(this.data.task.id);
     this.tooltipPosition = "right";
     this.showHideActivities = false;
+    this.showHideChecklistAddItem = false;
     // this.showHideCompletedTask = false;
     if (this.data.task.checklists) {
       this.localChecklists = cloneDeep(this.data.task.checklists);
@@ -133,6 +136,7 @@ export class TaskDialogComponent implements OnInit {
         delete curChecklist.checklistCompleted;
         delete curChecklist.doneChecklist;
         delete curChecklist.totalChecklist;
+        delete curChecklist.showHideCompletedTask;
 
         if (curChecklist.checklist && curChecklist.checklist.length > 0) {
           curChecklist.checklist.forEach((chklst) => {
@@ -168,9 +172,16 @@ export class TaskDialogComponent implements OnInit {
       });
   }
 
+  openChecklistAdd(tskChecklist: TaskChecklist) {
+    console.log(tskChecklist);
+    tskChecklist.showHideChecklistAddItem =
+      !tskChecklist.showHideChecklistAddItem;
+  }
+
   addPropertyToCkecklist(localChecklists: TaskChecklist[]) {
     localChecklists.forEach((localList) => {
       localList.showHideCompletedTask = false;
+      localList.showHideChecklistAddItem = false;
       localList.checklistText = "";
       this.resetChecklistCalc(localList);
     });
@@ -524,12 +535,14 @@ export class TaskDialogComponent implements OnInit {
   }
 
   openMoveDialog() {
+    this.dialogRef.close();
     const dialogRef = this.dialog.open(MoveDialogComponent, {
       width: "360px",
       data: {
         boardId: this.data.boardId,
         task: this.data.task,
         labels: this.data.labels,
+        taskLists: this.data.taskLists,
       },
     });
     dialogRef.afterClosed().subscribe((result: MoveDialogResult) => {
@@ -549,6 +562,7 @@ export class TaskDialogComponent implements OnInit {
       width: "360px",
       data: {
         boardId: this.data.boardId,
+        taskLists: this.data.taskLists,
         task: this.data.task,
         labels: this.data.labels,
       },
@@ -563,7 +577,7 @@ export class TaskDialogComponent implements OnInit {
 
   makeTaskTemplate() {
     console.log(this.data.task.isTemplateTask);
-    if(!this.data.task.isTemplateTask) {
+    if (!this.data.task.isTemplateTask) {
       this.data.task.isTemplateTask = false;
     }
 
@@ -647,6 +661,7 @@ export interface TaskDialogData {
   boardMembers: SharedUser[];
   enableDelete: boolean;
   boardChecklists?: TaskChecklist[];
+  taskLists: TaskList[];
 }
 
 export interface TaskDialogResult {

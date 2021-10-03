@@ -68,6 +68,18 @@ section {
   height: 20px;
 }
 
+.checklist-textarea {
+  background-color: #fff;
+  box-shadow: inset 0 0 0 2px #172b4d;
+  color: #172b4d;
+  cursor: text;
+  float: none;
+  resize: vertical;
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 12px;
+}
+
 .checklist-add {
   display: flex;
   margin-top: 10px;
@@ -290,7 +302,8 @@ section {
 }
 
 .template-header {
-  background-color: rgb(228, 240, 246);    display: flex;
+  background-color: rgb(228, 240, 246);
+  display: flex;
   height: 48px;
   align-items: center;
   grid-gap: 12px;

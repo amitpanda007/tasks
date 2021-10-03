@@ -10,7 +10,10 @@
         <img src="../../../assets/images/template.png" class="template-img" />
         <span>This is a Template Task</span>
       </span>
-      <button mat-flat-button color="primary"><mat-icon class="material-icons-outlined">add_box</mat-icon>Create task from template</button>
+      <button mat-flat-button color="primary">
+        <mat-icon class="material-icons-outlined">add_box</mat-icon>Create task
+        from template
+      </button>
     </div>
 
     <mat-form-field class="title">
@@ -161,17 +164,46 @@
           ></checklist>
         </div>
 
+        <button
+          mat-stroked-button
+          (click)="openChecklistAdd(checklists, j)"
+          *ngIf="checklists.showHideChecklistAddItem"
+        >
+          Cancel
+        </button>
         <div class="checklist-add">
-          <textarea
+          <!-- <textarea
             class="checklist-input"
             name="checklistInput"
             placeholder="Add a new task to checklist"
             wrap="off"
             [(ngModel)]="checklists.checklistText"
             (keyup.enter)="updateChecklist(checklists.checklist, i)"
-          ></textarea>
+          ></textarea> -->
           <!-- <button mat-stroked-button (click)="updateChecklist()">Add</button> -->
+
+          <textarea
+            *ngIf="checklists.showHideChecklistAddItem"
+            matInput
+            cdkTextareaAutosize
+            cdkAutosizeMinRows="1"
+            cdkAutosizeMaxRows="5"
+            class="checklist-textarea"
+            name="checklistInput"
+            wrap="off"
+            placeholder="Add a new task to checklist"
+            [(ngModel)]="checklists.checklistText"
+            (keyup.enter)="updateChecklist(checklists.checklist, i)"
+          >
+          </textarea>
         </div>
+        <button
+          mat-stroked-button
+          (click)="openChecklistAdd(checklists, j)"
+          *ngIf="!checklists.showHideChecklistAddItem"
+        >
+          Add an item
+        </button>
       </section>
     </div>
 
