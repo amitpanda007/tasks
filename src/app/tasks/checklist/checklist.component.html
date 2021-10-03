@@ -7,7 +7,7 @@
   <mat-checkbox
     [(ngModel)]="checklist.done"
     color="primary"
-    (click)="markChecklistDone(checklist)"
+    (change)="markChecklistDone(checklist)"
   ></mat-checkbox>
   <span
     (click)="toggleChecklistEditing(checklist)"

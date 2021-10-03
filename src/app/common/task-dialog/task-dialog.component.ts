@@ -217,9 +217,9 @@ export class TaskDialogComponent implements OnInit {
   checklistClicked($event: CheckList, index: number) {
     console.log($event);
     if ($event.done) {
-      this.localChecklists[index].doneChecklist -= 1;
-    } else {
       this.localChecklists[index].doneChecklist += 1;
+    } else {
+      this.localChecklists[index].doneChecklist -= 1;
     }
     this.localChecklists[index].checklistCompleted = Math.floor(
       (this.localChecklists[index].doneChecklist /
