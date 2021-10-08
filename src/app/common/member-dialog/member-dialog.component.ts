@@ -27,22 +27,23 @@ export class MemberDialogComponent implements OnInit {
       this.data.addedMembers = [];
     }
     // Check if current memebr is in members list else add it
-    const currentUser = {
-      id: this.authService.getUID(),
-      name: this.authService.getUserDisplayName(),
-    };
-    let userFound = false;
-    this.data.members.every((member) => {
-      if (member.id == currentUser.id) {
-        userFound = true;
-        return false;
-      }
-    });
-    if (!userFound) {
-      this.data.members.splice(0, 0, currentUser);
-    }
-    this.calculateAddedMember();
+    
+    // const currentUser = {
+    //   id: this.authService.getUID(),
+    //   name: this.authService.getUserDisplayName(),
+    // };
+    // let userFound = false;
+    // this.data.members.every((member) => {
+    //   if (member.id == currentUser.id) {
+    //     userFound = true;
+    //     return false;
+    //   }
+    // });
+    // if (!userFound) {
+    //   this.data.members.splice(0, 0, currentUser);
+    // }
 
+    this.calculateAddedMember();
     this.updateFilteredMembers();
     // let clonedMembers = cloneDeep(this.data.members);
     // this.filteredMembers = clonedMembers.slice(0, 5);

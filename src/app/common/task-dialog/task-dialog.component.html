@@ -1,260 +1,400 @@
 <div class="container">
   <div class="main">
-    <div *ngIf="data.task.archived" class="archive-header">
-      <mat-icon class="material-icons-outlined">archive</mat-icon>
-      <span>This task is archived.</span>
-    </div>
-
-    <div *ngIf="data.task.isTemplateTask" class="template-header">
-      <span class="option-content">
-        <img src="../../../assets/images/template.png" class="template-img" />
-        <span>This is a Template Task</span>
-      </span>
-      <button mat-flat-button color="primary">
-        <mat-icon class="material-icons-outlined">add_box</mat-icon>Create task
-        from template
-      </button>
-    </div>
-
-    <mat-form-field class="title">
-      <mat-label>Title</mat-label>
-      <input
-        matInput
-        cdkFocusInitial
-        autocomplete="off"
-        [(ngModel)]="data.task.title"
-      />
-    </mat-form-field>
-
-    <mat-form-field class="description">
-      <mat-label>Description</mat-label>
-      <textarea
-        matInput
-        [(ngModel)]="data.task.description"
-        rows="2"
-        cols="50"
-      ></textarea>
-    </mat-form-field>
-
-    <section class="members">
-      <p class="sub-header">Members</p>
-      <div class="member-section">
-        <span
-          class="member"
-          *ngFor="let member of data.task.members"
-          matTooltip="{{ member.name }}"
-          >{{ member.name | shortname }}</span
-        >
-        <div>
-          <button
-            mat-icon-button
-            aria-label="add member"
-            (click)="openMemberDialog()"
-          >
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
+    <div>
+      <div *ngIf="data.task.archived" class="archive-header">
+        <mat-icon class="material-icons-outlined">archive</mat-icon>
+        <span>This task is archived.</span>
       </div>
-    </section>
 
-    <section class="labels">
-      <p class="sub-header">Lables</p>
-      <div class="label-section">
-        <span *ngFor="let label of data.labels">
-          <span *ngFor="let taskId of label.taskIds">
-            <mat-chip
-              *ngIf="taskId == data.task.id"
-              [style.background-color]="label.color"
-              class="single-label"
-            >
-              {{ label.name }}
-            </mat-chip>
-          </span>
+      <div *ngIf="data.task.isTemplateTask" class="template-header">
+        <span class="option-content">
+          <img src="../../../assets/images/template.png" class="template-img" />
+          <span>This is a Template Task</span>
         </span>
-        <div
-          matTooltip="You can add Labels once task is created"
-          [matTooltipDisabled]="!isAddLabelDisabled()"
-        >
-          <button
-            mat-icon-button
-            aria-label="add label"
-            (click)="openLabelDialog()"
-            [disabled]="isAddLabelDisabled()"
-          >
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
+        <button mat-flat-button color="primary">
+          <mat-icon class="material-icons-outlined">add_box</mat-icon>Create
+          task from template
+        </button>
       </div>
-    </section>
 
-    <section class="duedate-section" *ngIf="data.task.dueDate">
-      <p class="sub-header">Due date</p>
-      <div class="duedates">
-        <mat-checkbox
-          [(ngModel)]="data.task.dueDate.completed"
-          color="primary"
-        ></mat-checkbox>
-        <span class="due-date"
-          >{{ data.task.dueDate.date | dateformat: "" }}
-          <mat-icon [matMenuTriggerFor]="menu"
-            >keyboard_arrow_down</mat-icon
-          ></span
-        >
-        <span class="due-complete" *ngIf="data.task.dueDate.completed"
-          >COMPLETED</span
-        >
-        <span
-          class="due-overdue"
-          *ngIf="overDue && !data.task.dueDate.completed"
-          >OVERDUE</span
-        >
-      </div>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="openCalenderDialog()">Update</button>
-        <button mat-menu-item (click)="removeDueDate()">Remove</button>
-      </mat-menu>
-    </section>
+      <mat-form-field class="title">
+        <mat-label>Title</mat-label>
+        <input
+          matInput
+          cdkFocusInitial
+          autocomplete="off"
+          [(ngModel)]="data.task.title"
+        />
+      </mat-form-field>
 
-    <div *ngIf="data.task.checklists">
+      <mat-form-field class="description">
+        <mat-label>Description</mat-label>
+        <textarea
+          matInput
+          [(ngModel)]="data.task.description"
+          rows="2"
+          cols="50"
+        ></textarea>
+      </mat-form-field>
+
       <section
-        class="checklist"
-        *ngFor="let checklists of localChecklists; let i = index"
+        class="members"
+        *ngIf="data.task.members && data.task.members.length > 0"
       >
-        <p class="sub-header">
-          {{ checklists.checklistName }}
-          <span>
+        <p class="sub-header">Members</p>
+        <div class="member-section">
+          <span
+            class="member"
+            *ngFor="let member of data.task.members"
+            matTooltip="{{ member.name }}"
+            >{{ member.name | shortname }}</span
+          >
+          <div>
             <button
-              mat-stroked-button
-              (click)="showHideCompletedChecklist(i)"
-              *ngIf="checklists.checklist && checklists.checklist.length > 0"
+              mat-icon-button
+              aria-label="add member"
+              (click)="openMemberDialog()"
             >
-              <span *ngIf="checklists.showHideCompletedTask">Show</span
-              ><span *ngIf="!checklists.showHideCompletedTask">Hide</span>
-              checked items
+              <mat-icon>add</mat-icon>
             </button>
-            <button mat-stroked-button (click)="deleteAllChecklist(i)">
-              Delete
-            </button>
-          </span>
-        </p>
-        <div class="checklist-progress" *ngIf="checklists">
-          <span class="task-completed"
-            >{{ checklists.checklistCompleted }}%</span
-          >
-          <mat-progress-bar
-            class="progress-bar"
-            mode="determinate"
-            value="{{ checklists.checklistCompleted }}"
-          ></mat-progress-bar>
-        </div>
-        <div
-          cdkDropList
-          (cdkDropListDropped)="drop($event)"
-          class="checklist-list"
-        >
-          <checklist
-            cdkDrag
-            *ngFor="let checklist of checklists.checklist; let j = index"
-            class="checklist-box"
-            [checklist]="checklist"
-            (duedate)="setDueDateChecklist($event, j, i)"
-            (assign)="assignChecklist($event, j, i)"
-            (delete)="deleteChecklist($event, checklists.checklist, i)"
-            (done)="checklistClicked($event, i)"
-          ></checklist>
-        </div>
-
-        <button
-          mat-stroked-button
-          (click)="openChecklistAdd(checklists, j)"
-          *ngIf="checklists.showHideChecklistAddItem"
-        >
-          Cancel
-        </button>
-        <div class="checklist-add">
-          <!-- <textarea
-            class="checklist-input"
-            name="checklistInput"
-            placeholder="Add a new task to checklist"
-            wrap="off"
-            [(ngModel)]="checklists.checklistText"
-            (keyup.enter)="updateChecklist(checklists.checklist, i)"
-          ></textarea> -->
-          <!-- <button mat-stroked-button (click)="updateChecklist()">Add</button> -->
-
-          <textarea
-            *ngIf="checklists.showHideChecklistAddItem"
-            matInput
-            cdkTextareaAutosize
-            cdkAutosizeMinRows="1"
-            cdkAutosizeMaxRows="5"
-            class="checklist-textarea"
-            name="checklistInput"
-            wrap="off"
-            placeholder="Add a new task to checklist"
-            [(ngModel)]="checklists.checklistText"
-            (keyup.enter)="updateChecklist(checklists.checklist, i)"
-          >
-          </textarea>
-        </div>
-        <button
-          mat-stroked-button
-          (click)="openChecklistAdd(checklists, j)"
-          *ngIf="!checklists.showHideChecklistAddItem"
-        >
-          Add an item
-        </button>
-      </section>
-    </div>
-
-    <div
-      *ngIf="data.task.activities && !data.isTemplateBoard"
-      class="act-container"
-    >
-      <section>
-        <div class="flex-display space-btwn">
-          <span class="flex-display">
-            <mat-icon>subject</mat-icon><span>Activity</span>
-          </span>
-          <button mat-stroked-button (click)="showHideActivity()">
-            <span *ngIf="!showHideActivities">Show</span>
-            <span *ngIf="showHideActivities">Hide</span>
-            Details
-          </button>
-        </div>
-
-        <div *ngIf="showHideActivities">
-          <div
-            *ngFor="let activity of data.task.activities"
-            class="activity-text"
-          >
-            <span class="member" matTooltip="{{ activity.user }}">{{
-              activity.user | shortname
-            }}</span>
-            <span
-              ><b>{{ activity.user }}</b> {{ activity.action }}</span
-            >
-            <p>{{ activity.dateTime | dateformat: "" }}</p>
           </div>
         </div>
       </section>
+
+      <section class="labels" *ngIf="showLabelSection">
+        <p class="sub-header">Lables</p>
+        <div class="label-section">
+          <span *ngFor="let label of data.labels">
+            <span *ngFor="let taskId of label.taskIds">
+              <mat-chip
+                *ngIf="taskId == data.task.id"
+                [style.background-color]="label.color"
+                class="single-label"
+              >
+                {{ label.name }}
+              </mat-chip>
+            </span>
+          </span>
+          <div
+            matTooltip="You can add Labels once task is created"
+            [matTooltipDisabled]="!isAddLabelDisabled()"
+          >
+            <button
+              mat-icon-button
+              aria-label="add label"
+              (click)="openLabelDialog()"
+              [disabled]="isAddLabelDisabled()"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="duedate-section" *ngIf="data.task.dueDate">
+        <p class="sub-header">Due date</p>
+        <div class="duedates">
+          <mat-checkbox
+            [(ngModel)]="data.task.dueDate.completed"
+            color="primary"
+          ></mat-checkbox>
+          <span class="due-date"
+            >{{ data.task.dueDate.date | dateformat: "" }}
+            <mat-icon [matMenuTriggerFor]="menu"
+              >keyboard_arrow_down</mat-icon
+            ></span
+          >
+          <span class="due-complete" *ngIf="data.task.dueDate.completed"
+            >COMPLETED</span
+          >
+          <span
+            class="due-overdue"
+            *ngIf="overDue && !data.task.dueDate.completed"
+            >OVERDUE</span
+          >
+        </div>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="openCalenderDialog()">Update</button>
+          <button mat-menu-item (click)="removeDueDate()">Remove</button>
+        </mat-menu>
+      </section>
+
+      <div *ngIf="data.task.checklists">
+        <section
+          class="checklist"
+          *ngFor="let checklists of localChecklists; let i = index"
+        >
+          <p class="sub-header">
+            {{ checklists.checklistName }}
+            <span>
+              <button
+                mat-stroked-button
+                (click)="showHideCompletedChecklist(i)"
+                *ngIf="checklists.checklist"
+              >
+                <span *ngIf="checklists.showHideCompletedTask">Show</span
+                ><span *ngIf="!checklists.showHideCompletedTask">Hide</span>
+                checked items
+                <span *ngIf="checklists.showHideCompletedTask"
+                  >({{ checklists.hiddenChecklistCount }})</span
+                >
+              </button>
+              <button mat-stroked-button (click)="deleteAllChecklist(i)">
+                Delete
+              </button>
+            </span>
+          </p>
+          <div class="checklist-progress" *ngIf="checklists">
+            <span class="task-completed"
+              >{{ checklists.checklistCompleted }}%</span
+            >
+            <mat-progress-bar
+              [ngClass]="
+                checklists.checklistCompleted == '100'
+                  ? 'progress-bar complete'
+                  : 'progress-bar'
+              "
+              mode="determinate"
+              value="{{ checklists.checklistCompleted }}"
+            ></mat-progress-bar>
+          </div>
+          <div
+            cdkDropList
+            (cdkDropListDropped)="drop($event, checklists.checklist)"
+            class="checklist-list"
+          >
+            <div *ngFor="let checklist of checklists.checklist; let j = index">
+              <checklist
+                cdkDrag
+                *ngIf="!checklist.hide"
+                class="checklist-box"
+                [checklist]="checklist"
+                (duedate)="setDueDateChecklist($event, j, i)"
+                (assign)="assignChecklist($event, j, i)"
+                (delete)="deleteChecklist($event, checklists.checklist, i)"
+                (done)="checklistClicked($event, i)"
+                (convert)="convertChecklistToCard($event, i, j)"
+              ></checklist>
+            </div>
+          </div>
+
+          <button
+            mat-stroked-button
+            (click)="openChecklistAdd(checklists, j)"
+            *ngIf="checklists.showHideChecklistAddItem"
+          >
+            Cancel
+          </button>
+          <div class="checklist-add">
+            <textarea
+              *ngIf="checklists.showHideChecklistAddItem"
+              matInput
+              cdkTextareaAutosize
+              cdkAutosizeMinRows="1"
+              cdkAutosizeMaxRows="5"
+              class="checklist-textarea"
+              name="checklistInput"
+              placeholder="Add a new task to checklist"
+              [(ngModel)]="checklists.checklistText"
+              (keyup.enter)="updateChecklist(checklists.checklist, i)"
+            >
+            </textarea>
+          </div>
+          <button
+            mat-stroked-button
+            (click)="openChecklistAdd(checklists, j)"
+            *ngIf="!checklists.showHideChecklistAddItem"
+          >
+            Add an item
+          </button>
+        </section>
+      </div>
+
+      <!-- Activity Section -->
+      <div
+        *ngIf="data.task.activities && !data.isTemplateBoard"
+        class="act-container"
+      >
+        <section>
+          <div class="flex-display space-btwn">
+            <span class="flex-display">
+              <mat-icon>subject</mat-icon><span>Activity</span>
+            </span>
+            <button mat-stroked-button (click)="showHideActivity()">
+              <span *ngIf="!showHideActivities">Show</span>
+              <span *ngIf="showHideActivities">Hide</span>
+              Details
+            </button>
+          </div>
+
+          <div *ngIf="showHideActivities">
+            <div
+              *ngFor="let activity of data.task.activities"
+              class="activity-text"
+            >
+              <span class="member" matTooltip="{{ activity.user }}">{{
+                activity.user | shortname
+              }}</span>
+              <span
+                ><b>{{ activity.user }}</b>
+                <span [innerHTML]="activity.action"></span
+              ></span>
+              <p>{{ activity.dateTime | dateformat: "" }}</p>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
 
-    <div mat-dialog-actions>
-      <!-- <button mat-button [mat-dialog-close]="{ task: data.task }">OK</button> -->
-      <button mat-button (click)="save()">OK</button>
-      <button mat-button (click)="cancel()">Cancel</button>
+    <!-- Comment Section -->
+    <section>
+      <div *ngIf="currentUser">
+        <div class="comment-header">
+          <diV class="flex-display align-top">
+            <span
+              class="member member-large"
+              matTooltip="{{ currentUser.name }}"
+              >{{ currentUser.name | shortname }}</span
+            >
 
-      <button
-        *ngIf="data.enableDelete"
-        mat-icon-button
-        color="warn"
-        aria-label="Delete"
-        class="close"
-        (click)="delete()"
-      >
-        <mat-icon>delete</mat-icon>
-      </button>
+            <textarea
+              *ngIf="true"
+              matInput
+              cdkTextareaAutosize
+              cdkAutosizeMinRows="1"
+              cdkAutosizeMaxRows="2"
+              class="comment-textarea"
+              [ngClass]="{
+                'small-area': !insideCommentTextArea,
+                'large-area': insideCommentTextArea
+              }"
+              name="checklistInput"
+              placeholder="Write a comment..."
+              [(ngModel)]="taskComment"
+              (focus)="focusCommentArea()"
+              (focusout)="focusOutCommentArea()"
+            >
+            </textarea>
+          </diV>
+          <div
+            *ngIf="insideCommentTextArea"
+            class="flex-display spacing comment-box"
+            [ngClass]="{
+              show: insideCommentTextArea
+            }"
+          >
+            <div class="comment-box-btn">
+              <button
+                mat-flat-button
+                color="primary"
+                [disabled]="taskComment.trim().length == 0"
+                (click)="addComment()"
+              >
+                save
+              </button>
+            </div>
+            <div class="comment-box-options">
+              <button mat-icon-button aria-label="Add attachment to comment">
+                <mat-icon>attachment</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                aria-label="Specify people in the comment"
+              >
+                <mat-icon>alternate_email</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-display align-top">
+        <div *ngFor="let taskComment of allTaskComments" class="comment-sec">
+          <div>
+            <span class="member" matTooltip="{{ taskComment.userName }}">{{
+              taskComment.userName | shortname
+            }}</span>
+            <span
+              [innerHTML]="taskComment.userName"
+              class="comment-user"
+            ></span>
+            <span
+              [innerHTML]="taskComment.timePassed"
+              class="comment-time"
+            ></span>
+          </div>
+          <div>
+            <p
+              [innerHTML]="taskComment.text"
+              *ngIf="!taskComment.isEditing"
+            ></p>
+            <textarea
+              *ngIf="taskComment.isEditing"
+              matInput
+              cdkTextareaAutosize
+              cdkAutosizeMinRows="1"
+              cdkAutosizeMaxRows="2"
+              class="comment-textarea large-area"
+              placeholder="Write a comment..."
+              [(ngModel)]="taskComment.text"
+            >
+            </textarea>
+            <span>
+              <button
+                mat-icon-button
+                aria-label="done edit comment"
+                *ngIf="taskComment.isEditing"
+                (click)="editComment(taskComment)"
+              >
+                <mat-icon>done</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                aria-label="close editing comment"
+                *ngIf="taskComment.isEditing"
+                (click)="toggleEditComment(taskComment)"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                aria-label="edit comment"
+                *ngIf="!taskComment.isEditing"
+                (click)="toggleEditComment(taskComment)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                aria-label="delete comment"
+                (click)="deleteComment(taskComment)"
+                *ngIf="!taskComment.isEditing"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div>
+      <div mat-dialog-actions>
+        <!-- <button mat-button [mat-dialog-close]="{ task: data.task }">OK</button> -->
+        <button mat-button (click)="save()">OK</button>
+        <button mat-button (click)="cancel()">Cancel</button>
+
+        <button
+          *ngIf="data.enableDelete"
+          mat-icon-button
+          color="warn"
+          aria-label="Delete"
+          class="close"
+          (click)="delete()"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
     </div>
   </div>
 

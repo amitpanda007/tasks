@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { Subscription } from "rxjs";
 import { Board } from "../../boards/board/board";
 import { TaskList } from "../../tasks/task-list/tasklist";
 import { Task } from "../../tasks/task/task";
 import { Label } from "../../tasks/task/label";
-import * as cloneDeep from "lodash/cloneDeep";
 import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
+import { Activity } from "src/app/tasks/task/activity";
+import { AuthService } from "src/app/core/services/auth.service";
 
 @Component({
   selector: "app-copy-dialog",
@@ -28,12 +28,13 @@ export class CopyDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<CopyDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: CopyDialogData,
-    private boardServiceV2: BoardServiceV2
+    private boardServiceV2: BoardServiceV2,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.primaryColor = "primary";
-    this.titleText = this.data.task.title;
+    this.titleText = (' ' + this.data.task.title).slice(1);
 
     this.copyBoards = [];
     this.boardServiceV2.getBoardsAsync().then((_boards) => {
@@ -88,6 +89,13 @@ export class CopyDialogComponent implements OnInit {
       }
     }
 
+
+    const activity = this.createNewActivity(
+      `Copied from task <b>${this.data.task.title}</b>.`
+    );
+    newTask.activities = [];
+    newTask.activities.push(activity);
+
     let filteredLabels: Label[] = [];
     let updateLabels: Label[] = [];
     let createLabels: Label[] = [];
@@ -138,6 +146,16 @@ export class CopyDialogComponent implements OnInit {
       createLabels
     );
     this.dialogRef.close();
+  }
+
+  createNewActivity(action: string): Activity {
+    const activity: Activity = {
+      id: this.authService.getUID(),
+      user: this.authService.getUserDisplayName(),
+      action: action,
+      dateTime: new Date(),
+    };
+    return activity;
   }
 
   async boardSelected($event) {

@@ -54,6 +54,9 @@ import { Subscription } from "rxjs";
 import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
 import { Activity } from "src/app/tasks/task/activity";
 import { TaskList } from "src/app/tasks/task-list/tasklist";
+import { AccountService } from "src/app/core/services/account.service";
+import { User } from "src/app/auth/user";
+import { TaskComment } from "src/app/tasks/task/taskcomment";
 
 @Component({
   selector: "app-task-dialog",
@@ -66,6 +69,7 @@ export class TaskDialogComponent implements OnInit {
   private labelsSubscription: Subscription;
   private totalChecklist: number;
   public doneChecklist: number;
+  private commentsSubscription: Subscription;
 
   public localChecklists: TaskChecklist[];
   public filteredChecklist: CheckList[];
@@ -78,13 +82,19 @@ export class TaskDialogComponent implements OnInit {
   public showHideCompletedTask: boolean;
   public showHideActivities: boolean;
   public showHideChecklistAddItem: boolean;
+  public showLabelSection: boolean;
+  public currentUser: User;
+  public taskComment: string;
+  public insideCommentTextArea: boolean;
+  public allTaskComments: TaskComment[];
 
   constructor(
     public dialogRef: MatDialogRef<TaskDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: TaskDialogData,
     private dialog: MatDialog,
     private authService: AuthService,
-    private boardServiceV2: BoardServiceV2
+    private boardServiceV2: BoardServiceV2,
+    private accountService: AccountService
   ) {}
 
   ngOnInit(): void {
@@ -92,6 +102,8 @@ export class TaskDialogComponent implements OnInit {
     this.tooltipPosition = "right";
     this.showHideActivities = false;
     this.showHideChecklistAddItem = false;
+    this.insideCommentTextArea = false;
+    this.taskComment = "";
     // this.showHideCompletedTask = false;
     if (this.data.task.checklists) {
       this.localChecklists = cloneDeep(this.data.task.checklists);
@@ -108,18 +120,67 @@ export class TaskDialogComponent implements OnInit {
         (labels) => {
           console.log(labels);
           this.data.labels = labels;
+          this.hasLabel();
         }
       );
+    } else {
+      this.hasLabel();
     }
+
+    this.boardServiceV2.getTaskComments(this.data.boardId, this.data.task.id);
+    this.commentsSubscription = this.boardServiceV2.commentsChanged.subscribe(
+      (comments) => {
+        this.allTaskComments = comments;
+        this.allTaskComments.forEach((comment) => {
+          comment.isEditing = false;
+          
+          const createdTime = (
+            comment.created as any as firestore.Timestamp
+          ).toDate();
+          const timeNow = new Date();
+          const timePassed = timeNow.getTime() - createdTime.getTime();
+          const secs = Math.floor(timePassed / 1000);
+          const minutes = Math.floor(timePassed / (1000 * 60));
+          const hours = Math.floor(timePassed / (1000 * 60 * 60));          
+          const days = Math.floor(timePassed / (1000 * 60 * 60 * 24));
+          console.log(secs, minutes, hours, days);
+          if (secs < 60) {
+            comment.timePassed = `${secs} secs ago`;
+          } else if (minutes < 60) {
+            comment.timePassed = `${minutes} mins ago`;
+          } else if (hours < 24) {
+            comment.timePassed = `${hours} hours ago`;
+          } else if (days <= 5) {
+            comment.timePassed = `${days} days`;
+          } else {
+            const newDate = createdTime.toLocaleString("en-US", {
+              day: "numeric",
+              month: "short",
+            });
+            comment.timePassed = `${newDate}`;
+          }
+          console.log(comment.timePassed);
+        });
+      }
+    );
 
     this.calculateChecklistCompleted();
     this.checkDueDateStatus();
+
+    this.accountService
+      .getUserById(this.authService.getUID())
+      .then((userData) => {
+        this.currentUser = userData;
+      });
   }
 
   ngOnDestroy() {
     if (this.labelsSubscription) {
       this.labelsSubscription.unsubscribe();
       this.boardServiceV2.cancelLabelSubscription();
+    }
+    if (this.commentsSubscription) {
+      this.commentsSubscription.unsubscribe();
     }
   }
 
@@ -137,11 +198,13 @@ export class TaskDialogComponent implements OnInit {
         delete curChecklist.doneChecklist;
         delete curChecklist.totalChecklist;
         delete curChecklist.showHideCompletedTask;
+        delete curChecklist.hiddenChecklistCount;
 
         if (curChecklist.checklist && curChecklist.checklist.length > 0) {
           curChecklist.checklist.forEach((chklst) => {
             delete chklst.isEditing;
             delete chklst.unsaved;
+            delete chklst.hide;
           });
         }
       });
@@ -170,6 +233,15 @@ export class TaskDialogComponent implements OnInit {
           this.dialogRef.close({ task: this.data.task, delete: true });
         }
       });
+  }
+
+  hasLabel() {
+    const taskHasLabel = this.data.labels.filter((label: Label) => {
+      return label.taskIds.includes(this.data.task.id);
+    });
+    if (taskHasLabel && taskHasLabel.length > 0) {
+      this.showLabelSection = true;
+    }
   }
 
   openChecklistAdd(tskChecklist: TaskChecklist) {
@@ -226,6 +298,45 @@ export class TaskDialogComponent implements OnInit {
         this.localChecklists[index].totalChecklist) *
         100
     );
+    console.log(this.data.task.checklists);
+    if (this.localChecklists[index].showHideCompletedTask) {
+      this.showHideCompletedChecklist(index, true);
+    }
+  }
+
+  convertChecklistToCard(
+    checklist: CheckList,
+    index: number,
+    checklistIndex: number
+  ): void {
+    const curList = this.data.taskLists.filter(
+      (list) => list.id == this.data.task.listId
+    )[0];
+
+    const oldTask: Task = this.data.task as Task;
+    oldTask.checklists[index].checklist.splice(checklistIndex, 1);
+    this.localChecklists[index].checklist.splice(checklistIndex, 1);
+    console.log(oldTask);
+
+    const newTask: Task = {
+      index: curList.tasks.length,
+      title: checklist.text,
+      description: "",
+      listId: curList.id,
+      members: checklist.members ? checklist.members : [],
+      dueDate: checklist.dueDate ? checklist.dueDate : null,
+      created: new Date(),
+      modified: new Date(),
+    };
+    console.log(newTask);
+
+    this.calculateChecklistCompleted();
+    this.boardServiceV2.convertChecklistToCard(
+      this.data.boardId,
+      oldTask,
+      newTask
+    );
+    this.dialogRef.close();
   }
 
   checkDueDateStatus() {
@@ -240,13 +351,9 @@ export class TaskDialogComponent implements OnInit {
     }
   }
 
-  drop(event: CdkDragDrop<string[]>) {
+  drop(event: CdkDragDrop<string[]>, checklist: CheckList[]) {
     console.log(event);
-    moveItemInArray(
-      this.filteredChecklist,
-      event.previousIndex,
-      event.currentIndex
-    );
+    moveItemInArray(checklist, event.previousIndex, event.currentIndex);
   }
 
   updateChecklist(checklist: CheckList[], index: number) {
@@ -369,31 +476,112 @@ export class TaskDialogComponent implements OnInit {
     this.calculateChecklistCompleted();
   }
 
-  showHideCompletedChecklist(index: number) {
+  showHideCompletedChecklist(index: number, recalc: boolean = false) {
+    if (recalc) {
+      this.localChecklists[index].checklist.forEach((checklist) => {
+        if (checklist.done) checklist.hide = true;
+        else checklist.hide = false;
+      });
+      this.countHiddenChecklist(index);
+      return;
+    }
+
     this.localChecklists[index].showHideCompletedTask =
       !this.localChecklists[index].showHideCompletedTask;
     if (this.localChecklists[index].showHideCompletedTask) {
-      this.localChecklists[index].checklist = this.localChecklists[
-        index
-      ].checklist.filter((checklist) => {
-        return checklist.done != true;
+      this.localChecklists[index].checklist.forEach((checklist) => {
+        if (checklist.done) checklist.hide = true;
+        else checklist.hide = false;
       });
     } else {
-      this.localChecklists[index] = cloneDeep(this.data.task.checklists[index]);
+      // this.localChecklists[index].checklist = cloneDeep(this.data.task.checklists[index].checklist);
+      this.localChecklists[index].checklist.forEach((checklist) => {
+        if (checklist.done) checklist.hide = false;
+      });
       this.calculateChecklistCompleted();
     }
+    this.countHiddenChecklist(index);
+  }
+
+  countHiddenChecklist(index: number) {
+    this.localChecklists[index].hiddenChecklistCount = this.localChecklists[
+      index
+    ].checklist.filter((checklist) => checklist.hide == true).length;
   }
 
   deleteAllChecklist(index: number) {
-    console.info("Delete all checklist items.");
-    this.data.task.checklists.splice(index, 1);
-    this.localChecklists.splice(index, 1);
-    this.calculateChecklistCompleted();
+    const delDialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+      width: "240px",
+      disableClose: true,
+    });
+
+    delDialogRef
+      .afterClosed()
+      .subscribe((result: DeleteConfirmationDialogResult) => {
+        if (result.delete) {
+          console.info("Delete all checklist items.");
+          this.data.task.checklists.splice(index, 1);
+          this.localChecklists.splice(index, 1);
+          this.calculateChecklistCompleted();
+        }
+      });
   }
 
   showHideActivity() {
     this.showHideActivities = !this.showHideActivities;
   }
+
+  addComment() {
+    this.insideCommentTextArea = false;
+    console.log(this.taskComment);
+    const newComment: TaskComment = {
+      userId: this.currentUser.id,
+      userName: this.currentUser.name,
+      text: this.taskComment,
+      created: new Date(),
+      modified: new Date(),
+    };
+
+    this.boardServiceV2.addTaskComment(
+      this.data.boardId,
+      this.data.task.id,
+      newComment
+    );
+    this.taskComment = "";
+  }
+
+  toggleEditComment(comment: TaskComment) {
+    comment.isEditing = !comment.isEditing;
+  }
+
+  editComment(comment: TaskComment) {
+    this.boardServiceV2.updateTaskComment(
+      this.data.boardId,
+      this.data.task.id,
+      comment
+    );
+    this.toggleEditComment(comment);
+  }
+
+  deleteComment(comment: TaskComment) {
+    this.boardServiceV2.deleteTaskComment(
+      this.data.boardId,
+      this.data.task.id,
+      comment.id
+    );
+  }
+
+  focusCommentArea() {
+    this.insideCommentTextArea = true;
+  }
+
+  focusOutCommentArea() {
+    if (this.taskComment.trim() === "") {
+      this.insideCommentTextArea = false;
+    }
+  }
+
+  saveComment() {}
 
   openLabelDialog() {
     const allLabels = [...this.data.labels];
@@ -416,6 +604,7 @@ export class TaskDialogComponent implements OnInit {
 
       this.data.labels = result.labels;
       this.data.updatedLabels = result.updatedLabelData;
+      this.showLabelSection = true;
     });
   }
 

@@ -9,4 +9,5 @@ export interface CheckList {
   isEditing?: boolean;
   dueDate?: DueDate;
   members?: SharedUser[];
+  hide?: boolean;
 }

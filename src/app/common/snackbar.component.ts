@@ -25,6 +25,9 @@ import {
       <span style="color:#99ff99">
         {{ data?.text }}
       </span>
+      <mat-icon *ngIf="data?.reload" (click)="reload()" class="hover"
+        >refresh</mat-icon
+      >
       <mat-icon *ngIf="data?.close" (click)="dismiss()" class="hover"
         >close</mat-icon
       >
@@ -40,14 +43,33 @@ export class SuccessSnackbar {
   dismiss() {
     this._snackRef.dismiss();
   }
+
+  reload() {
+    window.location.reload();
+  }
 }
 
 @Component({
   selector: "error-snackbar",
   template: `
-    <mat-icon>{{ data?.icon }}</mat-icon>
-    <span style="color:hotpink">
-      {{ data?.text }}
+    <style>
+      .flex-display {
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: space-between;
+      }
+
+      .hover {
+        cursor: pointer;
+      }
+    </style>
+
+    <span class="flex-display">
+      <mat-icon>{{ data?.icon }}</mat-icon>
+      <span style="color:hotpink">
+        {{ data?.text }}
+      </span>
     </span>
   `,
 })

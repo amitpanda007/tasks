@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -13,12 +13,10 @@ import {
 } from "src/app/common/task-dialog/task-dialog.component";
 import {
   MatDialog,
-  MatMenuTrigger,
-  MatSidenav,
   MatSnackBar,
 } from "@angular/material";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BehaviorSubject, combineLatest, pipe, Subscription } from "rxjs";
+import { BehaviorSubject, Subscription } from "rxjs";
 import { TaskList } from "./tasklist";
 import { Label } from "../task/label";
 import {
@@ -74,7 +72,6 @@ import {
   TaskTemplateDialogResult,
 } from "src/app/common/task-template-dialog/task-template-dialog.component";
 import { TaskOption } from "../task/taskoptions";
-import { map } from "rxjs/internal/operators/map";
 import { AppNotification } from "src/app/common/notification/notification";
 import { NotificationService } from "src/app/core/services/notification.service";
 
@@ -211,6 +208,7 @@ export class TaskListComponent implements OnInit {
           text: "Connection is back online",
           icon: "wifi",
           close: true,
+          reload: true
         },
         duration: 15000,
       });
@@ -696,7 +694,6 @@ export class TaskListComponent implements OnInit {
         4. Users Added/Removed
         5. Duedate added/removed/updated
         6. Background color changed
-        7. Card copied (this is applicable to the copied card)        
       */
 
       if (!result.task.activities) {

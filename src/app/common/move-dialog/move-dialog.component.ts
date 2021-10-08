@@ -7,6 +7,8 @@ import { Label } from "src/app/tasks/task/label";
 import { Task } from "src/app/tasks/task/task";
 import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
 import * as cloneDeep from "lodash/cloneDeep";
+import { Activity } from "src/app/tasks/task/activity";
+import { AuthService } from "src/app/core/services/auth.service";
 
 @Component({
   selector: "app-move-dialog",
@@ -18,13 +20,15 @@ export class MoveDialogComponent implements OnInit {
   private taskListSubscription: Subscription;
   public selectedBoard: Board;
   public selectedList: TaskList;
+  public currentList: TaskList;
   public moveBoards: Board[];
   public moveTaskLists: TaskList[];
 
   constructor(
     public dialogRef: MatDialogRef<MoveDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MoveDialogData,
-    private boardServiceV2: BoardServiceV2
+    private boardServiceV2: BoardServiceV2,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -45,6 +49,8 @@ export class MoveDialogComponent implements OnInit {
       this.selectedList = this.data.taskLists.filter(
         (list) => list.id == this.data.task.listId
       )[0];
+
+      this.currentList = cloneDeep(this.selectedList);
     });
   }
 
@@ -57,6 +63,16 @@ export class MoveDialogComponent implements OnInit {
   async move() {
     if (this.selectedBoard && this.selectedList) {
       const newTask: Task = cloneDeep(this.data.task);
+      
+      const activity = this.createNewActivity(
+        `Moved this task from <b>${this.currentList.name}</b> to <b>${this.selectedList.name}</b>.`
+      );
+
+      if(!newTask.activities) {
+        newTask.activities = [];
+      }
+      newTask.activities.push(activity);
+
 
       if (this.selectedBoard.id == this.data.boardId) {
         if (this.selectedList.id == newTask.listId) {
@@ -135,6 +151,16 @@ export class MoveDialogComponent implements OnInit {
 
   async listSelected($event) {
     this.selectedList = $event.value;
+  }
+
+  createNewActivity(action: string): Activity {
+    const activity: Activity = {
+      id: this.authService.getUID(),
+      user: this.authService.getUserDisplayName(),
+      action: action,
+      dateTime: new Date(),
+    };
+    return activity;
   }
 }
 

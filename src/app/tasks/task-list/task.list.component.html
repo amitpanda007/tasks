@@ -61,19 +61,6 @@
 
       <span class="option-dividor"></span>
       <div class="flex-display" #menuUser>
-        <!-- <div class="members" *ngIf="boardAdmin">
-          <span
-            class="member"
-            [ngClass]="{ 'current-member': isCurrentUser }"
-            matTooltip="{{ boardAdmin.name }}"
-            [matTooltipPosition]="'above'"
-            (click)="openMemberMenu(boardAdmin)"
-            ><span class="member-owner owner-img" matTooltip="owner"></span
-            >{{ boardAdmin.name | shortname
-            }}<span class="member-admin admin-img" matTooltip="admin"></span
-          ></span>
-        </div> -->
-
         <div class="members" *ngIf="boardMembers && boardMembers.length > 0">
           <span *ngFor="let member of boardMembers">
             <span
@@ -512,14 +499,6 @@
       </div>
     </div>
     <div class="nav-option-dividor"></div>
-    <!-- <div
-      class="menu-option flex-display pointer"
-      (click)="emailToBoard()"
-      *ngIf="!board.isTemplate"
-    >
-      <mat-icon class="material-icons-outlined">email</mat-icon>
-      <span>Email-to-board settings</span>
-    </div> -->
     <div
       class="menu-option flex-display pointer"
       (click)="watchBoard()"

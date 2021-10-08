@@ -18,6 +18,7 @@ export class ChecklistComponent implements OnInit {
   @Output() assign = new EventEmitter<CheckList>();
   @Output() delete = new EventEmitter<CheckList>();
   @Output() done = new EventEmitter<CheckList>();
+  @Output() convert = new EventEmitter<CheckList>();
 
   public checklistOverDue: boolean;
   public dueDate;
@@ -34,6 +35,10 @@ export class ChecklistComponent implements OnInit {
 
   markChecklistDone(checklist: CheckList) {
     this.done.emit(checklist);
+  }
+
+  convertToCard(checklist: CheckList) {
+    this.convert.emit(checklist);
   }
 
   checkDueDateStatus() {

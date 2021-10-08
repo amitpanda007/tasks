@@ -14,6 +14,7 @@ import { Subscription } from "rxjs";
 import { Invitation } from "../../common/invite-dialog/invitation";
 import { firestore } from "firebase/app";
 import * as firebase from "firebase/app";
+import { TaskComment } from "src/app/tasks/task/taskcomment";
 
 @Injectable()
 export class BoardServiceV2 {
@@ -23,6 +24,7 @@ export class BoardServiceV2 {
   private taskListsCollection: AngularFirestoreCollection<TaskList>;
   private tasksCollection: AngularFirestoreCollection<Task>;
   private labelsCollection: AngularFirestoreCollection<Label>;
+  private taskCommentCollection: AngularFirestoreCollection<TaskComment>;
 
   private singleBoard: Board;
   private allBoards: Board[];
@@ -30,6 +32,7 @@ export class BoardServiceV2 {
   private allTaskLists: TaskList[];
   private allTasks: Task[];
   private allLabelList: Label[];
+  private allComments: TaskComment[];
 
   private boardSubscription: Subscription;
   private boardsSubscription: Subscription;
@@ -37,6 +40,7 @@ export class BoardServiceV2 {
   private taskListsSubscription: Subscription;
   private tasksSubscription: Subscription;
   private labelsSubscription: Subscription;
+  private taskCommentSubscription: Subscription;
 
   public boardChanged = new Subject<Board>();
   // public boardsChanged = new Subject<Board[]>();
@@ -46,6 +50,7 @@ export class BoardServiceV2 {
   public tasksChanged = new Subject<Task[]>();
   public labelListChanged = new Subject<Label[]>();
   public showHidelabel = new BehaviorSubject<boolean>(false);
+  public commentsChanged = new Subject<TaskComment[]>();
 
   constructor(
     private _store: AngularFirestore,
@@ -561,8 +566,84 @@ export class BoardServiceV2 {
       .delete();
   }
 
+  getTaskComments(boardId: string, taskId: string, sortField = "created") {
+    this.taskCommentCollection = this._store
+      .collection("boards")
+      .doc(boardId)
+      .collection("tasks")
+      .doc(taskId)
+      .collection("comments", (ref) => ref.orderBy(sortField, "asc"));
+
+    this.taskCommentSubscription = this.taskCommentCollection
+      .valueChanges({ idField: "id" })
+      .subscribe((comments) => {
+        this.allComments = comments;
+        this.commentsChanged.next([...this.allComments]);
+      });
+  }
+
+  addTaskComment(boardId: string, taskId: string, comment: TaskComment) {
+    delete comment.isEditing;
+    delete comment.timePassed;
+    
+    this._store
+      .collection("boards")
+      .doc(boardId)
+      .collection("tasks")
+      .doc(taskId)
+      .collection("comments")
+      .add(comment);
+  }
+
+  updateTaskComment(boardId: string, taskId: string, comment: TaskComment) {
+    delete comment.isEditing;
+    delete comment.timePassed;
+    
+    this._store
+      .collection("boards")
+      .doc(boardId)
+      .collection("tasks")
+      .doc(taskId)
+      .collection("comments")
+      .doc(comment.id)
+      .set(comment, { merge: true });
+  }
+
+  deleteTaskComment(boardId: string, taskId: string, commentId: string) {
+    this._store
+      .collection("boards")
+      .doc(boardId)
+      .collection("tasks")
+      .doc(taskId)
+      .collection("comments")
+      .doc(commentId)
+      .delete();
+  }
+
   showHideTaskLabelName(labelStatus: boolean) {
     this.showHidelabel.next(!labelStatus);
+  }
+
+  convertChecklistToCard(boardId: string, oldTask: Task, newTask: Task) {
+    const db = firebase.firestore();
+    const batch = db.batch();
+
+    // Update Task by removing current checklist item
+    const oldTaskRef = db
+      .collection("boards")
+      .doc(boardId)
+      .collection("tasks")
+      .doc(oldTask.id);
+    batch.update(oldTaskRef, oldTask);
+    // Add Task from current checklist item
+    const newTaskRef = db
+      .collection("boards")
+      .doc(boardId)
+      .collection("tasks")
+      .doc();
+    batch.set(newTaskRef, newTask);
+
+    batch.commit();
   }
 
   // moveTaskToList(boardId: string, taskId: string, newTaskListId: string) {
