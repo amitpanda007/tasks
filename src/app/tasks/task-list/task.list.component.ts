@@ -11,10 +11,7 @@ import {
   TaskDialogComponent,
   TaskDialogResult,
 } from "src/app/common/task-dialog/task-dialog.component";
-import {
-  MatDialog,
-  MatSnackBar,
-} from "@angular/material";
+import { MatDialog, MatSnackBar } from "@angular/material";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs";
 import { TaskList } from "./tasklist";
@@ -74,6 +71,10 @@ import {
 import { TaskOption } from "../task/taskoptions";
 import { AppNotification } from "src/app/common/notification/notification";
 import { NotificationService } from "src/app/core/services/notification.service";
+import {
+  AutomationDialogComponent,
+  AutomationDialogResult,
+} from "src/app/common/automation-dialog/automation-dialog.component";
 
 @Component({
   selector: "task-list",
@@ -94,7 +95,9 @@ export class TaskListComponent implements OnInit {
   public hasBoardAccess: boolean = false;
   public showInputField: boolean = false;
   public listName: string;
+  private backupTaskListName: string;
   public board: Board;
+  private backupBoardTitle: string;
   public boardMembers: SharedUser[];
   public boardAdmin: User;
   public allAdmins: any[] = [];
@@ -208,7 +211,7 @@ export class TaskListComponent implements OnInit {
           text: "Connection is back online",
           icon: "wifi",
           close: true,
-          reload: true
+          reload: true,
         },
         duration: 15000,
       });
@@ -672,6 +675,7 @@ export class TaskListComponent implements OnInit {
         enableDelete: true,
         boardChecklists: clonedAllChecklist,
         taskLists: clonedTaskLists,
+        boardSettings: this.board.settings,
       },
     });
     dialogRef.disableClose = true;
@@ -1044,18 +1048,39 @@ export class TaskListComponent implements OnInit {
     });
   }
 
-  toggleBoardNameEditing(saveChange: boolean) {
+  focusBoardTitle() {
+    console.log("focus on Board Title");
+    this.backupBoardTitle = cloneDeep(this.board.title);
+  }
+
+  focusOutBoardTitle() {
     this.editingBoardName = !this.editingBoardName;
-    if (saveChange) {
+    console.log(`Focus out Board Title ${this.board.title}`);
+    if (this.backupBoardTitle !== this.board.title) {
+      console.log("Board Title Changed");
       this.boardServiceV2.updateBoard(this.boardId, this.board);
     }
   }
 
-  toggleListNameEditing(saveChange: boolean, taskList: TaskList) {
+  toggleBoardNameEditing() {
+    this.editingBoardName = !this.editingBoardName;
+  }
+
+  focusListTitle(taskList: TaskList) {
+    console.log("focus on Board Title");
+    this.backupTaskListName = cloneDeep(taskList.name);
+  }
+
+  focusOutListTitle(taskList: TaskList) {
     taskList.isEditing = !taskList.isEditing;
-    if (saveChange) {
+    if (this.backupTaskListName !== taskList.name) {
+      console.log("tasklist name changed");
       this.boardServiceV2.updateTaskList(this.boardId, taskList.id, taskList);
     }
+  }
+
+  toggleListNameEditing(taskList: TaskList) {
+    taskList.isEditing = !taskList.isEditing;
   }
 
   showInput() {
@@ -1204,6 +1229,20 @@ export class TaskListComponent implements OnInit {
 
   openAutomation() {
     console.log("Opening Automation dialog");
+    const dialogRef = this.dialog.open(AutomationDialogComponent, {
+      width: "1200px",
+      minHeight: "700px",
+      data: {
+        board: this.board,
+        taskLists: this.taskList,
+        labels: this.labels,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: AutomationDialogResult) => {
+      if (!result) {
+        return;
+      }
+    });
   }
 
   toggleMenuSidenav() {

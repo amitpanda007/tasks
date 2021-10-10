@@ -263,6 +263,10 @@ section {
   width: 36px;
 }
 
+.flex {
+  display: flex;
+}
+
 .flex-display {
   display: flex;
   align-items: center;
@@ -366,6 +370,11 @@ section {
   margin: 1rem;
 }
 
+.comments {
+  flex-direction: column;
+  width: 90%;
+}
+
 .comment-box {
   margin: 1rem 0 0 3rem;
   opacity: 0;
@@ -374,6 +383,10 @@ section {
 
 .show {
   opacity: 1;
+}
+
+.icon-small {
+  font-size: 18px;
 }
 
 .comment-sec {
@@ -396,4 +409,14 @@ section {
 
 .comment-box-options {
   opacity: 0.8;
+}
+
+.comment-btns button {
+  width: 23px;
+  height: 22px;
+  line-height: 18px;
+}
+
+.comment-content {
+  margin-left: 0.5rem;
 }

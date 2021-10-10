@@ -1,0 +1,94 @@
+<div mat-dialog-content>
+  <div class="flex-display end">
+    <button
+      mat-icon-button
+      aria-label="close automation popup"
+      (click)="cancel()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <section class="header" *ngIf="!showRuleSection">
+    <div class="flex-display spacing pad-10">
+      <p>Rules</p>
+      <button mat-flat-button color="primary" (click)="showCreateRule()">
+        Create Rule
+      </button>
+    </div>
+  </section>
+
+  <section *ngIf="showRuleSection">
+    <div class="flex-display spacing header pad-10">
+      <p>Create a Rule</p>
+      <div>
+        <button mat-flat-button color="primary" (click)="saveRule()">
+          Save
+        </button>
+        <button mat-flat-button (click)="cancelRule()">Cancel</button>
+      </div>
+    </div>
+    <div class="pad-10">
+      <p>Trigger</p>
+      <button
+        mat-stroked-button
+        color="primary"
+        aria-label="add trigger"
+        class="btn-large"
+      >
+        <mat-icon>add</mat-icon> Add Trigger
+      </button>
+    </div>
+
+    <div>
+      <p>Select a Trigger</p>
+      <!-- Different Triggers -->
+      <div class="box">
+        <mat-card class="flex-display col card-small">
+          <mat-icon>arrow_forward</mat-icon>
+          <span>Card Move</span>
+        </mat-card>
+      </div>
+
+      <!-- Different Trigger Options-->
+      <div class="box">
+        <mat-card class="flex-display">
+          <div class="flex-display col full-width">
+            <div>
+              <span>When a card is</span>
+              <select [(ngModel)]="cardStatus">
+                <option>added to</option>
+                <option>created in</option>
+                <option>emailed into</option>
+                <option>moved into</option>
+                <option>moved out of</option>
+              </select>
+              <span>the board</span>
+              <select [(ngModel)]="cardAssignee">
+                <option>by me</option>
+                <option>by anyone</option>
+                <option>by anyone except me</option>
+              </select>
+            </div>
+            <p class="trigger-info">
+              "Added" means created, copied, moved into the board or emailed
+              into the board.
+            </p>
+          </div>
+          <button
+            mat-mini-fab
+            color="primary"
+            aria-label="add trigger"
+            (click)="addTrigger(cardStatus, cardAssignee)"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </mat-card>
+      </div>
+    </div>
+  </section>
+</div>
+<!-- <div mat-dialog-actions>
+  <button mat-button (click)="copy()" cdkFocusInitial>Copy</button>
+  <button mat-button (click)="cancel()">Cancel</button>
+</div> -->

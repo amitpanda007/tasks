@@ -18,7 +18,7 @@ import { environment } from "src/environments/environment";
 import { DeleteConfirmationDialogComponent } from "./common/delete.dialog.component";
 import { AuthModule } from "./auth/auth.module";
 import { AngularFireAuthGuardModule } from "@angular/fire/auth-guard";
-import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFireStorageModule } from "@angular/fire/storage";
 import { FileUploadDialogComponent } from "./common/file-upload.dialog.component";
 import { TaskDialogComponent } from "./common/task-dialog/task-dialog.component";
 import { BoardDialogComponent } from "./common/board-dialog/board-dialog.component";
@@ -55,6 +55,7 @@ import { TaskTemplateDialogComponent } from "./common/task-template-dialog/task-
 import { BoardInfoDialogComponent } from "./common/board-info-dialog/board-info-dialog.component";
 import { NotificationDialogComponent } from "./common/notification/notification-dialog.component";
 import { InformationDialogComponent } from "./common/information/information-dialog.component";
+import { AutomationDialogComponent } from "./common/automation-dialog/automation-dialog.component";
 
 @NgModule({
   declarations: [
@@ -88,6 +89,7 @@ import { InformationDialogComponent } from "./common/information/information-dia
     BoardInfoDialogComponent,
     NotificationDialogComponent,
     InformationDialogComponent,
+    AutomationDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -142,6 +144,7 @@ import { InformationDialogComponent } from "./common/information/information-dia
     BoardInfoDialogComponent,
     NotificationDialogComponent,
     InformationDialogComponent,
+    AutomationDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

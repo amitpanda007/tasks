@@ -57,6 +57,7 @@ import { TaskList } from "src/app/tasks/task-list/tasklist";
 import { AccountService } from "src/app/core/services/account.service";
 import { User } from "src/app/auth/user";
 import { TaskComment } from "src/app/tasks/task/taskcomment";
+import { Settings } from "@angular/fire/firestore";
 
 @Component({
   selector: "app-task-dialog",
@@ -133,7 +134,7 @@ export class TaskDialogComponent implements OnInit {
         this.allTaskComments = comments;
         this.allTaskComments.forEach((comment) => {
           comment.isEditing = false;
-          
+
           const createdTime = (
             comment.created as any as firestore.Timestamp
           ).toDate();
@@ -141,7 +142,7 @@ export class TaskDialogComponent implements OnInit {
           const timePassed = timeNow.getTime() - createdTime.getTime();
           const secs = Math.floor(timePassed / 1000);
           const minutes = Math.floor(timePassed / (1000 * 60));
-          const hours = Math.floor(timePassed / (1000 * 60 * 60));          
+          const hours = Math.floor(timePassed / (1000 * 60 * 60));
           const days = Math.floor(timePassed / (1000 * 60 * 60 * 24));
           console.log(secs, minutes, hours, days);
           if (secs < 60) {
@@ -151,7 +152,7 @@ export class TaskDialogComponent implements OnInit {
           } else if (hours < 24) {
             comment.timePassed = `${hours} hours ago`;
           } else if (days <= 5) {
-            comment.timePassed = `${days} days`;
+            comment.timePassed = `${days} days ago`;
           } else {
             const newDate = createdTime.toLocaleString("en-US", {
               day: "numeric",
@@ -851,6 +852,7 @@ export interface TaskDialogData {
   enableDelete: boolean;
   boardChecklists?: TaskChecklist[];
   taskLists: TaskList[];
+  boardSettings: Settings;
 }
 
 export interface TaskDialogResult {

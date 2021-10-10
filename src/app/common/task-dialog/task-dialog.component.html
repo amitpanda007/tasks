@@ -247,7 +247,7 @@
     </div>
 
     <!-- Comment Section -->
-    <section>
+    <section *ngIf="!data.boardSettings.commentingPermission.disabled">
       <div *ngIf="currentUser">
         <div class="comment-header">
           <diV class="flex-display align-top">
@@ -308,12 +308,17 @@
         </div>
       </div>
 
-      <div class="flex-display align-top">
-        <div *ngFor="let taskComment of allTaskComments" class="comment-sec">
+      <div class="flex-display align-top comments">
+        <div
+          *ngFor="let taskComment of allTaskComments"
+          class="flex comment-sec comment-header"
+        >
           <div>
             <span class="member" matTooltip="{{ taskComment.userName }}">{{
               taskComment.userName | shortname
             }}</span>
+          </div>
+          <div class="comment-content">
             <span
               [innerHTML]="taskComment.userName"
               class="comment-user"
@@ -322,8 +327,7 @@
               [innerHTML]="taskComment.timePassed"
               class="comment-time"
             ></span>
-          </div>
-          <div>
+
             <p
               [innerHTML]="taskComment.text"
               *ngIf="!taskComment.isEditing"
@@ -339,14 +343,16 @@
               [(ngModel)]="taskComment.text"
             >
             </textarea>
-            <span>
+            <span class="comment-btns">
               <button
                 mat-icon-button
                 aria-label="done edit comment"
                 *ngIf="taskComment.isEditing"
                 (click)="editComment(taskComment)"
               >
-                <mat-icon>done</mat-icon>
+                <mat-icon class="icon-small material-icons-outlined"
+                  >done</mat-icon
+                >
               </button>
               <button
                 mat-icon-button
@@ -354,7 +360,9 @@
                 *ngIf="taskComment.isEditing"
                 (click)="toggleEditComment(taskComment)"
               >
-                <mat-icon>close</mat-icon>
+                <mat-icon class="icon-small material-icons-outlined"
+                  >close</mat-icon
+                >
               </button>
               <button
                 mat-icon-button
@@ -362,7 +370,9 @@
                 *ngIf="!taskComment.isEditing"
                 (click)="toggleEditComment(taskComment)"
               >
-                <mat-icon>edit</mat-icon>
+                <mat-icon class="icon-small material-icons-outlined"
+                  >edit</mat-icon
+                >
               </button>
               <button
                 mat-icon-button
@@ -370,7 +380,9 @@
                 (click)="deleteComment(taskComment)"
                 *ngIf="!taskComment.isEditing"
               >
-                <mat-icon>delete</mat-icon>
+                <mat-icon class="icon-small material-icons-outlined"
+                  >delete</mat-icon
+                >
               </button>
             </span>
           </div>

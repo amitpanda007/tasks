@@ -19,11 +19,18 @@
           <span
             *ngIf="!editingBoardName"
             class="title option-bg"
-            (click)="toggleBoardNameEditing(false)"
+            (click)="toggleBoardNameEditing()"
             [innerHTML]="board.title"
           ></span>
+          <input
+            [(ngModel)]="board.title"
+            class="input"
+            *ngIf="editingBoardName"
+            (focus)="focusBoardTitle()"
+            (focusout)="focusOutBoardTitle()"
+          />
           <p class="template" *ngIf="board.isTemplate">Template</p>
-          <span *ngIf="!editingBoardName">
+          <span>
             <svg
               width="18"
               height="18"
@@ -48,15 +55,20 @@
             </svg>
           </span>
         </div>
-        <div class="boardname-edit-input" *ngIf="editingBoardName">
-          <input [(ngModel)]="board.title" class="input" />
+        <!-- <div class="boardname-edit-input" *ngIf="editingBoardName">
+          <input
+            [(ngModel)]="board.title"
+            class="input"
+            (focus)="focusBoardTitle()"
+            (focusout)="focusOutBoardTitle()"
+          />
           <span (click)="toggleBoardNameEditing(true)" class="done">
             <mat-icon class="icon">done</mat-icon>
           </span>
           <span (click)="toggleBoardNameEditing(false)" class="close">
             <mat-icon class="icon">close</mat-icon>
           </span>
-        </div>
+        </div> -->
       </div>
 
       <span class="option-dividor"></span>
@@ -140,22 +152,29 @@
                 <span
                   *ngIf="!list.isEditing"
                   class="pointer"
-                  (click)="toggleListNameEditing(false, list)"
+                  (click)="toggleListNameEditing(list)"
                   >{{ list.name }}</span
                 >
+                <input
+                  [(ngModel)]="list.name"
+                  class="list-input"
+                  *ngIf="list.isEditing"
+                  (focus)="focusListTitle(list)"
+                  (focusout)="focusOutListTitle(list)"
+                />
               </div>
-              <div class="list-title" *ngIf="list.isEditing">
+              <!-- <div class="list-title" *ngIf="list.isEditing">
                 <input [(ngModel)]="list.name" class="list-input" />
-                <span (click)="toggleListNameEditing(true, list)" class="done">
+                <span (click)="toggleListNameEditing(list)" class="done">
                   <mat-icon class="icon pointer">done</mat-icon>
                 </span>
                 <span
-                  (click)="toggleListNameEditing(false, list)"
+                  (click)="toggleListNameEditing(list)"
                   class="close"
                 >
                   <mat-icon class="icon pointer">close</mat-icon>
                 </span>
-              </div>
+              </div> -->
               <div class="list-options">
                 <span
                   [matMenuTriggerFor]="menu"

@@ -1,0 +1,50 @@
+.flex-display {
+  display: flex;
+  align-content: center;
+}
+
+.spacing {
+  justify-content: space-between;
+}
+
+.end {
+  justify-content: end;
+}
+
+.col {
+  flex-direction: column;
+}
+
+.header {
+  border-bottom: 1px solid gray;
+}
+
+.btn-large {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.pad-10 {
+  padding: 10px;
+}
+
+.box {
+  margin: 1rem;
+}
+
+.card-small {
+  width: 80px;
+}
+
+.trigger-info {
+  margin-top: 1rem;
+  color: #6b808c;
+  font-size: 14px;
+  margin-bottom: 0;
+  margin-right: 4rem;
+  padding-top: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
