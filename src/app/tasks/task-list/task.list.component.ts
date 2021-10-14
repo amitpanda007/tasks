@@ -89,7 +89,7 @@ export class TaskListComponent implements OnInit {
   private labelsSubscription: Subscription;
   private routeQueryParams: Subscription;
   private tasksDataUpdated: BehaviorSubject<boolean>;
-  private boardId: string;
+  public boardId: string;
   private tasklistCopy: TaskList[];
 
   public taskOptions: TaskOption;

@@ -39,7 +39,7 @@ import {
   CopyDialogComponent,
   CopyDialogResult,
 } from "../copy-dialog/copy-dialog.component";
-import { SharedUser } from "src/app/boards/board/board";
+import { Settings, SharedUser } from "src/app/boards/board/board";
 import {
   MessageDialogComponent,
   MessageDialogResult,
@@ -58,7 +58,6 @@ import { TaskList } from "src/app/tasks/task-list/tasklist";
 import { AccountService } from "src/app/core/services/account.service";
 import { User } from "src/app/auth/user";
 import { TaskComment } from "src/app/tasks/task/taskcomment";
-import { Settings } from "@angular/fire/firestore";
 
 @Component({
   selector: "app-task-dialog",

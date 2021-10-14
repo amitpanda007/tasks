@@ -180,7 +180,7 @@
 
           <button
             mat-stroked-button
-            (click)="openChecklistAdd(checklists, j)"
+            (click)="openChecklistAdd(checklists)"
             *ngIf="checklists.showHideChecklistAddItem"
           >
             Cancel
@@ -202,7 +202,7 @@
           </div>
           <button
             mat-stroked-button
-            (click)="openChecklistAdd(checklists, j)"
+            (click)="openChecklistAdd(checklists)"
             *ngIf="!checklists.showHideChecklistAddItem"
           >
             Add an item

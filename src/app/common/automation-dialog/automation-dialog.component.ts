@@ -11,6 +11,8 @@ import { Label } from "../../tasks/task/label";
 })
 export class AutomationDialogComponent implements OnInit {
   public showRuleSection: boolean;
+  public cardStatus: string;
+  public cardAssignee: string;
 
   constructor(
     public dialogRef: MatDialogRef<AutomationDialogComponent>,
@@ -33,6 +35,14 @@ export class AutomationDialogComponent implements OnInit {
 
   addTrigger(one, two) {
     console.log(one, two);
+  }
+
+  saveRule() {
+
+  }
+
+  cancelRule() {
+    
   }
 }
 
