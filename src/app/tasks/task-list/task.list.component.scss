@@ -9,13 +9,11 @@ mat-toolbar > span {
 .content-wrapper {
   width: 100%;
   overflow: auto;
-  // max-width: 1400px;
   margin: auto;
   margin-top: 1em;
 }
 
 .container-wrapper {
-  // display: flex;
   display: inline-flex;
   justify-content: space-around;
 }
@@ -30,22 +28,18 @@ mat-toolbar > span {
 }
 
 .title {
-  // display: flex;
-  // width: 174px;
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .board-options {
-  // background-color: rgba(0, 0, 0, 0.15);
   background-color: #ffffff3d;
   display: flex;
   align-items: center;
   align-content: center;
   justify-content: space-between;
   width: 100%;
-  // margin: 2em auto;
 }
 
 #left {
@@ -61,11 +55,9 @@ mat-toolbar > span {
   align-items: center;
   align-content: center;
   justify-content: space-between;
-  // width: 200px;
 }
 
 .list {
-  // border: solid 1px #ccc;
   min-height: 80px;
   border-radius: 4px;
   padding: 8px;
@@ -100,10 +92,6 @@ mat-toolbar > span {
 .cdk-drag-animating {
   transition: transform 300ms ease;
 }
-
-// .cdk-drag-placeholder {
-//   opacity: 0.5;
-// }
 
 .drag {
   cursor: move;
@@ -211,19 +199,16 @@ mat-toolbar > span {
 
 .boardname-edit-input {
   display: flex;
-  // width: 100%;
   cursor: pointer;
   align-content: center;
   align-items: center;
 }
 
 .board-input {
-  // width: 200px;
   height: 24px;
 }
 
 .input {
-  // width: 152px;
   background-color: #fff;
   font-weight: 700;
   font-size: 18px;
@@ -234,7 +219,7 @@ mat-toolbar > span {
 }
 
 .list-input {
-  width: 104px;
+  width: 180px;
   background-color: #fff;
   font-weight: 600;
   font-size: 19px;
@@ -242,6 +227,9 @@ mat-toolbar > span {
   border: 0;
   margin: 0;
   padding: 0;
+}
+.fav {
+  margin: 0 4px;
 }
 
 .fav-icon {
@@ -260,7 +248,6 @@ mat-toolbar > span {
 
 .option-bg {
   border-radius: 4px;
-  // background-color: #eeeeee;
   background-color: #00000014;
   padding: 0 4px;
 }
@@ -269,16 +256,19 @@ mat-toolbar > span {
   font-size: small;
 }
 
+.list-header-section {
+  width: 100%;
+}
+
 .list-header {
   display: flex;
   align-content: center;
   align-items: center;
   justify-content: space-between;
-  // width: 200px;
 }
 
 .list-options {
-  margin-left: 2rem;
+  margin-left: 0rem;
 }
 
 .icon-small {
@@ -333,12 +323,6 @@ mat-toolbar > span {
 .spacing {
   justify-content: space-between;
 }
-
-// .nav-option-dividor {
-//   border-top: 1px solid hsla(0, 0%, 100%, 0.24);
-//   margin: 1em 3em;
-//   border-color: rgba(0, 0, 0, 0.2);
-// }
 
 .menu-options {
   margin: 0 2em;

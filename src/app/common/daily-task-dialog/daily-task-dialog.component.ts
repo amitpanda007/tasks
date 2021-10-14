@@ -7,7 +7,8 @@ import {
 import { DailyTask } from "src/app/daily/daily-task/dailytask";
 import { CheckList } from "../../tasks/task/checklist";
 import { firestore } from "firebase";
-import * as cloneDeep from "lodash/cloneDeep";
+// import * as cloneDeep from "lodash/cloneDeep";
+import { cloneDeep } from "lodash";
 import {
   CalenderDialogComponent,
   CalenderDialogResult,

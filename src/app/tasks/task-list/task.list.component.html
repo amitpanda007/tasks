@@ -30,7 +30,7 @@
             (focusout)="focusOutBoardTitle()"
           />
           <p class="template" *ngIf="board.isTemplate">Template</p>
-          <span>
+          <span class="fav">
             <svg
               width="18"
               height="18"
@@ -147,81 +147,71 @@
       <div class="container" *ngFor="let list of taskList" cdkDrag>
         <mat-card class="card" [style.background-color]="list.backgroundColor">
           <mat-card-header>
-            <mat-card-title class="list-header">
-              <div class="flex-display">
-                <span
-                  *ngIf="!list.isEditing"
-                  class="pointer"
-                  (click)="toggleListNameEditing(list)"
-                  >{{ list.name }}</span
-                >
-                <input
-                  [(ngModel)]="list.name"
-                  class="list-input"
-                  *ngIf="list.isEditing"
-                  (focus)="focusListTitle(list)"
-                  (focusout)="focusOutListTitle(list)"
-                />
-              </div>
-              <!-- <div class="list-title" *ngIf="list.isEditing">
-                <input [(ngModel)]="list.name" class="list-input" />
-                <span (click)="toggleListNameEditing(list)" class="done">
-                  <mat-icon class="icon pointer">done</mat-icon>
-                </span>
-                <span
-                  (click)="toggleListNameEditing(list)"
-                  class="close"
-                >
-                  <mat-icon class="icon pointer">close</mat-icon>
-                </span>
-              </div> -->
-              <div class="list-options">
-                <span
-                  [matMenuTriggerFor]="menu"
-                  aria-label="sort task under list"
-                  class="sort"
-                >
-                  <mat-icon>sort</mat-icon>
-                </span>
+            <div class="list-header-section">
+              <mat-card-title class="list-header">
+                <div class="flex-display">
+                  <span
+                    *ngIf="!list.isEditing"
+                    class="pointer"
+                    (click)="toggleListNameEditing(list)"
+                    >{{ list.name }}</span
+                  >
+                  <input
+                    [(ngModel)]="list.name"
+                    class="list-input"
+                    *ngIf="list.isEditing"
+                    (focus)="focusListTitle(list)"
+                    (focusout)="focusOutListTitle(list)"
+                  />
+                </div>
+                <div class="list-options">
+                  <span
+                    [matMenuTriggerFor]="menu"
+                    aria-label="sort task under list"
+                    class="sort"
+                  >
+                    <mat-icon>sort</mat-icon>
+                  </span>
 
-                <mat-menu #menu="matMenu">
-                  <button
-                    mat-menu-item
-                    (click)="sortTasks(list.id, sortOrders.INDEX)"
-                  >
-                    index
-                  </button>
-                  <button
-                    mat-menu-item
-                    (click)="sortTasks(list.id, sortOrders.CREATED)"
-                  >
-                    created
-                  </button>
-                  <button
-                    mat-menu-item
-                    (click)="sortTasks(list.id, sortOrders.MODIFIED)"
-                  >
-                    modified
-                  </button>
-                  <button
-                    mat-menu-item
-                    (click)="sortTasks(list.id, sortOrders.DUEDATE)"
-                  >
-                    duedate
-                  </button>
-                  <button
-                    mat-menu-item
-                    (click)="sortTasks(list.id, sortOrders.CHECKLIST)"
-                  >
-                    checklist
-                  </button>
-                </mat-menu>
+                  <mat-menu #menu="matMenu">
+                    <button
+                      mat-menu-item
+                      (click)="sortTasks(list.id, sortOrders.INDEX)"
+                    >
+                      index
+                    </button>
+                    <button
+                      mat-menu-item
+                      (click)="sortTasks(list.id, sortOrders.CREATED)"
+                    >
+                      created
+                    </button>
+                    <button
+                      mat-menu-item
+                      (click)="sortTasks(list.id, sortOrders.MODIFIED)"
+                    >
+                      modified
+                    </button>
+                    <button
+                      mat-menu-item
+                      (click)="sortTasks(list.id, sortOrders.DUEDATE)"
+                    >
+                      duedate
+                    </button>
+                    <button
+                      mat-menu-item
+                      (click)="sortTasks(list.id, sortOrders.CHECKLIST)"
+                    >
+                      checklist
+                    </button>
+                  </mat-menu>
 
-                <span aria-label="drag task list" class="drag" cdkDragHandle>
-                  <mat-icon>drag_indicator</mat-icon>
-                </span>
-              </div>
-            </mat-card-title>
+                  <span aria-label="drag task list" class="drag" cdkDragHandle>
+                    <mat-icon>drag_indicator</mat-icon>
+                  </span>
+                </div>
+              </mat-card-title>
+            </div>
           </mat-card-header>
           <!-- <p class="empty-label" *ngIf="emptyContainer">Empty list</p> -->
           <mat-card-content
@@ -235,17 +225,20 @@
             <p class="empty-label" *ngIf="list.tasks && list.tasks.length == 0">
               Empty list
             </p>
-            <div *ngFor="let task of list.tasks">
-              <task
-                (edit)="editTask($event)"
-                (priorityChnaged)="setTaskPriority($event)"
-                (statusChanged)="setTaskStatus($event)"
-                cdkDrag
-                [task]="task"
-                [labels]="labels"
-                [options]="taskOptions"
-              ></task>
-            </div>
+            <task
+              *ngFor="let task of list.tasks"
+              (edit)="editTask($event)"
+              (priorityChnaged)="setTaskPriority($event)"
+              (statusChanged)="setTaskStatus($event)"
+              cdkDrag
+              [task]="task"
+              [labels]="labels"
+              [options]="taskOptions"
+              [boardId]="boardId"
+              [listName]="list.name"
+              [boardMembers]="boardMembers"
+              [taskLists]="taskList"
+            ></task>
           </mat-card-content>
           <div>
             <button

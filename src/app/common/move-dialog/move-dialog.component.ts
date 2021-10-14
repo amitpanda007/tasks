@@ -6,7 +6,8 @@ import { TaskList } from "../../tasks/task-list/tasklist";
 import { Label } from "src/app/tasks/task/label";
 import { Task } from "src/app/tasks/task/task";
 import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
-import * as cloneDeep from "lodash/cloneDeep";
+// import * as cloneDeep from "lodash/cloneDeep";
+import { cloneDeep } from "lodash";
 import { Activity } from "src/app/tasks/task/activity";
 import { AuthService } from "src/app/core/services/auth.service";
 
@@ -63,7 +64,8 @@ export class MoveDialogComponent implements OnInit {
   async move() {
     if (this.selectedBoard && this.selectedList) {
       const newTask: Task = cloneDeep(this.data.task);
-      
+      newTask.index = 99;
+
       const activity = this.createNewActivity(
         `Moved this task from <b>${this.currentList.name}</b> to <b>${this.selectedList.name}</b>.`
       );

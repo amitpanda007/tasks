@@ -222,7 +222,6 @@ export class BoardServiceV2 {
     });
   }
 
-  //FIXME: These changes should be done in some server environment as user can refresh page in between actions.
   removeUserFromBoard(
     boardId: string,
     shared: Array<string>,
@@ -278,7 +277,9 @@ export class BoardServiceV2 {
 
   // Referrence from https://leechy.dev/firestore-move
   public newDocId: any;
-  //FIXME: These changes should be done in some server environment as user can refresh page in between actions.
+  /**
+  * @deprecated The method should not be used
+  */
   async copyBoardDoc(
     collectionFrom: string,
     docId: string,
@@ -386,6 +387,51 @@ export class BoardServiceV2 {
       return this.newDocId.id;
     }
     return this.newDocId.id;
+  }
+
+  async copyBoardBatch(boardId: string, extraData: any = {}) : Promise<string> {
+    const db = firebase.firestore();
+    let batch = db.batch();
+
+    // Create a new board document
+    const newBoardRef = db.collection("boards").doc();
+
+    // Get board document & set it for new board
+    const boardDoc = await db.collection("boards").doc(boardId).get();
+    const newBoardData: Board = boardDoc.data() as Board;
+    if(extraData.boardTitle) {
+      newBoardData.title = extraData.boardTitle;
+    }
+    if(extraData.boardDescription) {
+      newBoardData.description = extraData.boardDescription;
+    }
+    
+    batch.set(newBoardRef, newBoardData);
+
+    // Get label collection
+    const labelDocs = await db.collection("boards").doc(boardId).collection("labels").get();
+    const newBoardLabelRef = newBoardRef.collection("labels");
+    labelDocs.forEach(labelDoc => {
+      batch.set(newBoardLabelRef.doc(labelDoc.id), labelDoc.data());
+    });
+
+    // Get taskLists collection
+    const taskListsDocs = await db.collection("boards").doc(boardId).collection("taskLists").get();
+    const newBoardTaskListsRef = newBoardRef.collection("taskLists");
+    taskListsDocs.forEach(tasklistDoc => {
+      batch.set(newBoardTaskListsRef.doc(tasklistDoc.id), tasklistDoc.data());
+    });
+
+    // Get tasks collection
+    const tasksDocs = await db.collection("boards").doc(boardId).collection("tasks").get();
+    const newBoardTasksRef = newBoardRef.collection("tasks");
+    tasksDocs.forEach(taskDoc => {
+      batch.set(newBoardTasksRef.doc(taskDoc.id), taskDoc.data());
+    });
+
+    // Commit the change
+    batch.commit();
+    return newBoardRef.id;
   }
 
   deleteBoard(boardId: string) {
@@ -566,6 +612,25 @@ export class BoardServiceV2 {
       .delete();
   }
 
+  deleteTaskBatch(boardId: string, taskId: string, labels: Label[]) {
+    const db = firebase.firestore();
+    const batch = db.batch();
+
+    const labelRefs = labels.map((l) =>
+      db.collection("boards").doc(boardId).collection("labels").doc(l.id)
+    );
+    labelRefs.forEach((ref, idx) => {
+      const currentLabel = labels[idx];
+      delete currentLabel.isSelected;
+      batch.update(ref, currentLabel);
+    });
+
+    const taskRef = db.collection("boards").doc(boardId).collection("tasks").doc(taskId);
+    batch.delete(taskRef);
+
+    batch.commit();  
+  }
+
   getTaskComments(boardId: string, taskId: string, sortField = "created") {
     this.taskCommentCollection = this._store
       .collection("boards")
@@ -585,7 +650,7 @@ export class BoardServiceV2 {
   addTaskComment(boardId: string, taskId: string, comment: TaskComment) {
     delete comment.isEditing;
     delete comment.timePassed;
-    
+
     this._store
       .collection("boards")
       .doc(boardId)
@@ -598,7 +663,7 @@ export class BoardServiceV2 {
   updateTaskComment(boardId: string, taskId: string, comment: TaskComment) {
     delete comment.isEditing;
     delete comment.timePassed;
-    
+
     this._store
       .collection("boards")
       .doc(boardId)
@@ -893,6 +958,7 @@ export class BoardServiceV2 {
   }
 
   async addLabel(boardId: string, label: Label) {
+    delete label.isSelected;
     const docRef = await this._store
       .collection("boards")
       .doc(boardId)
@@ -911,12 +977,29 @@ export class BoardServiceV2 {
   }
 
   updateLabel(boardId: string, labelId: string, label: Label) {
+    delete label.isSelected;
     this._store
       .collection("boards")
       .doc(boardId)
       .collection("labels")
       .doc(labelId)
       .set(label, { merge: true });
+  }
+
+  updateLabelBatch(boardId: string, labels: Label[]) {
+    const db = firebase.firestore();
+    const batch = db.batch();
+
+    const labelRefs = labels.map((l) =>
+      db.collection("boards").doc(boardId).collection("labels").doc(l.id)
+    );
+    labelRefs.forEach((ref, idx) => {
+      const currentLabel = labels[idx];
+      delete currentLabel.isSelected;
+      batch.update(ref, currentLabel);
+    });
+
+    batch.commit();
   }
 
   deleteLabel(boardId: string, labelId: string) {

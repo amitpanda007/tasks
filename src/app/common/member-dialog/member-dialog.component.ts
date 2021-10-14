@@ -2,7 +2,8 @@ import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { SharedUser } from "src/app/boards/board/board";
 import { AuthService } from "src/app/core/services/auth.service";
-import * as cloneDeep from "lodash/cloneDeep";
+// import * as cloneDeep from "lodash/cloneDeep";
+import { cloneDeep } from "lodash";
 
 @Component({
   selector: "app-member-dialog",

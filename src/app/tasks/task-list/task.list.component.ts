@@ -4,7 +4,8 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
-import * as cloneDeep from "lodash/cloneDeep";
+// import * as cloneDeep from "lodash/cloneDeep";
+import { cloneDeep } from "lodash";
 import xor from "lodash/xor";
 import { Task } from "../task/task";
 import {
@@ -496,13 +497,12 @@ export class TaskListComponent implements OnInit {
     return lists;
   }
 
-  //FIXME: This is called from template. which is not a good idea for peformance.
-  containerData(curListId: string) {
-    // console.log("FUNCTION containerData getting called");
-    if (this.tasks) {
-      return this.tasks.filter((task) => task.listId === curListId);
-    }
-  }
+  // containerData(curListId: string) {
+  //   // console.log("FUNCTION containerData getting called");
+  //   if (this.tasks) {
+  //     return this.tasks.filter((task) => task.listId === curListId);
+  //   }
+  // }
 
   dropList(event: CdkDragDrop<TaskList[] | null>): void {
     console.log(event);
@@ -532,7 +532,6 @@ export class TaskListComponent implements OnInit {
     const newTaskListId = event.container.id;
 
     if (event.previousContainer === event.container) {
-      //FIXME: if previous & current index are same the card is moved to back of list.
       if (event.currentIndex === event.previousIndex) {
         return;
       }
@@ -902,20 +901,19 @@ export class TaskListComponent implements OnInit {
         Once result is saved close the task modal pop up
       */
       if (result.delete) {
+        // Update label by removing task ids from labels
+        const deletedLabels = [];
         this.labels.forEach((label: Label) => {
           if (label.taskIds && label.taskIds.includes(result.task.id)) {
             label.taskIds.splice(label.taskIds.indexOf(result.task.id), 1);
-            this.boardServiceV2.updateLabel(this.boardId, label.id, label);
+            deletedLabels.push(label);
           }
         });
-        this.boardServiceV2.deleteTask(this.boardId, result.task.id);
+        // Delete task from board
+        this.boardServiceV2.deleteTaskBatch(this.boardId, result.task.id, deletedLabels);
       } else {
-        // FIXME: Label is not updated once task is created and label is added just after that without refresh
         if (result.updatedLabels && result.updatedLabels.length > 0) {
-          result.updatedLabels.forEach((label) => {
-            console.log("Updating Label with task ID");
-            this.boardServiceV2.updateLabel(this.boardId, label.id, label);
-          });
+          this.boardServiceV2.updateLabelBatch(this.boardId, result.updatedLabels);
         }
         console.log("Updating task");
         this.boardServiceV2.updateTask(
@@ -958,6 +956,7 @@ export class TaskListComponent implements OnInit {
         task: task,
         boardId: this.boardId,
         enableDelete: false,
+        boardSettings: this.board.settings
       },
     });
     dialogRef.afterClosed().subscribe((result: TaskDialogResult) => {
@@ -978,7 +977,6 @@ export class TaskListComponent implements OnInit {
       }
       const activity = this.createNewActivity(`Created this card.`);
       result.task.activities.push(activity);
-
       this.boardServiceV2.addTask(this.boardId, result.task);
     });
   }
@@ -1461,17 +1459,18 @@ export class TaskListComponent implements OnInit {
 
           if (result.isTemplate) {
             this.loaderService.changeLoading(true);
-            const copiedBoard = await this.boardServiceV2.copyBoardDoc(
-              "boards",
-              this.boardId,
-              this.board.title,
-              this.board.description,
-              "boards",
-              true,
-              {},
-              true,
-              true
-            );
+            // const copiedBoard = await this.boardServiceV2.copyBoardDoc(
+            //   "boards",
+            //   this.boardId,
+            //   this.board.title,
+            //   this.board.description,
+            //   "boards",
+            //   true,
+            //   {},
+            //   true,
+            //   true
+            // );
+            const copiedBoard = await this.boardServiceV2.copyBoardBatch(this.boardId);
             console.log(`BOARD COPY COMPLETE: ${copiedBoard}`);
             this.loaderService.changeLoading(false);
 
@@ -1523,17 +1522,24 @@ export class TaskListComponent implements OnInit {
           }
 
           this.loaderService.changeLoading(true);
-          const copiedBoard = await this.boardServiceV2.copyBoardDoc(
-            "boards",
-            this.boardId,
-            result.boardTitle,
-            result.boardDescription,
-            "boards",
-            true,
-            {},
-            false,
-            true
-          );
+
+          // const copiedBoard = await this.boardServiceV2.copyBoardDoc(
+          //   "boards",
+          //   this.boardId,
+          //   result.boardTitle,
+          //   result.boardDescription,
+          //   "boards",
+          //   true,
+          //   {},
+          //   false,
+          //   true
+          // );
+
+          const extraData = {
+            boardTitle: result.boardTitle,
+            boardDescription: result.boardDescription
+          }
+          const copiedBoard = await this.boardServiceV2.copyBoardBatch(this.boardId, extraData);
           console.log(`BOARD COPY COMPLETE: ${copiedBoard}`);
           this.loaderService.changeLoading(false);
 

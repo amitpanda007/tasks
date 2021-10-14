@@ -6,7 +6,8 @@ import { Label } from "../../tasks/task/label";
 import { ConfirmDialogComponent, ConfirmDialogResult } from "../confirm-dialog/confirm-dialog.component";
 import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
 import { Router } from "@angular/router";
-import * as cloneDeep from "lodash/cloneDeep";
+// import * as cloneDeep from "lodash/cloneDeep";
+import { cloneDeep } from "lodash";
 import { LoaderService } from "src/app/core/services/loader.service";
 
 @Component({

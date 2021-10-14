@@ -6,7 +6,8 @@ import {
   MatDialog,
 } from "@angular/material/dialog";
 import { firestore } from "firebase";
-import * as cloneDeep from "lodash/cloneDeep";
+// import * as cloneDeep from "lodash/cloneDeep";
+import { cloneDeep } from 'lodash';
 import { CheckList } from "src/app/tasks/task/checklist";
 import { Label } from "src/app/tasks/task/label";
 import { Task } from "src/app/tasks/task/task";
@@ -106,7 +107,7 @@ export class TaskDialogComponent implements OnInit {
     this.insideCommentTextArea = false;
     this.taskComment = "";
     // this.showHideCompletedTask = false;
-    if (this.data.task.checklists) {
+    if (this.data.task && this.data.task.checklists) {
       this.localChecklists = cloneDeep(this.data.task.checklists);
     }
 
@@ -116,6 +117,7 @@ export class TaskDialogComponent implements OnInit {
     }
 
     //Check if labels exist ? else subscribe
+    // FIXME: Extra subscription. find out why its used and then check if we can remove it
     if (!this.data.labels) {
       this.labelsSubscription = this.boardServiceV2.labelListChanged.subscribe(
         (labels) => {
@@ -128,7 +130,9 @@ export class TaskDialogComponent implements OnInit {
       this.hasLabel();
     }
 
-    this.boardServiceV2.getTaskComments(this.data.boardId, this.data.task.id);
+    if(this.data.task && this.data.task.id) {
+      this.boardServiceV2.getTaskComments(this.data.boardId, this.data.task.id);
+    }
     this.commentsSubscription = this.boardServiceV2.commentsChanged.subscribe(
       (comments) => {
         this.allTaskComments = comments;
@@ -178,7 +182,7 @@ export class TaskDialogComponent implements OnInit {
   ngOnDestroy() {
     if (this.labelsSubscription) {
       this.labelsSubscription.unsubscribe();
-      this.boardServiceV2.cancelLabelSubscription();
+      // this.boardServiceV2.cancelLabelSubscription();
     }
     if (this.commentsSubscription) {
       this.commentsSubscription.unsubscribe();
@@ -238,7 +242,9 @@ export class TaskDialogComponent implements OnInit {
 
   hasLabel() {
     const taskHasLabel = this.data.labels.filter((label: Label) => {
-      return label.taskIds.includes(this.data.task.id);
+      if(label.taskIds) {
+        return label.taskIds.includes(this.data.task.id);
+      }
     });
     if (taskHasLabel && taskHasLabel.length > 0) {
       this.showLabelSection = true;
@@ -585,7 +591,7 @@ export class TaskDialogComponent implements OnInit {
   saveComment() {}
 
   openLabelDialog() {
-    const allLabels = [...this.data.labels];
+    const allLabels = cloneDeep(this.data.labels);
     const dialogRef = this.dialog.open(LabelDialogComponent, {
       width: "360px",
       data: {

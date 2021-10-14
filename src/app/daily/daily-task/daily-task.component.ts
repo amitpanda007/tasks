@@ -125,8 +125,6 @@ export class DailyTaskComponent implements OnInit {
     window.clearTimeout(this.reminderTime);
   }
 
-  //TODO: Complete reminder countdown.
-  //Make sure to keep starting reminder when 1hr left.
   checkReminderStatus() {
     if (this.dailyTask.reminder) {
       const reminder = this.dailyTask.reminder as any;
@@ -214,19 +212,6 @@ export class DailyTaskComponent implements OnInit {
     console.log("CLICKED ON PRIORITY ICON");
     this.isPriorityIconSelected = true;
   }
-
-  //FIXME: This event is getting triggered for all the components and might cause performance issues.
-  // We can use Menu closed event to target the hide of icon.
-
-  /* @HostListener('document:click', ['$event'])
-  clickout(event) {
-    if(this.eRef.nativeElement.contains(event.target)) {
-      console.log("CLICKED INSIDE");
-    } else {
-      this.isPriorityIconSelected = false;
-      console.log("CLICKED OUTSIDE");
-    }
-  } */
 
   priorityMenuClosed() {
     console.log("PRIORITY MENU IS CLOSED.");

@@ -1,12 +1,6 @@
 <section class="option-bar">
   <div class="options">
     <div class="toggle-btn">
-      <!-- <mat-icon
-        class="material-icons-outlined"
-        aria-hidden="false"
-        aria-label="pending task icon"
-        >{{ pendingTaskIcon }}</mat-icon
-      > -->
       Pending
       <mat-slide-toggle
         matTooltip="show pending task"
@@ -19,12 +13,6 @@
     </div>
     <span class="option-dividor"></span>
     <div class="toggle-btn">
-      <!-- <mat-icon
-        class="material-icons-outlined"
-        aria-hidden="false"
-        aria-label="todays task icon"
-        >{{ todayIcon }}</mat-icon
-      > -->
       Today
       <mat-slide-toggle
         matTooltip="show today's task"
@@ -36,21 +24,6 @@
       </mat-slide-toggle>
     </div>
     <span class="option-dividor"></span>
-    <!-- <mat-form-field appearance="fill">
-      <mat-label>Show Data for</mat-label>
-      <mat-select
-        (selectionChange)="daysSelected($event)"
-        [(value)]="selectedShownDays"
-      >
-        <mat-option
-          *ngFor="let days of taskShownForDays"
-          [value]="days.value"
-        >
-          {{ days.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field> -->
-
     <div class="days">
       <p [matMenuTriggerFor]="menuInterval">{{ selectedShownDays }} days</p>
     </div>

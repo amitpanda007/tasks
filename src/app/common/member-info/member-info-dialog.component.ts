@@ -53,7 +53,6 @@ export class MemberInfoDialogComponent implements OnInit {
     });
   }
 
-  //TODO: Implement this feature
   removeUserFromBoard() {
     console.log("Removing user from shared & sharedUserInfo");
     this.dialogRef.close({

@@ -65,7 +65,7 @@ export class CopyDialogComponent implements OnInit {
   async copy() {
     //FIXME: inxed needs to be determine where the task is getting copied to.
     const newTask: Task = {
-      index: 0,
+      index: 99,
       title: this.titleText,
       description: this.data.task.description ? this.data.task.description : "",
       backgroundColor: this.data.task.backgroundColor

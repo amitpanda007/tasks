@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { Component, ElementRef, Inject, OnInit } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig } from "@angular/material/dialog";
 import { Label } from "../../tasks/task/label";
 import { ColorEvent } from "ngx-color";
 import { BoardService } from "src/app/core/services/board.service";
@@ -11,6 +11,9 @@ import { BoardServiceV2 } from '../../core/services/boardv2.service';
   styleUrls: ["./label-dialog.component.scss"],
 })
 export class LabelDialogComponent implements OnInit {
+  private positionRelativeToElement: ElementRef =
+    this.data.positionRelativeToElement;
+
   private backupLabel: Partial<Label[]> = { ...this.data.labels };
   public isAddingLabel: boolean = false;
   public isEditingLabel: boolean = false;
@@ -27,9 +30,22 @@ export class LabelDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // const matDialogConfig = new MatDialogConfig();
+    // if(this.positionRelativeToElement) {
+    //   const rect: DOMRect =
+    //   this.positionRelativeToElement.nativeElement.getBoundingClientRect();
+    //   matDialogConfig.position = {
+    //     top: `${rect.bottom + 2}px`,
+    //     left: `${rect.left + 2}px`,
+    //   };
+    //   this.dialogRef.updatePosition(matDialogConfig.position);
+    // }
+
     this.selectedLabels = [];
     this.data.labels.forEach((label) => {
-      if (label.taskIds && label.taskIds.includes(this.data.taskId)) {
+      if (label.taskIds.includes(this.data.taskId)) {
+        console.log(this.data.taskId);
+        console.log(label);
         label.isSelected = true;
       }
     });
@@ -136,14 +152,17 @@ export class LabelDialogComponent implements OnInit {
       label.isSelected = true;
       this.data.labels[labelIndex].taskIds.push(this.data.taskId);
     }
-    console.log(this.data.labels);
   }
 }
 
 export interface LabelDialogData {
+  positionRelativeToElement?: ElementRef;
   labels: Partial<Label[]>;
   enableDelete: boolean;
+  enableEdit: boolean;
   taskId: string;
+  taskTitle?: string;
+  listName?: string;
   boardId: string;
 }
 

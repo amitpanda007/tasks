@@ -3,8 +3,9 @@
   *ngIf="task"
   [style.background-color]="task.backgroundColor"
   [style.color]="textColor"
+  (contextmenu)="onRightClick($event)"
 >
-  <div class="heading-info" (click)="editTask()">
+  <div #taskCard class="heading-info" (click)="editTask()">
     <div class="top-section">
       <p class="title">{{ task.title }}</p>
 
@@ -168,6 +169,29 @@
     <img src="../../../assets/images/template.png" height="18px" width="18px" />
     <span>This card is a template</span>
   </div>
+
+  <!-- an hidden div is created to set the position of appearance of the menu-->
+  <div
+    style="visibility: hidden; position: fixed"
+    [style.left]="menuTopLeftPosition.x"
+    [style.top]="menuTopLeftPosition.y"
+    [matMenuTriggerFor]="rightMenu"
+    #contextMenuTrigger="matMenuTrigger"
+  ></div>
+
+  <!-- standard material menu -->
+  <mat-menu #rightMenu="matMenu">
+    <ng-template matMenuContent let-item="item">
+      <button mat-menu-item (click)="editTask()">Open card</button>
+      <button mat-menu-item (click)="openTaskLabels()">Edit labels</button>
+      <button mat-menu-item (click)="openTaskMembers()">Change members</button>
+      <button mat-menu-item (click)="chnageTaskColor()">Change color</button>
+      <button mat-menu-item (click)="moveTask()">Move</button>
+      <button mat-menu-item (click)="taskCopy()">Copy</button>
+      <button mat-menu-item (click)="changeTaskDate()">Edit dates</button>
+      <button mat-menu-item (click)="archiveTask()">Archive</button>
+    </ng-template>
+  </mat-menu>
 </mat-card>
 
 <!-- Accordion Implementation for checklist to show in task -->

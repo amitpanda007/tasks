@@ -1,3 +1,11 @@
+.header {
+  margin-bottom: 2rem;
+}
+
+.header p{
+  font-size: 12px;
+}
+
 .label-input {
   border: 1px dotted gray;
   line-height: 30px;
@@ -52,4 +60,14 @@
 
 .new-label-options {
   margin-top: 15px;
+}
+
+.task-title {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.list-name {
+  font-size: 14px;
+  text-decoration: underline;
 }

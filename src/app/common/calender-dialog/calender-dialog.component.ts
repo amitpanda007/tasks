@@ -27,6 +27,10 @@ export class CalenderDialogComponent implements OnInit {
   }
 
   save() {
+    if(this.data.date == undefined) {
+      const newDate : any = new Date();
+      this.data.date = newDate;
+    }
     this.dialogRef.close(this.data);
   }
 

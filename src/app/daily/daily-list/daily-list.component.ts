@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
 import { MatDialog, throwToolbarMixedModesError } from "@angular/material";
 import { Subscription } from "rxjs";
-import * as cloneDeep from "lodash/cloneDeep";
+// import * as cloneDeep from "lodash/cloneDeep";
+import { cloneDeep } from "lodash";
 import {
   DailyTaskDialogComponent,
   DailyTaskDialogResult,
@@ -153,6 +154,7 @@ export class DailyListComponent implements OnInit {
   }
 
   editTask(task: DailyTask) {
+    console.log(task.id);
     const clonedDailyTask = cloneDeep(task);
     const dialogRef = this.dialog.open(DailyTaskDialogComponent, {
       width: "600px",
@@ -199,18 +201,19 @@ export class DailyListComponent implements OnInit {
     this.dailyService.updateDailyTask(task);
   }
 
-  //TODO: Add modified date for the task field updates
   setPriority(priorityData: any) {
-    const priorityField = {
-      priority: priorityData.priority,
-    };
-    this.dailyService.updateDailyTaskField(priorityData.taskId, priorityField);
+    const currentTask = this.dailyTasks.filter(dailyTask => dailyTask.id == priorityData.taskId)[0];
+    // const priorityField = {
+    //   priority: priorityData.priority,
+    // };
+    // this.dailyService.updateDailyTaskField(priorityData.taskId, priorityField);
+    currentTask.priority = priorityData.priority;
+    currentTask.modified = new Date();
+    this.dailyService.updateDailyTask(currentTask);
   }
 
-  //TODO: Add modified date for the task field updates
   addReminder(updatedData: any) {
     updatedData.task.modified = new Date();
-
     if (updatedData.delete) {
       this.dailyService.deleteDailyTaskField(updatedData.task.id, "reminder");
     } else {
