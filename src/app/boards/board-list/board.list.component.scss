@@ -18,8 +18,21 @@ mat-toolbar > span {
 }
 
 .container {
-  width: 400px;
-  margin: 25px;
+  // width: 400px;
+  // margin: 25px;
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.board {
+  width: 300px;
+  margin: 1rem;
+}
+
+.flex-display {
+  display: flex;
+  align-items: center;
 }
 
 .list {
