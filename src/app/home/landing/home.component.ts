@@ -20,10 +20,7 @@ export class HomeComponent implements OnInit {
     private authService: AuthService,
     private _snackBar: MatSnackBar,
     private router: Router
-  ) {}
-
-  ngOnInit(): void {
-    this.emailId = "";
+  ) {
     this.authSubscription = this.authService
       .authStateChanged()
       .subscribe((isAuthenticated) => {
@@ -32,6 +29,10 @@ export class HomeComponent implements OnInit {
           this.router.navigate(["/boards"]);
         }
       });
+  }
+
+  ngOnInit(): void {
+    this.emailId = "";
   }
 
   ngOnDestroy(): void {

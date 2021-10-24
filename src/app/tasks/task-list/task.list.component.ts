@@ -910,10 +910,17 @@ export class TaskListComponent implements OnInit {
           }
         });
         // Delete task from board
-        this.boardServiceV2.deleteTaskBatch(this.boardId, result.task.id, deletedLabels);
+        this.boardServiceV2.deleteTaskBatch(
+          this.boardId,
+          result.task.id,
+          deletedLabels
+        );
       } else {
         if (result.updatedLabels && result.updatedLabels.length > 0) {
-          this.boardServiceV2.updateLabelBatch(this.boardId, result.updatedLabels);
+          this.boardServiceV2.updateLabelBatch(
+            this.boardId,
+            result.updatedLabels
+          );
         }
         console.log("Updating task");
         this.boardServiceV2.updateTask(
@@ -956,7 +963,7 @@ export class TaskListComponent implements OnInit {
         task: task,
         boardId: this.boardId,
         enableDelete: false,
-        boardSettings: this.board.settings
+        boardSettings: this.board.settings,
       },
     });
     dialogRef.afterClosed().subscribe((result: TaskDialogResult) => {
@@ -1245,7 +1252,7 @@ export class TaskListComponent implements OnInit {
 
   toggleMenuSidenav() {
     this.allAdmins = [];
-    this.allAdmins.push(this.boardAdmin);
+    // this.allAdmins.push(this.boardAdmin);
 
     if (this.boardMembers && this.boardMembers.length > 0) {
       this.boardMembers.forEach((boardMember) => {
@@ -1254,6 +1261,7 @@ export class TaskListComponent implements OnInit {
         }
       });
     }
+    console.log(this.allAdmins);
 
     this.isShowingSidenav = !this.isShowingSidenav;
 
@@ -1470,7 +1478,9 @@ export class TaskListComponent implements OnInit {
             //   true,
             //   true
             // );
-            const copiedBoard = await this.boardServiceV2.copyBoardBatch(this.boardId);
+            const copiedBoard = await this.boardServiceV2.copyBoardBatch(
+              this.boardId
+            );
             console.log(`BOARD COPY COMPLETE: ${copiedBoard}`);
             this.loaderService.changeLoading(false);
 
@@ -1537,9 +1547,12 @@ export class TaskListComponent implements OnInit {
 
           const extraData = {
             boardTitle: result.boardTitle,
-            boardDescription: result.boardDescription
-          }
-          const copiedBoard = await this.boardServiceV2.copyBoardBatch(this.boardId, extraData);
+            boardDescription: result.boardDescription,
+          };
+          const copiedBoard = await this.boardServiceV2.copyBoardBatch(
+            this.boardId,
+            extraData
+          );
           console.log(`BOARD COPY COMPLETE: ${copiedBoard}`);
           this.loaderService.changeLoading(false);
 
@@ -1700,7 +1713,7 @@ export class TaskListComponent implements OnInit {
       name: "No Member",
     };
     this.searchMembers.push(noMember);
-    this.searchMembers.push(cloneDeep(this.boardAdmin));
+    // this.searchMembers.push(cloneDeep(this.boardAdmin));
     const boardMembers = cloneDeep(this.boardMembers);
     if (boardMembers && boardMembers.length > 0) {
       this.searchMembers.push(...boardMembers);
