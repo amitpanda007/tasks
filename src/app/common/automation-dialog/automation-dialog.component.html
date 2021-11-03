@@ -1,4 +1,4 @@
-<div mat-dialog-content>
+<div>
   <div class="flex-display end">
     <button
       mat-icon-button
@@ -22,7 +22,7 @@
     <div class="flex-display spacing header pad-10">
       <p>Create a Rule</p>
       <div>
-        <button mat-flat-button color="primary" (click)="saveRule()">
+        <button mat-flat-button color="primary" (click)="saveRule()" [disabled]="!isSaveEnabled">
           Save
         </button>
         <button mat-flat-button (click)="cancelRule()">Cancel</button>
@@ -30,17 +30,23 @@
     </div>
     <div class="pad-10">
       <p>Trigger</p>
+      <div class="info-message">
+        Your command doesn't have a trigger yet. Select a trigger for the
+        command below.
+      </div>
       <button
         mat-stroked-button
         color="primary"
         aria-label="add trigger"
         class="btn-large"
+        *ngIf="!isShowingTriggerSection"
+        (click)="showTriggers()"
       >
         <mat-icon>add</mat-icon> Add Trigger
       </button>
     </div>
 
-    <div>
+    <div *ngIf="isShowingTriggerSection && !isShowingActionSection">
       <p>Select a Trigger</p>
       <!-- Different Triggers -->
       <div class="box">
@@ -56,7 +62,7 @@
           <div class="flex-display col full-width">
             <div>
               <span>When a card is</span>
-              <select [(ngModel)]="cardStatus">
+              <select [(ngModel)]="move_trigger_1_type">
                 <option>added to</option>
                 <option>created in</option>
                 <option>emailed into</option>
@@ -64,7 +70,7 @@
                 <option>moved out of</option>
               </select>
               <span>the board</span>
-              <select [(ngModel)]="cardAssignee">
+              <select [(ngModel)]="move_trigger_1_assign">
                 <option>by me</option>
                 <option>by anyone</option>
                 <option>by anyone except me</option>
@@ -79,7 +85,92 @@
             mat-mini-fab
             color="primary"
             aria-label="add trigger"
-            (click)="addTrigger(cardStatus, cardAssignee)"
+            (click)="addTrigger(move_trigger_1_type, move_trigger_1_assign)"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </mat-card>
+      </div>
+    </div>
+
+    <div *ngIf="isShowingActionSection">
+      <p>Select an Action</p>
+      <!-- Different Actions -->
+      <div class="box">
+        <mat-card class="flex-display col card-small">
+          <mat-icon>arrow_forward</mat-icon>
+          <span>Move</span>
+        </mat-card>
+      </div>
+
+      <!-- Different Action Options-->
+      <div class="box">
+        <mat-card class="flex-display">
+          <div class="flex-display col full-width">
+            <div>
+              <select [(ngModel)]="move_action_1_type">
+                <option value="move">move</option>
+                <option value="copy">copy</option>
+              </select>
+              <span>the card to</span>
+              <select [(ngModel)]="move_action_1_location">
+                <option value="the top of list">the top of list</option>
+                <option value="the bottom of list">the bottom of list</option>
+              </select>
+              <select [(ngModel)]="move_action_list_name">
+                <option [value]="taskList.name" *ngFor="let taskList of data.taskLists">{{ taskList.name }}</option>
+              </select>
+            </div>
+          </div>
+          <button
+            mat-mini-fab
+            color="primary"
+            aria-label="add action"
+            (click)="addAction(move_action_1_type, move_action_1_location, move_action_list_name)"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </mat-card>
+      </div>
+      <div class="box">
+        <mat-card class="flex-display">
+          <div class="flex-display col full-width">
+            <div>
+              <span>move the card to</span>
+              <select [(ngModel)]="move_action_2_location">
+                <option value="the top of the list">the top of the list</option>
+                <option value="the top of the list">the top of the list</option>
+                <option value="the next list on the board">the next list on the board</option>
+                <option value="the previous list on the board">the previous list on the board</option>
+              </select>
+            </div>
+          </div>
+          <button
+            mat-mini-fab
+            color="primary"
+            aria-label="add action"
+            (click)="addAction(move_action_2_location)"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </mat-card>
+      </div>
+      <div class="box">
+        <mat-card class="flex-display">
+          <div class="flex-display col full-width">
+            <div>
+              <select [(ngModel)]="move_action_3_type">
+                <option value="arcive">arcive</option>
+                <option value="unarcive">unarcive</option>
+              </select>
+              <span>the card</span>
+            </div>
+          </div>
+          <button
+            mat-mini-fab
+            color="primary"
+            aria-label="add action"
+            (click)="addAction(move_action_3_type)"
           >
             <mat-icon>add</mat-icon>
           </button>
@@ -88,7 +179,3 @@
     </div>
   </section>
 </div>
-<!-- <div mat-dialog-actions>
-  <button mat-button (click)="copy()" cdkFocusInitial>Copy</button>
-  <button mat-button (click)="cancel()">Cancel</button>
-</div> -->

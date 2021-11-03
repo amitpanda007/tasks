@@ -11,8 +11,20 @@ import { Label } from "../../tasks/task/label";
 })
 export class AutomationDialogComponent implements OnInit {
   public showRuleSection: boolean;
-  public cardStatus: string;
-  public cardAssignee: string;
+  public isShowingTriggerSection: boolean;
+  public isShowingActionSection: boolean;
+  public isSaveEnabled: boolean;
+
+  // Trigger
+  public move_trigger_1_type: string = "added to";
+  public move_trigger_1_assign: string = "by me";
+
+  // Action 
+  public move_action_1_type: string = "copy";
+  public move_action_1_location: string = "the top of list";
+  public move_action_list_name: string;
+  public move_action_2_location: string = "the top of the list";
+  public move_action_3_type: string = "arcive";
 
   constructor(
     public dialogRef: MatDialogRef<AutomationDialogComponent>,
@@ -21,6 +33,9 @@ export class AutomationDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.showRuleSection = false;
+    this.isShowingTriggerSection = false;
+    this.isShowingActionSection = false;
+    this.isSaveEnabled = false;
   }
 
   ngOnDestroy(): void {}
@@ -33,8 +48,24 @@ export class AutomationDialogComponent implements OnInit {
     this.showRuleSection = true;
   }
 
-  addTrigger(one, two) {
-    console.log(one, two);
+  showTriggers() {
+    this.isShowingTriggerSection = true;
+  }
+
+  addTrigger(triggerOne, triggerTwo) {
+    console.log(triggerOne, triggerTwo);
+    this.showActions();
+  }
+
+  showActions() {
+    this.isShowingActionSection = true;
+  }
+
+  addAction(actionOne, actionTwo, actionThree) {
+    console.log(actionOne, actionTwo, actionThree);
+    this.isSaveEnabled = true;
+
+    
   }
 
   saveRule() {
@@ -42,7 +73,8 @@ export class AutomationDialogComponent implements OnInit {
   }
 
   cancelRule() {
-    
+    this.showRuleSection = false;
+    this.isShowingTriggerSection = false;
   }
 }
 

@@ -48,3 +48,17 @@
 .full-width {
   width: 100%;
 }
+
+.info-message {
+  position: relative;
+  min-height: 1em;
+  margin: 1em0;
+  background: #f8f8f9;
+  padding: 1em 1.5em;
+  line-height: 1.4285em;
+  color: #17394d;
+  -webkit-transition: opacity .1s ease,color .1s ease,background .1s ease,box-shadow .1s ease;
+  transition: opacity .1s ease,color .1s ease,background .1s ease,box-shadow .1s ease;
+  border-radius: 0.28571429rem;
+  box-shadow: 0 0 0 1px rgb(34 36 38 / 22%) inset, 0 0 0 0 transparent;
+}
