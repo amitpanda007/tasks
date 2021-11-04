@@ -15,6 +15,8 @@ import { Invitation } from "../../common/invite-dialog/invitation";
 import { firestore } from "firebase/app";
 import * as firebase from "firebase/app";
 import { TaskComment } from "src/app/tasks/task/taskcomment";
+import { Trigger } from "src/app/common/automation-dialog/trigger";
+import { Action } from "src/app/common/automation-dialog/action";
 
 @Injectable()
 export class BoardServiceV2 {
@@ -278,8 +280,8 @@ export class BoardServiceV2 {
   // Referrence from https://leechy.dev/firestore-move
   public newDocId: any;
   /**
-  * @deprecated The method should not be used
-  */
+   * @deprecated The method should not be used
+   */
   async copyBoardDoc(
     collectionFrom: string,
     docId: string,
@@ -389,7 +391,7 @@ export class BoardServiceV2 {
     return this.newDocId.id;
   }
 
-  async copyBoardBatch(boardId: string, extraData: any = {}) : Promise<string> {
+  async copyBoardBatch(boardId: string, extraData: any = {}): Promise<string> {
     const db = firebase.firestore();
     let batch = db.batch();
 
@@ -399,33 +401,45 @@ export class BoardServiceV2 {
     // Get board document & set it for new board
     const boardDoc = await db.collection("boards").doc(boardId).get();
     const newBoardData: Board = boardDoc.data() as Board;
-    if(extraData.boardTitle) {
+    if (extraData.boardTitle) {
       newBoardData.title = extraData.boardTitle;
     }
-    if(extraData.boardDescription) {
+    if (extraData.boardDescription) {
       newBoardData.description = extraData.boardDescription;
     }
-    
+
     batch.set(newBoardRef, newBoardData);
 
     // Get label collection
-    const labelDocs = await db.collection("boards").doc(boardId).collection("labels").get();
+    const labelDocs = await db
+      .collection("boards")
+      .doc(boardId)
+      .collection("labels")
+      .get();
     const newBoardLabelRef = newBoardRef.collection("labels");
-    labelDocs.forEach(labelDoc => {
+    labelDocs.forEach((labelDoc) => {
       batch.set(newBoardLabelRef.doc(labelDoc.id), labelDoc.data());
     });
 
     // Get taskLists collection
-    const taskListsDocs = await db.collection("boards").doc(boardId).collection("taskLists").get();
+    const taskListsDocs = await db
+      .collection("boards")
+      .doc(boardId)
+      .collection("taskLists")
+      .get();
     const newBoardTaskListsRef = newBoardRef.collection("taskLists");
-    taskListsDocs.forEach(tasklistDoc => {
+    taskListsDocs.forEach((tasklistDoc) => {
       batch.set(newBoardTaskListsRef.doc(tasklistDoc.id), tasklistDoc.data());
     });
 
     // Get tasks collection
-    const tasksDocs = await db.collection("boards").doc(boardId).collection("tasks").get();
+    const tasksDocs = await db
+      .collection("boards")
+      .doc(boardId)
+      .collection("tasks")
+      .get();
     const newBoardTasksRef = newBoardRef.collection("tasks");
-    tasksDocs.forEach(taskDoc => {
+    tasksDocs.forEach((taskDoc) => {
       batch.set(newBoardTasksRef.doc(taskDoc.id), taskDoc.data());
     });
 
@@ -625,10 +639,14 @@ export class BoardServiceV2 {
       batch.update(ref, currentLabel);
     });
 
-    const taskRef = db.collection("boards").doc(boardId).collection("tasks").doc(taskId);
+    const taskRef = db
+      .collection("boards")
+      .doc(boardId)
+      .collection("tasks")
+      .doc(taskId);
     batch.delete(taskRef);
 
-    batch.commit();  
+    batch.commit();
   }
 
   getTaskComments(boardId: string, taskId: string, sortField = "created") {
@@ -870,9 +888,10 @@ export class BoardServiceV2 {
     batch.commit();
   }
 
-  /*
-  / Labels API Call section
-  */
+  /**
+  /* Labels API section
+  /* All label relared methods on label collection available under each board collection
+  **/
 
   getLabels(boardId: string) {
     this.labelsCollection = this._store
@@ -1009,5 +1028,21 @@ export class BoardServiceV2 {
       .collection("labels")
       .doc(labelId)
       .delete();
+  }
+
+  /**
+  /* Automation collection
+  /* all trigger and associated action created by user for the board
+  /* is stored and accessed fromt his collection.
+  **/
+
+  addAutomation(boardId: string, trigger: Trigger, action: Action) {
+    const data = {
+      boardId: boardId,
+      trigger: trigger,
+      action: action,
+    };
+
+    this._store.collection("automation").doc(boardId).set(data);
   }
 }
