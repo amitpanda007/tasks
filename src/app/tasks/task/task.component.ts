@@ -33,9 +33,16 @@ import {
   MoveDialogResult,
 } from "src/app/common/move-dialog/move-dialog.component";
 import { TaskList } from "../task-list/tasklist";
-import { CopyDialogComponent, CopyDialogResult } from "src/app/common/copy-dialog/copy-dialog.component";
+import {
+  CopyDialogComponent,
+  CopyDialogResult,
+} from "src/app/common/copy-dialog/copy-dialog.component";
 import { firestore } from "firebase";
-import { CalenderDialogComponent, CalenderDialogResult } from "src/app/common/calender-dialog/calender-dialog.component";
+import {
+  CalenderDialogComponent,
+  CalenderDialogResult,
+} from "src/app/common/calender-dialog/calender-dialog.component";
+import { ConfirmDialogComponent } from "src/app/common/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: "task",
@@ -305,6 +312,26 @@ export class TaskComponent implements OnInit {
       }
       this.task.dueDate.date = result.date;
       this.boardServiceV2.updateTask(this.boardId, this.task.id, this.task);
+    });
+  }
+
+  deleteTask() {
+    const task: Task = this.task as Task;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: "360px",
+      data: {
+        message: `Delete Task: <mark><b>${task.title}</b></mark> ?`,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: ConfirmDialogComponent) => {
+      if (!result) {
+        return;
+      }
+
+      if (result.confirm) {
+        this.boardServiceV2.deleteTask(this.boardId, task.id);
+      }
     });
   }
 

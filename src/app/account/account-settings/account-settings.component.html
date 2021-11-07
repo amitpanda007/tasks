@@ -1,33 +1,93 @@
-<div class="container">
-  <h3>Account Settings</h3>
+<mat-tab-group mat-align-tabs="center" [backgroundColor]="'primary'">
+  <mat-tab label="Profile">
+    <section class="profile-container">
+      <div class="container">
+        <h1>Manage your personal information</h1>
 
-  <section class="section">
-    <p class="label">User Information</p>
-    <div *ngIf="user">
-      <mat-form-field class="username">
-        <mat-label>Full Name</mat-label>
-        <input
-          matInput
-          cdkFocusInitial
-          autocomplete="off"
-          [(ngModel)]="user.name"
-        />
-      </mat-form-field>
-    </div>
-    <button mat-flat-button color="primary" (click)="saveUserInformation(user)">
-      Save
-    </button>
-  </section>
+        <div>
+          <h3 class="header-text">About</h3>
+          <hr />
+          <div class="profile-section">
+            <div class="avatar-container">
+              <h3>Avatar</h3>
+              <div class="avatar-section">
+                <div class="avatar-section-image">
+                  <span
+                    *ngIf="avatarImageUrl"
+                    class="avatar-img big img-style"
+                    [style.backgroundImage]="'url(' + avatarImageUrl + ')'"
+                  ></span>
+                </div>
+                <button class="avatar-btn" (click)="uploadFileLocal()">
+                  Change
+                </button>
+              </div>
+            </div>
+            <div *ngIf="user" class="profile-form">
+              <mat-form-field>
+                <mat-label>Full Name</mat-label>
+                <input
+                  matInput
+                  cdkFocusInitial
+                  autocomplete="off"
+                  [(ngModel)]="user.name"
+                />
+              </mat-form-field>
 
-  <section class="section">
-    <p class="label">Board Settings</p>
+              <mat-form-field>
+                <mat-label>Initials</mat-label>
+                <input
+                  matInput
+                  cdkFocusInitial
+                  autocomplete="off"
+                  [(ngModel)]="user.initials"
+                />
+              </mat-form-field>
 
-    <button mat-flat-button color="primary">Save</button>
-  </section>
+              <mat-form-field>
+                <mat-label>Username</mat-label>
+                <input
+                  matInput
+                  cdkFocusInitial
+                  autocomplete="off"
+                  [(ngModel)]="user.username"
+                />
+              </mat-form-field>
 
-  <section class="section">
-    <p class="label">Daily Task Settings</p>
+              <mat-form-field>
+                <mat-label>Bio</mat-label>
+                <textarea
+                  matInput
+                  placeholder="Information about you..."
+                ></textarea>
+              </mat-form-field>
 
-    <button mat-flat-button color="primary">Save</button>
-  </section>
-</div>
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="saveUserInformation(user)"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </mat-tab>
+  <mat-tab label="Activity"></mat-tab>
+  <mat-tab label="Cards"></mat-tab>
+  <mat-tab label="Settings">
+    <section class="section">
+      <p class="label">Board Settings</p>
+
+      <button mat-flat-button color="primary">Save</button>
+    </section>
+
+    <section class="section">
+      <p class="label">Daily Task Settings</p>
+
+      <button mat-flat-button color="primary">Save</button>
+    </section>
+  </mat-tab>
+</mat-tab-group>

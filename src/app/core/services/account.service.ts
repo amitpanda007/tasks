@@ -4,6 +4,7 @@ import {
   AngularFirestoreCollection,
   AngularFirestoreDocument,
 } from "@angular/fire/firestore";
+import { AngularFireStorage } from "@angular/fire/storage";
 import * as firebase from "firebase";
 import { Subject, Subscription } from "rxjs";
 import { User } from "src/app/auth/user";
@@ -22,7 +23,8 @@ export class AccountService {
 
   constructor(
     private _store: AngularFirestore,
-    private authService: AuthService
+    private authService: AuthService,
+    private storage: AngularFireStorage
   ) {}
 
   getUserInfo() {
@@ -48,9 +50,19 @@ export class AccountService {
       .set(user, { merge: true });
   }
 
-  async getUserById(userId: string): Promise<User>{
+  async getUserById(userId: string): Promise<User> {
     const db = firebase.firestore();
     const userSnapshot = await db.collection("users").doc(userId).get();
     return userSnapshot.data() as User;
+  }
+
+  getAvatarImage(imageReference: string) {
+    const ref = this.storage.ref(imageReference);
+    return ref.getDownloadURL();
+  }
+
+  //https://blog.angular.io/file-uploads-come-to-angularfire-6842352b3b47
+  uploadAvatarImage(fileName: string, file: File) {
+    this.storage.upload(`/avatar/${fileName}`, file);
   }
 }

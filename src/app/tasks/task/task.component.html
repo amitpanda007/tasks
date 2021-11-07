@@ -182,14 +182,33 @@
   <!-- standard material menu -->
   <mat-menu #rightMenu="matMenu" class="context-menu-btn">
     <ng-template matMenuContent let-item="item">
-      <button mat-menu-item (click)="editTask()" class="context-btn">Open card</button>
-      <button mat-menu-item (click)="openTaskLabels()" class="context-btn">Edit labels</button>
-      <button mat-menu-item (click)="openTaskMembers()" class="context-btn">Change members</button>
-      <button mat-menu-item (click)="chnageTaskColor()" class="context-btn">Change color</button>
-      <button mat-menu-item (click)="moveTask()" class="context-btn">Move</button>
-      <button mat-menu-item (click)="taskCopy()" class="context-btn">Copy</button>
-      <button mat-menu-item (click)="changeTaskDate()" class="context-btn">Edit dates</button>
-      <button mat-menu-item (click)="archiveTask()" class="context-btn">Archive</button>
+      <button mat-menu-item (click)="editTask()" class="context-btn">
+        Open card
+      </button>
+      <button mat-menu-item (click)="openTaskLabels()" class="context-btn">
+        Edit labels
+      </button>
+      <button mat-menu-item (click)="openTaskMembers()" class="context-btn">
+        Change members
+      </button>
+      <button mat-menu-item (click)="chnageTaskColor()" class="context-btn">
+        Change color
+      </button>
+      <button mat-menu-item (click)="moveTask()" class="context-btn">
+        Move
+      </button>
+      <button mat-menu-item (click)="taskCopy()" class="context-btn">
+        Copy
+      </button>
+      <button mat-menu-item (click)="changeTaskDate()" class="context-btn">
+        Edit dates
+      </button>
+      <button mat-menu-item (click)="deleteTask()" class="context-btn">
+        Delete
+      </button>
+      <button mat-menu-item (click)="archiveTask()" class="context-btn">
+        Archive
+      </button>
     </ng-template>
   </mat-menu>
 </mat-card>

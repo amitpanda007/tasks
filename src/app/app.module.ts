@@ -56,6 +56,7 @@ import { BoardInfoDialogComponent } from "./common/board-info-dialog/board-info-
 import { NotificationDialogComponent } from "./common/notification/notification-dialog.component";
 import { InformationDialogComponent } from "./common/information/information-dialog.component";
 import { AutomationDialogComponent } from "./common/automation-dialog/automation-dialog.component";
+import { UploadDialogComponent } from "./common/upload-dialog/upload-dialog.component";
 
 @NgModule({
   declarations: [
@@ -90,6 +91,7 @@ import { AutomationDialogComponent } from "./common/automation-dialog/automation
     NotificationDialogComponent,
     InformationDialogComponent,
     AutomationDialogComponent,
+    UploadDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -145,6 +147,7 @@ import { AutomationDialogComponent } from "./common/automation-dialog/automation
     NotificationDialogComponent,
     InformationDialogComponent,
     AutomationDialogComponent,
+    UploadDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],
