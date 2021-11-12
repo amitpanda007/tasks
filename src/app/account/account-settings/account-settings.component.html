@@ -1,6 +1,6 @@
-<mat-tab-group mat-align-tabs="center" [backgroundColor]="'primary'">
+<mat-tab-group mat-align-tabs="center" [backgroundColor]="'primary'" (selectedTabChange)="tabClicked($event)">
   <mat-tab label="Profile">
-    <section class="profile-container">
+    <section class="section-container">
       <div class="container">
         <h1>Manage your personal information</h1>
 
@@ -59,6 +59,7 @@
                 <textarea
                   matInput
                   placeholder="Information about you..."
+                  [(ngModel)]="user.bio"
                 ></textarea>
               </mat-form-field>
 
@@ -75,19 +76,39 @@
       </div>
     </section>
   </mat-tab>
-  <mat-tab label="Activity"></mat-tab>
-  <mat-tab label="Cards"></mat-tab>
-  <mat-tab label="Settings">
-    <section class="section">
-      <p class="label">Board Settings</p>
+  <mat-tab label="Activity">
+    <section class="section-container">
+      <div class="container">
+        <h1>User Activity</h1>
 
-      <button mat-flat-button color="primary">Save</button>
+        <div></div>
+      </div>
     </section>
+  </mat-tab>
+  <mat-tab label="Cards">
+    <section class="section-container">
+      <div class="container">
+        <h1>Your Cards</h1>
 
-    <section class="section">
-      <p class="label">Daily Task Settings</p>
+        <div></div>
+      </div>
+    </section>
+  </mat-tab>
+  <mat-tab label="Settings">
 
-      <button mat-flat-button color="primary">Save</button>
+    <section class="section-container">
+      <div class="container">
+        <h1>Change settings for Board</h1>
+
+        <div>
+          <p class="label">Board Settings</p>
+          <button mat-flat-button color="primary">Save</button>
+        </div>
+        <div>
+          <p class="label">Daily Task Settings</p>
+          <button mat-flat-button color="primary">Save</button>
+        </div>
+      </div>
     </section>
   </mat-tab>
 </mat-tab-group>

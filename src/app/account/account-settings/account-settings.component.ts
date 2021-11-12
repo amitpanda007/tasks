@@ -8,6 +8,7 @@ import {
   UploadDialogResult,
 } from "src/app/common/upload-dialog/upload-dialog.component";
 import { AccountService } from "src/app/core/services/account.service";
+import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
 
 @Component({
   moduleId: module.id,
@@ -23,6 +24,7 @@ export class AccountSettingsComponent implements OnInit {
 
   constructor(
     private accountService: AccountService,
+    private boardServiceV2: BoardServiceV2,
     private dialog: MatDialog
   ) {}
 
@@ -54,15 +56,33 @@ export class AccountSettingsComponent implements OnInit {
   uploadFileLocal() {
     const dialogRef = this.dialog.open(UploadDialogComponent, {
       width: "360px",
+      data: {
+        userId: this.user.id,
+      },
     });
     dialogRef.afterClosed().subscribe((result: UploadDialogResult) => {
       if (!result) {
         return;
+      }
+      if (result.confirm) {
+        this.accountService.updateAvatarImageForUser(
+          this.user.id,
+          result.fileName
+        );
       }
     });
   }
 
   saveUserInformation(user: User) {
     this.accountService.saveUser(user);
+  }
+
+  tabClicked(event) {
+    console.log(event);
+    if (event.index == 1) {
+      const userActivity = this.boardServiceV2.gatherUserActivityAcrossBoard(
+        this.user.id
+      );
+    }
   }
 }

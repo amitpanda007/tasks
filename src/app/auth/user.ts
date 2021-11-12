@@ -6,6 +6,8 @@ export interface User {
   modifiedDate?: Date;
   permission?: Permission;
   avatarImg?: string;
+  initials?: string;
+  bio?: string;
 }
 
 export interface Permission {

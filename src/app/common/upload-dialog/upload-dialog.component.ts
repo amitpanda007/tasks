@@ -9,6 +9,9 @@ import { AccountService } from "src/app/core/services/account.service";
 })
 export class UploadDialogComponent implements OnInit {
   private fileToUpload: any;
+  public uploadProgress: number = 0;
+  public isUploadComplete: boolean = false;
+  public uploadConfirmed: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<UploadDialogComponent>,
@@ -21,7 +24,11 @@ export class UploadDialogComponent implements OnInit {
   ngOnDestroy(): void {}
 
   cancel(): void {
-    this.dialogRef.close();
+    if(this.uploadConfirmed) {
+      this.dialogRef.close();
+    }else {
+      //TODO: Delete uploaded data from firebase storage
+    }
   }
 
   fileChanged(event: any) {
@@ -30,13 +37,33 @@ export class UploadDialogComponent implements OnInit {
   }
 
   upload() {
-    this.accountService.uploadAvatarImage(
-      this.fileToUpload.name,
+    const fileName = `${this.data.userId}_${this.fileToUpload.name}`;
+    const uploadProgress = this.accountService.uploadAvatarImage(
+      fileName,
       this.fileToUpload
     );
+
+    uploadProgress.subscribe((progress) => {
+      console.log(progress);
+      this.uploadProgress = progress;
+      if (progress == 100) {
+        this.isUploadComplete = true;
+      }
+    });
+  }
+
+  confirmUpload() {
+    this.uploadConfirmed = true;
+    const fileName = `${this.data.userId}_${this.fileToUpload.name}`;
+    this.dialogRef.close({confirm: true, fileName: fileName});
   }
 }
 
-export interface UploadDialogData {}
+export interface UploadDialogData {
+  userId: string;
+}
 
-export interface UploadDialogResult {}
+export interface UploadDialogResult {
+  confirm: boolean;
+  fileName: string;
+}

@@ -7,6 +7,7 @@ import {
 import { AngularFireStorage } from "@angular/fire/storage";
 import * as firebase from "firebase";
 import { Subject, Subscription } from "rxjs";
+import { map } from "rxjs/operators";
 import { User } from "src/app/auth/user";
 import { AuthService } from "./auth.service";
 
@@ -63,6 +64,17 @@ export class AccountService {
 
   //https://blog.angular.io/file-uploads-come-to-angularfire-6842352b3b47
   uploadAvatarImage(fileName: string, file: File) {
-    this.storage.upload(`/avatar/${fileName}`, file);
+    const uploadProgress = this.storage
+      .upload(`/avatar/${fileName}`, file)
+      .snapshotChanges()
+      .pipe(map((s) => (s.bytesTransferred / s.totalBytes) * 100));
+    return uploadProgress;
+  }
+
+  updateAvatarImageForUser(userId: string, fileName: string) {
+    const db = firebase.firestore();
+    db.collection("users")
+      .doc(userId)
+      .set({ avatarImg: fileName }, { merge: true });
   }
 }

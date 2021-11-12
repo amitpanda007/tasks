@@ -17,6 +17,7 @@ import * as firebase from "firebase/app";
 import { TaskComment } from "src/app/tasks/task/taskcomment";
 import { Trigger } from "src/app/common/automation-dialog/trigger";
 import { Action } from "src/app/common/automation-dialog/action";
+import { Activity } from "src/app/tasks/task/activity";
 
 @Injectable()
 export class BoardServiceV2 {
@@ -27,6 +28,7 @@ export class BoardServiceV2 {
   private tasksCollection: AngularFirestoreCollection<Task>;
   private labelsCollection: AngularFirestoreCollection<Label>;
   private taskCommentCollection: AngularFirestoreCollection<TaskComment>;
+  private userActivityCollection: AngularFirestoreCollection<Activity>;
 
   private singleBoard: Board;
   private allBoards: Board[];
@@ -35,6 +37,7 @@ export class BoardServiceV2 {
   private allTasks: Task[];
   private allLabelList: Label[];
   private allComments: TaskComment[];
+  private userActivities: Activity[];
 
   private boardSubscription: Subscription;
   private boardsSubscription: Subscription;
@@ -43,6 +46,7 @@ export class BoardServiceV2 {
   private tasksSubscription: Subscription;
   private labelsSubscription: Subscription;
   private taskCommentSubscription: Subscription;
+  private userActivitySubscription: Subscription;
 
   public boardChanged = new Subject<Board>();
   // public boardsChanged = new Subject<Board[]>();
@@ -53,6 +57,7 @@ export class BoardServiceV2 {
   public labelListChanged = new Subject<Label[]>();
   public showHidelabel = new BehaviorSubject<boolean>(false);
   public commentsChanged = new Subject<TaskComment[]>();
+  public userActivityChanged = new Subject<Activity[]>();
 
   constructor(
     private _store: AngularFirestore,
@@ -1044,5 +1049,44 @@ export class BoardServiceV2 {
     };
 
     this._store.collection("automation").doc(boardId).set(data);
+  }
+
+  /**
+  /* General methods
+  **/
+
+  async gatherUserActivityAcrossBoard(userId: string) {
+    const db = firebase.firestore();
+    const userDocuments = db
+      .collection("boards")
+      .where("shared", "array-contains", userId)
+      .get();
+    const boardIdsWithUser = [];
+    await userDocuments
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          boardIdsWithUser.push(doc.id);
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+
+    // console.log(boardIdsWithUser);
+    boardIdsWithUser.forEach((id) => {
+      this._store
+        .collection<Board>("boards")
+        .doc(id)
+        .collection<Task>("tasks", (ref) =>
+          ref.where("shared", "array-contains", userId)
+        );
+    });
+
+    // this.userActivitySubscription = this.userActivityCollection
+    //   .valueChanges({ idField: "id" })
+    //   .subscribe((activities) => {
+    //     this.userActivities = activities;
+    //     this.userActivityChanged.next([...this.userActivities]);
+    //   });
   }
 }
