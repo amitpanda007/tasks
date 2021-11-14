@@ -827,7 +827,27 @@
 
   <!-- Change Background Section : Photos -->
   <div *ngIf="isShowingPhotos" class="menucard">
-    <p>Photos</p>
+    <button
+      mat-raised-button
+      matTooltip="upload"
+      aria-label="open upload dialod"
+      (click)="openUploadDialog()"
+      class="upload-btn"
+    >
+      <mat-icon>file_upload</mat-icon> Upload
+    </button>
+
+    <div class="bg-imgs">
+      <p class="info-text">All Available Photos</p>
+      <div class="flex-display">
+        <img
+          [src]="image.url"
+          *ngFor="let image of backgroundImages"
+          (click)="setBackgroundImage(image.name)"
+          class="bg-img-box"
+        />
+      </div>
+    </div>
   </div>
 
   <!-- Search Cards Section -->

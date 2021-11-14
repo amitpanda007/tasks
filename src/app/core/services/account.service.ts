@@ -77,4 +77,12 @@ export class AccountService {
       .doc(userId)
       .set({ avatarImg: fileName }, { merge: true });
   }
+
+  uploadBackgroundImage(fileName: string, file: File) {
+    const uploadProgress = this.storage
+      .upload(`/backgroundImages/${fileName}`, file)
+      .snapshotChanges()
+      .pipe(map((s) => (s.bytesTransferred / s.totalBytes) * 100));
+    return uploadProgress;
+  }
 }

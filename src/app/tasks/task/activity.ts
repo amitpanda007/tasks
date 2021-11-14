@@ -5,4 +5,5 @@ export interface Activity {
   dateTime: Date;
   taskTitle?: string;
   taskId?: string;
+  taskOnBoard?: string;
 }

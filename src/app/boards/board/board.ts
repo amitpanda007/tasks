@@ -11,7 +11,7 @@ export interface Board {
   shared?: Array<string>;
   sharedUserInfo?: SharedUser[];
   favourite?: Array<string>;
-  backgroundUrl?: string;
+  backgroundImgUrl?: string;
   backgroundColors?: BGColor;
   settings: Settings;
   isTemplate?: boolean;

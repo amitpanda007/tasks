@@ -1,4 +1,8 @@
-<mat-tab-group mat-align-tabs="center" [backgroundColor]="'primary'" (selectedTabChange)="tabClicked($event)">
+<mat-tab-group
+  mat-align-tabs="center"
+  [backgroundColor]="'primary'"
+  (selectedTabChange)="tabClicked($event)"
+>
   <mat-tab label="Profile">
     <section class="section-container">
       <div class="container">
@@ -81,21 +85,72 @@
       <div class="container">
         <h1>User Activity</h1>
 
-        <div></div>
+        <section class="activity">
+          <div class="flex-display space-btwn">
+            <span class="flex-display">
+              <mat-icon>subject</mat-icon><span>Activity</span>
+            </span>
+          </div>
+
+          <div *ngIf="userActivities">
+            <div *ngFor="let activity of userActivities" class="activity-text">
+              <span class="member" matTooltip="{{ activity.user }}">{{
+                activity.user | shortname
+              }}</span>
+              <div class="member-info">
+                <span
+                  ><b>{{ activity.user }} </b>
+                  <span [innerHTML]="activity.action"></span>
+                  on task
+                  <span
+                    [innerHTML]="activity.taskTitle"
+                    (click)="activityToCard(activity.taskId)"
+                    class="activity-card"
+                  ></span
+                ></span>
+                <p>
+                  <span>{{ activity.dateTime | dateformat: "" }}</span>
+                  - on board
+                  <span
+                    [innerHTML]="activity.taskOnBoard"
+                    (click)="activityToBoard(activity.taskId)"
+                    class="activity-card activity-card-board"
+                  ></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
   </mat-tab>
-  <mat-tab label="Cards">
+  <mat-tab label="Tasks">
     <section class="section-container">
       <div class="container">
-        <h1>Your Cards</h1>
+        <h1>Your Tasks</h1>
 
-        <div></div>
+        <div *ngIf="userTasks">
+          <div *ngFor="let taskBoard of userTasksOnBoard">
+            <mat-card class="board-card">
+              <mat-card-title>{{ taskBoard.boardName }}</mat-card-title>
+              <mat-card-content>
+                <div *ngFor="let task of taskBoard.tasks">
+                  <task
+                    (edit)="editTask($event)"
+                    [task]="task"
+                    [labels]="taskBoard.labels"
+                    [options]="taskOptions"
+                    [boardId]="boardId"
+                  ></task>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
       </div>
     </section>
   </mat-tab>
   <mat-tab label="Settings">
-
     <section class="section-container">
       <div class="container">
         <h1>Change settings for Board</h1>

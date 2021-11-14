@@ -138,3 +138,77 @@ hr {
   flex-direction: column;
   flex: 0 0 355px;
 }
+
+.member {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  font-weight: 700;
+  background-color: #dfe1e6;
+  border-radius: 25em;
+  color: #172b4d;
+  cursor: pointer;
+  float: left;
+  height: 28px;
+  margin: 0 4px 0 0;
+  overflow: visible;
+  position: relative;
+  width: 28px;
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.activity {
+  margin-bottom: 4rem;
+}
+
+.activity-text {
+  margin-top: 1rem;
+}
+
+.activity-text span {
+  font-size: 14px;
+}
+
+.activity-text p {
+  color: #5e6c84;
+  font-size: 12px;
+}
+
+.activity-card {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.activity-card-board {
+  font-weight: 700;
+  color: #5e6c84;
+}
+
+.activity-btn {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.flex-display {
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.space-btwn {
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.board-card {
+  margin-bottom: 1rem;
+}

@@ -76,6 +76,10 @@ import {
   AutomationDialogComponent,
   AutomationDialogResult,
 } from "src/app/common/automation-dialog/automation-dialog.component";
+import {
+  UploadDialogComponent,
+  UploadDialogResult,
+} from "src/app/common/upload-dialog/upload-dialog.component";
 
 @Component({
   selector: "task-list",
@@ -132,6 +136,7 @@ export class TaskListComponent implements OnInit {
   public isShowingMoreSetting: boolean = false;
   public isShowingAllLabels: boolean = false;
   public isShowingArchivedTasks: boolean = false;
+  public backgroundImages = [];
 
   public searchLabels: Label[] = [];
   public searchMembers: SharedUser[] = [];
@@ -289,12 +294,19 @@ export class TaskListComponent implements OnInit {
         }
 
         // Set document background image & design
-        if (this.board.backgroundUrl) {
-          document.body.style.backgroundImage = `url(${this.board.backgroundUrl})`;
-          document.body.style.backgroundPosition = "center center";
-          document.body.style.backgroundRepeat = "no-repeat";
-          document.body.style.backgroundAttachment = "fixed";
-          document.body.style.backgroundSize = "cover";
+        if (this.board.backgroundImgUrl) {
+          this.boardServiceV2
+            .getBackgroundImage(
+              `backgroundImages\/${this.board.backgroundImgUrl}`
+            )
+            .subscribe((imageUrl) => {
+              console.log(imageUrl);
+              document.body.style.backgroundImage = `url(${imageUrl})`;
+              document.body.style.backgroundPosition = "center center";
+              document.body.style.backgroundRepeat = "no-repeat";
+              document.body.style.backgroundAttachment = "fixed";
+              document.body.style.backgroundSize = "cover";
+            });
         } else if (this.board.backgroundColors) {
           // document.body.style.backgroundImage = `linear-gradient(#eb01a5, #d13531)`;
           let primaryColor = "";
@@ -1303,6 +1315,18 @@ export class TaskListComponent implements OnInit {
 
   showPhotos() {
     this.isShowingPhotos = true;
+    this.gatherBackgroundPhotos();
+  }
+
+  async gatherBackgroundPhotos() {
+    this.backgroundImages = await this.boardServiceV2.gatherBackgroundImages();
+    console.log(this.backgroundImages);
+  }
+
+  setBackgroundImage(imageName) {
+    console.log(imageName);
+    this.board.backgroundImgUrl = imageName;
+    this.boardServiceV2.updateBoard(this.boardId, this.board);
   }
 
   showMore() {
@@ -2278,6 +2302,26 @@ export class TaskListComponent implements OnInit {
 
       list.backgroundColor = result.color;
       this.boardServiceV2.updateTaskList(this.boardId, list.id, list);
+    });
+  }
+
+  openUploadDialog() {
+    const dialogRef = this.dialog.open(UploadDialogComponent, {
+      width: "360px",
+      data: {
+        userId: this.authService.getUID(),
+        uploadLocation: "background",
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: UploadDialogResult) => {
+      console.log(result);
+      if (!result) {
+        return;
+      }
+
+      if (result.confirm) {
+        console.log("Successfully Uploaded your image");
+      }
     });
   }
 }

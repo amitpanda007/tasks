@@ -24,9 +24,9 @@ export class UploadDialogComponent implements OnInit {
   ngOnDestroy(): void {}
 
   cancel(): void {
-    if(this.uploadConfirmed) {
+    if (this.uploadConfirmed) {
       this.dialogRef.close();
-    }else {
+    } else {
       //TODO: Delete uploaded data from firebase storage
     }
   }
@@ -38,10 +38,19 @@ export class UploadDialogComponent implements OnInit {
 
   upload() {
     const fileName = `${this.data.userId}_${this.fileToUpload.name}`;
-    const uploadProgress = this.accountService.uploadAvatarImage(
-      fileName,
-      this.fileToUpload
-    );
+    let uploadProgress;
+
+    if (this.data.uploadLocation == "avatar") {
+      uploadProgress = this.accountService.uploadAvatarImage(
+        fileName,
+        this.fileToUpload
+      );
+    } else if (this.data.uploadLocation == "background") {
+      uploadProgress = this.accountService.uploadBackgroundImage(
+        fileName,
+        this.fileToUpload
+      );
+    }
 
     uploadProgress.subscribe((progress) => {
       console.log(progress);
@@ -55,12 +64,13 @@ export class UploadDialogComponent implements OnInit {
   confirmUpload() {
     this.uploadConfirmed = true;
     const fileName = `${this.data.userId}_${this.fileToUpload.name}`;
-    this.dialogRef.close({confirm: true, fileName: fileName});
+    this.dialogRef.close({ confirm: true, fileName: fileName });
   }
 }
 
 export interface UploadDialogData {
   userId: string;
+  uploadLocation: string;
 }
 
 export interface UploadDialogResult {

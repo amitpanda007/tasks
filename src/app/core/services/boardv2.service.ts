@@ -3,6 +3,8 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
   AngularFirestoreDocument,
+  DocumentData,
+  QuerySnapshot,
 } from "@angular/fire/firestore";
 import { Subject, BehaviorSubject } from "rxjs";
 import { Board, SharedUser } from "src/app/boards/board/board";
@@ -18,6 +20,7 @@ import { TaskComment } from "src/app/tasks/task/taskcomment";
 import { Trigger } from "src/app/common/automation-dialog/trigger";
 import { Action } from "src/app/common/automation-dialog/action";
 import { Activity } from "src/app/tasks/task/activity";
+import { AngularFireStorage } from "@angular/fire/storage";
 
 @Injectable()
 export class BoardServiceV2 {
@@ -61,7 +64,8 @@ export class BoardServiceV2 {
 
   constructor(
     private _store: AngularFirestore,
-    private authService: AuthService
+    private authService: AuthService,
+    private storage: AngularFireStorage
   ) {}
 
   /**
@@ -926,6 +930,18 @@ export class BoardServiceV2 {
     return boardSnapshot.docs;
   }
 
+  async getLabelAsync(boardId: string) {
+    const db = firebase.firestore();
+    const labelsRef = db.collection("boards").doc(boardId).collection("labels");
+    const labelSnapshot = await labelsRef.get();
+    const boardLabels = [];
+    labelSnapshot.forEach((labelDoc) => {
+      const label = labelDoc.data();
+      boardLabels.push(label);
+    });
+    return boardLabels;
+  }
+
   findLabel(boardId: string, label: Label) {
     return this._store
       .collection("boards")
@@ -1055,38 +1071,116 @@ export class BoardServiceV2 {
   /* General methods
   **/
 
-  async gatherUserActivityAcrossBoard(userId: string) {
-    const db = firebase.firestore();
-    const userDocuments = db
-      .collection("boards")
-      .where("shared", "array-contains", userId)
-      .get();
-    const boardIdsWithUser = [];
-    await userDocuments
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          boardIdsWithUser.push(doc.id);
+  private allUserTasks = [];
+  private allTaskActivity: Activity[] = [];
+  private allTasksFromBoard: Task[] = [];
+
+  async gatherUserActivityAcrossBoard(
+    userId: string,
+    type: string
+  ): Promise<Activity[] | Task[]> {
+    if (
+      type === "activity" &&
+      this.allTaskActivity &&
+      this.allTaskActivity.length > 0
+    ) {
+      return this.allTaskActivity;
+    } else if (
+      type === "task" &&
+      this.allTasksFromBoard &&
+      this.allTasksFromBoard.length > 0
+    ) {
+      return this.allTasksFromBoard;
+    }
+
+    if (this.allUserTasks && this.allUserTasks.length == 0) {
+      const boardWithUser = [];
+      console.log("Called for first time...gathering data...");
+      const db = firebase.firestore();
+      const userDocuments = db
+        .collection("boards")
+        .where("shared", "array-contains", userId)
+        .get();
+
+      await userDocuments
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const board = doc.data();
+            board.id = doc.id;
+            boardWithUser.push(board);
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
         });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
+
+      //Gather all task documents
+      for (let i = 0; i < boardWithUser.length; i++) {
+        console.log(boardWithUser[i]);
+        const boardTaskRef = db
+          .collection("boards")
+          .doc(boardWithUser[i].id)
+          .collection("tasks");
+        const taskSnapshot = await boardTaskRef.get();
+        taskSnapshot.forEach((taskDoc) => {
+          const task = taskDoc.data();
+          task.id = taskDoc.id;
+          task.taskOnBoard = boardWithUser[i].title;
+          task.boardId = boardWithUser[i].id;
+          this.allUserTasks.push(task);
+        });
+      }
+    }
+
+    //Find current user activity from all boards
+
+    if (type === "activity") {
+      this.allUserTasks.forEach((task) => {
+        const curActivities = task.activities;
+        if (curActivities) {
+          curActivities.forEach((activity: Activity) => {
+            if (activity.id == userId) {
+              activity.taskOnBoard = task.taskOnBoard;
+              this.allTaskActivity.push(activity);
+            }
+          });
+        }
       });
+      console.log("Activity gather Complete...");
+      return this.allTaskActivity;
+    } else if (type === "task") {
+      this.allUserTasks.forEach((task) => {
+        if (task.members) {
+          task.members.forEach((member) => {
+            if (member.id == userId) {
+              this.allTasksFromBoard.push(task);
+            }
+          });
+        }
+      });
+      console.log("Task gather Complete...");
+      return this.allTasksFromBoard;
+    }
+  }
 
-    // console.log(boardIdsWithUser);
-    boardIdsWithUser.forEach((id) => {
-      this._store
-        .collection<Board>("boards")
-        .doc(id)
-        .collection<Task>("tasks", (ref) =>
-          ref.where("shared", "array-contains", userId)
-        );
-    });
+  async gatherBackgroundImages() {
+    var storageRef = firebase.storage().ref("backgroundImages");
+    const allImagesRef = await storageRef.listAll();
+    const allImageDownloadUrl = [];
+    for (let i = 0; i < allImagesRef.items.length; i++) {
+      const imageRef = allImagesRef.items[i];
+      const imageUrl = await imageRef.getDownloadURL();
+      const imageData = {
+        name: imageRef.name,
+        url: imageUrl,
+      };
+      allImageDownloadUrl.push(imageData);
+    }
+    return allImageDownloadUrl;
+  }
 
-    // this.userActivitySubscription = this.userActivityCollection
-    //   .valueChanges({ idField: "id" })
-    //   .subscribe((activities) => {
-    //     this.userActivities = activities;
-    //     this.userActivityChanged.next([...this.userActivities]);
-    //   });
+  getBackgroundImage(imageReference) {
+    const ref = this.storage.ref(imageReference);
+    return ref.getDownloadURL();
   }
 }
