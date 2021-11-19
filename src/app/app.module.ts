@@ -57,6 +57,7 @@ import { NotificationDialogComponent } from "./common/notification/notification-
 import { InformationDialogComponent } from "./common/information/information-dialog.component";
 import { AutomationDialogComponent } from "./common/automation-dialog/automation-dialog.component";
 import { UploadDialogComponent } from "./common/upload-dialog/upload-dialog.component";
+import { SubscriptionDialogComponent } from "./common/subscription-dialog/subscription-dialog.component";
 
 @NgModule({
   declarations: [
@@ -92,6 +93,7 @@ import { UploadDialogComponent } from "./common/upload-dialog/upload-dialog.comp
     InformationDialogComponent,
     AutomationDialogComponent,
     UploadDialogComponent,
+    SubscriptionDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -148,6 +150,7 @@ import { UploadDialogComponent } from "./common/upload-dialog/upload-dialog.comp
     InformationDialogComponent,
     AutomationDialogComponent,
     UploadDialogComponent,
+    SubscriptionDialogComponent
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

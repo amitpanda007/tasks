@@ -66,11 +66,11 @@ export class AccountService {
     const db = firebase.firestore();
     const userSnapshot = await db.collection("users").doc(userId).get();
     const user = userSnapshot.data() as User;
-    if(user.avatarImg) {
+    if (user.avatarImg) {
       const imageReference = `avatar\/${user.avatarImg}`;
       const ref = this.storage.ref(imageReference);
       return ref.getDownloadURL().toPromise();
-    }else {
+    } else {
       return null;
     }
   }

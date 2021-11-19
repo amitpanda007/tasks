@@ -13,6 +13,8 @@ import {
   ClosedBoardContentDialogResult,
 } from "src/app/common/closed-board-content/closed-board-content-dialog.component";
 import { Router } from "@angular/router";
+import { APIService } from "src/app/core/services/api.service";
+import { SubscriptionDialogComponent, SubscriptionDialogResult } from "src/app/common/subscription-dialog/subscription-dialog.component";
 
 @Component({
   selector: "board-list",
@@ -30,6 +32,7 @@ export class BaordListComponent implements OnInit {
     private dialog: MatDialog,
     private boardServiceV2: BoardServiceV2,
     private authService: AuthService,
+    private apiservice: APIService,
     private router: Router
   ) {}
 
@@ -70,52 +73,75 @@ export class BaordListComponent implements OnInit {
     this.boardSubscription.unsubscribe();
   }
 
-  newBoard(): void {
-    const dialogRef = this.dialog.open(BoardDialogComponent, {
-      width: "360px",
-      data: {
-        board: {},
-      },
-    });
-    dialogRef.afterClosed().subscribe((result: BoardDialogResult) => {
-      if (!result) {
-        return;
-      }
+  async newBoard() {
+    const userTokenResult = await this.authService.getUserToken();
+    console.log(userTokenResult);
 
-      const userUID = this.authService.getUID();
-      const user: SharedUser = {
-        id: userUID,
-        name: this.authService.getUserDisplayName(),
-        permission: {
-          admin: true,
-          normal: false,
-          owner: true,
+    if (userTokenResult.claims.paidUser) {
+      const dialogRef = this.dialog.open(BoardDialogComponent, {
+        width: "360px",
+        data: {
+          board: {},
         },
-      };
+      });
+      dialogRef.afterClosed().subscribe((result: BoardDialogResult) => {
+        if (!result) {
+          return;
+        }
 
-      const board: Board = {
-        title: result.board.title,
-        description: result.board.description,
-        owner: userUID,
-        settings: {
-          cardCoverEnabled: false,
-          addRemovePermission: {
+        const userUID = this.authService.getUID();
+        const user: SharedUser = {
+          id: userUID,
+          name: this.authService.getUserDisplayName(),
+          permission: {
             admin: true,
-            allMembers: false,
+            normal: false,
+            owner: true,
           },
-          commentingPermission: {
-            disabled: true,
-            members: false,
-            membersAndObservers: false,
-            AllBoardMembers: false,
-            anyUser: false,
+        };
+
+        const board: Board = {
+          title: result.board.title,
+          description: result.board.description,
+          owner: userUID,
+          settings: {
+            cardCoverEnabled: false,
+            addRemovePermission: {
+              admin: true,
+              allMembers: false,
+            },
+            commentingPermission: {
+              disabled: true,
+              members: false,
+              membersAndObservers: false,
+              AllBoardMembers: false,
+              anyUser: false,
+            },
           },
+          shared: [userUID],
+          sharedUserInfo: [user],
+        };
+        this.boardServiceV2.addBoard(board);
+      });
+    }else {
+      // Open Paid User POP-UP Modal
+      const dialogRef = this.dialog.open(SubscriptionDialogComponent, {
+        width: "280px",
+        data: {
+          header: "Add Unlimited Boards",
+          body: "Upgrade your Tasks account to a Paid user, so you can utilize the full set of functionalities.",
         },
-        shared: [userUID],
-        sharedUserInfo: [user],
-      };
-      this.boardServiceV2.addBoard(board);
-    });
+      });
+      dialogRef.afterClosed().subscribe((result: SubscriptionDialogResult) => {
+        if (!result) {
+          return;
+        }
+        if(result.paid) {
+          this.apiservice.setToPaidUser();
+        }
+      });
+      
+    }
   }
 
   editBoard(board: Board): void {

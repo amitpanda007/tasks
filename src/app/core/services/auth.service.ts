@@ -126,6 +126,10 @@ export class AuthService {
     return this._afAuth.auth.currentUser.displayName;
   }
 
+  async getUserToken() {
+    return await this._afAuth.auth.currentUser.getIdTokenResult();
+  }
+
   authStateChanged() {
     return new Observable((subscriber) => {
       this._afAuth.authState.subscribe((state) => {
