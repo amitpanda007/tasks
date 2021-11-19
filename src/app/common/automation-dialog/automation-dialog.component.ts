@@ -88,7 +88,7 @@ export class AutomationDialogComponent implements OnInit {
     this.isShowingActionSection = true;
   }
 
-  addAction(actionOne, actionTwo, actionThree) {
+  addAction(actionOne="", actionTwo="", actionThree="") {
     console.log(actionOne, actionTwo, actionThree);
     this.isSaveEnabled = true;
   }

@@ -43,12 +43,21 @@
       >
         <p class="sub-header">Members</p>
         <div class="member-section">
-          <span
-            class="member"
-            *ngFor="let member of data.task.members"
-            matTooltip="{{ member.name }}"
-            >{{ member.name | shortname }}</span
-          >
+          <span *ngFor="let member of data.task.members">
+            <span
+              *ngIf="!member.image"
+              class="member"
+              matTooltip="{{ member.name }}"
+              >{{ member.name | shortname }}</span
+            >
+            <span
+              *ngIf="member.image"
+              class="member member-image"
+              [style.background-image]="'url(' + member.image + ')'"
+              matTooltip="{{ member.name }}"
+              [matTooltipPosition]="'above'"
+            ></span>
+          </span>
           <div>
             <button
               mat-icon-button
@@ -232,9 +241,15 @@
               *ngFor="let activity of data.task.activities"
               class="activity-text"
             >
-              <span class="member" matTooltip="{{ activity.user }}">{{
+              <span class="member" matTooltip="{{ activity.user }}" *ngIf="!activity.userImage">{{
                 activity.user | shortname
               }}</span>
+              <span
+                *ngIf="activity.userImage"
+                class="member member-image"
+                [style.background-image]="'url(' + activity.userImage + ')'"
+                matTooltip="{{ activity.userImage }}"
+              ></span>
               <span
                 ><b>{{ activity.user }}</b>
                 <span [innerHTML]="activity.action"></span
@@ -252,10 +267,18 @@
         <div class="comment-header">
           <diV class="flex-display align-top">
             <span
+              *ngIf="!currentUser.image"
               class="member member-large"
               matTooltip="{{ currentUser.name }}"
               >{{ currentUser.name | shortname }}</span
             >
+            <span
+              *ngIf="currentUser.image"
+              class="member member-image"
+              [style.background-image]="'url(' + currentUser.image + ')'"
+              matTooltip="{{ currentUser.name }}"
+              [matTooltipPosition]="'above'"
+            ></span>
 
             <textarea
               *ngIf="true"

@@ -76,6 +76,7 @@
         <div class="members" *ngIf="boardMembers && boardMembers.length > 0">
           <span *ngFor="let member of boardMembers">
             <span
+              *ngIf="!member.image"
               class="member"
               [ngClass]="{ 'current-member': member.isCurrentUser }"
               matTooltip="{{ member.name }}"
@@ -93,6 +94,24 @@
                 matTooltip="admin"
               ></span
             ></span>
+            <span
+              *ngIf="member.image"
+              class="member member-image"
+              [style.background-image]="'url(' + member.image + ')'"
+              matTooltip="{{ member.name }}"
+              [matTooltipPosition]="'above'"
+            >
+              <span
+                *ngIf="member.permission.owner"
+                class="member-owner owner-img"
+                matTooltip="owner"
+              ></span
+              ><span
+                *ngIf="member.permission.admin"
+                class="member-admin admin-img"
+                matTooltip="admin"
+              ></span>
+            </span>
           </span>
         </div>
 
@@ -247,7 +266,7 @@
               aria-label="drag task list"
               matTooltip="create new task"
             >
-              <mat-icon>add</mat-icon>
+              <mat-icon class="icon-small">add</mat-icon>
             </button>
             <button
               mat-icon-button
@@ -256,7 +275,9 @@
               aria-label="task list background color"
               matTooltip="add background color"
             >
-              <mat-icon class="material-icons-outlined">palette</mat-icon>
+              <mat-icon class="material-icons-outlined icon-small"
+                >palette</mat-icon
+              >
             </button>
             <button
               mat-icon-button
@@ -265,7 +286,7 @@
               aria-label="drag task list"
               matTooltip="delete task list"
             >
-              <mat-icon>delete</mat-icon>
+              <mat-icon class="icon-small">delete</mat-icon>
             </button>
             <button
               mat-icon-button
@@ -273,7 +294,7 @@
               aria-label="Create from template"
               matTooltip="Create from template"
             >
-              <mat-icon>event_note</mat-icon>
+              <mat-icon class="icon-small">event_note</mat-icon>
             </button>
           </div>
         </mat-card>
@@ -464,9 +485,15 @@
           "
           class="activity-text"
         >
-          <span class="member" matTooltip="{{ activity.user }}">{{
+          <span class="member" matTooltip="{{ activity.user }}" *ngIf="!activity.userImage">{{
             activity.user | shortname
           }}</span>
+          <span
+            *ngIf="activity.userImage"
+            class="member member-image"
+            [style.background-image]="'url(' + activity.userImage + ')'"
+            matTooltip="{{ activity.userImage }}"
+          ></span>
           <div class="member-info">
             <span
               ><b>{{ activity.user }}</b> {{ activity.action }} on
@@ -704,12 +731,20 @@
     </div>
 
     <div class="line about-sec">
-      <span
-        class="member"
-        matTooltip="{{ admin.name }}"
-        *ngFor="let admin of allAdmins"
-        [innerHTML]="admin.name | shortname"
-      ></span>
+      <span *ngFor="let admin of allAdmins">
+        <span
+          *ngIf="!admin.image"
+          class="member"
+          matTooltip="{{ admin.name }}"
+          [innerHTML]="admin.name | shortname"
+        ></span>
+        <span
+          *ngIf="admin.image"
+          class="member member-image"
+          [style.background-image]="'url(' + admin.image + ')'"
+          matTooltip="{{ admin.name }}"
+        ></span>
+      </span>
     </div>
 
     <div class="about-sec">

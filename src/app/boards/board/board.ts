@@ -24,6 +24,7 @@ export interface SharedUser {
   isAdded?: boolean;
   permission?: Permission;
   isCurrentUser?: boolean;
+  image?: string;
 }
 export interface Permission {
   admin: boolean;

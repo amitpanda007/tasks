@@ -233,6 +233,13 @@ mat-icon span {
   z-index: 0;
 }
 
+.member-image {
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .badge {
   color: #5e6c84;
   display: flex;

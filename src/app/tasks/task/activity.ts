@@ -6,4 +6,5 @@ export interface Activity {
   taskTitle?: string;
   taskId?: string;
   taskOnBoard?: string;
+  userImage?: string;
 }

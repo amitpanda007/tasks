@@ -62,6 +62,19 @@ export class AccountService {
     return ref.getDownloadURL();
   }
 
+  async getAvatarImageForUser(userId: string) {
+    const db = firebase.firestore();
+    const userSnapshot = await db.collection("users").doc(userId).get();
+    const user = userSnapshot.data() as User;
+    if(user.avatarImg) {
+      const imageReference = `avatar\/${user.avatarImg}`;
+      const ref = this.storage.ref(imageReference);
+      return ref.getDownloadURL().toPromise();
+    }else {
+      return null;
+    }
+  }
+
   //https://blog.angular.io/file-uploads-come-to-angularfire-6842352b3b47
   uploadAvatarImage(fileName: string, file: File) {
     const uploadProgress = this.storage

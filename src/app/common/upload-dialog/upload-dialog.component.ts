@@ -8,7 +8,7 @@ import { AccountService } from "src/app/core/services/account.service";
   styleUrls: ["./upload-dialog.component.scss"],
 })
 export class UploadDialogComponent implements OnInit {
-  private fileToUpload: any;
+  public fileToUpload: any;
   public uploadProgress: number = 0;
   public isUploadComplete: boolean = false;
   public uploadConfirmed: boolean = false;

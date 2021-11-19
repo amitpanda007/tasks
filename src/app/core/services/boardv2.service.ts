@@ -618,6 +618,21 @@ export class BoardServiceV2 {
   }
 
   updateTask(boardId: string, taskId: string, task: Task) {
+    // Delete images referrence from members
+    if(task.members && task.members.length > 0) {
+      task.members.forEach((member) => {
+        delete member.image;
+      });
+    }
+
+    // Delete images referrence from activities
+    if(task.activities && task.activities.length > 0) {
+      task.activities.forEach((activity) => {
+        delete activity.userImage;
+      });
+    }
+
+    console.log(task);
     this._store
       .collection("boards")
       .doc(boardId)

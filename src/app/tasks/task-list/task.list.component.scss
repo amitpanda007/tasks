@@ -142,6 +142,13 @@ mat-toolbar > span {
   z-index: 0;
 }
 
+.member-image {
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .current-member {
   color: #ffffff;
   background-color: #00bcd4;

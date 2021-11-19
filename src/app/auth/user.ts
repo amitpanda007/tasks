@@ -8,6 +8,8 @@ export interface User {
   avatarImg?: string;
   initials?: string;
   bio?: string;
+  username?: string;
+  image?: string;
 }
 
 export interface Permission {

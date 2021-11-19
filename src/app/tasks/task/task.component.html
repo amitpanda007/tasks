@@ -156,12 +156,17 @@
     </p>
 
     <div class="members">
-      <span
-        class="member"
-        *ngFor="let member of task.members"
-        matTooltip="{{ member.name }}"
-        >{{ member.name | shortname }}</span
-      >
+      <span *ngFor="let member of task.members">
+        <span class="member" matTooltip="{{ member.name }}" *ngIf="!member.image">{{
+          member.name | shortname
+        }}</span>
+        <span
+          *ngIf="member.image"
+          class="member member-image"
+          [style.background-image]="'url(' + member.image + ')'"
+          matTooltip="{{ member.name }}"
+        ></span>
+      </span>
     </div>
   </div>
 

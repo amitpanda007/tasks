@@ -146,4 +146,12 @@ export class AccountSettingsComponent implements OnInit {
     const taskId = event.id;
     this.router.navigateByUrl(`boards/${boardId}?task=${taskId}`);
   }
+
+  activityToCard(taskId: string) {
+    console.log(taskId);
+  }
+
+  activityToBoard(taskId: string) {
+    console.log(taskId);
+  }
 }

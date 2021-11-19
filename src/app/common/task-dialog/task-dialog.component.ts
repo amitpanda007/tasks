@@ -100,6 +100,8 @@ export class TaskDialogComponent implements OnInit {
 
   ngOnInit(): void {
     console.log(this.data.task.id);
+    console.log(this.data.task);
+    
     this.tooltipPosition = "right";
     this.showHideActivities = false;
     this.showHideChecklistAddItem = false;
@@ -175,6 +177,11 @@ export class TaskDialogComponent implements OnInit {
       .getUserById(this.authService.getUID())
       .then((userData) => {
         this.currentUser = userData;
+        this.data.boardMembers.forEach((member) => {
+          if(member.id === this.currentUser.id) {
+            this.currentUser.image = member.image;
+          }
+        })
       });
   }
 
@@ -534,6 +541,15 @@ export class TaskDialogComponent implements OnInit {
   }
 
   showHideActivity() {
+    this.data.task.activities.forEach((activity) => {
+      this.data.boardMembers.forEach((member) => {
+        if(member.image) {
+          if(activity.id ==  member.id) {
+            activity.userImage = member.image;
+          }
+        }
+      })
+    });
     this.showHideActivities = !this.showHideActivities;
   }
 

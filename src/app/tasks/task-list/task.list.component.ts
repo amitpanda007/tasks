@@ -80,6 +80,7 @@ import {
   UploadDialogComponent,
   UploadDialogResult,
 } from "src/app/common/upload-dialog/upload-dialog.component";
+import { AccountService } from "src/app/core/services/account.service";
 
 @Component({
   selector: "task-list",
@@ -170,7 +171,8 @@ export class TaskListComponent implements OnInit {
     private boardServiceV2: BoardServiceV2,
     private authService: AuthService,
     private snackBar: MatSnackBar,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private accountService: AccountService
   ) {
     // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.boardId = this.route.snapshot.params.boardId;
@@ -200,6 +202,9 @@ export class TaskListComponent implements OnInit {
   }
 
   async ngOnInit() {
+    // Start Loading Screen till page is setup
+    this.loaderService.changeLoading(true);
+
     // Setup event listeners to detect online/offline state of connecton.
     window.addEventListener("offline", (e) => {
       this.snackBar.openFromComponent(ErrorSnackbar, {
@@ -253,7 +258,16 @@ export class TaskListComponent implements OnInit {
     if (this.board.shared && this.board.shared.includes(userUID)) {
       console.log("User has access.");
       this.hasBoardAccess = true;
-      this.boardMembers = this.board.sharedUserInfo;
+      // this.boardMembers = this.board.sharedUserInfo;
+      const boardMembers = this.board.sharedUserInfo;
+      for (let i = 0; i < boardMembers.length; i++) {
+        const memberImage = await this.accountService.getAvatarImageForUser(boardMembers[i].id);
+        if(memberImage) {
+          boardMembers[i].image = memberImage;
+        }
+        this.boardMembers.push(boardMembers[i]);
+      }
+      console.log(this.boardMembers);
     } else {
       console.log("You dont have Access to this Board.");
       this.router.navigate(["/boards"]);
@@ -265,7 +279,6 @@ export class TaskListComponent implements OnInit {
     // }
 
     console.log("TASK LIST INITIATED");
-    this.loaderService.changeLoading(true);
     this.boardServiceV2.getSingleBoard(this.boardId);
     this.boardServiceV2.getTaskList(this.boardId);
     this.boardServiceV2.getTasks(this.boardId);
@@ -359,8 +372,10 @@ export class TaskListComponent implements OnInit {
             this.authService.getUID()
           );
         }
-
-        this.boardMembers = board.sharedUserInfo;
+        
+        if(this.boardMembers.length != board.sharedUserInfo.length) {
+          this.boardMembers = board.sharedUserInfo;
+        }
         if (this.boardMembers && this.boardMembers.length > 0) {
           this.boardMembers.forEach((boardMember) => {
             if (boardMember.id == this.authService.getUID()) {
@@ -427,6 +442,16 @@ export class TaskListComponent implements OnInit {
 
                 this.activities.push(...curActivities);
               }
+
+              if(task.members && task.members.length > 0) {
+                task.members.forEach((member) => {
+                  this.boardMembers.forEach(boardMember => {
+                    if(member.id === boardMember.id) {
+                      member.image = boardMember.image;
+                    }
+                  })
+                })
+              }
             });
             this.activities.sort((a, b) => {
               if (a.dateTime > b.dateTime) return -1;
@@ -434,6 +459,15 @@ export class TaskListComponent implements OnInit {
               else return 0;
             });
 
+            this.activities.forEach(activity => {
+              this.boardMembers.forEach(member => {
+                if(member.image) {
+                  if(member.id == activity.id) {
+                    activity.userImage = member.image;
+                  }
+                }
+              })
+            });
             // console.log(this.activities);
 
             this.loaderService.changeLoading(false);
@@ -953,7 +987,8 @@ export class TaskListComponent implements OnInit {
   }
 
   setTaskStatus(data) {
-    const task = data.task;
+    console.log(data);
+    const task = data.task as Task;
     task.status = data.status.name;
     this.boardServiceV2.updateTask(this.boardId, task.id, task);
   }

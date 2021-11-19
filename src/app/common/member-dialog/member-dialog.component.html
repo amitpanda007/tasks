@@ -1,7 +1,10 @@
 <div mat-dialog-content>
   <!-- <p class="title">Members</p> -->
   <div class="search">
-    <filter-search (changed)="filterMembers($event)" [placeholder]="'Search members'"></filter-search>
+    <filter-search
+      (changed)="filterMembers($event)"
+      [placeholder]="'Search members'"
+    ></filter-search>
   </div>
   <p class="sub-header">BOARD MEMBERS</p>
   <div *ngIf="data.members">
@@ -11,11 +14,18 @@
       *ngFor="let member of filteredMembers"
       class="member-info"
     >
-    <span class="flex-display">
-      <span class="member flex-display">{{ member.name | shortname }}</span>
-      <span>{{ member.name }}</span>
-      <mat-icon *ngIf="member.isAdded">done</mat-icon>
-    </span>
+      <span class="flex-display">
+        <span *ngIf="!member.image" class="member flex-display">{{
+          member.name | shortname
+        }}</span>
+        <span
+          *ngIf="member.image"
+          class="member member-image"
+          [style.background-image]="'url(' + member.image + ')'"
+        ></span>
+        <span>{{ member.name }}</span>
+        <mat-icon *ngIf="member.isAdded">done</mat-icon>
+      </span>
     </button>
   </div>
   <button

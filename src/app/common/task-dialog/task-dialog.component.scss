@@ -252,11 +252,18 @@ section {
   margin: 0 2px 0 2px;
   overflow: visible;
   position: relative;
-  width: 32px;
+  width: 34px;
   text-decoration: none;
   -webkit-user-select: none;
   user-select: none;
   z-index: 0;
+}
+
+.member-image {
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .member-large {
