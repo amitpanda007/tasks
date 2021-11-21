@@ -14,7 +14,10 @@ import {
 } from "src/app/common/closed-board-content/closed-board-content-dialog.component";
 import { Router } from "@angular/router";
 import { APIService } from "src/app/core/services/api.service";
-import { SubscriptionDialogComponent, SubscriptionDialogResult } from "src/app/common/subscription-dialog/subscription-dialog.component";
+import {
+  SubscriptionDialogComponent,
+  SubscriptionDialogResult,
+} from "src/app/common/subscription-dialog/subscription-dialog.component";
 
 @Component({
   selector: "board-list",
@@ -77,7 +80,7 @@ export class BaordListComponent implements OnInit {
     const userTokenResult = await this.authService.getUserToken();
     console.log(userTokenResult);
 
-    if (userTokenResult.claims.paidUser) {
+    if (userTokenResult.claims.subscribedUser) {
       const dialogRef = this.dialog.open(BoardDialogComponent, {
         width: "360px",
         data: {
@@ -123,7 +126,7 @@ export class BaordListComponent implements OnInit {
         };
         this.boardServiceV2.addBoard(board);
       });
-    }else {
+    } else {
       // Open Paid User POP-UP Modal
       const dialogRef = this.dialog.open(SubscriptionDialogComponent, {
         width: "280px",
@@ -136,11 +139,15 @@ export class BaordListComponent implements OnInit {
         if (!result) {
           return;
         }
-        if(result.paid) {
-          this.apiservice.setToPaidUser();
+        if (result.paid) {
+          this.apiservice.addSubscription().then((response: any) => {
+            console.log(response);
+            if (response.status === "success") {
+              this.apiservice.refreshFBToken();
+            }
+          });
         }
       });
-      
     }
   }
 

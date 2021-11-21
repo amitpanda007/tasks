@@ -29,36 +29,42 @@ export class APIService {
       .get(apiUrl, {
         params: {
           email: email,
-          name: name
+          name: name,
         },
         observe: "response",
       })
       .toPromise();
   }
 
-  async setToPaidUser() {
+  async addSubscription() {
     const idToken = await this._afAuth.auth.currentUser.getIdToken();
     console.log(idToken);
 
     // Make API Call to set the custom claim
-    const apiUrl = `${environment.apiUrl}payment/removeuser`;
-    this.http.post(apiUrl, {idToken: idToken}).subscribe(response => {
-      console.log(response);
-    })
-    // Force token refresh. The token claims will contain the additional claims.
-    // firebase.auth().currentUser.getIdToken(true);
+    const apiUrl = `${environment.apiUrl}payment/addsubscription`;
+    return this.http.post(apiUrl, { idToken: idToken }).toPromise();
   }
 
-  async removeFromPaidUser() {
+  async removeSubscription() {
     const idToken = await firebase.auth().currentUser.getIdToken();
     console.log(idToken);
 
     // Make API Call to set the custom claim
-    const apiUrl = `${environment.apiUrl}payment/removeuser`;
-    this.http.post(apiUrl, {idToken: idToken}).subscribe(response => {
-      console.log(response);
-    })
-    // Force token refresh. The token claims will contain the additional claims.
-    // firebase.auth().currentUser.getIdToken(true);
+    const apiUrl = `${environment.apiUrl}payment/removesubscription`;
+    return this.http.post(apiUrl, { idToken: idToken }).toPromise();
+  }
+
+  async refreshFBToken() {
+    await firebase.auth().currentUser.getIdToken(true);
+    return true;
+  }
+
+  paymentWithRazorPay(paymentData) {
+    const apiUrl = `${environment.apiUrl}payment/razorpayorder`;
+    return this.http
+      .post(apiUrl, {
+        amount: paymentData.amount,
+      })
+      .toPromise();
   }
 }

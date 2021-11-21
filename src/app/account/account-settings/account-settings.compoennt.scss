@@ -212,3 +212,12 @@ hr {
 .board-card {
   margin-bottom: 1rem;
 }
+
+.pay-btn-cancel {
+  background-color: #ff8a80;
+  transition: background-color 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.pay-btn-cancel:hover {
+  background-color: #ff1744;
+}

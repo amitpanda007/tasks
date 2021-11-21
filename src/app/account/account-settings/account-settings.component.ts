@@ -9,6 +9,8 @@ import {
   UploadDialogResult,
 } from "src/app/common/upload-dialog/upload-dialog.component";
 import { AccountService } from "src/app/core/services/account.service";
+import { APIService } from "src/app/core/services/api.service";
+import { AuthService } from "src/app/core/services/auth.service";
 import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
 import { Activity } from "src/app/tasks/task/activity";
 import { Task } from "src/app/tasks/task/task";
@@ -21,6 +23,7 @@ import { TaskOption } from "src/app/tasks/task/taskoptions";
   styleUrls: ["account-settings.compoennt.scss"],
 })
 export class AccountSettingsComponent implements OnInit {
+  public subscribedUser: boolean;
   private userSubscription: Subscription;
   public user: User;
   public avatarImageUrl: string;
@@ -33,14 +36,17 @@ export class AccountSettingsComponent implements OnInit {
   constructor(
     private accountService: AccountService,
     private boardServiceV2: BoardServiceV2,
+    private authService: AuthService,
+    private apiservice: APIService,
     private dialog: MatDialog,
     private router: Router
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.accountService.getUserInfo();
     this.userSubscription = this.accountService.userDataChanged.subscribe(
       (userData: User) => {
+        console.log(userData);
         this.user = userData;
         console.log(this.user);
         if (!userData.avatarImg) {
@@ -54,6 +60,9 @@ export class AccountSettingsComponent implements OnInit {
           });
       }
     );
+
+    const userTokenResult = await this.authService.getUserToken();
+    this.subscribedUser = userTokenResult.claims.subscribedUser;
   }
 
   ngOnDestroy(): void {
@@ -153,5 +162,24 @@ export class AccountSettingsComponent implements OnInit {
 
   activityToBoard(taskId: string) {
     console.log(taskId);
+  }
+
+  async cancelSubscription() {
+    const userTokenResult = await this.authService.getUserToken();
+    console.log(userTokenResult);
+
+    if (userTokenResult.claims.subscribedUser) {
+      await this.apiservice.removeSubscription().then(async (response: any) => {
+        if (response.status === "success") {
+          const refreshCompleted = await this.apiservice.refreshFBToken();
+          console.log(`Refreshed Token: ${refreshCompleted}`);
+          if (refreshCompleted) {
+            const userTokenResult = await this.authService.getUserToken();
+            console.log(userTokenResult);
+            this.subscribedUser = userTokenResult.claims.subscribedUser;
+          }
+        }
+      });
+    }
   }
 }

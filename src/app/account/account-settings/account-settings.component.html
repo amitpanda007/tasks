@@ -163,6 +163,16 @@
           <p class="label">Daily Task Settings</p>
           <button mat-flat-button color="primary">Save</button>
         </div>
+        <div *ngIf="subscribedUser">
+          <p class="label">payment</p>
+          <button
+            mat-flat-button
+            class="pay-btn-cancel"
+            (click)="cancelSubscription()"
+          >
+            Cancel Subscription
+          </button>
+        </div>
       </div>
     </section>
   </mat-tab>

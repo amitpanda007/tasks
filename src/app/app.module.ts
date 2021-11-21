@@ -58,6 +58,7 @@ import { InformationDialogComponent } from "./common/information/information-dia
 import { AutomationDialogComponent } from "./common/automation-dialog/automation-dialog.component";
 import { UploadDialogComponent } from "./common/upload-dialog/upload-dialog.component";
 import { SubscriptionDialogComponent } from "./common/subscription-dialog/subscription-dialog.component";
+import { PaymentModule } from "./payment/payment.module";
 
 @NgModule({
   declarations: [
@@ -93,7 +94,7 @@ import { SubscriptionDialogComponent } from "./common/subscription-dialog/subscr
     InformationDialogComponent,
     AutomationDialogComponent,
     UploadDialogComponent,
-    SubscriptionDialogComponent
+    SubscriptionDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -107,6 +108,7 @@ import { SubscriptionDialogComponent } from "./common/subscription-dialog/subscr
     BoardsModule,
     DailyModule,
     AccountModule,
+    PaymentModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
@@ -150,7 +152,7 @@ import { SubscriptionDialogComponent } from "./common/subscription-dialog/subscr
     InformationDialogComponent,
     AutomationDialogComponent,
     UploadDialogComponent,
-    SubscriptionDialogComponent
+    SubscriptionDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],
