@@ -59,11 +59,23 @@ export class APIService {
     return true;
   }
 
-  paymentWithRazorPay(paymentData) {
+  async paymentWithRazorPay(paymentData) {
     const apiUrl = `${environment.apiUrl}payment/razorpayorder`;
-    return this.http
+    const orderDetails = await this.http
       .post(apiUrl, {
         amount: paymentData.amount,
+      })
+      .toPromise();
+    return orderDetails;
+  }
+
+  verifyPaymentRazorPay(orderData) {
+    const apiUrl = `${environment.apiUrl}payment/verifypayment`;
+    return this.http
+      .post(apiUrl, {
+        orderId: orderData.orderId,
+        razorpayPaymentId: orderData.razorpayPaymentId,
+        razorpaySignature: orderData.razorpaySignature,
       })
       .toPromise();
   }

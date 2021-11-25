@@ -20,6 +20,7 @@ import { APIService } from "./services/api.service";
 import { LoaderService } from "./services/loader.service";
 import { LoaderComponent } from "./loader/loader.component";
 import { NotificationService } from "./services/notification.service";
+import { PaymentService } from "./services/payment.service";
 
 @NgModule({
   imports: [CommonModule, SharedModule],
@@ -39,6 +40,7 @@ import { NotificationService } from "./services/notification.service";
     APIService,
     LoaderService,
     NotificationService,
+    PaymentService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
 })

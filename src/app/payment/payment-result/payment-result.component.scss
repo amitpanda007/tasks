@@ -1,0 +1,124 @@
+.pricing-img {
+  margin-bottom: 25px;
+  max-width: 100%;
+}
+
+.pricing-header {
+  color: #888;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.pricing-features {
+  color: #016ff9;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin: 50px 0 25px;
+}
+
+.pricing-features-item {
+  border-top: 1px solid #e1f1ff;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 15px 0;
+}
+
+.pricing-features-item:last-child {
+  border-bottom: 1px solid #e1f1ff;
+}
+
+.pricing-price {
+  color: #016ff9;
+  display: block;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.pricing-button {
+  border: 1px solid #9dd1ff;
+  border-radius: 10px;
+  color: #348efe;
+  display: inline-block;
+  margin: 25px 0;
+  padding: 15px 35px;
+  text-decoration: none;
+  transition: all 150ms ease-in-out;
+}
+
+.pricing-button:hover,
+.pricing-button:focus {
+  background-color: #e1f1ff;
+}
+
+.pricing-button.is-featured {
+  background-color: #48aaff;
+  color: #fff;
+}
+
+.pricing-button.is-featured:hover,
+.pricing-button.is-featured:active {
+  background-color: #269aff;
+}
+
+.payment-background {
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 0.06);
+  z-index: 1000;
+}
+
+.payment-msg-box {
+  background: white;
+  height: 60%;
+  width: 80%;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  justify-content: space-around;
+}
+
+.payment-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.confirm-msg {
+  color: #0ea55e;
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.failed-msg {
+  color: #ce472f;
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.order-info-msg {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.order-info-sub-msg {
+  width: 65%;
+}
+
+.btn {
+  margin: 0 10px;
+}
+
+.btn-pop {
+  background-color: rgb(212, 112, 145);
+}
+
+.btn-pop2 {
+  background-color: rgb(75, 192, 91);
+}

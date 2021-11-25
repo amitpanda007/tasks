@@ -35,7 +35,7 @@ export class BaordListComponent implements OnInit {
     private dialog: MatDialog,
     private boardServiceV2: BoardServiceV2,
     private authService: AuthService,
-    private apiservice: APIService,
+    private apiService: APIService,
     private router: Router
   ) {}
 
@@ -140,12 +140,7 @@ export class BaordListComponent implements OnInit {
           return;
         }
         if (result.paid) {
-          this.apiservice.addSubscription().then((response: any) => {
-            console.log(response);
-            if (response.status === "success") {
-              this.apiservice.refreshFBToken();
-            }
-          });
+          this.router.navigate(["/payments"]);
         }
       });
     }

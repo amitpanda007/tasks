@@ -1,0 +1,46 @@
+<div *ngIf="isPaymentSuccessful" class="payment-background">
+  <div class="payment-msg-box">
+    <div class="payment-info">
+      <p class="confirm-msg">Subscription confirmed</p>
+      <p class="order-info-msg">
+        Subscription Id <b>#{{ subscriptionId }}</b>
+      </p>
+      <p class="order-info-sub-msg">
+        Your subscription is created successfully. You will receive the
+        subscription email/SMS shortly. You can now access premium features.
+      </p>
+    </div>
+    <div>
+      <button mat-stroked-button class="btn" (click)="navigateAccount()">
+        Accounts
+      </button>
+      <button mat-stroked-button class="btn btn-pop" (click)="navigateBoards()">
+        Your Boards
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isPaymentFailed" class="payment-background">
+  <div class="payment-msg-box">
+    <div class="payment-info">
+      <p class="failed-msg">Subscription failed</p>
+      <p class="order-info-msg">
+        Payment Referrence Id <b>#{{ subscriptionId }}</b>
+      </p>
+      <p class="order-info-sub-msg">
+        Sorry, we can't complete your subscription purchase at this time. Please
+        return to payments and try another payment
+      </p>
+    </div>
+    <div>
+      <button
+        mat-stroked-button
+        class="btn btn-pop2"
+        (click)="navigatePayments()"
+      >
+        Payments
+      </button>
+    </div>
+  </div>
+</div>

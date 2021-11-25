@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { MatSnackBar } from "@angular/material";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Subscription } from "rxjs";
 import { APIService } from "src/app/core/services/api.service";
-import { HomeService } from "../../core/services/home.service";
+import { PaymentService } from "src/app/core/services/payment.service";
+import { PaymentInfo } from "./paymentinfo";
 
 declare var Razorpay: any;
 
@@ -11,11 +13,14 @@ declare var Razorpay: any;
   styleUrls: ["razorpay.component.scss"],
 })
 export class RazorPayComponent implements OnInit {
-  constructor(private apiService: APIService) {}
-
-  ngOnInit(): void {}
-
-  razorPayOptions = {
+  private successSubscription: Subscription = new Subscription();
+  private failureSubscription: Subscription = new Subscription();
+  public isPaymentSuccessful: boolean;
+  public isPaymentFailed: boolean;
+  private failedPaymentData: any;
+  private successPaymentData: any;
+  private orderId: string;
+  private razorPayOptions = {
     key: "",
     amount: "",
     currency: "INR",
@@ -25,27 +30,125 @@ export class RazorPayComponent implements OnInit {
     handler: (res) => {
       console.log(res);
     },
+    prefill: {
+      name: "Amit Panda",
+      email: "amitpanda007@gmail.com",
+      contact: "8939560975",
+    },
+    notes: {
+      address: "Tasks India",
+    },
+    theme: {
+      color: "#3399cc",
+    },
   };
 
-  buyWithRazorPay() {
+  constructor(
+    private apiService: APIService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private paymentService: PaymentService
+  ) {}
+
+  ngOnInit(): void {}
+
+  ngOnDestroy(): void {}
+
+  async buyWithRazorPay() {
     const paymentData = {
       name: "Amit P",
       amount: 100,
     };
-    this.apiService.paymentWithRazorPay(paymentData).then((res) => {
-      console.log(res);
-      this.razorPayOptions.key = res["key"];
-      this.razorPayOptions.amount = res["value"]["amount"];
-      this.razorPayOptions.name = paymentData["name"];
-      this.razorPayOptions.order_id = res["value"]["id"];
-      this.razorPayOptions.handler = this.razorPayResponseHandler;
-      let rzp1 = new Razorpay(this.razorPayOptions);
-      rzp1.open();
-      console.log("RazorPay Payment Modal Opened");
+    const orderDetails = await this.apiService.paymentWithRazorPay(paymentData);
+    console.log(orderDetails);
+    this.orderId = orderDetails["value"]["id"];
+    this.razorPayOptions.key = orderDetails["key"];
+    this.razorPayOptions.amount = orderDetails["value"]["amount"];
+    this.razorPayOptions.name = paymentData["name"];
+    this.razorPayOptions.order_id = orderDetails["value"]["id"];
+    this.razorPayOptions.handler = (response) => {
+      this.razorPayResponseHandler(response);
+    };
+    let rzp1 = new Razorpay(this.razorPayOptions);
+    rzp1.open();
+    rzp1.on("payment.failed", (response) => {
+      console.log("Payment failed");
+      console.log(response);
+      this.failedPaymentData = response;
+
+      const paymentData: PaymentInfo = {
+        paymentDone: false,
+        paymentStatus: "failure",
+        paymentFailure: {
+          code: this.failedPaymentData.error.code,
+          paymentId: this.failedPaymentData.error.metadata.payment_id,
+          orderId: this.failedPaymentData.error.metadata.order_id,
+          description: this.failedPaymentData.error.description,
+          source: this.failedPaymentData.error.source,
+          step: this.failedPaymentData.error.step,
+          reason: this.failedPaymentData.error.reason,
+        },
+      };
+      this.paymentService.savePaymentInfo(paymentData);
+      this.paymentService.updatePaymentFailureStatus(true);
+      this.router.navigate(['order/failure']);
     });
+    console.log("RazorPay Payment Modal Opened");
   }
 
   razorPayResponseHandler(response) {
     console.log(response);
+    this.successPaymentData = response;
+    const orderData = {
+      orderId: this.orderId,
+      razorpayPaymentId: response.razorpay_payment_id,
+      razorpaySignature: response.razorpay_signature,
+    };
+    console.log(orderData);
+    this.apiService.verifyPaymentRazorPay(orderData).then((res: any) => {
+      console.log(res);
+      if (res.success) {
+        console.log("Order created successfully");
+        this.apiService.addSubscription().then((response: any) => {
+          console.log(response);
+          if (response.status === "success") {
+            this.apiService.refreshFBToken();
+          }
+        });
+        const paymentData: PaymentInfo = {
+          paymentDone: true,
+          paymentStatus: "success",
+          paymentSuccess: {
+            orderId: this.successPaymentData.razorpay_order_id,
+            paymentId: this.successPaymentData.razorpay_payment_id,
+            signature: this.successPaymentData.razorpay_signature,
+          },
+        };
+        this.paymentService.savePaymentInfo(paymentData).then(() => {
+          this.apiService.refreshFBToken();
+          this.paymentService.updatePaymentSuccessStatus(true);
+          this.router.navigate(['order/success']);
+        });
+      } else {
+        console.log("Unable to verify the Payment at the moment");
+        const paymentData: PaymentInfo = {
+          paymentDone: false,
+          paymentStatus: "failure",
+          paymentFailure: {
+            code: this.failedPaymentData.error.code,
+            paymentId: this.failedPaymentData.error.metadata.payment_id,
+            orderId: this.failedPaymentData.error.metadata.order_id,
+            description: this.failedPaymentData.error.description,
+            source: this.failedPaymentData.error.source,
+            step: this.failedPaymentData.error.step,
+            reason: this.failedPaymentData.error.reason,
+          },
+        };
+        this.paymentService.savePaymentInfo(paymentData);
+        this.apiService.refreshFBToken();
+        this.paymentService.updatePaymentFailureStatus(true);
+        this.router.navigate(['order/failure']);
+      }
+    });
   }
 }

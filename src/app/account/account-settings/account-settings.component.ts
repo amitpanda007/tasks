@@ -5,6 +5,10 @@ import { Subscription } from "rxjs";
 import { switchMap } from "rxjs/operators";
 import { User } from "src/app/auth/user";
 import {
+  ConfirmDialogComponent,
+  ConfirmDialogResult,
+} from "src/app/common/confirm-dialog/confirm-dialog.component";
+import {
   UploadDialogComponent,
   UploadDialogResult,
 } from "src/app/common/upload-dialog/upload-dialog.component";
@@ -164,22 +168,37 @@ export class AccountSettingsComponent implements OnInit {
     console.log(taskId);
   }
 
-  async cancelSubscription() {
-    const userTokenResult = await this.authService.getUserToken();
-    console.log(userTokenResult);
+  cancelSubscription() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: "240px",
+      data: {
+        message: "Cancelling subscription. Are you sure?",
+      },
+    });
+    dialogRef.afterClosed().subscribe(async (result: ConfirmDialogResult) => {
+      if (!result) {
+        return;
+      }
+      if (result.confirm) {
+        const userTokenResult = await this.authService.getUserToken();
+        console.log(userTokenResult);
 
-    if (userTokenResult.claims.subscribedUser) {
-      await this.apiservice.removeSubscription().then(async (response: any) => {
-        if (response.status === "success") {
-          const refreshCompleted = await this.apiservice.refreshFBToken();
-          console.log(`Refreshed Token: ${refreshCompleted}`);
-          if (refreshCompleted) {
-            const userTokenResult = await this.authService.getUserToken();
-            console.log(userTokenResult);
-            this.subscribedUser = userTokenResult.claims.subscribedUser;
-          }
+        if (userTokenResult.claims.subscribedUser) {
+          await this.apiservice
+            .removeSubscription()
+            .then(async (response: any) => {
+              if (response.status === "success") {
+                const refreshCompleted = await this.apiservice.refreshFBToken();
+                console.log(`Refreshed Token: ${refreshCompleted}`);
+                if (refreshCompleted) {
+                  const userTokenResult = await this.authService.getUserToken();
+                  console.log(userTokenResult);
+                  this.subscribedUser = userTokenResult.claims.subscribedUser;
+                }
+              }
+            });
         }
-      });
-    }
+      }
+    });
   }
 }

@@ -1,4 +1,66 @@
-<p>Subscription Price: <b>&#8377;100</b></p>
-<button mat-stroked-button color="primary" (click)="buyWithRazorPay()">
-  Pay
-</button>
+<!-- Payment Information -->
+
+<div class="background">
+  <div class="container">
+    <div class="panel pricing-table">
+      <div class="pricing-plan">
+        <img
+          src="https://s22.postimg.cc/8mv5gn7w1/paper-plane.png"
+          alt=""
+          class="pricing-img"
+        />
+        <h2 class="pricing-header">PERSONAL</h2>
+        <ul class="pricing-features">
+          <li class="pricing-features-item">Free</li>
+          <li class="pricing-features-item">
+            For individuals or teams looking to organize anything.
+          </li>
+        </ul>
+        <span class="pricing-price">₹0 INR</span>
+        <a href="#/" class="pricing-button">Sign up</a>
+      </div>
+
+      <div class="pricing-plan">
+        <img
+          src="https://s28.postimg.cc/ju5bnc3x9/plane.png"
+          alt=""
+          class="pricing-img"
+        />
+        <h2 class="pricing-header">STANDARD</h2>
+        <ul class="pricing-features">
+          <li class="pricing-features-item">Get Extra Features</li>
+          <li class="pricing-features-item">
+            For teams that need to manage more work and scale collaboration.
+          </li>
+        </ul>
+        <span class="pricing-price">₹149 INR</span>
+        <a
+          href="javascript: void(0)"
+          class="pricing-button is-featured"
+          (click)="buyWithRazorPay()"
+          >Upgrade now</a
+        >
+      </div>
+
+      <div class="pricing-plan">
+        <img
+          src="https://s21.postimg.cc/tpm0cge4n/space-ship.png"
+          alt=""
+          class="pricing-img"
+        />
+        <h2 class="pricing-header">Enterprise</h2>
+        <ul class="pricing-features">
+          <li class="pricing-features-item">
+            Premium features for organizations
+          </li>
+          <li class="pricing-features-item">
+            For organizations that need to connect work across teams with more
+            security and controls.
+          </li>
+        </ul>
+        <span class="pricing-price">Contact Sales</span>
+        <a href="#/" class="pricing-button">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</div>
