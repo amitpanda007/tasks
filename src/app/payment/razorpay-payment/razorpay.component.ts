@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { MatDialog } from "@angular/material";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from "rxjs";
+import { PaymentResultDialogComponent, PaymentResultDialogResult } from "src/app/common/payment-result-dialog/payment-result-dialog.component";
 import { APIService } from "src/app/core/services/api.service";
 import { PaymentService } from "src/app/core/services/payment.service";
 import { PaymentInfo } from "./paymentinfo";
@@ -13,8 +15,6 @@ declare var Razorpay: any;
   styleUrls: ["razorpay.component.scss"],
 })
 export class RazorPayComponent implements OnInit {
-  private successSubscription: Subscription = new Subscription();
-  private failureSubscription: Subscription = new Subscription();
   public isPaymentSuccessful: boolean;
   public isPaymentFailed: boolean;
   private failedPaymentData: any;
@@ -44,9 +44,10 @@ export class RazorPayComponent implements OnInit {
   };
 
   constructor(
-    private apiService: APIService,
+    private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
+    private apiService: APIService,
     private paymentService: PaymentService
   ) {}
 
@@ -96,6 +97,7 @@ export class RazorPayComponent implements OnInit {
     console.log("RazorPay Payment Modal Opened");
   }
 
+  // FIXME: Add routes or functionality once payment succeed or failed
   razorPayResponseHandler(response) {
     console.log(response);
     this.successPaymentData = response;
@@ -125,9 +127,23 @@ export class RazorPayComponent implements OnInit {
           },
         };
         this.paymentService.savePaymentInfo(paymentData).then(() => {
-          this.apiService.refreshFBToken();
-          this.paymentService.updatePaymentSuccessStatus(true);
-          this.router.navigate(['order/success']);
+          // this.paymentService.updatePaymentSuccessStatus(true);
+          // this.router.navigate(['order/success']);
+          
+          const dialogRef = this.dialog.open(PaymentResultDialogComponent, {
+            width: "540px",
+            data: {
+              isPaymentSuccess: true,
+              isPaymentFailed: false,
+              subscriptionId: this.successPaymentData.razorpay_order_id
+            },
+          });
+          dialogRef.afterClosed().subscribe((result: PaymentResultDialogResult) => {
+            console.log(result);
+            if (!result) {
+              return;
+            }
+          });
         });
       } else {
         console.log("Unable to verify the Payment at the moment");

@@ -599,3 +599,8 @@ mat-toolbar > span {
   padding: 2px;
   cursor: pointer;
 }
+
+.active {
+  background: lightgray;
+  font-weight: 500;
+}

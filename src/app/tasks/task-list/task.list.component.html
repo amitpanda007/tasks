@@ -195,30 +195,35 @@
                   <mat-menu #menu="matMenu">
                     <button
                       mat-menu-item
+                      [ngClass]="{'active': list.sortOrder === 'index'}"
                       (click)="sortTasks(list.id, sortOrders.INDEX)"
                     >
                       index
                     </button>
                     <button
                       mat-menu-item
+                      [ngClass]="{'active': list.sortOrder === 'created'}"
                       (click)="sortTasks(list.id, sortOrders.CREATED)"
                     >
                       created
                     </button>
                     <button
                       mat-menu-item
+                      [ngClass]="{'active': list.sortOrder === 'modified'}"
                       (click)="sortTasks(list.id, sortOrders.MODIFIED)"
                     >
                       modified
                     </button>
                     <button
                       mat-menu-item
+                      [ngClass]="{'active': list.sortOrder === 'dueDate'}"
                       (click)="sortTasks(list.id, sortOrders.DUEDATE)"
                     >
                       duedate
                     </button>
                     <button
                       mat-menu-item
+                      [ngClass]="{'active': list.sortOrder === 'checklist'}"
                       (click)="sortTasks(list.id, sortOrders.CHECKLIST)"
                     >
                       checklist

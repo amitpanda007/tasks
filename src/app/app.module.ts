@@ -59,6 +59,7 @@ import { AutomationDialogComponent } from "./common/automation-dialog/automation
 import { UploadDialogComponent } from "./common/upload-dialog/upload-dialog.component";
 import { SubscriptionDialogComponent } from "./common/subscription-dialog/subscription-dialog.component";
 import { PaymentModule } from "./payment/payment.module";
+import { PaymentResultDialogComponent } from "./common/payment-result-dialog/payment-result-dialog.component";
 
 @NgModule({
   declarations: [
@@ -95,6 +96,7 @@ import { PaymentModule } from "./payment/payment.module";
     AutomationDialogComponent,
     UploadDialogComponent,
     SubscriptionDialogComponent,
+    PaymentResultDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -153,6 +155,7 @@ import { PaymentModule } from "./payment/payment.module";
     AutomationDialogComponent,
     UploadDialogComponent,
     SubscriptionDialogComponent,
+    PaymentResultDialogComponent
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],
