@@ -43,6 +43,8 @@ import {
   CalenderDialogResult,
 } from "src/app/common/calender-dialog/calender-dialog.component";
 import { ConfirmDialogComponent } from "src/app/common/confirm-dialog/confirm-dialog.component";
+import { AuthService } from "src/app/core/services/auth.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "task",
@@ -70,6 +72,8 @@ export class TaskComponent implements OnInit {
   @ViewChild("contextMenuTrigger", { static: false })
   contextMenuTrigger: MatMenuTrigger;
 
+  private showHideLabelSubscription: Subscription = new Subscription();
+  private showCurrentUserTaskSubscription: Subscription = new Subscription();
   public showLabelText: boolean = false;
   public overDue: boolean = false;
   public currentState: string = "initial";
@@ -84,10 +88,13 @@ export class TaskComponent implements OnInit {
   public selectStatusBackgroundColor: string;
   public selectStatusColor: string;
   public localChecklists: TaskChecklist[];
+  public onlyShowCurrentUserTask: boolean = false;
+  public onlyShowUserTask: boolean = false;
 
   constructor(
     private boardServiceV2: BoardServiceV2,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -110,8 +117,14 @@ export class TaskComponent implements OnInit {
     }
 
     this.textColor = "#000000";
-    this.boardServiceV2.showHidelabel.subscribe((value) => {
+    this.showHideLabelSubscription = this.boardServiceV2.showHidelabel.subscribe((value) => {
       this.showLabelText = value;
+    });
+
+    this.showCurrentUserTaskSubscription = this.boardServiceV2.showUserTask.subscribe((value) => {
+      console.log(value);
+      this.onlyShowCurrentUserTask = value;
+      this.checkIfOnlyShowCurrentUserTask();
     });
 
     if (this.task.dueDate) {
@@ -141,6 +154,30 @@ export class TaskComponent implements OnInit {
     this.localChecklists = this.task.checklists;
     this.isPriorityIconSelected = false;
     this.isStatusIconSelected = false;
+
+    // Check if user highlighting task for current user
+    this.checkIfOnlyShowCurrentUserTask();
+  }
+
+  checkIfOnlyShowCurrentUserTask() {
+    const currentUser = this.authService.getUID();
+    if (this.onlyShowCurrentUserTask) {
+      if (this.task.members && this.task.members.length > 0) {
+        this.task.members.forEach((taskMember) => {
+          if (taskMember.id === currentUser) {
+            this.onlyShowUserTask = true;
+          }
+        });
+      }
+    } else {
+      this.onlyShowUserTask = false;
+    }
+  }
+
+  ngOnDestroy() {
+    if(this.showHideLabelSubscription) {
+      this.showHideLabelSubscription.unsubscribe();
+    }
   }
 
   hideLabelName() {

@@ -1,8 +1,17 @@
 <div class="menucard" *ngIf="data.member && data.member.name">
   <div class="menucard-title">
-    <span class="member" matTooltip="{{ data.member.name }}"
+    <span
+      *ngIf="!data.member.image"
+      class="member"
+      matTooltip="{{ data.member.name }}"
       >{{ data.member.name | shortname
       }}<span class="member-admin admin-img"></span
+    ></span>
+    <span
+      *ngIf="data.member.image"
+      class="member member-image"
+      [style.background-image]="'url(' + data.member.image + ')'"
+      matTooltip="{{ data.member.name }}"
     ></span>
     <p>
       <span>{{ data.member.name }}</span>
@@ -45,7 +54,9 @@
             >Can view and edit cards. Can change some board settings.</span
           >
         </a>
-        <span *ngIf="data.isOwner" class="perm-info">You can’t change roles because you are the owner of this board.</span>
+        <span *ngIf="data.isOwner" class="perm-info"
+          >You can’t change roles because you are the owner of this board.</span
+        >
       </mat-expansion-panel>
     </mat-accordion>
     <p (click)="navigateToBoardActivity()">View member’s board activity</p>
@@ -65,8 +76,13 @@
     >
       Leave board
     </p>
-    <span class="perm-info" *ngIf="data.currentUserMember && data.member.permission.admin && !data.isOwner"
-      >You are an Admin for this Board. Remove Admin permission to leave this board.</span
+    <span
+      class="perm-info"
+      *ngIf="
+        data.currentUserMember && data.member.permission.admin && !data.isOwner
+      "
+      >You are an Admin for this Board. Remove Admin permission to leave this
+      board.</span
     >
   </div>
 </div>

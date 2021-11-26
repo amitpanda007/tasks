@@ -16,6 +16,7 @@ export interface Board {
   settings: Settings;
   isTemplate?: boolean;
   closed?: boolean;
+  onlyCurrentUser?: boolean;
 }
 
 export interface SharedUser {

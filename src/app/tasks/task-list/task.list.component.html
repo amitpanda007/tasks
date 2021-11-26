@@ -100,6 +100,7 @@
               [style.background-image]="'url(' + member.image + ')'"
               matTooltip="{{ member.name }}"
               [matTooltipPosition]="'above'"
+              (click)="openMemberMenu(member)"
             >
               <span
                 *ngIf="member.permission.owner"
@@ -126,6 +127,7 @@
       </div>
     </div>
     <div id="right" class="flex-display">
+      <mat-checkbox [(ngModel)]="onlyShowCurrentUserTask" (change)="showCurrentUserTask()" [color]="warn">My Tasks</mat-checkbox>
       <div
         class="flex-display option-bg pointer"
         *ngIf="removeSearch"

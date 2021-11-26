@@ -138,6 +138,7 @@ export class TaskListComponent implements OnInit {
   public isShowingAllLabels: boolean = false;
   public isShowingArchivedTasks: boolean = false;
   public backgroundImages = [];
+  public onlyShowCurrentUserTask: boolean = false;
 
   public searchLabels: Label[] = [];
   public searchMembers: SharedUser[] = [];
@@ -261,8 +262,10 @@ export class TaskListComponent implements OnInit {
       // this.boardMembers = this.board.sharedUserInfo;
       const boardMembers = this.board.sharedUserInfo;
       for (let i = 0; i < boardMembers.length; i++) {
-        const memberImage = await this.accountService.getAvatarImageForUser(boardMembers[i].id);
-        if(memberImage) {
+        const memberImage = await this.accountService.getAvatarImageForUser(
+          boardMembers[i].id
+        );
+        if (memberImage) {
           boardMembers[i].image = memberImage;
         }
         this.boardMembers.push(boardMembers[i]);
@@ -289,6 +292,14 @@ export class TaskListComponent implements OnInit {
       (board: Board) => {
         console.log(board);
         //Check Settings for Board
+        this.onlyShowCurrentUserTask = board.onlyCurrentUser;
+        if(board.onlyCurrentUser) {
+          this.boardServiceV2.showCurrentUserTask(board.onlyCurrentUser);
+        }else {
+          this.boardServiceV2.showCurrentUserTask(false);
+        }
+        
+
         //TODO: Duplicate code, move to one function
         if (board.settings.addRemovePermission.admin) {
           this.hasMemberAddAccess = this.isCurrentUserAdmin();
@@ -372,8 +383,8 @@ export class TaskListComponent implements OnInit {
             this.authService.getUID()
           );
         }
-        
-        if(this.boardMembers.length != board.sharedUserInfo.length) {
+
+        if (this.boardMembers.length != board.sharedUserInfo.length) {
           this.boardMembers = board.sharedUserInfo;
         }
         if (this.boardMembers && this.boardMembers.length > 0) {
@@ -443,14 +454,14 @@ export class TaskListComponent implements OnInit {
                 this.activities.push(...curActivities);
               }
 
-              if(task.members && task.members.length > 0) {
+              if (task.members && task.members.length > 0) {
                 task.members.forEach((member) => {
-                  this.boardMembers.forEach(boardMember => {
-                    if(member.id === boardMember.id) {
+                  this.boardMembers.forEach((boardMember) => {
+                    if (member.id === boardMember.id) {
                       member.image = boardMember.image;
                     }
-                  })
-                })
+                  });
+                });
               }
             });
             this.activities.sort((a, b) => {
@@ -459,14 +470,14 @@ export class TaskListComponent implements OnInit {
               else return 0;
             });
 
-            this.activities.forEach(activity => {
-              this.boardMembers.forEach(member => {
-                if(member.image) {
-                  if(member.id == activity.id) {
+            this.activities.forEach((activity) => {
+              this.boardMembers.forEach((member) => {
+                if (member.image) {
+                  if (member.id == activity.id) {
                     activity.userImage = member.image;
                   }
                 }
-              })
+              });
             });
             // console.log(this.activities);
 
@@ -1167,6 +1178,14 @@ export class TaskListComponent implements OnInit {
       const index = this.board.favourite.indexOf(this.authService.getUID());
       this.board.favourite.splice(index, 1);
     }
+    this.boardServiceV2.updateBoard(this.boardId, this.board);
+  }
+
+  showCurrentUserTask() {
+    console.log(
+      `Only show Task for current user ${this.onlyShowCurrentUserTask}`
+    );
+    this.board.onlyCurrentUser = this.onlyShowCurrentUserTask;
     this.boardServiceV2.updateBoard(this.boardId, this.board);
   }
 
@@ -2152,6 +2171,7 @@ export class TaskListComponent implements OnInit {
       id: member.id ? member.id : "",
       name: null,
       permission: {},
+      image: member.image,
     };
     console.log(member);
 
@@ -2179,7 +2199,6 @@ export class TaskListComponent implements OnInit {
     const tasks = cloneDeep(this.tasks);
     const dialogRef = this.dialog.open(MemberInfoDialogComponent, {
       width: "380px",
-      // hasBackdrop: false,
       autoFocus: false,
       data: {
         member: this.menuMember,
