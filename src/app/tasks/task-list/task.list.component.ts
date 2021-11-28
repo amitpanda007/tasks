@@ -293,12 +293,11 @@ export class TaskListComponent implements OnInit {
         console.log(board);
         //Check Settings for Board
         this.onlyShowCurrentUserTask = board.onlyCurrentUser;
-        if(board.onlyCurrentUser) {
+        if (board.onlyCurrentUser) {
           this.boardServiceV2.showCurrentUserTask(board.onlyCurrentUser);
-        }else {
+        } else {
           this.boardServiceV2.showCurrentUserTask(false);
         }
-        
 
         //TODO: Duplicate code, move to one function
         if (board.settings.addRemovePermission.admin) {
@@ -1197,11 +1196,11 @@ export class TaskListComponent implements OnInit {
     );
 
     if (curTaskList.sortOrder && curTaskList.sortOrder === sortBy) {
-      // return;
+      return;
     }
-    this.sortTaskByOrder(curTaskList, sortBy);
 
     curTaskList.sortOrder = sortBy;
+    this.sortTaskByOrder(curTaskList, sortBy);
     this.boardServiceV2.updateTaskList(this.boardId, taskListId, curTaskList);
   }
 
@@ -1240,18 +1239,26 @@ export class TaskListComponent implements OnInit {
           return 1;
         }
       } else if (sortOrder == this.sortOrders.CHECKLIST) {
-        if (task1[sortOrder] && task2[sortOrder]) {
-          if (task1[sortOrder].length < task2[sortOrder].length) {
+        const checkListSortOrder = "checklists";
+        if (task1[checkListSortOrder] && task2[checkListSortOrder]) {
+          if (
+            task1[checkListSortOrder].length < task2[checkListSortOrder].length
+          ) {
             return -1;
           }
-          if (task1[sortOrder].length > task2[sortOrder].length) {
+          if (
+            task1[checkListSortOrder].length > task2[checkListSortOrder].length
+          ) {
             return 1;
           }
           return 0;
         }
-        if (task1[sortOrder] && task1[sortOrder].length > 0) {
+        if (task1[checkListSortOrder] && task1[checkListSortOrder].length > 0) {
           return -1;
-        } else if (task2[sortOrder] && task2[sortOrder].length > 0) {
+        } else if (
+          task2[checkListSortOrder] &&
+          task2[checkListSortOrder].length > 0
+        ) {
           return 1;
         }
       }

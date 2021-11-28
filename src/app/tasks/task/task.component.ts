@@ -117,15 +117,17 @@ export class TaskComponent implements OnInit {
     }
 
     this.textColor = "#000000";
-    this.showHideLabelSubscription = this.boardServiceV2.showHidelabel.subscribe((value) => {
-      this.showLabelText = value;
-    });
+    this.showHideLabelSubscription =
+      this.boardServiceV2.showHidelabel.subscribe((value) => {
+        this.showLabelText = value;
+      });
 
-    this.showCurrentUserTaskSubscription = this.boardServiceV2.showUserTask.subscribe((value) => {
-      console.log(value);
-      this.onlyShowCurrentUserTask = value;
-      this.checkIfOnlyShowCurrentUserTask();
-    });
+    this.showCurrentUserTaskSubscription =
+      this.boardServiceV2.showUserTask.subscribe((value) => {
+        // console.log(value);
+        this.onlyShowCurrentUserTask = value;
+        this.checkIfOnlyShowCurrentUserTask();
+      });
 
     if (this.task.dueDate) {
       if (!this.task.dueDate.completed) {
@@ -175,7 +177,7 @@ export class TaskComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if(this.showHideLabelSubscription) {
+    if (this.showHideLabelSubscription) {
       this.showHideLabelSubscription.unsubscribe();
     }
   }

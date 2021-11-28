@@ -127,7 +127,13 @@
       </div>
     </div>
     <div id="right" class="flex-display">
-      <mat-checkbox [(ngModel)]="onlyShowCurrentUserTask" (change)="showCurrentUserTask()" [color]="warn">My Tasks</mat-checkbox>
+      <mat-checkbox
+        [(ngModel)]="onlyShowCurrentUserTask"
+        (change)="showCurrentUserTask()"
+        [color]="warn"
+        >My Tasks</mat-checkbox
+      >
+      <span class="option-dividor"></span>
       <div
         class="flex-display option-bg pointer"
         *ngIf="removeSearch"
@@ -197,35 +203,35 @@
                   <mat-menu #menu="matMenu">
                     <button
                       mat-menu-item
-                      [ngClass]="{'active': list.sortOrder === 'index'}"
+                      [ngClass]="{ active: list.sortOrder === 'index' }"
                       (click)="sortTasks(list.id, sortOrders.INDEX)"
                     >
                       index
                     </button>
                     <button
                       mat-menu-item
-                      [ngClass]="{'active': list.sortOrder === 'created'}"
+                      [ngClass]="{ active: list.sortOrder === 'created' }"
                       (click)="sortTasks(list.id, sortOrders.CREATED)"
                     >
                       created
                     </button>
                     <button
                       mat-menu-item
-                      [ngClass]="{'active': list.sortOrder === 'modified'}"
+                      [ngClass]="{ active: list.sortOrder === 'modified' }"
                       (click)="sortTasks(list.id, sortOrders.MODIFIED)"
                     >
                       modified
                     </button>
                     <button
                       mat-menu-item
-                      [ngClass]="{'active': list.sortOrder === 'dueDate'}"
+                      [ngClass]="{ active: list.sortOrder === 'dueDate' }"
                       (click)="sortTasks(list.id, sortOrders.DUEDATE)"
                     >
                       duedate
                     </button>
                     <button
                       mat-menu-item
-                      [ngClass]="{'active': list.sortOrder === 'checklist'}"
+                      [ngClass]="{ active: list.sortOrder === 'checklist' }"
                       (click)="sortTasks(list.id, sortOrders.CHECKLIST)"
                     >
                       checklist
@@ -492,9 +498,12 @@
           "
           class="activity-text"
         >
-          <span class="member" matTooltip="{{ activity.user }}" *ngIf="!activity.userImage">{{
-            activity.user | shortname
-          }}</span>
+          <span
+            class="member"
+            matTooltip="{{ activity.user }}"
+            *ngIf="!activity.userImage"
+            >{{ activity.user | shortname }}</span
+          >
           <span
             *ngIf="activity.userImage"
             class="member member-image"
