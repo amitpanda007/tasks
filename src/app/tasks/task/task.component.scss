@@ -16,6 +16,11 @@
   justify-content: space-between;
 }
 
+.flex-display {
+  display: flex;
+  align-items: center;
+}
+
 .status-icon {
   height: 12px;
 }
@@ -130,7 +135,7 @@
   height: auto;
   margin-bottom: 1px;
   cursor: pointer;
-  margin-top: -2px;
+  margin-right: 2px;
 }
 
 .icon {
@@ -152,7 +157,7 @@
   opacity: 0;
 }
 
-.actions-info:hover .opts {
+.heading-info:hover .opts {
   opacity: 1;
 }
 

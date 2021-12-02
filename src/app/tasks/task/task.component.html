@@ -3,42 +3,101 @@
   *ngIf="task"
   [style.background-color]="task.backgroundColor"
   [style.color]="textColor"
-  [ngClass]="{'my-task': (onlyShowCurrentUserTask === true && onlyShowUserTask === false)}"
+  [ngClass]="{
+    'my-task': onlyShowCurrentUserTask === true && onlyShowUserTask === false
+  }"
   (contextmenu)="onRightClick($event)"
 >
   <div #taskCard class="heading-info" (click)="editTask()">
     <div class="top-section">
       <p class="title">{{ task.title }}</p>
 
-      <div
-        class="status"
-        [ngClass]="{
-          'status-selected': task.status || isStatusIconSelected
-        }"
-        matTooltip="Set status"
-        *ngIf="options.showTaskStatus"
-      >
-        <span
-          [matMenuTriggerFor]="statusMenu"
-          [style.background-color]="selectStatusBackgroundColor"
-          [style.color]="selectStatusColor"
-          (click)="statusIconClicked()"
-          class="status-icon"
+      <div class="flex-display">
+        <p class="priority-sec" *ngIf="options.showTaskPriority">
+          <img
+            class="opts images icon"
+            [ngClass]="{
+              'priority-selected': task.priority || isPriorityIconSelected
+            }"
+            src="./assets/images/priority/{{ priority }}.svg"
+            (click)="setTaskPriority()"
+            [matMenuTriggerFor]="menu"
+            matTooltip="Set priority"
+          />
+          <mat-menu #menu="matMenu" (closed)="priorityMenuClosed()">
+            <div
+              mat-menu-item
+              class="menu-opts"
+              (click)="selectedMenu('blocker')"
+            >
+              <img class="images" src="./assets/images/priority/blocker.svg" />
+              <span>Blocker</span>
+            </div>
+            <div
+              mat-menu-item
+              class="menu-opts"
+              (click)="selectedMenu('critical')"
+            >
+              <img class="images" src="./assets/images/priority/critical.svg" />
+              <span>Critical</span>
+            </div>
+            <div
+              mat-menu-item
+              class="menu-opts"
+              (click)="selectedMenu('major')"
+            >
+              <img class="images" src="./assets/images/priority/major.svg" />
+              <span>Major</span>
+            </div>
+            <div
+              mat-menu-item
+              class="menu-opts"
+              (click)="selectedMenu('minor')"
+            >
+              <img class="images" src="./assets/images/priority/minor.svg" />
+              <span>Minor</span>
+            </div>
+            <div
+              mat-menu-item
+              class="menu-opts"
+              (click)="selectedMenu('trivial')"
+            >
+              <img class="images" src="./assets/images/priority/trivial.svg" />
+              <span>Trivial</span>
+            </div>
+          </mat-menu>
+        </p>
+
+        <div
+          class="status"
+          [ngClass]="{
+            'status-selected': task.status || isStatusIconSelected
+          }"
+          matTooltip="Set status"
+          *ngIf="options.showTaskStatus"
         >
-          {{ task.status ? task.status : "ToDo" }}
-        </span>
-        <mat-menu #statusMenu="matMenu" (closed)="statusMenuClosed()">
-          <div
-            mat-menu-item
-            class="menu-opts"
-            (click)="onStatusChange(status.id)"
-            [style.background-color]="status.backgroundColor"
-            [style.color]="status.color"
-            *ngFor="let status of statusOptions"
+          <span
+            [matMenuTriggerFor]="statusMenu"
+            [style.background-color]="selectStatusBackgroundColor"
+            [style.color]="selectStatusColor"
+            (click)="statusIconClicked()"
+            class="status-icon"
           >
-            <span>{{ status.name }}</span>
-          </div>
-        </mat-menu>
+            {{ task.status ? task.status : "ToDo" }}
+          </span>
+          <mat-menu #statusMenu="matMenu" (closed)="statusMenuClosed()">
+            <div
+              mat-menu-item
+              class="menu-opts"
+              (click)="onStatusChange(status.id)"
+              [style.background-color]="status.backgroundColor"
+              [style.color]="status.color"
+              *ngFor="let status of statusOptions"
+            >
+              <span>{{ status.name }}</span>
+            </div>
+          </mat-menu>
+        </div>
       </div>
     </div>
 
@@ -74,7 +133,7 @@
         </div>
       </mat-chip-list>
     </div>
-    <p class="desc">
+    <p class="desc" *ngIf="!hideTaskDescription">
       {{ task.description }}
     </p>
   </div>
@@ -113,41 +172,6 @@
       >
     </p>
 
-    <p class="priority-sec" *ngIf="options.showTaskPriority">
-      <img
-        class="opts images icon"
-        [ngClass]="{
-          'priority-selected': task.priority || isPriorityIconSelected
-        }"
-        src="./assets/images/priority/{{ priority }}.svg"
-        (click)="setTaskPriority()"
-        [matMenuTriggerFor]="menu"
-        matTooltip="{{ priority }}"
-      />
-      <mat-menu #menu="matMenu" (closed)="priorityMenuClosed()">
-        <div mat-menu-item class="menu-opts" (click)="selectedMenu('blocker')">
-          <img class="images" src="./assets/images/priority/blocker.svg" />
-          <span>Blocker</span>
-        </div>
-        <div mat-menu-item class="menu-opts" (click)="selectedMenu('critical')">
-          <img class="images" src="./assets/images/priority/critical.svg" />
-          <span>Critical</span>
-        </div>
-        <div mat-menu-item class="menu-opts" (click)="selectedMenu('major')">
-          <img class="images" src="./assets/images/priority/major.svg" />
-          <span>Major</span>
-        </div>
-        <div mat-menu-item class="menu-opts" (click)="selectedMenu('minor')">
-          <img class="images" src="./assets/images/priority/minor.svg" />
-          <span>Minor</span>
-        </div>
-        <div mat-menu-item class="menu-opts" (click)="selectedMenu('trivial')">
-          <img class="images" src="./assets/images/priority/trivial.svg" />
-          <span>Trivial</span>
-        </div>
-      </mat-menu>
-    </p>
-
     <p *ngIf="task.lockStatus && task.lockStatus.isLocked" class="">
       <mat-icon
         class="material-icons-outlined task-icon red"
@@ -158,9 +182,12 @@
 
     <div class="members">
       <span *ngFor="let member of task.members">
-        <span class="member" matTooltip="{{ member.name }}" *ngIf="!member.image">{{
-          member.name | shortname
-        }}</span>
+        <span
+          class="member"
+          matTooltip="{{ member.name }}"
+          *ngIf="!member.image"
+          >{{ member.name | shortname }}</span
+        >
         <span
           *ngIf="member.image"
           class="member member-image"

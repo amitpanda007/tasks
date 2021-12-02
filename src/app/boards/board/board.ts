@@ -17,6 +17,7 @@ export interface Board {
   isTemplate?: boolean;
   closed?: boolean;
   onlyCurrentUser?: boolean;
+  hideTaskDescrption?: boolean;
 }
 
 export interface SharedUser {

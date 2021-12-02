@@ -74,6 +74,7 @@ export class TaskComponent implements OnInit {
 
   private showHideLabelSubscription: Subscription = new Subscription();
   private showCurrentUserTaskSubscription: Subscription = new Subscription();
+  private hideTaskDescriptionSubscription: Subscription = new Subscription();
   public showLabelText: boolean = false;
   public overDue: boolean = false;
   public currentState: string = "initial";
@@ -90,6 +91,7 @@ export class TaskComponent implements OnInit {
   public localChecklists: TaskChecklist[];
   public onlyShowCurrentUserTask: boolean = false;
   public onlyShowUserTask: boolean = false;
+  public hideTaskDescription: boolean = false;
 
   constructor(
     private boardServiceV2: BoardServiceV2,
@@ -127,6 +129,12 @@ export class TaskComponent implements OnInit {
         // console.log(value);
         this.onlyShowCurrentUserTask = value;
         this.checkIfOnlyShowCurrentUserTask();
+      });
+
+    this.hideTaskDescriptionSubscription =
+      this.boardServiceV2.hideTaskDesc.subscribe((value) => {
+        // console.log(value);
+        this.hideTaskDescription = value;
       });
 
     if (this.task.dueDate) {
@@ -179,6 +187,9 @@ export class TaskComponent implements OnInit {
   ngOnDestroy() {
     if (this.showHideLabelSubscription) {
       this.showHideLabelSubscription.unsubscribe();
+    }
+    if(this.hideTaskDescriptionSubscription) {
+      this.hideTaskDescriptionSubscription.unsubscribe();
     }
   }
 

@@ -139,6 +139,7 @@ export class TaskListComponent implements OnInit {
   public isShowingArchivedTasks: boolean = false;
   public backgroundImages = [];
   public onlyShowCurrentUserTask: boolean = false;
+  public hideDescriptionForTask: boolean = false;
 
   public searchLabels: Label[] = [];
   public searchMembers: SharedUser[] = [];
@@ -297,6 +298,13 @@ export class TaskListComponent implements OnInit {
           this.boardServiceV2.showCurrentUserTask(board.onlyCurrentUser);
         } else {
           this.boardServiceV2.showCurrentUserTask(false);
+        }
+
+        this.hideDescriptionForTask = board.hideTaskDescrption;
+        if (board.hideTaskDescrption) {
+          this.boardServiceV2.hideTaskDescrption(board.hideTaskDescrption);
+        } else {
+          this.boardServiceV2.hideTaskDescrption(false);
         }
 
         //TODO: Duplicate code, move to one function
@@ -1185,6 +1193,14 @@ export class TaskListComponent implements OnInit {
       `Only show Task for current user ${this.onlyShowCurrentUserTask}`
     );
     this.board.onlyCurrentUser = this.onlyShowCurrentUserTask;
+    this.boardServiceV2.updateBoard(this.boardId, this.board);
+  }
+
+  hideTaskDescription() {
+    console.log(
+      `Show/Hide Task description ${this.hideDescriptionForTask}`
+    );
+    this.board.hideTaskDescrption = this.hideDescriptionForTask;
     this.boardServiceV2.updateBoard(this.boardId, this.board);
   }
 

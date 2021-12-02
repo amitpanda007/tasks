@@ -24,6 +24,18 @@ export class PaymentResultDialogComponent implements OnInit{
   confirm(): void {
     this.dialogRef.close({ confirm: true });
   }
+
+  navigatePayments() {
+    console.log("Navigating to Payment");
+  }
+
+  navigateAccount() {
+    console.log("Navigating to Account");
+  }
+
+  navigateBoards() {
+    console.log("Navigating to Boards");
+  }
 }
 
 export interface PaymentResultDialogData {

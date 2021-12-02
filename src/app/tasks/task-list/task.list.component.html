@@ -127,12 +127,24 @@
       </div>
     </div>
     <div id="right" class="flex-display">
-      <mat-checkbox
-        [(ngModel)]="onlyShowCurrentUserTask"
-        (change)="showCurrentUserTask()"
-        [color]="warn"
-        >My Tasks</mat-checkbox
-      >
+      <span [matMenuTriggerFor]="optionMenu" class="flex-display option-bg pointer">Options</span>
+      <mat-menu #optionMenu="matMenu">
+        <mat-checkbox
+          class="mat-menu-item"
+          [(ngModel)]="onlyShowCurrentUserTask"
+          (change)="showCurrentUserTask()"
+          [color]="'warn'"
+          >Only my task</mat-checkbox
+        >
+        <mat-checkbox
+          class="mat-menu-item"
+          [(ngModel)]="hideDescriptionForTask"
+          (change)="hideTaskDescription()"
+          [color]="'warn'"
+          >Hide description</mat-checkbox
+        >
+      </mat-menu>
+
       <span class="option-dividor"></span>
       <div
         class="flex-display option-bg pointer"

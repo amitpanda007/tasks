@@ -60,7 +60,7 @@ export class BoardServiceV2 {
   public labelListChanged = new Subject<Label[]>();
   public showHidelabel = new BehaviorSubject<boolean>(false);
   public showUserTask = new BehaviorSubject<boolean>(false);
-  // public showUserTask = new Subject<boolean>();
+  public hideTaskDesc = new BehaviorSubject<boolean>(false);
   public commentsChanged = new Subject<TaskComment[]>();
   public userActivityChanged = new Subject<Activity[]>();
 
@@ -735,6 +735,10 @@ export class BoardServiceV2 {
 
   showCurrentUserTask(status: boolean) {
     this.showUserTask.next(status);
+  }
+
+  hideTaskDescrption(status: boolean) {
+    this.hideTaskDesc.next(status);
   }
 
   convertChecklistToCard(boardId: string, oldTask: Task, newTask: Task) {

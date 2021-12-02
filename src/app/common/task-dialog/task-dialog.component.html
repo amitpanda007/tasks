@@ -221,7 +221,7 @@
 
       <!-- Activity Section -->
       <div
-        *ngIf="data.task.activities && !data.isTemplateBoard"
+        *ngIf="data.task.activities && data.task.activities.length > 0 && !data.isTemplateBoard"
         class="act-container"
       >
         <section>
