@@ -1,12 +1,24 @@
 <div *ngIf="!data.isCreate">
   <div class="flex-display spacing title">
-    <span class="pad-small">All Boards</span>
+    <span class="pad-small">Your Boards</span>
     <mat-icon class="pad-small pointer" (click)="cancel()">close</mat-icon>
   </div>
   <div *ngIf="boards">
     <board
       (open)="openBoard($event)"
       *ngFor="let board of boards"
+      [board]="board"
+      [showDescription]="false"
+      [compactBoard]="true"
+    ></board>
+  </div>
+  <div class="flex-display spacing title" *ngIf="sharedBoards && sharedBoards.length > 0">
+    <span class="pad-small">Shared Boards</span>
+  </div>
+  <div *ngIf="sharedBoards && sharedBoards.length > 0">
+    <board
+      (open)="openBoard($event)"
+      *ngFor="let board of sharedBoards"
       [board]="board"
       [showDescription]="false"
       [compactBoard]="true"

@@ -54,7 +54,8 @@ export class BoardServiceV2 {
   public boardChanged = new Subject<Board>();
   // public boardsChanged = new Subject<Board[]>();
   public boardsChanged = new BehaviorSubject<Board[]>([]);
-  public sharedBoardsChanged = new Subject<Board[]>();
+  // public sharedBoardsChanged = new Subject<Board[]>();
+  public sharedBoardsChanged = new BehaviorSubject<Board[]>([]);
   public taskListsChanged = new Subject<TaskList[]>();
   public tasksChanged = new Subject<Task[]>();
   public labelListChanged = new Subject<Label[]>();

@@ -19,7 +19,9 @@ export class BoardInfoDialogComponent implements OnInit {
     this.data.positionRelativeToElement;
   private boardSubscription: Subscription;
   public boards: Board[] = [];
+  public sharedBoards: Board[] = [];
   public templateBoards: Board[] = [];
+  public sharedTemplateBoards: Board[] = [];
   public topTemplateBoards: Board[] = [];
   public isShowingTemplateBoard: boolean = false;
 
@@ -66,6 +68,27 @@ export class BoardInfoDialogComponent implements OnInit {
         if (boards && boards.length == 0 && !apiCalled) {
           this.boardServiceV2.getBoards();
           apiCalled = true;
+        }
+      }
+    );
+
+    let sharedApiCalled: boolean = false;
+    this.boardSubscription = this.boardServiceV2.sharedBoardsChanged.subscribe(
+      (sharedBoards: Board[]) => {
+        this.sharedBoards = [];
+        console.log(sharedBoards);
+        if (sharedBoards) {
+          sharedBoards.forEach((sharedBoard) => {
+            if (!sharedBoard.isTemplate) {
+              this.sharedBoards.push(sharedBoard);
+            } else {
+              this.sharedTemplateBoards.push(sharedBoard);
+            }
+          });
+        }
+        if (sharedBoards && sharedBoards.length == 0 && !sharedApiCalled) {
+          this.boardServiceV2.getSharedBoards();
+          sharedApiCalled = true;
         }
       }
     );
