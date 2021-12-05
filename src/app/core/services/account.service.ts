@@ -93,10 +93,20 @@ export class AccountService {
 
     //FIXME: Not updating storage metadata referrence
     const newMetadata = {
-      cacheControl: "public,max-age=86400",
+      cacheControl: "max-age=86400",
     };
     const imageReference = `avatar\/${fileName}`;
-    this.storage.ref(imageReference).updateMetadata(newMetadata);
+    this.storage
+      .ref(imageReference)
+      .updateMetadata(newMetadata)
+      .toPromise()
+      .then((metadata) => {
+        console.log(`Updated metadata for image ${fileName}`);
+        console.log(metadata);
+      })
+      .catch((error) => {
+        console.log(`Error updating metadata for image ${fileName}`);
+      });
   }
 
   uploadBackgroundImage(fileName: string, file: File) {
