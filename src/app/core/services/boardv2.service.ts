@@ -171,6 +171,7 @@ export class BoardServiceV2 {
     if (board.sharedUserInfo && board.sharedUserInfo.length > 0) {
       board.sharedUserInfo.forEach((userInfo) => {
         delete userInfo.isCurrentUser;
+        delete userInfo.image;
       });
     }
     this._store.collection("boards").doc(boardId).set(board, { merge: true });
@@ -622,14 +623,14 @@ export class BoardServiceV2 {
 
   updateTask(boardId: string, taskId: string, task: Task) {
     // Delete images referrence from members
-    if(task.members && task.members.length > 0) {
+    if (task.members && task.members.length > 0) {
       task.members.forEach((member) => {
         delete member.image;
       });
     }
 
     // Delete images referrence from activities
-    if(task.activities && task.activities.length > 0) {
+    if (task.activities && task.activities.length > 0) {
       task.activities.forEach((activity) => {
         delete activity.userImage;
       });

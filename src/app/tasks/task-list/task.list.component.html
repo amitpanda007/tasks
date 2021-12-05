@@ -127,7 +127,11 @@
       </div>
     </div>
     <div id="right" class="flex-display">
-      <span [matMenuTriggerFor]="optionMenu" class="flex-display option-bg pointer">Options</span>
+      <span
+        [matMenuTriggerFor]="optionMenu"
+        class="flex-display option-bg pointer"
+        >Options</span
+      >
       <mat-menu #optionMenu="matMenu">
         <mat-checkbox
           class="mat-menu-item"
@@ -523,14 +527,17 @@
             matTooltip="{{ activity.userImage }}"
           ></span>
           <div class="member-info">
-            <span
-              ><b>{{ activity.user }}</b> {{ activity.action }} on
+            <span>
+              <!-- <span [innerHTML]="activity.user"></span> -->
+              <b [innerHTML]="activity.user"></b>
+              <span>&nbsp;</span>
+              <span [innerHTML]="activity.action"></span> on
               <span
                 [innerHTML]="activity.taskTitle"
                 (click)="activityToCard(activity.taskId)"
                 class="activity-card"
-              ></span
-            ></span>
+              ></span>
+            </span>
             <p>{{ activity.dateTime | dateformat: "" }}</p>
           </div>
         </div>

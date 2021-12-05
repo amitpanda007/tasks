@@ -263,13 +263,17 @@ export class TaskListComponent implements OnInit {
       // this.boardMembers = this.board.sharedUserInfo;
       const boardMembers = this.board.sharedUserInfo;
       for (let i = 0; i < boardMembers.length; i++) {
-        const memberImage = await this.accountService.getAvatarImageForUser(
-          boardMembers[i].id
-        );
-        if (memberImage) {
-          boardMembers[i].image = memberImage;
+        try {
+          const memberImage = await this.accountService.getAvatarImageForUser(
+            boardMembers[i].id
+          );
+          if (memberImage) {
+            boardMembers[i].image = memberImage;
+          }
+          this.boardMembers.push(boardMembers[i]);
+        } catch {
+          console.log("unable to download image");
         }
-        this.boardMembers.push(boardMembers[i]);
       }
       console.log(this.boardMembers);
     } else {
@@ -1197,9 +1201,7 @@ export class TaskListComponent implements OnInit {
   }
 
   hideTaskDescription() {
-    console.log(
-      `Show/Hide Task description ${this.hideDescriptionForTask}`
-    );
+    console.log(`Show/Hide Task description ${this.hideDescriptionForTask}`);
     this.board.hideTaskDescrption = this.hideDescriptionForTask;
     this.boardServiceV2.updateBoard(this.boardId, this.board);
   }

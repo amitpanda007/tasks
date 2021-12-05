@@ -189,10 +189,10 @@ section {
 .checklist-list {
   width: 100%;
   max-width: 100%;
-  // border: solid 1px #ccc;
+  max-height: 500px;
   display: block;
   border-radius: 4px;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 .checklist-box {

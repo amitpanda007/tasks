@@ -58,10 +58,16 @@ export class AccountSettingsComponent implements OnInit {
         }
         this.accountService
           .getAvatarImage(`avatar\/${this.user.avatarImg}`)
-          .subscribe((imageUrl) => {
-            console.log(imageUrl);
-            this.avatarImageUrl = imageUrl;
-          });
+          .subscribe(
+            (imageUrl) => {
+              console.log(imageUrl);
+              this.avatarImageUrl = imageUrl;
+            },
+            (error) => {
+              console.log("Unable to gather Avatar Image");
+              this.avatarImageUrl = "default.png";
+            }
+          );
       }
     );
 

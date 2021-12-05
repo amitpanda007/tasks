@@ -165,6 +165,9 @@
               "
               mode="determinate"
               value="{{ checklists.checklistCompleted }}"
+              matTooltip="
+                {{ checklists.doneChecklist }} / {{ checklists.totalChecklist }}
+              "
             ></mat-progress-bar>
           </div>
           <div
@@ -221,7 +224,11 @@
 
       <!-- Activity Section -->
       <div
-        *ngIf="data.task.activities && data.task.activities.length > 0 && !data.isTemplateBoard"
+        *ngIf="
+          data.task.activities &&
+          data.task.activities.length > 0 &&
+          !data.isTemplateBoard
+        "
         class="act-container"
       >
         <section>
@@ -241,9 +248,12 @@
               *ngFor="let activity of data.task.activities"
               class="activity-text"
             >
-              <span class="member" matTooltip="{{ activity.user }}" *ngIf="!activity.userImage">{{
-                activity.user | shortname
-              }}</span>
+              <span
+                class="member"
+                matTooltip="{{ activity.user }}"
+                *ngIf="!activity.userImage"
+                >{{ activity.user | shortname }}</span
+              >
               <span
                 *ngIf="activity.userImage"
                 class="member member-image"

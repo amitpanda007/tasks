@@ -69,7 +69,8 @@ export class AccountService {
     if (user.avatarImg) {
       const imageReference = `avatar\/${user.avatarImg}`;
       const ref = this.storage.ref(imageReference);
-      return ref.getDownloadURL().toPromise();
+      const downloadRef = ref.getDownloadURL().toPromise();
+      return downloadRef;
     } else {
       return null;
     }
@@ -89,6 +90,13 @@ export class AccountService {
     db.collection("users")
       .doc(userId)
       .set({ avatarImg: fileName }, { merge: true });
+
+    //FIXME: Not updating storage metadata referrence
+    const newMetadata = {
+      cacheControl: "public,max-age=86400",
+    };
+    const imageReference = `avatar\/${fileName}`;
+    this.storage.ref(imageReference).updateMetadata(newMetadata);
   }
 
   uploadBackgroundImage(fileName: string, file: File) {
