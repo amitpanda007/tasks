@@ -100,12 +100,12 @@ export class NavComponent implements OnInit {
         (notifications: AppNotification[]) => {
           console.log(notifications);
           this.notifications = [];
-          if(notifications) {
-            notifications.forEach(notification => {
-                if(!notification.isRead) {
-                  this.notifications.push(notification);
-                }
-            })
+          if (notifications) {
+            notifications.forEach((notification) => {
+              if (!notification.isRead) {
+                this.notifications.push(notification);
+              }
+            });
           }
           // this.notifications = notifications;
           this.notificationCount = this.notifications.length;
@@ -303,13 +303,9 @@ export class NavComponent implements OnInit {
       }
 
       if (result.isBoardSelected) {
-        this.router
-          .navigate([`boards/${result.boardId}`], {
-            replaceUrl: true,
-          })
-          .then((_) => {
-            window.location.reload();
-          });
+        this.router.navigate([`boards/${result.boardId}`], {
+          replaceUrl: true,
+        });
       }
     });
   }
@@ -320,7 +316,7 @@ export class NavComponent implements OnInit {
       maxHeight: "600px",
       data: {
         positionRelativeToElement: this.infoRef,
-        informations: this.informations
+        informations: this.informations,
       },
     });
     dialogRef.afterClosed().subscribe((result: InformationDialogResult) => {

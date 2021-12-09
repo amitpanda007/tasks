@@ -14,7 +14,13 @@ import {
 } from "src/app/common/task-dialog/task-dialog.component";
 import { MatDialog, MatSnackBar } from "@angular/material";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BehaviorSubject, Subscription } from "rxjs";
+import {
+  BehaviorSubject,
+  Observable,
+  Subscription,
+  of,
+  combineLatest,
+} from "rxjs";
 import { TaskList } from "./tasklist";
 import { Label } from "../task/label";
 import {
@@ -81,6 +87,7 @@ import {
   UploadDialogResult,
 } from "src/app/common/upload-dialog/upload-dialog.component";
 import { AccountService } from "src/app/core/services/account.service";
+import { map, switchMap, tap } from "rxjs/operators";
 
 @Component({
   selector: "task-list",
@@ -93,6 +100,7 @@ export class TaskListComponent implements OnInit {
   private tasksSubscription: Subscription;
   private labelsSubscription: Subscription;
   private routeQueryParams: Subscription;
+  private routeParams: Subscription;
   private tasksDataUpdated: BehaviorSubject<boolean>;
   public boardId: string;
   private tasklistCopy: TaskList[];
@@ -113,7 +121,7 @@ export class TaskListComponent implements OnInit {
   public tasks: Task[];
   public archivedTasks: Task[];
   public labels: Label[];
-  public editingBoardName: boolean;
+  // public editingBoardName: boolean;
   public editingListName: boolean;
   public starred: string;
   public sortOrders: any;
@@ -154,7 +162,7 @@ export class TaskListComponent implements OnInit {
   public removeSearch: boolean = false;
   public searchTaskCount: number = 0;
   public searchCard: string;
-  public hasMemberAddAccess: boolean = false;
+  public hasMemberAddRemoveAccess: boolean = false;
 
   // @ViewChild("cardMenuTrigger", { static: false }) cardMenuTrigger: MatMenuTrigger;
   @ViewChild("menuUser", { static: false }) public menuUserRef: ElementRef;
@@ -181,6 +189,22 @@ export class TaskListComponent implements OnInit {
     console.log(this.boardId);
     this.tasksDataUpdated = new BehaviorSubject(false);
 
+    // Detect route param change
+    this.routeParams = this.route.paramMap.subscribe((pMap: any) => {
+      console.log(pMap.params);
+      if (this.boardId != pMap.params.boardId) {
+        console.log(
+          `Board ID changed from ${this.boardId} to ${pMap.params.boardId} recollecting all board data`
+        );
+        this.boardId = pMap.params.boardId;
+        this.boardServiceV2.getSingleBoard(this.boardId);
+        this.boardServiceV2.getTaskList(this.boardId);
+        this.boardServiceV2.getTasks(this.boardId);
+        this.boardServiceV2.getLabels(this.boardId);
+      }
+    });
+
+    // Detect Query Parameter change
     this.routeQueryParams = this.route.queryParams.subscribe((params) => {
       console.log(params);
       if (params["task"]) {
@@ -206,29 +230,7 @@ export class TaskListComponent implements OnInit {
   async ngOnInit() {
     // Start Loading Screen till page is setup
     this.loaderService.changeLoading(true);
-
-    // Setup event listeners to detect online/offline state of connecton.
-    window.addEventListener("offline", (e) => {
-      this.snackBar.openFromComponent(ErrorSnackbar, {
-        data: {
-          text: "Connection interrupted. retrying...",
-          icon: "wifi_off",
-        },
-        duration: 15000,
-      });
-    });
-
-    window.addEventListener("online", (e) => {
-      this.snackBar.openFromComponent(SuccessSnackbar, {
-        data: {
-          text: "Connection is back online",
-          icon: "wifi",
-          close: true,
-          reload: true,
-        },
-        duration: 15000,
-      });
-    });
+    this.connectionStatus();
 
     this.taskOptions = {
       showTaskPriority: true,
@@ -241,7 +243,7 @@ export class TaskListComponent implements OnInit {
     this.starred = "#FFC107";
     this.listName = "";
     this.boardMembers = [];
-    this.editingBoardName = false;
+    // this.editingBoardName = false;
     this.editingListName = false;
     this.menuMember = {
       name: null,
@@ -260,7 +262,7 @@ export class TaskListComponent implements OnInit {
     if (this.board.shared && this.board.shared.includes(userUID)) {
       console.log("User has access.");
       this.hasBoardAccess = true;
-      // this.boardMembers = this.board.sharedUserInfo;
+
       const boardMembers = this.board.sharedUserInfo;
       for (let i = 0; i < boardMembers.length; i++) {
         try {
@@ -282,20 +284,32 @@ export class TaskListComponent implements OnInit {
       return;
     }
 
-    // if (this.board.owner == userUID) {
-    //   this.isCurrentUser = true;
-    // }
-
     console.log("TASK LIST INITIATED");
     this.boardServiceV2.getSingleBoard(this.boardId);
     this.boardServiceV2.getTaskList(this.boardId);
     this.boardServiceV2.getTasks(this.boardId);
     this.boardServiceV2.getLabels(this.boardId);
-    // this.board = (await this.boardServiceV2.getBoard(this.boardId)) as Board;
 
     this.boardSubscription = this.boardServiceV2.boardChanged.subscribe(
-      (board: Board) => {
+      async (board: Board) => {
+        this.board = board;
         console.log(board);
+
+        const boardMembers = this.board.sharedUserInfo;
+        for (let i = 0; i < boardMembers.length; i++) {
+          try {
+            const memberImage = await this.accountService.getAvatarImageForUser(
+              boardMembers[i].id
+            );
+            if (memberImage) {
+              boardMembers[i].image = memberImage;
+            }
+            this.boardMembers.push(boardMembers[i]);
+          } catch {
+            console.log("unable to download image");
+          }
+        }
+
         //Check Settings for Board
         this.onlyShowCurrentUserTask = board.onlyCurrentUser;
         if (board.onlyCurrentUser) {
@@ -313,9 +327,9 @@ export class TaskListComponent implements OnInit {
 
         //TODO: Duplicate code, move to one function
         if (board.settings.addRemovePermission.admin) {
-          this.hasMemberAddAccess = this.isCurrentUserAdmin();
+          this.hasMemberAddRemoveAccess = this.isCurrentUserAdmin();
         } else if (board.settings.addRemovePermission.allMembers) {
-          this.hasMemberAddAccess = true;
+          this.hasMemberAddRemoveAccess = true;
         }
 
         this.selectedPrimaryColor = "";
@@ -420,9 +434,7 @@ export class TaskListComponent implements OnInit {
       (lists: TaskList[]) => {
         console.log(lists);
         this.taskList = lists;
-        this.taskList.forEach((list) => {
-          list.isEditing = false;
-        });
+
         this.tasklistCopy = cloneDeep(this.taskList);
         // If tasklist chnaged , but tasks didnt change
         if (this.tasks && this.tasks.length > 0) {
@@ -453,6 +465,7 @@ export class TaskListComponent implements OnInit {
             this.taskListBackup = cloneDeep(this.taskList);
             this.tasksDataUpdated.next(true);
 
+            this.activities = [];
             tasks.forEach((task) => {
               if (task.activities && task.activities.length > 0) {
                 let curActivities: Activity[] = [];
@@ -475,6 +488,7 @@ export class TaskListComponent implements OnInit {
                 });
               }
             });
+
             this.activities.sort((a, b) => {
               if (a.dateTime > b.dateTime) return -1;
               else if (a.dateTime < b.dateTime) return 1;
@@ -521,7 +535,12 @@ export class TaskListComponent implements OnInit {
     document.body.style.backgroundImage = "";
     console.log("TASK LIST DESTROYED");
     this.routeQueryParams.unsubscribe();
+    this.routeParams.unsubscribe();
 
+    this.clearSubscriptions();
+  }
+
+  clearSubscriptions() {
     if (this.boardSubscription) {
       this.boardSubscription.unsubscribe();
       this.boardServiceV2.cancelSingleBoardSuscriotion();
@@ -541,6 +560,31 @@ export class TaskListComponent implements OnInit {
       this.labelsSubscription.unsubscribe();
       this.boardServiceV2.cancelLabelSubscription();
     }
+  }
+
+  connectionStatus() {
+    // Setup event listeners to detect online/offline state of connecton.
+    window.addEventListener("offline", (e) => {
+      this.snackBar.openFromComponent(ErrorSnackbar, {
+        data: {
+          text: "Connection interrupted. retrying...",
+          icon: "wifi_off",
+        },
+        duration: 15000,
+      });
+    });
+
+    window.addEventListener("online", (e) => {
+      this.snackBar.openFromComponent(SuccessSnackbar, {
+        data: {
+          text: "Connection is back online",
+          icon: "wifi",
+          close: true,
+          reload: true,
+        },
+        duration: 15000,
+      });
+    });
   }
 
   addTasksToList(list: TaskList) {
@@ -1128,7 +1172,7 @@ export class TaskListComponent implements OnInit {
   }
 
   focusOutBoardTitle() {
-    this.editingBoardName = !this.editingBoardName;
+    // this.editingBoardName = !this.editingBoardName;
     console.log(`Focus out Board Title ${this.board.title}`);
     if (this.backupBoardTitle !== this.board.title) {
       console.log("Board Title Changed");
@@ -1136,9 +1180,9 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  toggleBoardNameEditing() {
-    this.editingBoardName = !this.editingBoardName;
-  }
+  // toggleBoardNameEditing() {
+  //   this.editingBoardName = !this.editingBoardName;
+  // }
 
   focusListTitle(taskList: TaskList) {
     console.log("focus on Board Title");
@@ -1146,16 +1190,17 @@ export class TaskListComponent implements OnInit {
   }
 
   focusOutListTitle(taskList: TaskList) {
-    taskList.isEditing = !taskList.isEditing;
+    console.log("focus out from Board Title");
+    // taskList.isEditing = !taskList.isEditing;
     if (this.backupTaskListName !== taskList.name) {
       console.log("tasklist name changed");
       this.boardServiceV2.updateTaskList(this.boardId, taskList.id, taskList);
     }
   }
 
-  toggleListNameEditing(taskList: TaskList) {
-    taskList.isEditing = !taskList.isEditing;
-  }
+  // toggleListNameEditing(taskList: TaskList) {
+  //   taskList.isEditing = !taskList.isEditing;
+  // }
 
   showInput() {
     this.showInputField = true;
@@ -2232,6 +2277,7 @@ export class TaskListComponent implements OnInit {
         isAdmin: isAdmin,
         tasks: tasks,
         currentUserMember: currentUserMember,
+        memberAddRemoveAccess: this.hasMemberAddRemoveAccess,
       },
     });
     dialogRef.afterClosed().subscribe((result: MemberInfoDialogResult) => {

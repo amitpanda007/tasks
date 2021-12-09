@@ -21,6 +21,7 @@ import {
 export class MemberInfoDialogComponent implements OnInit {
   private positionRelativeToElement: ElementRef;
   public panelOpenState: boolean = false;
+  public accountRoute: string = "/account";
 
   constructor(
     public dialogRef: MatDialogRef<MemberInfoDialogComponent>,
@@ -131,6 +132,10 @@ export class MemberInfoDialogComponent implements OnInit {
       }
     });
   }
+
+  navigatingToAccount() {
+    this.dialogRef.close();
+  }
 }
 
 export interface MemberInfoDialogData {
@@ -140,6 +145,7 @@ export interface MemberInfoDialogData {
   isAdmin: boolean;
   tasks: Task[];
   currentUserMember: boolean;
+  memberAddRemoveAccess: boolean;
 }
 
 export interface MemberInfoDialogResult {

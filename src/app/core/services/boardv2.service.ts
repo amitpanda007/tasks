@@ -137,6 +137,7 @@ export class BoardServiceV2 {
   }
 
   getSingleBoard(boardId: string) {
+    console.log(`Getting board ${boardId}`);
     this.boardDocument = this._store.collection<Board>("boards").doc(boardId);
 
     this.boardSubscription = this.boardDocument
@@ -470,6 +471,7 @@ export class BoardServiceV2 {
   **/
 
   getTaskList(boardId: string) {
+    console.log(`Getting TaskList for Board ${boardId}`);
     this.taskListsCollection = this._store
       .collection("boards")
       .doc(boardId)
@@ -576,6 +578,7 @@ export class BoardServiceV2 {
   **/
 
   getTasks(boardId: string, sortField = "index") {
+    console.log(`Getting Tasks for Board ${boardId}`);
     this.tasksCollection = this._store
       .collection("boards")
       .doc(boardId)
@@ -930,6 +933,7 @@ export class BoardServiceV2 {
   **/
 
   getLabels(boardId: string) {
+    console.log(`Getting Labels for Board ${boardId}`);
     this.labelsCollection = this._store
       .collection("boards")
       .doc(boardId)

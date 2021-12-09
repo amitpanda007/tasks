@@ -18,6 +18,7 @@ export class BoardInfoDialogComponent implements OnInit {
   private positionRelativeToElement: ElementRef =
     this.data.positionRelativeToElement;
   private boardSubscription: Subscription;
+  private sharedBoardSubscription: Subscription;
   public boards: Board[] = [];
   public sharedBoards: Board[] = [];
   public templateBoards: Board[] = [];
@@ -73,7 +74,7 @@ export class BoardInfoDialogComponent implements OnInit {
     );
 
     let sharedApiCalled: boolean = false;
-    this.boardSubscription = this.boardServiceV2.sharedBoardsChanged.subscribe(
+    this.sharedBoardSubscription = this.boardServiceV2.sharedBoardsChanged.subscribe(
       (sharedBoards: Board[]) => {
         this.sharedBoards = [];
         console.log(sharedBoards);
@@ -97,6 +98,9 @@ export class BoardInfoDialogComponent implements OnInit {
   ngOnDestroy(): void {
     if (this.boardSubscription) {
       this.boardSubscription.unsubscribe();
+    }
+    if(this.sharedBoardSubscription) {
+      this.sharedBoardSubscription.unsubscribe();
     }
   }
 

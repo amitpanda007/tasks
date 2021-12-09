@@ -16,7 +16,7 @@
     <p>
       <span>{{ data.member.name }}</span>
     </p>
-    <p *ngIf="data.currentUserMember"><a href="">Edit profile info</a></p>
+    <p *ngIf="data.currentUserMember" (click)="navigatingToAccount()"><a [routerLink]="accountRoute">Edit profile info</a></p>
   </div>
 
   <div class="menucard-options">
@@ -65,7 +65,8 @@
       *ngIf="
         !data.member.permission.admin &&
         data.member.permission.normal &&
-        !data.currentUserMember
+        !data.currentUserMember &&
+        data.memberAddRemoveAccess
       "
     >
       Remove from board

@@ -16,16 +16,15 @@
     <div id="left" class="flex-display">
       <div class="board-input" *ngIf="board">
         <div class="flex-display">
-          <span
+          <!-- <span
             *ngIf="!editingBoardName"
             class="title option-bg"
             (click)="toggleBoardNameEditing()"
             [innerHTML]="board.title"
-          ></span>
+          ></span> -->
           <input
             [(ngModel)]="board.title"
             class="input"
-            *ngIf="editingBoardName"
             (focus)="focusBoardTitle()"
             (focusout)="focusOutBoardTitle()"
           />
@@ -79,26 +78,28 @@
               *ngIf="!member.image"
               class="member"
               [ngClass]="{ 'current-member': member.isCurrentUser }"
-              matTooltip="{{ member.name }}"
+              [matTooltip]="member.name"
               [matTooltipPosition]="'above'"
               (click)="openMemberMenu(member)"
               ><span
                 *ngIf="member.permission.owner"
                 class="member-owner owner-img"
                 matTooltip="owner"
+                [matTooltipPosition]="'above'"
               ></span
               >{{ member.name | shortname
               }}<span
                 *ngIf="member.permission.admin"
                 class="member-admin admin-img"
                 matTooltip="admin"
+                [matTooltipPosition]="'above'"
               ></span
             ></span>
             <span
               *ngIf="member.image"
               class="member member-image"
               [style.background-image]="'url(' + member.image + ')'"
-              matTooltip="{{ member.name }}"
+              [matTooltip]="member.name"
               [matTooltipPosition]="'above'"
               (click)="openMemberMenu(member)"
             >
@@ -106,11 +107,13 @@
                 *ngIf="member.permission.owner"
                 class="member-owner owner-img"
                 matTooltip="owner"
+                [matTooltipPosition]="'above'"
               ></span
               ><span
                 *ngIf="member.permission.admin"
                 class="member-admin admin-img"
                 matTooltip="admin"
+                [matTooltipPosition]="'above'"
               ></span>
             </span>
           </span>
@@ -121,7 +124,7 @@
           aria-label="invite memebers"
           matTooltip="Invite member"
           class="iconBtn"
-          *ngIf="hasMemberAddAccess"
+          *ngIf="hasMemberAddRemoveAccess"
           >add</mat-icon
         >
       </div>
@@ -193,16 +196,15 @@
             <div class="list-header-section">
               <mat-card-title class="list-header">
                 <div class="flex-display">
-                  <span
+                  <!-- <span
                     *ngIf="!list.isEditing"
                     class="pointer"
                     (click)="toggleListNameEditing(list)"
                     >{{ list.name }}</span
-                  >
+                  > -->
                   <input
                     [(ngModel)]="list.name"
                     class="list-input"
-                    *ngIf="list.isEditing"
                     (focus)="focusListTitle(list)"
                     (focusout)="focusOutListTitle(list)"
                   />
