@@ -7,20 +7,39 @@
   </div>
   <section *ngIf="data.activities && data.activities.length > 0">
     <div>
-      <div *ngFor="let activity of data.activities" class="activity-text">
-        <span class="member" matTooltip="{{ activity.user }}">{{
+      <div *ngFor="let activity of data.activities" class="activity-text flex-display">
+        <!-- <span class="member" [matTooltip]="activity.user">{{
           activity.user | shortname
-        }}</span>
-        <span style="font-size: 12px"
-          ><b style="font-size: 14px">{{ activity.user }}</b>
-          {{ activity.action }} on
+        }}</span> -->
+        <div>
           <span
-            [innerHTML]="activity.taskTitle"
-            (click)="activityToCard(activity.taskId)"
-            class="activity-card"
-          ></span
-        ></span>
-        <p>{{ activity.dateTime | dateformat: "" }}</p>
+            class="member"
+            [matTooltip]="activity.user"
+            *ngIf="!activity.userImage"
+            >{{ activity.user | shortname }}</span
+          >
+          <span
+            *ngIf="activity.userImage"
+            class="member member-image"
+            [style.background-image]="'url(' + activity.userImage + ')'"
+            [matTooltip]="activity.user"
+          ></span>
+        </div>
+        <div class="flex-display-only flex-col">
+          <span style="font-size: 12px"
+            ><b [innerHTML]="activity.user"></b>&nbsp;<span
+              [innerHTML]="activity.action"
+              >&nbsp;</span
+            >
+            <span>on&nbsp;</span
+            ><span
+              [innerHTML]="activity.taskTitle"
+              (click)="activityToCard(activity.taskId)"
+              class="activity-card"
+            ></span
+          ></span>
+          <p>{{ activity.dateTime | dateformat: "" }}</p>
+        </div>
       </div>
     </div>
   </section>

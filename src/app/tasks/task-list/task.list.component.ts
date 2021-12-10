@@ -599,7 +599,6 @@ export class TaskListComponent implements OnInit {
   }
 
   remainingList(curListId: string) {
-    // console.log("FUNCTION containerData getting called");
     const lists = [];
     this.taskList.forEach((list) => {
       if (list.id != curListId) {
@@ -609,19 +608,8 @@ export class TaskListComponent implements OnInit {
     return lists;
   }
 
-  // containerData(curListId: string) {
-  //   // console.log("FUNCTION containerData getting called");
-  //   if (this.tasks) {
-  //     return this.tasks.filter((task) => task.listId === curListId);
-  //   }
-  // }
-
   dropList(event: CdkDragDrop<TaskList[] | null>): void {
     console.log(event);
-    // if (event.previousContainer === event.container) {
-    //   console.log("Same Container");
-    //   return;
-    // }
     if (event.previousIndex === event.currentIndex) {
       return;
     }
@@ -1615,17 +1603,6 @@ export class TaskListComponent implements OnInit {
 
           if (result.isTemplate) {
             this.loaderService.changeLoading(true);
-            // const copiedBoard = await this.boardServiceV2.copyBoardDoc(
-            //   "boards",
-            //   this.boardId,
-            //   this.board.title,
-            //   this.board.description,
-            //   "boards",
-            //   true,
-            //   {},
-            //   true,
-            //   true
-            // );
             const copiedBoard = await this.boardServiceV2.copyBoardBatch(
               this.boardId
             );
@@ -1680,18 +1657,6 @@ export class TaskListComponent implements OnInit {
           }
 
           this.loaderService.changeLoading(true);
-
-          // const copiedBoard = await this.boardServiceV2.copyBoardDoc(
-          //   "boards",
-          //   this.boardId,
-          //   result.boardTitle,
-          //   result.boardDescription,
-          //   "boards",
-          //   true,
-          //   {},
-          //   false,
-          //   true
-          // );
 
           const extraData = {
             boardTitle: result.boardTitle,
@@ -1769,11 +1734,6 @@ export class TaskListComponent implements OnInit {
     this.boardBGColorSecondary = "";
     this.isShowingPhotos = false;
     this.isSearchingCard = false;
-
-    // this.isShowingMore = false;
-    // this.isShowingMoreSetting = false;
-    // this.isShowingAllLabels = false;
-    // this.isShowingArchivedTasks = false;
 
     if (this.isShowingMore) {
       this.isShowingMore = false;

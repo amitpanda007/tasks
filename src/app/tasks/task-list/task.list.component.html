@@ -518,7 +518,7 @@
         >
           <span
             class="member"
-            matTooltip="{{ activity.user }}"
+            [matTooltip]="activity.user"
             *ngIf="!activity.userImage"
             >{{ activity.user | shortname }}</span
           >
@@ -526,7 +526,7 @@
             *ngIf="activity.userImage"
             class="member member-image"
             [style.background-image]="'url(' + activity.userImage + ')'"
-            matTooltip="{{ activity.userImage }}"
+            [matTooltip]="activity.user"
           ></span>
           <div class="member-info">
             <span>
@@ -785,7 +785,7 @@
     </div>
 
     <div class="about-sec">
-      <div class="flex-display">
+      <div class="flex-display desc">
         <mat-icon>description</mat-icon>
         <span>Description</span>
       </div>
