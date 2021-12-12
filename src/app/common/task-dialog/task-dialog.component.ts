@@ -7,7 +7,7 @@ import {
 } from "@angular/material/dialog";
 import { firestore } from "firebase";
 // import * as cloneDeep from "lodash/cloneDeep";
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from "lodash";
 import { CheckList } from "src/app/tasks/task/checklist";
 import { Label } from "src/app/tasks/task/label";
 import { Task } from "src/app/tasks/task/task";
@@ -101,7 +101,7 @@ export class TaskDialogComponent implements OnInit {
   ngOnInit(): void {
     console.log(this.data.task.id);
     console.log(this.data.task);
-    
+
     this.tooltipPosition = "right";
     this.showHideActivities = false;
     this.showHideChecklistAddItem = false;
@@ -131,7 +131,7 @@ export class TaskDialogComponent implements OnInit {
       this.hasLabel();
     }
 
-    if(this.data.task && this.data.task.id) {
+    if (this.data.task && this.data.task.id) {
       this.boardServiceV2.getTaskComments(this.data.boardId, this.data.task.id);
     }
     this.commentsSubscription = this.boardServiceV2.commentsChanged.subscribe(
@@ -173,16 +173,18 @@ export class TaskDialogComponent implements OnInit {
     this.calculateChecklistCompleted();
     this.checkDueDateStatus();
 
-    this.accountService
-      .getUserById(this.authService.getUID())
-      .then((userData) => {
-        this.currentUser = userData;
-        this.data.boardMembers.forEach((member) => {
-          if(member.id === this.currentUser.id) {
-            this.currentUser.image = member.image;
-          }
-        })
-      });
+    if (this.data.boardMembers) {
+      this.accountService
+        .getUserById(this.authService.getUID())
+        .then((userData) => {
+          this.currentUser = userData;
+          this.data.boardMembers.forEach((member) => {
+            if (member.id === this.currentUser.id) {
+              this.currentUser.image = member.image;
+            }
+          });
+        });
+    }
   }
 
   ngOnDestroy() {
@@ -248,7 +250,7 @@ export class TaskDialogComponent implements OnInit {
 
   hasLabel() {
     const taskHasLabel = this.data.labels.filter((label: Label) => {
-      if(label.taskIds) {
+      if (label.taskIds) {
         return label.taskIds.includes(this.data.task.id);
       }
     });
@@ -543,12 +545,12 @@ export class TaskDialogComponent implements OnInit {
   showHideActivity() {
     this.data.task.activities.forEach((activity) => {
       this.data.boardMembers.forEach((member) => {
-        if(member.image) {
-          if(activity.id ==  member.id) {
+        if (member.image) {
+          if (activity.id == member.id) {
             activity.userImage = member.image;
           }
         }
-      })
+      });
     });
     this.showHideActivities = !this.showHideActivities;
   }

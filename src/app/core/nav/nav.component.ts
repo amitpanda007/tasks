@@ -215,6 +215,8 @@ export class NavComponent implements OnInit {
             },
             shared: [userUID],
             sharedUserInfo: [user],
+            created: new Date(),
+            modified: new Date(),
           };
           this.boardServiceV2.addBoard(board);
         });

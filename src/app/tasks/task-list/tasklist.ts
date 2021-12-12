@@ -9,4 +9,6 @@ export interface TaskList {
   index: number;
   isEditing?: boolean;
   backgroundColor?: string;
+  created: Date;
+  modified: Date;
 }

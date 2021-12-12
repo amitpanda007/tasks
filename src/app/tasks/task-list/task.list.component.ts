@@ -198,9 +198,9 @@ export class TaskListComponent implements OnInit {
         );
         this.boardId = pMap.params.boardId;
         this.boardServiceV2.getSingleBoard(this.boardId);
-        this.boardServiceV2.getTaskList(this.boardId);
-        this.boardServiceV2.getTasks(this.boardId);
-        this.boardServiceV2.getLabels(this.boardId);
+        // this.boardServiceV2.getTaskList(this.boardId);
+        // this.boardServiceV2.getTasks(this.boardId);
+        // this.boardServiceV2.getLabels(this.boardId);
       }
     });
 
@@ -263,21 +263,21 @@ export class TaskListComponent implements OnInit {
       console.log("User has access.");
       this.hasBoardAccess = true;
 
-      const boardMembers = this.board.sharedUserInfo;
-      for (let i = 0; i < boardMembers.length; i++) {
-        try {
-          const memberImage = await this.accountService.getAvatarImageForUser(
-            boardMembers[i].id
-          );
-          if (memberImage) {
-            boardMembers[i].image = memberImage;
-          }
-          this.boardMembers.push(boardMembers[i]);
-        } catch {
-          console.log("unable to download image");
-        }
-      }
-      console.log(this.boardMembers);
+      // const boardMembers = this.board.sharedUserInfo;
+      // for (let i = 0; i < boardMembers.length; i++) {
+      //   try {
+      //     const memberImage = await this.accountService.getAvatarImageForUser(
+      //       boardMembers[i].id
+      //     );
+      //     if (memberImage) {
+      //       boardMembers[i].image = memberImage;
+      //     }
+      //     this.boardMembers.push(boardMembers[i]);
+      //   } catch {
+      //     console.log("unable to download image");
+      //   }
+      // }
+      // console.log(this.boardMembers);
     } else {
       console.log("You dont have Access to this Board.");
       this.router.navigate(["/boards"]);
@@ -286,9 +286,9 @@ export class TaskListComponent implements OnInit {
 
     console.log("TASK LIST INITIATED");
     this.boardServiceV2.getSingleBoard(this.boardId);
-    this.boardServiceV2.getTaskList(this.boardId);
-    this.boardServiceV2.getTasks(this.boardId);
-    this.boardServiceV2.getLabels(this.boardId);
+    // this.boardServiceV2.getTaskList(this.boardId);
+    // this.boardServiceV2.getTasks(this.boardId);
+    // this.boardServiceV2.getLabels(this.boardId);
 
     this.boardSubscription = this.boardServiceV2.boardChanged.subscribe(
       async (board: Board) => {
@@ -296,6 +296,7 @@ export class TaskListComponent implements OnInit {
         console.log(board);
 
         const boardMembers = this.board.sharedUserInfo;
+        this.boardMembers = [];
         for (let i = 0; i < boardMembers.length; i++) {
           try {
             const memberImage = await this.accountService.getAvatarImageForUser(
@@ -407,6 +408,8 @@ export class TaskListComponent implements OnInit {
           this.isFavourite = board.favourite.includes(
             this.authService.getUID()
           );
+        } else {
+          this.isFavourite = false;
         }
 
         if (this.boardMembers.length != board.sharedUserInfo.length) {
@@ -419,6 +422,10 @@ export class TaskListComponent implements OnInit {
             }
           });
         }
+
+        this.boardServiceV2.getTaskList(this.boardId);
+        this.boardServiceV2.getTasks(this.boardId);
+        this.boardServiceV2.getLabels(this.boardId);
       }
     );
 
@@ -1017,6 +1024,10 @@ export class TaskListComponent implements OnInit {
         );
       } else {
         if (result.updatedLabels && result.updatedLabels.length > 0) {
+          result.updatedLabels.forEach((label) => {
+            label.modified = new Date();
+          });
+
           this.boardServiceV2.updateLabelBatch(
             this.boardId,
             result.updatedLabels
@@ -1123,6 +1134,8 @@ export class TaskListComponent implements OnInit {
       name: this.listName,
       list: this.listName + "List",
       index: this.taskList ? this.taskList.length : 0,
+      created: new Date(),
+      modified: new Date(),
     };
     if (this.listName.trim() === "") {
       return;
@@ -1810,6 +1823,8 @@ export class TaskListComponent implements OnInit {
       color: "#b3bac5",
       name: "No labels",
       isSelected: false,
+      created: new Date(),
+      modified: new Date(),
     };
     this.searchLabels.push(noLabel);
     const labels = cloneDeep(this.labels);

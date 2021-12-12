@@ -1,9 +1,13 @@
 import { Component, ElementRef, Inject, OnInit } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogConfig } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogConfig,
+} from "@angular/material/dialog";
 import { Label } from "../../tasks/task/label";
 import { ColorEvent } from "ngx-color";
 import { BoardService } from "src/app/core/services/board.service";
-import { BoardServiceV2 } from '../../core/services/boardv2.service';
+import { BoardServiceV2 } from "../../core/services/boardv2.service";
 
 @Component({
   selector: "app-label-dialog",
@@ -89,6 +93,8 @@ export class LabelDialogComponent implements OnInit {
     const newLabel: Label = {
       name: this.newLabelName,
       color: this.newLabelColor,
+      created: new Date(),
+      modified: new Date(),
     };
     const labelId = await this.boardServiceV2.addLabel(
       this.data.boardId,
@@ -125,7 +131,6 @@ export class LabelDialogComponent implements OnInit {
     );
     const index = this.data.labels.indexOf(updatedLabel);
     this.data.labels[index] = updatedLabel;
-
     this.reset();
   }
 

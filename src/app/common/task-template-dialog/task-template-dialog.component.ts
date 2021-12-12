@@ -3,7 +3,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatDialog } from "@angular/material";
 import { Task } from "../../tasks/task/task";
 import { Label } from "../../tasks/task/label";
-import { ConfirmDialogComponent, ConfirmDialogResult } from "../confirm-dialog/confirm-dialog.component";
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogResult,
+} from "../confirm-dialog/confirm-dialog.component";
 import { BoardServiceV2 } from "src/app/core/services/boardv2.service";
 import { Router } from "@angular/router";
 // import * as cloneDeep from "lodash/cloneDeep";
@@ -66,7 +69,7 @@ export class TaskTemplateDialogComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: "240px",
       data: {
-        message: "Delete this Template card ?"
+        message: "Delete this Template card ?",
       },
     });
     dialogRef.afterClosed().subscribe((result: ConfirmDialogResult) => {
@@ -74,7 +77,7 @@ export class TaskTemplateDialogComponent implements OnInit {
       if (!result) {
         return;
       }
-      if(result.confirm) {
+      if (result.confirm) {
         this.boardServiceV2.deleteTask(this.data.boardId, task.id);
       }
     });
@@ -82,7 +85,7 @@ export class TaskTemplateDialogComponent implements OnInit {
 
   createTemplate() {
     console.log("Creating new template task");
-    this.dialogRef.close({isCreatingTemplate: true});
+    this.dialogRef.close({ isCreatingTemplate: true });
   }
 
   async createCard() {
@@ -96,7 +99,7 @@ export class TaskTemplateDialogComponent implements OnInit {
       }
     }
 
-    if(this.curTask.dueDate) {
+    if (this.curTask.dueDate) {
       newDueDate = this.curTask.dueDate;
     }
 
@@ -109,7 +112,7 @@ export class TaskTemplateDialogComponent implements OnInit {
       dueDate: newDueDate,
       checklists: newCheckList,
       created: new Date(),
-      modified: new Date()
+      modified: new Date(),
     };
     console.log(newTask);
     const taskId = await this.boardServiceV2.addTask(
@@ -127,7 +130,6 @@ export class TaskTemplateDialogComponent implements OnInit {
       filteredLabels.forEach(async (label) => {
         label.taskIds.push(taskId);
         this.boardServiceV2.updateLabel(this.data.boardId, label.id, label);
-      
       });
     }
 

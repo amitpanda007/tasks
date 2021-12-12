@@ -188,7 +188,7 @@ export class TaskComponent implements OnInit {
     if (this.showHideLabelSubscription) {
       this.showHideLabelSubscription.unsubscribe();
     }
-    if(this.hideTaskDescriptionSubscription) {
+    if (this.hideTaskDescriptionSubscription) {
       this.hideTaskDescriptionSubscription.unsubscribe();
     }
   }
@@ -240,6 +240,10 @@ export class TaskComponent implements OnInit {
       });
 
       if (result.updatedLabelData && result.updatedLabelData.length > 0) {
+        result.updatedLabelData.forEach((label) => {
+          label.modified = new Date();
+        });
+
         this.boardServiceV2.updateLabelBatch(
           this.boardId,
           result.updatedLabelData

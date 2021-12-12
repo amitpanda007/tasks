@@ -18,6 +18,8 @@ export interface Board {
   closed?: boolean;
   onlyCurrentUser?: boolean;
   hideTaskDescrption?: boolean;
+  created: Date;
+  modified: Date;
 }
 
 export interface SharedUser {

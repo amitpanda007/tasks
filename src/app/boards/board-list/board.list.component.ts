@@ -79,8 +79,12 @@ export class BaordListComponent implements OnInit {
   async newBoard() {
     const userTokenResult = await this.authService.getUserToken();
     console.log(userTokenResult);
+    console.log(this.boards.length);
 
-    if (userTokenResult.claims.subscribedUser) {
+    if (
+      (this.boards && this.boards.length < 3) ||
+      userTokenResult.claims.subscribedUser
+    ) {
       const dialogRef = this.dialog.open(BoardDialogComponent, {
         width: "360px",
         data: {
@@ -105,7 +109,7 @@ export class BaordListComponent implements OnInit {
 
         const board: Board = {
           title: result.board.title,
-          description: result.board.description,
+          description: result.board.description ? result.board.description : "",
           owner: userUID,
           settings: {
             cardCoverEnabled: false,
@@ -123,6 +127,8 @@ export class BaordListComponent implements OnInit {
           },
           shared: [userUID],
           sharedUserInfo: [user],
+          created: new Date(),
+          modified: new Date(),
         };
         this.boardServiceV2.addBoard(board);
       });
@@ -155,15 +161,18 @@ export class BaordListComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe((result: BoardDialogResult) => {
+      console.log(result);
       if (!result) {
         return;
       }
 
       const boardIndex = this.boards.indexOf(board);
       if (result.delete) {
-        this.boards.splice(boardIndex, 1);
+        // this.boards.splice(boardIndex, 1);
+        this.boardServiceV2.deleteBoard(board.id);
       } else {
-        this.boards[boardIndex] = board;
+        this.boardServiceV2.updateBoard(board.id, result.board);
+        // this.boards[boardIndex] = board;
       }
     });
   }

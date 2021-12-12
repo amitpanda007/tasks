@@ -4,4 +4,6 @@ export interface Label {
   color: string;
   taskIds?: string[];
   isSelected?: boolean;
+  created: Date;
+  modified: Date;
 }

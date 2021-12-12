@@ -76,8 +76,10 @@ export class BoardServiceV2 {
    **/
 
   getBoards() {
-    this.boardsCollection = this._store.collection<Board>("boards", (ref) =>
-      ref.where("owner", "==", this.authService.getUID())
+    this.boardsCollection = this._store.collection<Board>(
+      "boards",
+      (ref) => ref.where("owner", "==", this.authService.getUID())
+      // .orderBy("created", "desc")
     );
 
     this.boardsSubscription = this.boardsCollection
@@ -167,6 +169,7 @@ export class BoardServiceV2 {
   }
 
   updateBoard(boardId: string, board: Board) {
+    board.modified = new Date();
     console.log(board);
     // Remove unwanted properties from board object
     if (board.sharedUserInfo && board.sharedUserInfo.length > 0) {
@@ -519,6 +522,8 @@ export class BoardServiceV2 {
   updateTaskList(boardId: string, taskListId: string, taskList: TaskList) {
     delete taskList.tasks;
     delete taskList.isEditing;
+    taskList.modified = new Date();
+
     this._store
       .collection("boards")
       .doc(boardId)
@@ -1049,6 +1054,8 @@ export class BoardServiceV2 {
 
   updateLabel(boardId: string, labelId: string, label: Label) {
     delete label.isSelected;
+    label.modified = new Date();
+
     this._store
       .collection("boards")
       .doc(boardId)

@@ -8,6 +8,7 @@ import {
   ElementRef,
   ViewChild,
   AfterViewInit,
+  HostListener,
 } from "@angular/core";
 import { Board } from "./board";
 import { Router, ActivatedRoute } from "@angular/router";
@@ -26,6 +27,12 @@ export class BoardComponent implements OnInit, AfterViewInit {
   @Output() open = new EventEmitter<string>();
 
   @ViewChild("boardCard", { static: false }) boardCardRef: ElementRef;
+
+  @HostListener("contextmenu", ["$event"])
+  onRightClick(event) {
+    event.preventDefault();
+    this.edit.emit(this.board);
+  }
 
   public isFavourite: boolean = false;
   public primaryColor: string = "";

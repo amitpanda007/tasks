@@ -85,14 +85,14 @@
                 *ngIf="member.permission.owner"
                 class="member-owner owner-img"
                 matTooltip="owner"
-                [matTooltipPosition]="'above'"
+                [matTooltipPosition]="'below'"
               ></span
               >{{ member.name | shortname
               }}<span
                 *ngIf="member.permission.admin"
                 class="member-admin admin-img"
                 matTooltip="admin"
-                [matTooltipPosition]="'above'"
+                [matTooltipPosition]="'below'"
               ></span
             ></span>
             <span
@@ -107,13 +107,13 @@
                 *ngIf="member.permission.owner"
                 class="member-owner owner-img"
                 matTooltip="owner"
-                [matTooltipPosition]="'above'"
+                [matTooltipPosition]="'below'"
               ></span
               ><span
                 *ngIf="member.permission.admin"
                 class="member-admin admin-img"
                 matTooltip="admin"
-                [matTooltipPosition]="'above'"
+                [matTooltipPosition]="'below'"
               ></span>
             </span>
           </span>
@@ -130,6 +130,20 @@
       </div>
     </div>
     <div id="right" class="flex-display">
+      <div
+        class="flex-display option-bg pointer"
+        *ngIf="removeSearch"
+        [style.backgroundColor]="'#00e676'"
+      >
+        <span class="txt-small">{{ searchTaskCount }} search results</span>
+        <mat-icon
+          class="flex-display icon-small"
+          (click)="removeSearchResults()"
+          >close</mat-icon
+        >
+      </div>
+
+      <span class="option-dividor" *ngIf="removeSearch"></span>
       <span
         [matMenuTriggerFor]="optionMenu"
         class="flex-display option-bg pointer"
@@ -152,19 +166,6 @@
         >
       </mat-menu>
 
-      <span class="option-dividor"></span>
-      <div
-        class="flex-display option-bg pointer"
-        *ngIf="removeSearch"
-        [style.backgroundColor]="'#00e676'"
-      >
-        <span class="txt-small">{{ searchTaskCount }} search results</span>
-        <mat-icon
-          class="flex-display icon-small"
-          (click)="removeSearchResults()"
-          >close</mat-icon
-        >
-      </div>
       <span class="option-dividor" *ngIf="removeSearch"></span>
       <div
         class="flex-display option-bg pointer"
@@ -956,9 +957,16 @@
           (click)="searchCardFilter(member, 'member')"
         >
           <span
+            *ngIf="!member.image"
             class="member"
             [matTooltip]="member.name"
             [innerHTML]="member.name | shortname"
+          ></span>
+          <span
+            *ngIf="member.image"
+            class="member member-image"
+            [style.background-image]="'url(' + member.image + ')'"
+            [matTooltip]="member.name"
           ></span>
           <span [innerHTML]="member.name"></span>
           <mat-icon *ngIf="member.selected">done</mat-icon>
