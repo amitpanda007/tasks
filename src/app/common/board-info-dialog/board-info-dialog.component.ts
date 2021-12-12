@@ -67,6 +67,7 @@ export class BoardInfoDialogComponent implements OnInit {
           });
         }
         if (boards && boards.length == 0 && !apiCalled) {
+          console.log("SHOULD BE CALLED ONCE");
           this.boardServiceV2.getBoards();
           apiCalled = true;
         }
@@ -74,32 +75,33 @@ export class BoardInfoDialogComponent implements OnInit {
     );
 
     let sharedApiCalled: boolean = false;
-    this.sharedBoardSubscription = this.boardServiceV2.sharedBoardsChanged.subscribe(
-      (sharedBoards: Board[]) => {
-        this.sharedBoards = [];
-        console.log(sharedBoards);
-        if (sharedBoards) {
-          sharedBoards.forEach((sharedBoard) => {
-            if (!sharedBoard.isTemplate) {
-              this.sharedBoards.push(sharedBoard);
-            } else {
-              this.sharedTemplateBoards.push(sharedBoard);
-            }
-          });
+    this.sharedBoardSubscription =
+      this.boardServiceV2.sharedBoardsChanged.subscribe(
+        (sharedBoards: Board[]) => {
+          this.sharedBoards = [];
+          console.log(sharedBoards);
+          if (sharedBoards) {
+            sharedBoards.forEach((sharedBoard) => {
+              if (!sharedBoard.isTemplate) {
+                this.sharedBoards.push(sharedBoard);
+              } else {
+                this.sharedTemplateBoards.push(sharedBoard);
+              }
+            });
+          }
+          if (sharedBoards && sharedBoards.length == 0 && !sharedApiCalled) {
+            this.boardServiceV2.getSharedBoards();
+            sharedApiCalled = true;
+          }
         }
-        if (sharedBoards && sharedBoards.length == 0 && !sharedApiCalled) {
-          this.boardServiceV2.getSharedBoards();
-          sharedApiCalled = true;
-        }
-      }
-    );
+      );
   }
 
   ngOnDestroy(): void {
     if (this.boardSubscription) {
       this.boardSubscription.unsubscribe();
     }
-    if(this.sharedBoardSubscription) {
+    if (this.sharedBoardSubscription) {
       this.sharedBoardSubscription.unsubscribe();
     }
   }

@@ -42,11 +42,15 @@ export class BaordListComponent implements OnInit {
   ngOnInit(): void {
     console.log("BOARDLIST IS INITIATED");
     this.isLoading = true;
+    let apiCalled = false;
     // this.boardServiceV2.getBoards();
+    this.boardServiceV2.getBoards();
     this.boardSubscription = this.boardServiceV2.boardsChanged.subscribe(
       (boards) => {
-        if (boards && boards.length == 0) {
+        if (boards && boards.length == 0 && !apiCalled) {
+          console.log("SHOULD BE CALLED ONCE");
           this.boardServiceV2.getBoards();
+          apiCalled = true;
         }
         this.boards = [];
         this.closedBoards = [];
@@ -73,7 +77,10 @@ export class BaordListComponent implements OnInit {
 
   ngOnDestroy() {
     console.log("BOARDLIST IS DESTROYED");
-    this.boardSubscription.unsubscribe();
+    if (this.boardSubscription) {
+      this.boardSubscription.unsubscribe();
+      this.boardServiceV2.cancelBoardSuscriotion();
+    }
   }
 
   async newBoard() {
