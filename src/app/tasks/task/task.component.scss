@@ -298,3 +298,8 @@ mat-icon span {
 .my-task {
   opacity: 0.1;
 }
+
+.task-menu-open {
+  outline: 4px dashed gray;
+  outline-offset: -0.4em;
+}

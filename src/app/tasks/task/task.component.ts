@@ -92,6 +92,7 @@ export class TaskComponent implements OnInit {
   public onlyShowCurrentUserTask: boolean = false;
   public onlyShowUserTask: boolean = false;
   public hideTaskDescription: boolean = false;
+  public isTaskContextMenuOpen: boolean = false;
 
   constructor(
     private boardServiceV2: BoardServiceV2,
@@ -213,6 +214,12 @@ export class TaskComponent implements OnInit {
     this.menuTopLeftPosition.x = event.clientX + "px";
     this.menuTopLeftPosition.y = event.clientY + "px";
     this.contextMenuTrigger.openMenu();
+    this.isTaskContextMenuOpen = true;
+  }
+
+  contextMenuClosed() {
+    console.log("Closing Context Menu");
+    this.isTaskContextMenuOpen = false;
   }
 
   //TODO: Complete these features

@@ -79,7 +79,7 @@ export class BoardServiceV2 {
     this.boardsCollection = this._store.collection<Board>(
       "boards",
       (ref) => ref.where("owner", "==", this.authService.getUID())
-      // .orderBy("created", "desc")
+      .orderBy("modified", "desc")
     );
 
     this.boardsSubscription = this.boardsCollection

@@ -4,7 +4,8 @@
   [style.background-color]="task.backgroundColor"
   [style.color]="textColor"
   [ngClass]="{
-    'my-task': onlyShowCurrentUserTask === true && onlyShowUserTask === false
+    'my-task': onlyShowCurrentUserTask === true && onlyShowUserTask === false,
+    'task-menu-open': isTaskContextMenuOpen === true
   }"
   (contextmenu)="onRightClick($event)"
 >
@@ -213,7 +214,7 @@
   ></div>
 
   <!-- standard material menu -->
-  <mat-menu #rightMenu="matMenu" class="context-menu-btn">
+  <mat-menu #rightMenu="matMenu" class="context-menu-btn" (closed)="contextMenuClosed()">
     <ng-template matMenuContent let-item="item">
       <button mat-menu-item (click)="editTask()" class="context-btn">
         Open card

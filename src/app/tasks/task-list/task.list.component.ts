@@ -163,6 +163,8 @@ export class TaskListComponent implements OnInit {
   public searchTaskCount: number = 0;
   public searchCard: string;
   public hasMemberAddRemoveAccess: boolean = false;
+  private hasBoardChanged: boolean = false;
+  private hasBoardInitiated: boolean = false;
 
   // @ViewChild("cardMenuTrigger", { static: false }) cardMenuTrigger: MatMenuTrigger;
   @ViewChild("menuUser", { static: false }) public menuUserRef: ElementRef;
@@ -193,6 +195,7 @@ export class TaskListComponent implements OnInit {
     this.routeParams = this.route.paramMap.subscribe((pMap: any) => {
       console.log(pMap.params);
       if (this.boardId != pMap.params.boardId) {
+        this.hasBoardChanged = true;
         console.log(
           `Board ID changed from ${this.boardId} to ${pMap.params.boardId} recollecting all board data`
         );
@@ -423,9 +426,13 @@ export class TaskListComponent implements OnInit {
           });
         }
 
-        this.boardServiceV2.getTaskList(this.boardId);
-        this.boardServiceV2.getTasks(this.boardId);
-        this.boardServiceV2.getLabels(this.boardId);
+        if (!this.hasBoardInitiated || this.hasBoardChanged) {
+          this.boardServiceV2.getTaskList(this.boardId);
+          this.boardServiceV2.getTasks(this.boardId);
+          this.boardServiceV2.getLabels(this.boardId);
+          this.hasBoardInitiated = true;
+          this.hasBoardChanged = false;
+        }
       }
     );
 

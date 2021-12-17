@@ -22,15 +22,22 @@ export class ChecklistComponent implements OnInit {
 
   public checklistOverDue: boolean;
   public dueDate;
+  private backupChecklist: CheckList;
 
   constructor() {}
 
   ngOnInit(): void {
     this.checkDueDateStatus();
+    this.backupChecklist = JSON.parse(JSON.stringify(this.checklist));
   }
 
   toggleChecklistEditing(checklist: CheckList) {
     checklist.isEditing = !checklist.isEditing;
+  }
+
+  markChecklistClose(checklist: CheckList) {
+    checklist.isEditing = !checklist.isEditing;
+    this.checklist = JSON.parse(JSON.stringify(this.backupChecklist));
   }
 
   markChecklistDone(checklist: CheckList) {

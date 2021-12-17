@@ -45,11 +45,11 @@
   </p>
 
   <div class="checklist-text checklist-edit-input" *ngIf="checklist.isEditing">
-    <input matInput [(ngModel)]="checklist.text" />
+    <textarea matInput matTextareaAutosize [(ngModel)]="checklist.text" class="checklist-textarea"></textarea>
     <span (click)="toggleChecklistEditing(checklist)" class="done">
       <mat-icon class="icon icon-bold">done</mat-icon>
     </span>
-    <span (click)="toggleChecklistEditing(checklist)" class="close">
+    <span (click)="markChecklistClose(checklist)" class="close">
       <mat-icon class="icon icon-bold">close</mat-icon>
     </span>
   </div>

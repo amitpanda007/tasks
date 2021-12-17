@@ -135,7 +135,7 @@
         *ngIf="removeSearch"
         [style.backgroundColor]="'#00e676'"
       >
-        <span class="txt-small">{{ searchTaskCount }} search results</span>
+        <span>{{ searchTaskCount }} search results</span>
         <mat-icon
           class="flex-display icon-small"
           (click)="removeSearchResults()"
@@ -144,11 +144,14 @@
       </div>
 
       <span class="option-dividor" *ngIf="removeSearch"></span>
-      <span
+      <div class="flex-display option-bg pointer">
+        <mat-icon class="flex-display icon-small">settings</mat-icon>
+        <span
         [matMenuTriggerFor]="optionMenu"
-        class="flex-display option-bg pointer"
         >Options</span
       >
+      </div>
+      
       <mat-menu #optionMenu="matMenu">
         <mat-checkbox
           class="mat-menu-item"
@@ -166,19 +169,19 @@
         >
       </mat-menu>
 
-      <span class="option-dividor" *ngIf="removeSearch"></span>
+      <span class="option-dividor"></span>
       <div
         class="flex-display option-bg pointer"
         (click)="openAutomation()"
         matTooltip="Feature coming soon"
       >
         <mat-icon class="flex-display icon-small">bolt</mat-icon>
-        <span class="txt-small">Automation</span>
+        <span>Automation</span>
       </div>
       <span class="option-dividor"></span>
       <div class="flex-display option-bg pointer" (click)="toggleMenuSidenav()">
         <mat-icon class="flex-display icon-small">more_horiz</mat-icon>
-        <span class="txt-small">Menu</span>
+        <span>Menu</span>
       </div>
     </div>
   </div>
