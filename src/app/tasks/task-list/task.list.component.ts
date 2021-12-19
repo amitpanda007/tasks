@@ -88,6 +88,7 @@ import {
 } from "src/app/common/upload-dialog/upload-dialog.component";
 import { AccountService } from "src/app/core/services/account.service";
 import { map, switchMap, tap } from "rxjs/operators";
+import { APIService } from "src/app/core/services/api.service";
 
 @Component({
   selector: "task-list",
@@ -192,7 +193,8 @@ export class TaskListComponent implements OnInit {
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private notificationService: NotificationService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private apiService: APIService
   ) {
     // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.boardId = this.route.snapshot.params.boardId;
@@ -310,7 +312,10 @@ export class TaskListComponent implements OnInit {
         this.boardMembers = [];
         for (let i = 0; i < boardMembers.length; i++) {
           try {
-            const memberImage = await this.accountService.getAvatarImageForUser(
+            // const memberImage = await this.accountService.getAvatarImageForUser(
+            //   boardMembers[i].id
+            // );
+            const memberImage = await this.apiService.getAvatarImageFromServer(
               boardMembers[i].id
             );
             if (memberImage) {

@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 import * as firebase from "firebase";
 import { AngularFireAuth } from "@angular/fire/auth";
+import { User } from "src/app/auth/user";
 
 @Injectable()
 export class APIService {
@@ -78,5 +79,23 @@ export class APIService {
         razorpaySignature: orderData.razorpaySignature,
       })
       .toPromise();
+  }
+
+  async getAvatarImageFromServer(userId: string) {
+    const db = firebase.firestore();
+    const userSnapshot = await db.collection("users").doc(userId).get();
+    const user = userSnapshot.data() as User;
+    if (user.avatarImg) {
+      const apiUrl = `${environment.apiUrl}firebase/read/avatarImg`;
+      const downloadRef: any = await this.http
+        .post(apiUrl, {
+          imageName: user.avatarImg,
+        })
+        .toPromise();
+      console.log(downloadRef);
+      return downloadRef.image;
+    } else {
+      return null;
+    }
   }
 }

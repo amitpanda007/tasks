@@ -599,7 +599,7 @@
     </div>
     <div class="nav-option-dividor"></div>
     <div
-      class="menu-option flex-display pointer"
+      class="menu-option flex-display pointer disableDiv"
       (click)="watchBoard()"
       *ngIf="!board.isTemplate"
     >
@@ -630,7 +630,10 @@
       <mat-icon class="material-icons-outlined">restart_alt</mat-icon>
       <span>Convert to board</span>
     </div>
-    <div class="menu-option flex-display pointer" (click)="printExport()">
+    <div
+      class="menu-option flex-display pointer disableDiv"
+      (click)="printExport()"
+    >
       <mat-icon class="material-icons-outlined">print</mat-icon>
       <span>Print and export</span>
     </div>
