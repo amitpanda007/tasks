@@ -165,6 +165,9 @@ export class TaskListComponent implements OnInit {
   public hasMemberAddRemoveAccess: boolean = false;
   private hasBoardChanged: boolean = false;
   private hasBoardInitiated: boolean = false;
+  public backgroundImageLoaded: boolean = false;
+  public rightScrollEnabled: boolean = true;
+  public leftScrollEnabled: boolean = false;
 
   // @ViewChild("cardMenuTrigger", { static: false }) cardMenuTrigger: MatMenuTrigger;
   @ViewChild("menuUser", { static: false }) public menuUserRef: ElementRef;
@@ -174,6 +177,11 @@ export class TaskListComponent implements OnInit {
   public addRemovePermissionRef: ElementRef;
   @ViewChild("closeBoardElm", { static: false })
   public closeBoardRef: ElementRef;
+  @ViewChild("scrollContent", {
+    read: ElementRef,
+    static: false,
+  })
+  public widgetsContent: ElementRef<any>;
 
   constructor(
     private loaderService: LoaderService,
@@ -459,70 +467,70 @@ export class TaskListComponent implements OnInit {
             }
           });
         }
+      }
+    );
 
-        this.tasksSubscription = this.boardServiceV2.tasksChanged.subscribe(
-          (tasks: Task[]) => {
-            console.log(tasks);
-            this.tasks = tasks;
+    this.tasksSubscription = this.boardServiceV2.tasksChanged.subscribe(
+      (tasks: Task[]) => {
+        console.log(tasks);
+        this.tasks = tasks;
 
-            //FIXME: Hacky way to fix the Drag & Drop problem. Once task is moved from one list to another.
-            // A dummy copy of data stays on previous task list .
-            this.taskList = [];
-            this.taskList = cloneDeep(this.tasklistCopy);
-            this.taskList.forEach((_list) => {
-              this.addTasksToList(_list);
-              if (_list.sortOrder) {
-                this.sortTaskByOrder(_list, _list.sortOrder);
-              }
-            });
-            console.log(this.taskList);
-            this.taskListBackup = cloneDeep(this.taskList);
-            this.tasksDataUpdated.next(true);
+        //FIXME: Hacky way to fix the Drag & Drop problem. Once task is moved from one list to another.
+        // A dummy copy of data stays on previous task list .
+        this.taskList = [];
+        this.taskList = cloneDeep(this.tasklistCopy);
+        this.taskList.forEach((_list) => {
+          this.addTasksToList(_list);
+          if (_list.sortOrder) {
+            this.sortTaskByOrder(_list, _list.sortOrder);
+          }
+        });
+        console.log(this.taskList);
+        this.taskListBackup = cloneDeep(this.taskList);
+        this.tasksDataUpdated.next(true);
 
-            this.activities = [];
-            tasks.forEach((task) => {
-              if (task.activities && task.activities.length > 0) {
-                let curActivities: Activity[] = [];
-                curActivities = curActivities.concat(task.activities);
-                curActivities.forEach((activity) => {
-                  activity.taskTitle = task.title;
-                  activity.taskId = task.id;
-                });
-
-                this.activities.push(...curActivities);
-              }
-
-              if (task.members && task.members.length > 0) {
-                task.members.forEach((member) => {
-                  this.boardMembers.forEach((boardMember) => {
-                    if (member.id === boardMember.id) {
-                      member.image = boardMember.image;
-                    }
-                  });
-                });
-              }
+        this.activities = [];
+        tasks.forEach((task) => {
+          if (task.activities && task.activities.length > 0) {
+            let curActivities: Activity[] = [];
+            curActivities = curActivities.concat(task.activities);
+            curActivities.forEach((activity) => {
+              activity.taskTitle = task.title;
+              activity.taskId = task.id;
             });
 
-            this.activities.sort((a, b) => {
-              if (a.dateTime > b.dateTime) return -1;
-              else if (a.dateTime < b.dateTime) return 1;
-              else return 0;
-            });
+            this.activities.push(...curActivities);
+          }
 
-            this.activities.forEach((activity) => {
-              this.boardMembers.forEach((member) => {
-                if (member.image) {
-                  if (member.id == activity.id) {
-                    activity.userImage = member.image;
-                  }
+          if (task.members && task.members.length > 0) {
+            task.members.forEach((member) => {
+              this.boardMembers.forEach((boardMember) => {
+                if (member.id === boardMember.id) {
+                  member.image = boardMember.image;
                 }
               });
             });
-            // console.log(this.activities);
-
-            this.loaderService.changeLoading(false);
           }
-        );
+        });
+
+        this.activities.sort((a, b) => {
+          if (a.dateTime > b.dateTime) return -1;
+          else if (a.dateTime < b.dateTime) return 1;
+          else return 0;
+        });
+
+        this.activities.forEach((activity) => {
+          this.boardMembers.forEach((member) => {
+            if (member.image) {
+              if (member.id == activity.id) {
+                activity.userImage = member.image;
+              }
+            }
+          });
+        });
+        // console.log(this.activities);
+
+        this.loaderService.changeLoading(false);
       }
     );
 
@@ -531,17 +539,24 @@ export class TaskListComponent implements OnInit {
 
     // const allTasks = combineLatest([
     //   this.boardServiceV2.taskListsChanged,
-    //   this.boardServiceV2.tasksChanged
+    //   this.boardServiceV2.tasksChanged,
     // ]).pipe(
-    //   map(([taskLists, tasks]) => taskLists.map(taskList => ({
-    //     ...taskList,
-    //     tasks: tasks.filter(task => taskList.id === task.listId)
-    //   }) as TaskList))
-    // )
+    //   map(([taskLists, tasks]) => {
+    //     console.log(taskLists);
+    //     console.log(tasks);
+    //     return taskLists.map(
+    //       (taskList) =>
+    //         ({
+    //           ...taskList,
+    //           tasks: tasks.filter((task) => taskList.id === task.listId),
+    //         } as TaskList)
+    //     );
+    //   })
+    // );
 
-    // allTasks.subscribe(data => {
+    // allTasks.subscribe((data) => {
     //   console.log(data);
-    // })
+    // });
   }
 
   ngOnDestroy() {
@@ -1451,7 +1466,9 @@ export class TaskListComponent implements OnInit {
   }
 
   async gatherBackgroundPhotos() {
+    this.backgroundImageLoaded = true;
     this.backgroundImages = await this.boardServiceV2.gatherBackgroundImages();
+    this.backgroundImageLoaded = false;
     console.log(this.backgroundImages);
   }
 
@@ -2430,5 +2447,23 @@ export class TaskListComponent implements OnInit {
         console.log("Successfully Uploaded your image");
       }
     });
+  }
+
+  public scrollRight(): void {
+    this.widgetsContent.nativeElement.scrollTo({
+      left: this.widgetsContent.nativeElement.scrollLeft + 250,
+      behavior: "smooth",
+    });
+    this.leftScrollEnabled = true;
+  }
+
+  public scrollLeft(): void {
+    this.widgetsContent.nativeElement.scrollTo({
+      left: this.widgetsContent.nativeElement.scrollLeft - 250,
+      behavior: "smooth",
+    });
+    if (this.widgetsContent.nativeElement.scrollLeft - 250 <= 0) {
+      this.leftScrollEnabled = false;
+    }
   }
 }

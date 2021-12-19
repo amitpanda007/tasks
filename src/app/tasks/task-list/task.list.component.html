@@ -146,12 +146,9 @@
       <span class="option-dividor" *ngIf="removeSearch"></span>
       <div class="flex-display option-bg pointer">
         <mat-icon class="flex-display icon-small">settings</mat-icon>
-        <span
-        [matMenuTriggerFor]="optionMenu"
-        >Options</span
-      >
+        <span [matMenuTriggerFor]="optionMenu">Options</span>
       </div>
-      
+
       <mat-menu #optionMenu="matMenu">
         <mat-checkbox
           class="mat-menu-item"
@@ -171,7 +168,7 @@
 
       <span class="option-dividor"></span>
       <div
-        class="flex-display option-bg pointer"
+        class="flex-display option-bg pointer disableDiv"
         (click)="openAutomation()"
         matTooltip="Feature coming soon"
       >
@@ -187,6 +184,7 @@
   </div>
 
   <div
+    #scrollContent
     class="content-wrapper"
     *ngIf="taskList && tasks && labels"
     cdkDropList
@@ -380,6 +378,27 @@
         </mat-card>
       </div>
     </div>
+
+    <!-- Scrolling button -->
+    <button
+      mat-fab
+      class="scroll-btn btn-left"
+      aria-label="scroll left"
+      *ngIf="leftScrollEnabled"
+      (click)="scrollLeft()"
+    >
+      <mat-icon>arrow_back_ios</mat-icon>
+    </button>
+
+    <button
+      mat-fab
+      class="scroll-btn btn-right"
+      aria-label="scroll right"
+      *ngIf="rightScrollEnabled"
+      (click)="scrollRight()"
+    >
+      <mat-icon>arrow_forward_ios</mat-icon>
+    </button>
   </div>
 </div>
 
@@ -487,7 +506,7 @@
     </div>
     <div class="nav-option-dividor"></div>
     <div class="menu-option">
-      <div class="flex-display">
+      <div class="flex-display disableDiv">
         <mat-icon>bolt</mat-icon>
         <div class="menu-options-info">
           <p>Automation</p>
@@ -915,6 +934,10 @@
 
     <div class="bg-imgs">
       <p class="info-text">All Available Photos</p>
+      <mat-progress-bar
+        mode="indeterminate"
+        *ngIf="backgroundImageLoaded"
+      ></mat-progress-bar>
       <div class="flex-display">
         <img
           [src]="image.url"

@@ -157,11 +157,15 @@
 
         <div>
           <p class="label">Board Settings</p>
-          <button mat-flat-button color="primary">Save</button>
+          <button mat-flat-button color="primary" [disabled]="true">
+            Save
+          </button>
         </div>
         <div>
           <p class="label">Daily Task Settings</p>
-          <button mat-flat-button color="primary">Save</button>
+          <button mat-flat-button color="primary" [disabled]="true">
+            Save
+          </button>
         </div>
         <div *ngIf="subscribedUser">
           <p class="label">payment</p>

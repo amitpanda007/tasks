@@ -305,7 +305,7 @@ mat-toolbar > span {
   transition-timing-function: ease-in;
   transform: translateX(0px) !important;
   width: 339px;
-  z-index: 5;
+  z-index: 15;
   background-color: #f4f5f7;
 }
 
@@ -603,4 +603,31 @@ mat-toolbar > span {
 .active {
   background: lightgray;
   font-weight: 500;
+}
+
+.disableDiv {
+  pointer-events: none;
+  background-color: #dddddd;
+}
+
+.scroll-btn {
+  position: fixed;
+  background-color: #00000014;
+  color: #00000014;
+  z-index: 10;
+}
+
+.scroll-btn:hover {
+  background-color: gray;
+  color: white;
+}
+
+.btn-left {
+  bottom: 10%;
+  left: 25px;
+}
+
+.btn-right {
+  bottom: 10%;
+  right: 25px;
 }
