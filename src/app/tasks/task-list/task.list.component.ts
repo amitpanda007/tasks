@@ -312,10 +312,7 @@ export class TaskListComponent implements OnInit {
         this.boardMembers = [];
         for (let i = 0; i < boardMembers.length; i++) {
           try {
-            // const memberImage = await this.accountService.getAvatarImageForUser(
-            //   boardMembers[i].id
-            // );
-            const memberImage = await this.apiService.getAvatarImageFromServer(
+            const memberImage = await this.accountService.getAvatarImageForUser(
               boardMembers[i].id
             );
             if (memberImage) {
