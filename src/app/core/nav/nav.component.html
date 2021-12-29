@@ -24,13 +24,15 @@
         <mat-icon>event</mat-icon>
         <a *ngIf="auth.isLoggedIn()" class="nav-padding"><span>Daily</span></a>
       </button>
+      <button mat-menu-item *ngIf="auth.isLoggedIn()" (click)="openProject()">
+        <mat-icon>view_agenda</mat-icon>
+        <a *ngIf="auth.isLoggedIn()" class="nav-padding"
+          ><span>Projects</span></a
+        >
+      </button>
     </mat-menu>
 
-    <button
-      mat-icon-button
-      aria-label="home page"
-      (click)="navigateHome()"
-    >
+    <button mat-icon-button aria-label="home page" (click)="navigateHome()">
       <mat-icon>home</mat-icon>
     </button>
     <button mat-icon-button aria-label="show boards" (click)="showAllBoards()">

@@ -1,0 +1,181 @@
+.item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: flex-start;
+}
+
+.title {
+  margin-left: 0.8em;
+  margin-left: 1em;
+  display: flex;
+  width: 300px;
+}
+
+.details {
+  cursor: pointer;
+}
+
+.mat-card {
+  padding: 8px !important;
+}
+
+.complete {
+  background-color: #80808070 !important;
+  color: #a4a3a3;
+}
+
+.options {
+  display: flex;
+  margin-left: 3px;
+}
+
+.task-options mat-icon {
+  margin-right: 1px;
+  cursor: pointer;
+}
+
+.single-task {
+  height: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.task-options {
+  display: flex;
+  color: darkslategray;
+  position: absolute;
+  right: 20px;
+}
+
+.opts {
+  opacity: 0;
+}
+
+.item:hover .opts {
+  opacity: 1;
+}
+
+.status {
+  opacity: 0;
+}
+
+.item:hover .status {
+  opacity: 1;
+}
+
+.status-selected {
+  opacity: 1;
+}
+
+.material-icons {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.task-info {
+  margin-left: 1em;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.task-info span {
+  font-size: 10px;
+  margin-left: 2px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.days {
+  margin-right: 0.3em;
+}
+
+.green {
+  color: #00c221;
+}
+
+.red {
+  color: #e20000;
+}
+
+.select {
+  padding: 2px;
+  color: #333333;
+  background-color: #eeeeee;
+  border: 1px solid #dddddd;
+  cursor: pointer;
+  border-radius: 5px;
+  height: 18px;
+  font-size: 9px;
+  font-weight: 900;
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.status {
+  display: flex;
+}
+
+.status span {
+  justify-content: center;
+  display: flex;
+  padding: 2px;
+  color: #333333;
+  background-color: #eeeeee;
+  border: 1px solid #dddddd;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 900;
+  min-width: 55px;
+}
+
+.menu-opts {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: space-between;
+}
+
+::ng-deep .mat-menu-content {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
+.images {
+  display: block;
+  max-width: 18px;
+  max-height: 18px;
+  width: auto;
+  height: auto;
+  margin-bottom: 1px;
+  cursor: pointer;
+  margin-top: -2px;
+}
+
+.priority-selected {
+  opacity: 1;
+}
+
+.opts-selected {
+  opacity: 1;
+}

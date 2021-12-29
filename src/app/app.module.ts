@@ -60,6 +60,7 @@ import { UploadDialogComponent } from "./common/upload-dialog/upload-dialog.comp
 import { SubscriptionDialogComponent } from "./common/subscription-dialog/subscription-dialog.component";
 import { PaymentModule } from "./payment/payment.module";
 import { PaymentResultDialogComponent } from "./common/payment-result-dialog/payment-result-dialog.component";
+import { ProjectModule } from "./projects/project.module";
 
 @NgModule({
   declarations: [
@@ -96,7 +97,7 @@ import { PaymentResultDialogComponent } from "./common/payment-result-dialog/pay
     AutomationDialogComponent,
     UploadDialogComponent,
     SubscriptionDialogComponent,
-    PaymentResultDialogComponent
+    PaymentResultDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -111,6 +112,7 @@ import { PaymentResultDialogComponent } from "./common/payment-result-dialog/pay
     DailyModule,
     AccountModule,
     PaymentModule,
+    ProjectModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
@@ -155,7 +157,7 @@ import { PaymentResultDialogComponent } from "./common/payment-result-dialog/pay
     AutomationDialogComponent,
     UploadDialogComponent,
     SubscriptionDialogComponent,
-    PaymentResultDialogComponent
+    PaymentResultDialogComponent,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent],

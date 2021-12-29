@@ -147,6 +147,10 @@ export class NavComponent implements OnInit {
     this.router.navigate(["/daily"]);
   }
 
+  openProject() {
+    this.router.navigate(["/projects"]);
+  }
+
   openAccount() {
     this.router.navigate(["/account"]);
   }
