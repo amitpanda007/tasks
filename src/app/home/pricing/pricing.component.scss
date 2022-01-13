@@ -13,7 +13,13 @@
 }
 
 .description h1 {
+  width: 100%;
   font-size: 3rem;
+  line-height: 1.25;
+}
+
+.description p {
+  font-size: 1.25rem;
   line-height: 1.25;
 }
 
@@ -204,4 +210,57 @@ outer-two {
   padding: 0.12rem 0.5rem 0.25rem;
   vertical-align: baseline;
   white-space: nowrap;
+}
+
+.flex-display {
+  display: flex;
+}
+
+.flex-center {
+  align-items: center;
+  justify-content: center;
+}
+
+.price-lg {
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.price-sm {
+  font-size: 1rem;
+}
+
+input {
+  margin: 0px;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  overflow: visible;
+}
+
+.estimate {
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+.estimate input[type="number"] {
+    appearance: textfield;
+    border-color: rgb(9, 30, 66);
+    border-radius: 0px;
+    border-style: solid;
+    border-width: 0px 0px 1px;
+    color: rgb(9, 30, 66);
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0px 0.25rem;
+    padding: 0px;
+    text-align: center;
+    width: 4.5rem;
+}
+
+.estimate input[type="range"] {
+  // appearance: none;
+  margin-top: 1.75rem;
+  width: 100%;
 }

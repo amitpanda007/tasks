@@ -28,7 +28,7 @@
 }
 
 footer {
-  font-size: 0.8em;
+  font-size: 16px;
   margin: 4em 1em;
   text-align: center;
 }
@@ -50,6 +50,13 @@ footer ul li a {
   text-decoration: underline;
 }
 
+footer img {
+  width: 110px;
+  height: auto;
+  display: block;
+  margin: 0 auto 17px;
+}
+
 .img-fluid {
   max-width: 100%;
   height: auto;
@@ -67,7 +74,20 @@ footer ul li a {
   margin-top: 3em;
 }
 
+.col {
+  flex-direction: column;
+}
+
+.col-lg {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 50%;
+  -ms-flex: 0 0 50%;
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+
 .detail {
+  margin-bottom: 1rem;
 }
 
 .detail h1 {
@@ -75,9 +95,47 @@ footer ul li a {
   line-height: 1.25;
 }
 
+.detail h2{
+  font-size: 2.25rem;
+  line-height: 1.33333333;
+}
+
+.detail h5 {
+  font-size: 1rem;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
 .detail p {
   margin-top: 0;
   margin-bottom: 1.5rem;
+  font-family: "Charlie Text",sans-serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #172B4D;
+  text-align: left;
+}
+
+.spacing {
+  padding: 3rem 0;
+}
+
+.order-2 {
+  -webkit-box-ordinal-group: 3;
+  -webkit-order: 2;
+  -ms-flex-order: 2;
+  order: 2;
+}
+
+.w-100 {
+  width: 100% !important;
+}
+
+section#features div.expand h3 a::before {
+  content: '+';
+  position: absolute;
+  left: 0;
 }
 
 .sign-up {
@@ -130,8 +188,35 @@ footer ul li a {
   border-color: #0065ff;
 }
 
+.btn-default {
+  color: #0065ff;
+  background-color: #fff;
+  border-color: #0065ff;
+}
+
+.btn-default:hover {
+  color: #fff;
+  background-color: #0065ff;
+  border-color: #0065ff;
+}
+
 .btn-block {
   display: block;
   // width: 100%;
   margin-left: 40px;
+}
+
+.flex-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+}
+
+.flex-only {
+  display: flex;
+}
+
+.offset {
+  margin-left: 8.33333333%;
 }
