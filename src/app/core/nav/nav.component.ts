@@ -35,6 +35,10 @@ import {
 import { NotificationService } from "../services/notification.service";
 import { AppNotification } from "src/app/common/notification/notification";
 import { Information } from "src/app/common/information/information";
+import {
+  SubscriptionDialogComponent,
+  SubscriptionDialogResult,
+} from "src/app/common/subscription-dialog/subscription-dialog.component";
 
 @Component({
   moduleId: module.id,
@@ -161,137 +165,161 @@ export class NavComponent implements OnInit {
     });
   }
 
-  createBoard() {
-    const dialogRef = this.dialog.open(BoardInfoDialogComponent, {
-      width: "320px",
-      maxHeight: "600px",
-      data: {
-        positionRelativeToElement: this.createBoardRef,
-        isCreate: true,
-      },
-    });
-    dialogRef.afterClosed().subscribe((result: BoardInfoDialogResult) => {
-      console.log(result);
-      if (!result) {
-        return;
-      }
+  async createBoard() {
+    const userTokenResult = await this.auth.getUserToken();
 
-      if (result.createBoard) {
-        const dialogRef = this.dialog.open(BoardDialogComponent, {
-          width: "360px",
-          data: {
-            board: {},
-          },
-        });
-        dialogRef.afterClosed().subscribe((result: BoardDialogResult) => {
-          if (!result) {
-            return;
-          }
+    if (
+      (this.boards && this.boards.length < 3) ||
+      userTokenResult.claims.subscribedUser
+    ) {
+      const dialogRef = this.dialog.open(BoardInfoDialogComponent, {
+        width: "320px",
+        maxHeight: "600px",
+        data: {
+          positionRelativeToElement: this.createBoardRef,
+          isCreate: true,
+        },
+      });
+      dialogRef.afterClosed().subscribe((result: BoardInfoDialogResult) => {
+        console.log(result);
+        if (!result) {
+          return;
+        }
 
-          const userUID = this.auth.getUID();
-          const user: SharedUser = {
-            id: userUID,
-            name: this.auth.getUserDisplayName(),
-            permission: {
-              admin: true,
-              normal: false,
-              owner: true,
+        if (result.createBoard) {
+          const dialogRef = this.dialog.open(BoardDialogComponent, {
+            width: "360px",
+            data: {
+              board: {},
             },
-          };
-
-          const board: Board = {
-            title: result.board.title,
-            description: result.board.description,
-            owner: userUID,
-            settings: {
-              cardCoverEnabled: false,
-              addRemovePermission: {
-                admin: true,
-                allMembers: false,
-              },
-              commentingPermission: {
-                disabled: true,
-                members: false,
-                membersAndObservers: false,
-                AllBoardMembers: false,
-                anyUser: false,
-              },
-            },
-            shared: [userUID],
-            sharedUserInfo: [user],
-            created: new Date(),
-            modified: new Date(),
-          };
-          this.boardServiceV2.addBoard(board);
-        });
-      } else if (result.isInternalTemplateSelected) {
-        // Create Board from internal Template
-        console.log("Create a board from internal template");
-        const selectedBoard = result.board;
-        const dialogRef = this.dialog.open(CopyBoardDialogComponent, {
-          width: "280px",
-          hasBackdrop: true,
-          data: {
-            board: selectedBoard,
-          },
-        });
-        dialogRef
-          .afterClosed()
-          .subscribe(async (result: CopyBoardDialogResult) => {
-            console.log(result);
+          });
+          dialogRef.afterClosed().subscribe((result: BoardDialogResult) => {
             if (!result) {
               return;
             }
 
-            this.loaderService.changeLoading(true);
-            const copiedBoard = await this.boardServiceV2.copyBoardDoc(
-              "boards",
-              selectedBoard.id,
-              result.boardTitle,
-              result.boardDescription,
-              "boards",
-              true,
-              {},
-              false,
-              true
-            );
-            console.log(`BOARD COPY COMPLETE: ${copiedBoard}`);
-            this.loaderService.changeLoading(false);
+            const userUID = this.auth.getUID();
+            const user: SharedUser = {
+              id: userUID,
+              name: this.auth.getUserDisplayName(),
+              permission: {
+                admin: true,
+                normal: false,
+                owner: true,
+              },
+            };
 
-            if (copiedBoard) {
-              const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-                width: "240px",
-                data: {
-                  message: `<span>Navigate to copied board</span>: <a href="/boards/${copiedBoard}">Copied Board</a>`,
+            const board: Board = {
+              title: result.board.title,
+              description: result.board.description,
+              owner: userUID,
+              settings: {
+                cardCoverEnabled: false,
+                addRemovePermission: {
+                  admin: true,
+                  allMembers: false,
                 },
-              });
-              dialogRef.disableClose = true;
-              dialogRef
-                .afterClosed()
-                .subscribe((result: ConfirmDialogResult) => {
-                  if (!result) {
-                    return;
-                  }
-                  console.log(result);
-                  if (result.confirm) {
-                    this.router
-                      .navigateByUrl(`/boards/${copiedBoard}`)
-                      .then(() => {
-                        window.location.reload();
-                      });
-                  }
-                });
-            }
+                commentingPermission: {
+                  disabled: true,
+                  members: false,
+                  membersAndObservers: false,
+                  AllBoardMembers: false,
+                  anyUser: false,
+                },
+              },
+              shared: [userUID],
+              sharedUserInfo: [user],
+              created: new Date(),
+              modified: new Date(),
+            };
+            this.boardServiceV2.addBoard(board);
           });
-      } else if (result.isExternalTemplateSelected) {
-        // Create Board from external Template
-        console.log("Create a board from external template");
-      } else if (result.navigateTemplate) {
-        this.router.navigate([`templates`], {
-          replaceUrl: true,
-        });
-      }
-    });
+        } else if (result.isInternalTemplateSelected) {
+          // Create Board from internal Template
+          console.log("Create a board from internal template");
+          const selectedBoard = result.board;
+          const dialogRef = this.dialog.open(CopyBoardDialogComponent, {
+            width: "280px",
+            hasBackdrop: true,
+            data: {
+              board: selectedBoard,
+            },
+          });
+          dialogRef
+            .afterClosed()
+            .subscribe(async (result: CopyBoardDialogResult) => {
+              console.log(result);
+              if (!result) {
+                return;
+              }
+
+              this.loaderService.changeLoading(true);
+              const copiedBoard = await this.boardServiceV2.copyBoardDoc(
+                "boards",
+                selectedBoard.id,
+                result.boardTitle,
+                result.boardDescription,
+                "boards",
+                true,
+                {},
+                false,
+                true
+              );
+              console.log(`BOARD COPY COMPLETE: ${copiedBoard}`);
+              this.loaderService.changeLoading(false);
+
+              if (copiedBoard) {
+                const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                  width: "240px",
+                  data: {
+                    message: `<span>Navigate to copied board</span>: <a href="/boards/${copiedBoard}">Copied Board</a>`,
+                  },
+                });
+                dialogRef.disableClose = true;
+                dialogRef
+                  .afterClosed()
+                  .subscribe((result: ConfirmDialogResult) => {
+                    if (!result) {
+                      return;
+                    }
+                    console.log(result);
+                    if (result.confirm) {
+                      this.router
+                        .navigateByUrl(`/boards/${copiedBoard}`)
+                        .then(() => {
+                          window.location.reload();
+                        });
+                    }
+                  });
+              }
+            });
+        } else if (result.isExternalTemplateSelected) {
+          // Create Board from external Template
+          console.log("Create a board from external template");
+        } else if (result.navigateTemplate) {
+          this.router.navigate([`templates`], {
+            replaceUrl: true,
+          });
+        }
+      });
+    } else {
+      // Open Paid User POP-UP Modal
+      const dialogRef = this.dialog.open(SubscriptionDialogComponent, {
+        width: "280px",
+        data: {
+          header: "Add Unlimited Boards",
+          body: "You have reached Board limit on your current plan. Upgrade your Tasks account, so you can utilize the full set of functionalities.",
+        },
+      });
+      dialogRef.afterClosed().subscribe((result: SubscriptionDialogResult) => {
+        if (!result) {
+          return;
+        }
+        if (result.paid) {
+          this.router.navigate(["/payments"]);
+        }
+      });
+    }
   }
 
   showAllBoards() {

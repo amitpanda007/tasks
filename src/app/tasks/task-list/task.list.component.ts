@@ -1760,6 +1760,7 @@ export class TaskListComponent implements OnInit {
         if (result.delete) {
           this.board.closed = true;
           this.boardServiceV2.updateBoard(this.boardId, this.board);
+          this.router.navigateByUrl('/boards');
         }
       });
     }

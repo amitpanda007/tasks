@@ -145,7 +145,7 @@ export class BaordListComponent implements OnInit {
         width: "280px",
         data: {
           header: "Add Unlimited Boards",
-          body: "Upgrade your Tasks account to a Paid user, so you can utilize the full set of functionalities.",
+          body: "You have reached Board limit on your current plan. Upgrade your Tasks account, so you can utilize the full set of functionalities.",
         },
       });
       dialogRef.afterClosed().subscribe((result: SubscriptionDialogResult) => {
